@@ -1,11 +1,11 @@
-name: MAIN CI
+name: V0 CI
 on:
   push:
     branches:
-      - "main"
+      - "v0"
 jobs:
   check-changes:
-    runs-on: [ self-hosted, main ]
+    runs-on: [ self-hosted, v0 ]
     outputs:
       swagger_changes: ${{ steps.check_changes.outputs.swagger_changed }}
       backend_changes: ${{ steps.check_changes.outputs.backend_changed }}
@@ -21,7 +21,7 @@ jobs:
           echo "backend_changed=$(./is_changed.sh fm_backend backend)" >> $GITHUB_OUTPUT
           echo "indexer_changed=$(./is_changed.sh fm_indexer indexer)" >> $GITHUB_OUTPUT
   build-frontend:
-    runs-on: [self-hosted, main]
+    runs-on: [self-hosted, v0]
     needs: [ check-changes ]
     if: ${{ !failure() && !cancelled() }}
     steps:
@@ -31,9 +31,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: frontend/node_modules
-          key: ${{ runner.os }}-main-node-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-v0-node-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-main-node
+            ${{ runner.os }}-v0-node
       - name: Install dependencies
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
         run: yarn --immutable
@@ -55,10 +55,10 @@ jobs:
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
         uses: actions/upload-artifact@v3
         with:
-          name: main-frontend
+          name: v0-frontend
           path: packages/frontend/frontend.zip
   build-oracle:
-    runs-on: [self-hosted, main]
+    runs-on: [self-hosted, v0]
     needs: [ check-changes ]
     steps:
       - uses: actions/checkout@v3
@@ -73,7 +73,7 @@ jobs:
         if: ${{ needs.check-changes.outputs.backend_changes == 'true' }}
         run: docker build -t file-market-oracle-service:latest -f backend/Dockerfile .
   build-indexer:
-    runs-on: [self-hosted, main]
+    runs-on: [self-hosted, v0]
     needs: [ check-changes ]
     steps:
       - uses: actions/checkout@v3
@@ -93,7 +93,7 @@ jobs:
         run: docker build --build-arg env=main -t file-market-indexer-service:latest .
         working-directory: indexer/
   update:
-    runs-on: [self-hosted, main]
+    runs-on: [self-hosted, v0]
     needs: [ check-changes, build-frontend, build-oracle, build-indexer ]
     steps:
       - uses: actions/checkout@v3
@@ -101,7 +101,7 @@ jobs:
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
         uses: actions/download-artifact@v3
         with:
-          name: main-frontend
+          name: v0-frontend
       - name: Update frontend
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
         run: |
