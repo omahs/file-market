@@ -36,6 +36,8 @@ async function main() {
 
   const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "")
 
+  console.log(priorityFee);
+
   const instance = await multiSenderFactory.deploy({
     maxPriorityFeePerGas: priorityFee,
   });

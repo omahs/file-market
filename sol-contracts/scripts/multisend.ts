@@ -1,6 +1,8 @@
 import * as hre from "hardhat";
-import { program } from "commander";
+import {program} from "commander";
 import {MultiSender__factory} from "../typechain-types";
+import fs from "fs";
+
 const util = require("util")
 const request = util.promisify(require("request"))
 
@@ -8,7 +10,7 @@ async function callRpc(method: string, params: string) {
   const network = process.env.HARDHAT_NETWORK;
   let url: string;
   if (network === 'filecoin') {
-    url = 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1';
+    url = 'https://rpc.ankr.com/filecoin';
   } else {
     url = 'https://api.hyperspace.node.glif.io/rpc/v1';
   }
@@ -32,9 +34,21 @@ async function callRpc(method: string, params: string) {
 
 async function main() {
   program.option("-instance, --instance <string>");
+  program.option("-path, --path <string>");
+  program.option("-num, --num <number>");
   program.parse();
   const args = program.opts();
 
+  const count = 200;
+  const addressesData = fs.readFileSync(args.path).toString().trim();
+  const addresses: string[] = JSON.parse(addressesData);
+  let addressesSlice: string[];
+  let ind = Number(args.num);
+  if ((ind+1)*count > addresses.length) {
+    addressesSlice = addresses.slice(ind*count, addresses.length)
+  } else {
+    addressesSlice = addresses.slice(ind*count, (ind+1)*count);
+  }
   let accounts = await hre.ethers.getSigners();
 
   const factory = new MultiSender__factory(accounts[0]);
@@ -42,31 +56,17 @@ async function main() {
 
   const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "")
 
-  const newEstimation = await multiSender.multisendEther([
-    "0x0E52dd93039dcbe4a531090C90e4a8340c5a2876",
-    "0x8880D850e1Fb9671A2e26775e96966F6f80B101A",
-    "0x96032Cd6365447DA971Ec4eb288CBFc3e59fe338",
-    "0x6781875eca59177Bf14344C41096f2f1b7D2fc31",
-    "0x3ADeF4778f22B5271A76c8646A347B0fB8dB36f1",
-    "0x21636afF2E459718C3Fc577d90817EE783eF015A",
-    "0x84EbEbf82EE45AE0f00A02126a73052FcceACC4F",
-    "0x11CBb99E4B3D0632b5e23a1c88afe1f6b2b41C7C",
-    "0x3cEb8700cc59EDD9B6c3fe659Be728959a28E058",
-    "0x80F3a282A5E30EfA11Ef2a57fec90BD21fAeda2E"
-  ], [
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000",
-    "10000000"
-  ], {
-    value: "100000000",
+  const single = hre.ethers.BigNumber.from("40000000000000000");
+  const countBN = hre.ethers.BigNumber.from(addressesSlice.length);
+  const value = single.mul(countBN);
+  console.log(single);
+  console.log(countBN);
+  console.log(value);
+  console.log(addressesSlice);
+  const newEstimation = await multiSender.multisendEther(addressesSlice, single, {
+    value: value,
     maxPriorityFeePerGas: priorityFee,
+    maxFeePerGas: "1000000000",
   });
 
   console.log("new accounts", newEstimation.hash);

@@ -32,7 +32,7 @@ if (process.env.POLYGON_QUIKNODE_URL) {
   mumbaiConfig.url = process.env.POLYGON_QUIKNODE_URL;
 }
 const filecoinConfig: HttpNetworkUserConfig = {
-  url: "https://filecoin-mainnet.chainstacklabs.com/rpc/v1",
+  url: "https://rpc.ankr.com/filecoin",
   chainId: 314,
   accounts: filecoinAccounts,
   timeout: 1000000000
