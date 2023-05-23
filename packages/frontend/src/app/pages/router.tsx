@@ -7,6 +7,8 @@ import { collectionPageRoutes } from './CollectionPage/routes'
 import { createRoutes } from './CreatePage/routes'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 import GetAccessPage from './GetAccessPage/GetAccessPage'
+import FAQPage from './InfoPages/FAQ/FAQ'
+import PolicyPage from './InfoPages/Policy/PolicyPage'
 import MainPage from './MainPage/MainPage'
 import MarketPage from './MarketPage/MarketPage'
 import { marketRoutes } from './MarketPage/routes'
@@ -39,6 +41,14 @@ const routes: RouteObject[] = [
       {
         path: 'create',
         children: createRoutes
+      },
+      {
+        path: 'policy',
+        element: <PolicyPage />
+      },
+      {
+        path: 'FAQ',
+        element: <FAQPage />
       },
       {
         path: `profile/:${Params.profileAddress}`,

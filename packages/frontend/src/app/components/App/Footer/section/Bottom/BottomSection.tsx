@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import EmailImg from '../../../../../../assets/img/Email.svg'
 import { styled } from '../../../../../../styles'
@@ -54,25 +55,31 @@ const Email = styled('div', {
 const date = new Date()
 
 const BottomSection = () => {
+  const navigate = useNavigate()
+
   return (
-        <BottomSectionStyle>
-            <Info>
-                <Txt secondary1 css={{ fontSize: 14, color: '#A7A8A9' }}>
-                    © {date.getFullYear()} FileMarket.xyz, Inc
-                </Txt>
-                <Divider />
-              <div className='links'>
-                <Link footer>Privacy policy</Link>
-                <Link footer>Terms of Service</Link>
-              </div>
-            </Info>
-            <Email>
-                <img src={EmailImg} />
-                <Txt secondary1 css={{ fontSize: 14 }}>
-                    genesis@filemarket.xyz
-                </Txt>
-            </Email>
-        </BottomSectionStyle>
+    <BottomSectionStyle>
+      <Info>
+        <Txt secondary1 css={{ fontSize: 14, color: '#A7A8A9' }}>
+          ©
+          {' '}
+          {date.getFullYear()}
+          {' '}
+          FileMarket.xyz, Inc
+        </Txt>
+        <Divider />
+        <div className='links'>
+          <Link footer onPress={() => { navigate('/policy') }}>Privacy policy</Link>
+          <Link footer>Terms of Service</Link>
+        </div>
+      </Info>
+      <Email>
+        <img src={EmailImg} />
+        <Txt secondary1 css={{ fontSize: 14 }}>
+          genesis@filemarket.xyz
+        </Txt>
+      </Email>
+    </BottomSectionStyle>
   )
 }
 

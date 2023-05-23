@@ -212,7 +212,7 @@ const TopSection = () => {
     },
     {
       text: 'FAQ',
-      url: ''
+      url: '/FAQ'
     }
   ]
   const Links: ILink[] = [{
@@ -258,29 +258,37 @@ const TopSection = () => {
       url: 'http://calendly.com/filemarket'
     }
   ]
+
   return (
-        <TopSectionStyle>
-            <div className="section first">
-              <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
-                <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
-            </div>
-            <div className="section second">
-                <HeaderText>Platform</HeaderText>
-                <SecondContent>{MarketPlaceItems.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
-            </div>
-            <div className="section second">
-                <HeaderText>Links</HeaderText>
-                <SecondContent>{Links.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
-            </div>
-            <div className="section second">
-                <HeaderText>Company</HeaderText>
-                <SecondContent>{Company.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
-            </div>
-            <div className="section third">
-                <HeaderText>Join our community</HeaderText>
-                <ThirdContent>{Cards.map((item, index) => <Card href={item.url} target={'_blank'} key={index}><img src={item.img} /><Text>{item.text}</Text></Card>)}</ThirdContent>
-            </div>
-        </TopSectionStyle>
+    <TopSectionStyle>
+      <div className="section first">
+        <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
+        <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
+      </div>
+      <div className="section second">
+        <HeaderText>Platform</HeaderText>
+        <SecondContent>{MarketPlaceItems.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+      </div>
+      <div className="section second">
+        <HeaderText>Links</HeaderText>
+        <SecondContent>{Links.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+      </div>
+      <div className="section second">
+        <HeaderText>Company</HeaderText>
+        <SecondContent>{Company.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+      </div>
+      <div className="section third">
+        <HeaderText>Join our community</HeaderText>
+        <ThirdContent>
+          {Cards.map((item, index) => (
+            <Card key={index} href={item.url} target={'_blank'}>
+              <img src={item.img} />
+              <Text>{item.text}</Text>
+            </Card>
+          ))}
+        </ThirdContent>
+      </div>
+    </TopSectionStyle>
   )
 }
 
