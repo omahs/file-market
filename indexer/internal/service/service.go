@@ -279,6 +279,25 @@ func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address 
 				return royalty, nil
 			}
 		}
+	} else if address == s.cfg.FileBunniesCollectionAddress {
+		for _, cli := range s.ethClient.Clients() {
+			var instance *filebunniesCollection.FileBunniesCollection
+
+			instance, err = filebunniesCollection.NewFileBunniesCollection(address, cli)
+			if err != nil {
+				return nil, err
+			}
+			var royalty *big.Int
+			royalty, err = instance.Royalties(&bind.CallOpts{
+				BlockNumber: blockNumber,
+				Context:     ctx,
+			}, tokenId)
+			if err != nil {
+				log.Println("token uri access token failed", tokenId, err)
+			} else {
+				return royalty, nil
+			}
+		}
 	} else {
 		for _, cli := range s.ethClient.Clients() {
 			var instance *collection.FilemarketCollectionV2
