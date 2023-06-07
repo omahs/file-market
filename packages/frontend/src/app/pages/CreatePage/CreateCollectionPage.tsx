@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { styled } from '../../../styles'
@@ -13,6 +13,7 @@ import { Button, PageLayout, textVariant } from '../../UIkit'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
+import { Description } from './CreateNFTPage'
 import { useCreateCollection } from './hooks/useCreateCollection'
 import { useModalProperties } from './hooks/useModalProperties'
 
@@ -37,6 +38,10 @@ export const Label = styled('label', {
       },
     },
   },
+})
+
+export const TitleGroup = styled(FormControl, {
+  marginBottom: '$4',
 })
 
 export const TextBold = styled('span', {
@@ -127,7 +132,10 @@ export default function CreateCollectionPage() {
     void setModalBody(
       <SuccessNavBody
         buttonText='View collection'
-        link={`/collection/${result.collectionTokenAddress}`}
+        link={`/collection/${result.collectionAddress}`}
+        onPress={() => {
+          setModalOpen(false)
+        }}
       />,
     )
     void setModalOpen(true)
@@ -136,8 +144,14 @@ export default function CreateCollectionPage() {
   useEffect(() => {
     if (!error) return
 
-    void setModalBody(<ErrorBody message={extractMessageFromError(error)} />)
-    void setModalOpen(true)
+    void setModalBody(<ErrorBody
+      message={extractMessageFromError(error)}
+      onClose={() => {
+        console.log('CLICCCCCKKK')
+        void setModalOpen(false)
+      }
+      }
+    />)
   }, [error])
 
   const [textareaLength, setTextareaLength] = useState(
@@ -149,16 +163,29 @@ export default function CreateCollectionPage() {
       <MintModal
         body={modalBody}
         open={modalOpen}
+        isError={!!error}
         handleClose={() => {
           setModalOpen(false)
         }}
       />
       <PageLayout css={{ minHeight: '100vh' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Title>Create New Collection</Title>
+          <TitleGroup><Title>Create New Collection</Title></TitleGroup>
 
           <FormControl>
             <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
+            <Description style={{ width: '320px' }}>
+              <TextBold>Formats:</TextBold>
+              {' '}
+              JPG, PNG or GIF.
+              <TextBold> Max size:</TextBold>
+              {' '}
+              100 MB.
+              {' '}
+              <TextBold>Recommended size:</TextBold>
+              {' '}
+              300x300 px
+            </Description>
             <ImageLoader
               registerProps={register('image', { required: true })}
               resetField={resetField}
@@ -221,6 +248,9 @@ export default function CreateCollectionPage() {
               type='submit'
               isDisabled={!isValid}
               title={isValid ? undefined : 'Required fields must be filled'}
+              css={{
+                width: '320px',
+              }}
             >
               Mint
             </Button>
