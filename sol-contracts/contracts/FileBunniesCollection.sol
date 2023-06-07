@@ -230,6 +230,12 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         require(_msgSender() == info.initiator, "FileBunniesCollection: permission denied");
         require(info.to == address(0), "FileBunniesCollection: draft already complete");
 
+        info.to = to;
+        info.data = data;
+        info.publicKey = publicKey;
+        info.publicKeySetAt = block.timestamp;
+        info.blockHash = blockhash(block.number-1);
+
         if (tokenId < FREE_MINT_LIMIT) {
             // free mint and it's initial purchase
             if (bytes(tokenUris[tokenId]).length == 0) {
@@ -240,14 +246,9 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
                 }
                 bytes32 address_bytes = bytes32(uint256(uint160(to)));
                 require(address_bytes.toEthSignedMessageHash().recover(data) == signer, "FileBunniesCollection: whitelist invalid signature");
+                attachRandomCid(tokenId, info);
             }
         }
-
-        info.to = to;
-        info.data = data;
-        info.publicKey = publicKey;
-        info.publicKeySetAt = block.timestamp;
-        info.blockHash = blockhash(block.number-1);
 
         emit TransferDraftCompletion(tokenId, to);
         emit TransferPublicKeySet(tokenId, publicKey);
@@ -293,11 +294,6 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         require(!info.fraudReported, "FileBunniesCollection: fraud was reported");
         require(info.to == _msgSender() ||
             (info.passwordSetAt + finalizeTransferTimeout < block.timestamp && info.from == _msgSender()), "FileBunniesCollection: permission denied");
-
-        // if initial purchase
-        if (bytes(tokenUris[tokenId]).length == 0) {
-            attachRandomCid(tokenId, info);
-        }
         _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFinished(tokenId);
@@ -331,10 +327,6 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
                 info.callbackReceiver.transferFraudDetected(tokenId, approve);
             }
             if (!approve) {
-                // if initial purchase
-                if (bytes(tokenUris[tokenId]).length == 0) {
-                    attachRandomCid(tokenId, info);
-                }
                 _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
             }
             delete transfers[tokenId];
@@ -361,10 +353,6 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         address to = info.to;
         delete transfers[tokenId];
         if (!approve) {
-            // if initial purchase
-            if (bytes(tokenUris[tokenId]).length == 0) {
-                attachRandomCid(tokenId, info);
-            }
             _safeTransfer(ownerOf(tokenId), to, tokenId, data);
         }
 
