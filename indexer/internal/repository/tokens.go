@@ -691,37 +691,3 @@ func (p *postgres) GetTraitCount(
 
 	return countByValue, total, nil
 }
-
-func (p *postgres) GetFileBunniesStats(
-	ctx context.Context,
-	tx pgx.Tx,
-	ownerAddress common.Address,
-) (*domain.FileBunniesStats, error) {
-	// language=PostgreSQL
-	query := `
-		SELECT
-			SUM(CASE WHEN token_id::bigint BETWEEN 0 AND 5999 THEN 1 ELSE 0 END) AS common_minted_amount,
-			SUM(CASE WHEN token_id::bigint BETWEEN 0 AND 5999 AND meta_uri != '' THEN 1 ELSE 0 END) AS common_bought_amount,
-			SUM(CASE WHEN token_id::bigint BETWEEN 6000 AND 6999 THEN 1 ELSE 0 END) AS uncommon_minted_amount,
-			SUM(CASE WHEN token_id::bigint BETWEEN 6000 AND 6999 AND meta_uri != '' THEN 1 ELSE 0 END) AS uncommon_bought_amount,
-			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 THEN 1 ELSE 0 END) AS payed_minted_amount,
-			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 AND meta_uri != '' THEN 1 ELSE 0 END) AS payed_bought_amount
-		FROM public.tokens
-		WHERE collection_address=$1
-	`
-	var stats domain.FileBunniesStats
-	if err := tx.QueryRow(ctx, query,
-		strings.ToLower(ownerAddress.String()),
-	).Scan(
-		&stats.CommonMindedAmount,
-		&stats.CommonBoughtAmount,
-		&stats.UncommonMindedAmount,
-		&stats.UncommonBoughtAmount,
-		&stats.PayedMindedAmount,
-		&stats.PayedBoughtAmount,
-	); err != nil {
-		return nil, err
-	}
-
-	return &stats, nil
-}

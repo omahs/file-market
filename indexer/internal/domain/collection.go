@@ -40,11 +40,7 @@ func CollectionToModel(c *Collection) *models.Collection {
 	}
 }
 
-type FileBunniesStats struct {
-	CommonMindedAmount   float64
-	CommonBoughtAmount   float64
-	UncommonMindedAmount float64
-	UncommonBoughtAmount float64
-	PayedMindedAmount    float64
-	PayedBoughtAmount    float64
+type CollectionStats struct {
+	Name  string
+	Value float64
 }

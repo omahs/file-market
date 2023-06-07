@@ -932,6 +932,18 @@ definitions:
           - "File Market Collection"
           - "Public Collection"
           - "File Bunnies Collection"
+      stats:
+        type: array
+        description: Статы коллекции, присутствует только у зайцев
+        items:
+          $ref: "#/definitions/CollectionStat"
+  CollectionStat:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: number
   Token:
     type: object
     description: Токен
