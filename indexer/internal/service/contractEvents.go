@@ -393,13 +393,27 @@ func (s *service) onTransferDraftCompletionEvent(
 	if exists {
 		return nil
 	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, tokenId)
+	token, err := s.repository.GetToken(ctx, tx, l.Address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil
 		}
 		return err
 	}
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+		metadata, metaUri, err := s.processMetadata(ctx, token)
+		if err != nil {
+			return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
+		}
+		if err := s.repository.InsertMetadata(ctx, tx, metadata, token.CollectionAddress, token.TokenId); err != nil {
+			return fmt.Errorf("failed to insert metadata: %w", err)
+		}
+		token.MetaUri = metaUri
+	}
+	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
+		return err
+	}
+
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, tokenId)
 	if err != nil {
 		return err
@@ -427,6 +441,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	}); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -555,16 +570,6 @@ func (s *service) onTransferFinishEvent(
 	token, err := s.repository.GetToken(ctx, tx, l.Address, tokenId)
 	if err != nil {
 		return err
-	}
-	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
-		metadata, metaUri, err := s.processMetadata(ctx, token)
-		if err != nil {
-			return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
-		}
-		if err := s.repository.InsertMetadata(ctx, tx, metadata, token.CollectionAddress, token.TokenId); err != nil {
-			return fmt.Errorf("failed to insert metadata: %w", err)
-		}
-		token.MetaUri = metaUri
 	}
 	token.Owner = transfer.ToAddress
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {

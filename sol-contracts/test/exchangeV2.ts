@@ -1604,7 +1604,6 @@ describe("File Bunnies collection", async () => {
           .to.emit(collectionInstance, "TransferDraftCompletion")
           .withArgs(BN.from(1), await accounts[2].getAddress());
 
-
       let throwFlag = true;
       try {
         // should throw. CommonCid array is empty
