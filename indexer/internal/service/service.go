@@ -609,7 +609,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 		return nil
 	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 	return nil
@@ -635,7 +635,7 @@ func (s *service) tryProcessFileBunniesTransferEvent(
 		return nil
 	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 
@@ -662,7 +662,7 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 		return nil
 	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 
@@ -1137,6 +1137,14 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 
 	for _, l := range receipt.Logs {
 		switch l.Address {
+		case s.cfg.ExchangeAddress:
+			instance, err := exchange.NewFilemarketExchangeV2(l.Address, nil)
+			if err == nil {
+				err := s.processExchangeEvents(ctx, tx, t, l, instance)
+				if err != nil {
+					return err
+				}
+			}
 		case s.cfg.PublicCollectionAddress:
 			instance, err := publicCollection.NewPublicCollection(l.Address, nil)
 			if err == nil {
@@ -1163,6 +1171,17 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 			}
 		}
 	}
+	return nil
+}
+
+func (s *service) processExchangeEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *exchange.FilemarketExchangeV2) error {
+	fee, err := instance.ParseFeeChanged(*l)
+	if err != nil {
+		return nil
+	}
+
+	// TODO: save somewhere
+	fmt.Printf("New fee: %s", fee.NewFee.String())
 	return nil
 }
 
@@ -1284,6 +1303,7 @@ func (s *service) processBlock(block *types.Block) error {
 		if err != nil {
 			return err
 		}
+
 		if *t.To() == s.cfg.AccessTokenAddress {
 			err = s.processAccessTokenTx(ctx, tx, t)
 		} else if *t.To() == s.cfg.ExchangeAddress {

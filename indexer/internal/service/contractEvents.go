@@ -21,7 +21,6 @@ func (s *service) onCollectionTransferEvent(
 	ctx context.Context,
 	tx pgx.Tx,
 	t *types.Transaction,
-	l *types.Log,
 	block *types.Block,
 	tokenId *big.Int,
 	to common.Address,
@@ -37,15 +36,47 @@ func (s *service) onCollectionTransferEvent(
 	}
 
 	// Get token metadata
-	shouldLoadMetadata := true
-	shouldCreatePlaceholder := false
-
-	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 3,
-		RandFactor:      0.5,
-		Multiplier:      2,
-		MaxInterval:     10,
+	meta, metaUri, err := s.processMetadata(ctx, token)
+	if err != nil {
+		return err
 	}
+	royalty, err := processRoyalty(ctx, s, block, token)
+	if err != nil {
+		return err
+	}
+	token.Metadata = meta
+	token.MetaUri = metaUri
+	token.Royalty = royalty.Uint64()
+
+	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
+		return err
+	}
+	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
+		token.MetaUri, token.Metadata)
+
+	// Deleting token from sequencer
+	if token.CollectionAddress == s.cfg.PublicCollectionAddress {
+		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %s. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
+		}
+	} else if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+		var suffix string
+		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
+			suffix = "common"
+		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
+			suffix = "uncommon"
+		} else {
+			suffix = "payed"
+		}
+		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
+		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
+		}
+	}
+	return nil
+}
+
+func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*domain.TokenMetadata, string, error) {
 	metaUriRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			collectionAddress, caOk := args[0].(common.Address)
@@ -56,76 +87,77 @@ func (s *service) onCollectionTransferEvent(
 			}
 			return s.collectionTokenURI(ctx, collectionAddress, tokenId)
 		},
-		FnArgs:          []any{l.Address, tokenId},
+		FnArgs:          []any{token.CollectionAddress, token.TokenId},
 		RetryOnAnyError: true,
-		Backoff:         backoff,
-		MaxElapsedTime:  30 * time.Second,
+		Backoff: &retry.ExponentialBackoff{
+			InitialInterval: 3,
+			RandFactor:      0.5,
+			Multiplier:      2,
+			MaxInterval:     10,
+		},
+		MaxElapsedTime: 30 * time.Second,
 	}
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
 	if err != nil {
 		var failedErr *retry.FailedErr
 		if errors.As(err, &failedErr) {
-			shouldLoadMetadata = false
 			log.Printf("failed to get metadataUri: %v", failedErr)
+			return domain.NewPlaceholderMetadata(), "", nil
 		} else {
-			return err
+			return nil, "", err
 		}
 	}
 
-	var meta domain.TokenMetadata
-	var metaUri string
+	metaUri, ok := metaUriAny.(string)
+	if !ok {
+		return nil, "", errors.New("failed to cast metaUri to string")
+	}
 
-	if shouldLoadMetadata {
-		var ok bool
-		metaUri, ok = metaUriAny.(string)
-		if !ok {
-			return errors.New("failed to cast metaUri to string")
-		}
+	// we do not have metaUri til TransferFinish
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && metaUri == "" {
+		return nil, "", nil
+	}
 
-		loadMetaRetryOpts := retry.Options{
-			Fn: func(ctx context.Context, args ...any) (any, error) {
-				uri, ok := args[0].(string)
-				if !ok {
-					return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
-				}
-				return s.loadTokenParams(ctx, uri)
-			},
-			FnArgs:          []any{metaUri},
-			RetryOnAnyError: true,
-			Backoff:         backoff,
-			MaxElapsedTime:  30 * time.Second,
-		}
-
-		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
-		if err != nil {
-			var failedErr *retry.FailedErr
-			if errors.As(err, &failedErr) {
-				shouldCreatePlaceholder = true
-				log.Printf("failed to load metadata: %v", failedErr)
-			} else {
-				return fmt.Errorf("failed to loadTokenParams: %w", err)
+	loadMetaRetryOpts := retry.Options{
+		Fn: func(ctx context.Context, args ...any) (any, error) {
+			uri, ok := args[0].(string)
+			if !ok {
+				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
-		}
+			return s.loadTokenParams(ctx, uri)
+		},
+		FnArgs:          []any{metaUri},
+		RetryOnAnyError: true,
+		Backoff: &retry.ExponentialBackoff{
+			InitialInterval: 3,
+			RandFactor:      0.5,
+			Multiplier:      2,
+			MaxInterval:     10,
+		},
+		MaxElapsedTime: 30 * time.Second,
+	}
 
-		meta, ok = metaAny.(domain.TokenMetadata)
-		if !ok {
-			return errors.New("failed to cast to Metadata")
+	metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
+	if err != nil {
+		var failedErr *retry.FailedErr
+		if errors.As(err, &failedErr) {
+			log.Printf("failed to load metadata: %v", failedErr)
+			return domain.NewPlaceholderMetadata(), metaUri, nil
+		} else {
+			return nil, metaUri, fmt.Errorf("failed to loadTokenParams: %w", err)
 		}
 	}
 
-	// Inserting placeholder metadata in case data is corrupted by self-mint
-	if shouldCreatePlaceholder || !shouldLoadMetadata {
-		log.Printf("inserting placeholder metadata for Token(address: %s, id: %s)",
-			token.CollectionAddress.String(),
-			token.TokenId.String(),
-		)
-		meta = *domain.NewPlaceholderMetadata()
+	meta, ok := metaAny.(domain.TokenMetadata)
+	if !ok {
+		return nil, metaUri, errors.New("failed to cast to Metadata")
 	}
 
-	token.Metadata = &meta
-	token.MetaUri = metaUri
+	return &meta, metaUri, nil
+}
 
+func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
 	royaltyRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			blockNumber, bOk := args[0].(*big.Int)
@@ -139,8 +171,13 @@ func (s *service) onCollectionTransferEvent(
 		},
 		FnArgs:          []any{block.Number(), token.CollectionAddress, token.TokenId},
 		RetryOnAnyError: true,
-		Backoff:         backoff,
-		MaxElapsedTime:  30 * time.Second,
+		Backoff: &retry.ExponentialBackoff{
+			InitialInterval: 3,
+			RandFactor:      0.5,
+			Multiplier:      2,
+			MaxInterval:     10,
+		},
+		MaxElapsedTime: 30 * time.Second,
 	}
 
 	royaltyAny, err := retry.OnErrors(ctx, royaltyRetryOpts)
@@ -149,44 +186,15 @@ func (s *service) onCollectionTransferEvent(
 		if errors.As(err, &failedErr) {
 			log.Printf("failed to load royalty: %v", failedErr)
 		} else {
-			return fmt.Errorf("failed to getRoyalty: %w", err)
+			return nil, fmt.Errorf("failed to getRoyalty: %w", err)
 		}
 	}
 
 	royalty, ok := royaltyAny.(*big.Int)
 	if !ok {
-		return errors.New("failed to cast royalty to *big.Int")
+		return nil, errors.New("failed to cast royalty to *big.Int")
 	}
-
-	token.Royalty = royalty.Uint64()
-
-	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
-		return err
-	}
-	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
-		token.MetaUri, token.Metadata)
-
-	if collectionAddress == s.cfg.PublicCollectionAddress {
-		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
-			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %s. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
-		}
-	}
-
-	if collectionAddress == s.cfg.FileBunniesCollectionAddress {
-		var suffix string
-		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
-			suffix = "common"
-		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
-			suffix = "uncommon"
-		} else {
-			suffix = "payed"
-		}
-		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
-		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
-			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %d. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
-		}
-	}
-	return nil
+	return royalty, nil
 }
 
 func (s *service) onCollectionTransferInitEvent(
@@ -548,10 +556,21 @@ func (s *service) onTransferFinishEvent(
 	if err != nil {
 		return err
 	}
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+		metadata, metaUri, err := s.processMetadata(ctx, token)
+		if err != nil {
+			return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
+		}
+		if err := s.repository.InsertMetadata(ctx, tx, metadata, token.CollectionAddress, token.TokenId); err != nil {
+			return fmt.Errorf("failed to insert metadata: %w", err)
+		}
+		token.MetaUri = metaUri
+	}
 	token.Owner = transfer.ToAddress
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -649,6 +668,16 @@ func (s *service) onTransferFraudDecidedEvent(
 		token, err := s.repository.GetToken(ctx, tx, l.Address, tokenId)
 		if err != nil {
 			return err
+		}
+		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+			metadata, metaUri, err := s.processMetadata(ctx, token)
+			if err != nil {
+				return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
+			}
+			if err := s.repository.InsertMetadata(ctx, tx, metadata, token.CollectionAddress, token.TokenId); err != nil {
+				return fmt.Errorf("failed to insert metadata: %w", err)
+			}
+			token.MetaUri = metaUri
 		}
 		token.Owner = transfer.ToAddress
 		if err := s.repository.UpdateToken(ctx, tx, token); err != nil {

@@ -873,11 +873,9 @@ definitions:
   WhitelistResponse:
     type: object
     properties:
-      whitelists:
-        type: array
-        description: Массив названий вайтлистов, в которых присутствует адрес
-        items:
-          type: string
+      whitelist:
+        type: string
+        description: Название вайтлиста, в котором есть адрес. Вернет пустую строку, если нет нигде
   CollectionData:
     type: object
     description: Коллекция со всеми токенами

@@ -80,7 +80,7 @@ type Orders interface {
 }
 
 type Whitelist interface {
-	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) ([]string, error)
+	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) (string, error)
 }
 
 type postgresConfig struct {
