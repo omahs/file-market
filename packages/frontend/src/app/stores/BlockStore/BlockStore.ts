@@ -25,6 +25,6 @@ export class BlockStore {
   }
 
   get canContinue() {
-    return this.currentBlockNumber.gte(this.receiptBlockNumber)
+    return this.currentBlockNumber.gte(this.receiptBlockNumber.add(BigNumber.from(1)))
   }
 }

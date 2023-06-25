@@ -241,14 +241,19 @@ export const CreateNFTPage: React.FC = observer(() => {
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
-        <SuccessNavBody
-          buttonText='View EFT'
-          link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
-          onPress={() => {
-            setModalOpen(false)
-          }}
-        />,
+        <InProgressBody text={'Please wait bit a more time'} waitForSign={false} />,
       )
+      setTimeout(() => {
+        setModalOpen(true)
+        setModalBody(
+          <SuccessNavBody
+            buttonText='View EFT'
+            link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
+            onPress={() => {
+              setModalOpen(false)
+            }}
+          />)
+      }, 40000)
     }
   }, [nftError, isNftLoading, nftResult])
 
