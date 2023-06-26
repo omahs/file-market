@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/ecdsa"
 	"encoding/hex"
 	"flag"
 	"fmt"
@@ -22,6 +23,9 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
+	pubKey := ecdsaKey.Public().(*ecdsa.PublicKey)
+	addr := crypto.PubkeyToAddress(*pubKey)
+	fmt.Println(addr)
 	data := make([]byte, 32)
 	addressBytes := common.HexToAddress(address)
 	copy(data[12:], addressBytes[:])

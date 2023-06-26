@@ -2,7 +2,7 @@ import * as hre from "hardhat";
 import {program} from "commander";
 import {
   FileBunniesCollection__factory, FilemarketCollectionV2__factory,
-  FilemarketExchangeV2__factory,
+  FilemarketExchangeV2__factory, FilemarketExchangeV3__factory,
   FraudDeciderWeb2V2__factory
 } from "../typechain-types";
 import {days} from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time/duration";
@@ -15,7 +15,7 @@ async function callRpc(method: string, params: string) {
   if (network === 'filecoin') {
     url = 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1';
   } else {
-    url = 'https://filecoin-calibration.chainup.net/rpc/v1';
+    url = 'https://api.calibration.node.glif.io/rpc/v1';
   }
   const options = {
     method: "POST",
@@ -45,12 +45,12 @@ async function deploy() {
   const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
 
   let fraudDecider = await fraudDeciderFactory.deploy({
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log("fraud decider address: ", fraudDecider.address);
 
   let exchange = await exchangeFactory.deploy({
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log("exchange address: ", exchange.address);
 
@@ -66,11 +66,25 @@ async function deploy() {
     fraudDecider.address,
     true,
     {
-      maxPriorityFeePerGas: priorityFee,
+      // maxPriorityFeePerGas: priorityFee,
     });
   console.log("file bunnies collection address: ", fileBunniesCollection.address);
-  const tx = await fileBunniesCollection.setFinalizeTransferTimeout(0);
+  const tx = await fileBunniesCollection.setFinalizeTransferTimeout(0, {
+    // maxPriorityFeePerGas: priorityFee,
+  });
   console.log("set finalize transfer timeout", tx.hash);
+}
+
+async function deployExchangeV3() {
+  let accounts = await hre.ethers.getSigners();
+
+  const exchangeFactory = new FilemarketExchangeV3__factory(accounts[0]);
+  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+
+  let exchange = await exchangeFactory.deploy({
+    // maxPriorityFeePerGas: priorityFee,
+  });
+  console.log("exchange address: ", exchange.address);
 }
 
 async function setFinalizeTimeout(collection: string) {
@@ -79,13 +93,15 @@ async function setFinalizeTimeout(collection: string) {
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
 
-  const tx = await instance.setFinalizeTransferTimeout(0);
+  const tx = await instance.setFinalizeTransferTimeout(0, {
+    // maxPriorityFeePerGas: priorityFee,
+  });
   console.log("set finalize transfer timeout", tx.hash);
 }
 
 async function mintBatch(collection: string, start: number, count: number) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
 
@@ -94,9 +110,9 @@ async function mintBatch(collection: string, start: number, count: number) {
     data.push("0x");
   }
   const tx = await instance.mintBatchWithoutMeta(accounts[0].address, start, count, 0, data, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
-  console.log(tx.hash, tx.gasLimit);
+  console.log("mint batch", start, count, tx.hash, tx.gasLimit);
 }
 
 async function estimateMintBatch(collection: string, start: number, count: number) {
@@ -110,9 +126,23 @@ async function estimateMintBatch(collection: string, start: number, count: numbe
     data.push("0x");
   }
   const gas = await instance.estimateGas.mintBatchWithoutMeta(accounts[0].address, start, count, 0, data, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
+}
+
+async function approve(
+  exchange: string,
+  collection: string,
+) {
+  let accounts = await hre.ethers.getSigners();
+  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  const factory = new FileBunniesCollection__factory();
+  const instance = factory.attach(collection).connect(accounts[0]);
+  const tx = await instance.setApprovalForAll(exchange, true, {
+    // maxPriorityFeePerGas: priorityFee,
+  });
+  console.log(tx.hash, tx.gasLimit)
 }
 
 async function placeOrdersBatch(
@@ -122,7 +152,7 @@ async function placeOrdersBatch(
   count: number,
   ) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FilemarketExchangeV2__factory();
   const instance = factory.attach(exchange).connect(accounts[0]);
 
@@ -131,9 +161,9 @@ async function placeOrdersBatch(
     ids.push(start+i);
   }
   const tx = await instance.placeOrderBatch(collection, ids, 10, hre.ethers.constants.AddressZero, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
-  console.log(tx.hash, tx.gasLimit);
+  console.log("place order batch", start, count, tx.hash, tx.gasLimit);
 }
 
 async function estimatePlaceOrdersBatch(
@@ -143,7 +173,7 @@ async function estimatePlaceOrdersBatch(
   count: number,
 ) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FilemarketExchangeV2__factory();
   const instance = factory.attach(exchange).connect(accounts[0]);
 
@@ -152,16 +182,16 @@ async function estimatePlaceOrdersBatch(
     ids.push(start+i);
   }
   const gas = await instance.estimateGas.placeOrderBatch(collection, ids, 10, hre.ethers.constants.AddressZero, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
 }
 
-const cid = "ipfs://QmVktEHCq3RaNYhbXfpNPjSiozYNLTu4xSugrKtN4nSPca";
+const cid = "QmVktEHCq3RaNYhbXfpNPjSiozYNLTu4xSugrKtN4nSPca";
 
 async function addCommonCids(collection: string, start: number, count: number) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
 
@@ -170,14 +200,14 @@ async function addCommonCids(collection: string, start: number, count: number) {
     cids.push(cid);
   }
   const tx = await instance.addCommonCids(start, cids, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
-  console.log(tx.hash, tx.gasLimit);
+  console.log("common cids", start, count, tx.hash, tx.gasLimit);
 }
 
 async function estimateAddCommonCids(collection: string, start: number, count: number) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
 
@@ -186,14 +216,14 @@ async function estimateAddCommonCids(collection: string, start: number, count: n
     cids.push(cid);
   }
   const gas = await instance.estimateGas.addCommonCids(start, cids, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
 }
 
 async function addUncommonCids(collection: string, start: number, count: number) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
 
@@ -202,9 +232,9 @@ async function addUncommonCids(collection: string, start: number, count: number)
     cids.push(cid);
   }
   const tx = await instance.addUncommonCids(start, cids, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
-  console.log(tx.hash, tx.gasLimit);
+  console.log("uncommon cids", start, count, tx.hash, tx.gasLimit);
 }
 
 async function estimateAddUncommonCids(collection: string, start: number, count: number) {
@@ -218,14 +248,14 @@ async function estimateAddUncommonCids(collection: string, start: number, count:
     cids.push(cid);
   }
   const gas = await instance.estimateGas.addUncommonCids(start, cids, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
 }
 
 async function addCids(collection: string, start: number, count: number) {
   let accounts = await hre.ethers.getSigners();
-  const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
+  // const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "");
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
 
@@ -234,9 +264,9 @@ async function addCids(collection: string, start: number, count: number) {
     cids.push(cid);
   }
   const tx = await instance.addPayedCids(start, cids, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
-  console.log(tx.hash, tx.gasLimit);
+  console.log("cids", start, count, tx.hash, tx.gasLimit);
 }
 
 async function estimateAddCids(collection: string, start: number, count: number) {
@@ -250,7 +280,7 @@ async function estimateAddCids(collection: string, start: number, count: number)
     cids.push(cid);
   }
   const gas = await instance.estimateGas.addPayedCids(start, cids, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
 }
@@ -264,7 +294,8 @@ async function buy(exchange: string, collection: string, id: number) {
   const instance = factory.attach(exchange).connect(accounts[0]);
 
   const tx = await instance.fulfillOrder(collection, publicKey, id, "0x", {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
+    value: 10
   });
   console.log(tx.hash, tx.gasLimit);
 }
@@ -275,12 +306,13 @@ async function estimateBuy(exchange: string, collection: string, id: number) {
   const factory = new FilemarketExchangeV2__factory();
   const instance = factory.attach(exchange).connect(accounts[0]);
   const gas = await instance.estimateGas.fulfillOrder(collection, publicKey, id, "0x", {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
+    value: 10
   });
   console.log(gas);
 }
 
-const signature = "bddbe9f15e47aa1e01fd3a68f7dedf4a0096046cf6d7dd0d28ac024ea38bb10a609446ed0a9c8ffc19a4cf9f698c89a6b5635ca63ac82089c4c04db04b9cbae21c";
+const signature = "0xbddbe9f15e47aa1e01fd3a68f7dedf4a0096046cf6d7dd0d28ac024ea38bb10a609446ed0a9c8ffc19a4cf9f698c89a6b5635ca63ac82089c4c04db04b9cbae21c";
 
 async function buyWhitelist(exchange: string, collection: string, id: number) {
   let accounts = await hre.ethers.getSigners();
@@ -288,7 +320,8 @@ async function buyWhitelist(exchange: string, collection: string, id: number) {
   const factory = new FilemarketExchangeV2__factory();
   const instance = factory.attach(exchange).connect(accounts[0]);
   const tx = await instance.fulfillOrder(collection, publicKey, id, signature, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
+    value: 10
   });
   console.log(tx.hash, tx.gasLimit);
 }
@@ -299,7 +332,8 @@ async function estimateBuyWhitelist(exchange: string, collection: string, id: nu
   const factory = new FilemarketExchangeV2__factory();
   const instance = factory.attach(exchange).connect(accounts[0]);
   const gas = await instance.estimateGas.fulfillOrder(collection, publicKey, id, signature, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
+    value: 10
   });
   console.log(gas);
 }
@@ -312,7 +346,7 @@ async function setEncryptedPassword(collection: string, id: number) {
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
   const tx = await instance.approveTransfer(id, password, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(tx.hash, tx.gasLimit);
 }
@@ -323,7 +357,7 @@ async function estimateSetEncryptedPassword(collection: string, id: number) {
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
   const gas = await instance.estimateGas.approveTransfer(id, password, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
 }
@@ -334,7 +368,7 @@ async function finalizeTransfer(collection: string, id: number) {
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
   const tx = await instance.finalizeTransfer(id, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(tx.hash, tx.gasLimit);
 }
@@ -345,7 +379,7 @@ async function estimateFinalizeTransfer(collection: string, id: number) {
   const factory = new FileBunniesCollection__factory();
   const instance = factory.attach(collection).connect(accounts[0]);
   const gas = await instance.estimateGas.finalizeTransfer(id, {
-    maxPriorityFeePerGas: priorityFee,
+    // maxPriorityFeePerGas: priorityFee,
   });
   console.log(gas);
 }
@@ -364,6 +398,9 @@ async function main() {
     case "deploy":
       await deploy();
       break;
+    case "deploy-exchange-v3":
+      await deployExchangeV3();
+      break;
     case "set-finalize-timeout":
       await setFinalizeTimeout(args.collection);
       break;
@@ -372,6 +409,9 @@ async function main() {
       break;
     case "estimate-mint-batch":
       await estimateMintBatch(args.collection, Number(args.start), Number(args.count));
+      break;
+    case "approve":
+      await approve(args.exchange, args.collection);
       break;
     case "place-orders":
       await placeOrdersBatch(args.exchange, args.collection, Number(args.start), Number(args.count));

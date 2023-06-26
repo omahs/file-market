@@ -23,18 +23,18 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
 
     /// @dev TransferInfo - transfer process info
     struct TransferInfo {
+        bytes data;                                             // transfer data
         uint256 id;                                             // token id
+        uint256 publicKeySetAt;                                 // public key set at
+        uint256 passwordSetAt;                                  // password set at
+        bytes32 publicKey;                                      // public key of receiver
+        bytes32 encryptedPassword;                              // encrypted password
+        bytes32 blockHash;
         address initiator;                                      // transfer initiator
         address from;                                           // transfer sender
         address to;                                             // transfer target
         IEncryptedFileTokenCallbackReceiver callbackReceiver;   // callback receiver
-        bytes data;                                             // transfer data
-        bytes publicKey;                                        // public key of receiver
-        bytes encryptedPassword;                                // encrypted password
         bool fraudReported;                                     // if fraud reported while finalizing transfer
-        uint256 publicKeySetAt;                                 // public key set at
-        uint256 passwordSetAt;                                  // password set at
-        bytes32 blockHash;
     }
 
     error StartIdExceedsCurrentLength();
@@ -190,8 +190,8 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "FileBunniesCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "FileBunniesCollection: transfer for this token was already created");
-        transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
-            callbackReceiver, data, bytes(""), bytes(""), false, 0, 0, 0);
+        transfers[tokenId] = TransferInfo(data, tokenId, 0, 0, 0, 0, 0, _msgSender(), _msgSender(), to,
+            callbackReceiver, false);
         transferCounts[tokenId]++;
 
         emit TransferInit(tokenId, ownerOf(tokenId), to, transferCounts[tokenId]);
@@ -208,8 +208,8 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         require(transfers[tokenId].initiator == address(0), "FileBunniesCollection: transfer for this token was already created");
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()) || block.timestamp > salesStartTimestamp, "FileBunniesCollection: transfer can't be done before sales start day");
         require(tokenId >= FREE_MINT_LIMIT || hasRole(DEFAULT_ADMIN_ROLE, _msgSender()) || block.timestamp > freeTokensSalesStartTimestamp, "FileBunniesCollection: transfer can't be done before sales start day");
-        transfers[tokenId] = TransferInfo(tokenId, _msgSender(), ownerOf(tokenId), address(0),
-            callbackReceiver, bytes(""), bytes(""), bytes(""), false, 0, 0, 0);
+        transfers[tokenId] = TransferInfo(bytes(""), tokenId, 0, 0, 0, 0, 0, _msgSender(), _msgSender(), address(0),
+            callbackReceiver, false);
         transferCounts[tokenId]++;
 
         emit TransferDraft(tokenId, ownerOf(tokenId), transferCounts[tokenId]);
@@ -232,7 +232,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
 
         info.to = to;
         info.data = data;
-        info.publicKey = publicKey;
+        info.publicKey = sha256(publicKey);
         info.publicKeySetAt = block.timestamp;
         info.blockHash = blockhash(block.number-1);
 
@@ -264,7 +264,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         require(info.to == _msgSender(), "FileBunniesCollection: permission denied");
         require(info.publicKey.length == 0, "FileBunniesCollection: public key was already set");
         require(transferNumber == transferCounts[tokenId], "FileBunniesCollection: the transfer is not the latest transfer of this token");
-        info.publicKey = publicKey;
+        info.publicKey = sha256(publicKey);
         info.publicKeySetAt = block.timestamp;
         emit TransferPublicKeySet(tokenId, publicKey);
     }
@@ -279,7 +279,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         require(ownerOf(tokenId) == _msgSender(), "FileBunniesCollection: permission denied");
         require(info.publicKey.length != 0, "FileBunniesCollection: public key wasn't set yet");
         require(info.encryptedPassword.length == 0, "FileBunniesCollection: encrypted password was already set");
-        info.encryptedPassword = encryptedPassword;
+        info.encryptedPassword = sha256(encryptedPassword);
         info.passwordSetAt = block.timestamp;
         emit TransferPasswordSet(tokenId, encryptedPassword);
     }
@@ -318,7 +318,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
 
         info.fraudReported = true;
         (bool decided, bool approve) = fraudDecider_.decide(tokenId,
-            tokenUris[tokenId], info.publicKey, privateKey, info.encryptedPassword);
+            tokenUris[tokenId], bytes(""), privateKey, bytes(""));
         require(fraudLateDecisionEnabled || decided, "FileBunniesCollection: late decision disabled");
         emit TransferFraudReported(tokenId);
 

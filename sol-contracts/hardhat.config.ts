@@ -27,7 +27,7 @@ const mumbaiConfig: HttpNetworkUserConfig = {
   accounts: mumbaiAccounts,
 };
 const calibrationConfig: HttpNetworkUserConfig = {
-  url: "https://filecoin-calibration.chainup.net/rpc/v1",
+  url: "https://api.calibration.node.glif.io/rpc/v1",
   chainId: 314159,
   accounts: calibrationAccounts,
   timeout: 1000000000
@@ -47,10 +47,16 @@ const filecoinConfig: HttpNetworkUserConfig = {
   accounts: filecoinAccounts,
   timeout: 1000000000
 }
-console.log("mumbai cfg:", mumbaiConfig);
-console.log("calibrationConfig cfg:", calibrationConfig);
+const sepoliaConfig: HttpNetworkUserConfig = {
+  url: "https://rpc2.sepolia.org",
+  chainId: 11155111,
+  accounts: calibrationAccounts,
+  timeout: 100000000,
+}
+// console.log("mumbai cfg:", mumbaiConfig);
+// console.log("calibrationConfig cfg:", calibrationConfig);
 // console.log("hyperspace cfg:", hyperspaceConfig);
-console.log("mainnet cfg:", filecoinConfig)
+// console.log("mainnet cfg:", filecoinConfig)
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -66,7 +72,11 @@ const config: HardhatUserConfig = {
     mumbai: mumbaiConfig,
     calibration: calibrationConfig,
     // hyperspace: hyperspaceConfig,
-    filecoin: filecoinConfig
+    filecoin: filecoinConfig,
+    sepolia: sepoliaConfig,
+    hardhat: {
+      blockGasLimit: 9755216967,
+    }
   },
   etherscan: {
     apiKey: {
