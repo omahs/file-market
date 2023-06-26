@@ -18,6 +18,8 @@ import { useCollectionAndTokenListStore, useStores } from '../../hooks'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../hooks/useMediaMui'
 import { usePublicCollectionStore } from '../../hooks/usePublicCollectionStore'
+import { useIsApprovedExchange } from '../../processing'
+import { TokenFullId } from '../../processing/types'
 import { Button, Link, PageLayout, textVariant, Txt } from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { FormControl } from '../../UIkit/Form/FormControl'
@@ -166,7 +168,7 @@ export const CreateNFTPage: React.FC = observer(() => {
   } | undefined = location.state?.collection
 
   const [chosenTags, setChosenTags] = useState<string[]>([])
-
+  const [interval, setIntervalState] = useState<NodeJS.Timer>()
   const {
     collectionMintOptions,
     isLoading: isCollectionLoading,
@@ -177,7 +179,19 @@ export const CreateNFTPage: React.FC = observer(() => {
 
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
-
+  const [tokenFullId, setTokenFullId] = useState<Partial<TokenFullId>>()
+  const { refetch } = useIsApprovedExchange(tokenFullId, () => {
+    clearInterval(interval)
+    setModalOpen(true)
+    setModalBody(
+      <SuccessNavBody
+        buttonText='View EFT'
+        link={`/collection/${tokenFullId?.collectionAddress}/${tokenFullId?.tokenId}`}
+        onPress={() => {
+          setModalOpen(false)
+        }}
+      />)
+  })
   const {
     createNft,
     error: nftError,
@@ -224,6 +238,30 @@ export const CreateNFTPage: React.FC = observer(() => {
     if (chosenTag && !chosenTags.includes(chosenTag.title)) setChosenTags([...chosenTags, chosenTag.title])
   }, [chosenTag])
 
+  useEffect(() => {
+    if (!tokenFullId) return
+    setTimeout(async () => {
+      let countReload = 0
+      const interval = setInterval(async () => {
+        await refetch()
+        if (countReload > 8) {
+          clearInterval(interval)
+          setModalOpen(true)
+          setModalBody(
+            <SuccessNavBody
+              buttonText='View EFT'
+              link={`/collection/${tokenFullId.collectionAddress}/${tokenFullId.tokenId}`}
+              onPress={() => {
+                setModalOpen(false)
+              }}
+            />)
+        }
+        countReload++
+      }, 5000)
+      setIntervalState(interval)
+    }, 10000)
+  }, [tokenFullId])
+
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
       setModalOpen(true)
@@ -241,19 +279,12 @@ export const CreateNFTPage: React.FC = observer(() => {
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
-        <InProgressBody text={'Please wait bit a more time'} waitForSign={false} />,
+        <InProgressBody text={'Please wait a bit more time'} waitForSign={false} />,
       )
-      setTimeout(() => {
-        setModalOpen(true)
-        setModalBody(
-          <SuccessNavBody
-            buttonText='View EFT'
-            link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
-            onPress={() => {
-              setModalOpen(false)
-            }}
-          />)
-      }, 40000)
+      setTokenFullId({
+        collectionAddress: nftResult.receipt.to,
+        tokenId: nftResult.tokenId,
+      })
     }
   }, [nftError, isNftLoading, nftResult])
 

@@ -3,12 +3,10 @@ import React, { FC } from 'react'
 
 import { Transfer } from '../../../../../swagger/Api'
 import { useStores } from '../../../../hooks'
-import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useIsApprovedExchange } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
-import BaseModal from '../../../Modal/Modal'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
@@ -33,8 +31,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   callBack,
   onError,
 }) => {
-  const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
-  const error = isApprovedExchangeError
+  const { isApprovedExchange, refetch } = useIsApprovedExchange(tokenFullId)
 
   // useWatchCollectionEvents({
   //   onApproval: () => { refetch(); transferStore.setIsLoading(false) },
@@ -56,15 +53,15 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
     }, 6000)
   }
 
-  const { modalProps } = useStatusModal({
-    statuses: { result: undefined, isLoading: false, error: error as unknown as string },
-    okMsg: '',
-    loadingMsg: '',
-  })
-
-  if (error) {
-    return <BaseModal {...modalProps} />
-  }
+  // const { modalProps } = useStatusModal({
+  //   statuses: { result: undefined, isLoading: false, error: error as unknown as string },
+  //   okMsg: '',
+  //   loadingMsg: '',
+  // })
+  //
+  // if (error) {
+  //   return <BaseModal {...modalProps} />
+  // }
 
   return (
     <>

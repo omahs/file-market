@@ -5,12 +5,15 @@ import { mark3dConfig } from '../../config/mark3d'
 import { TokenFullId } from '../types'
 import { ensureAddress } from '../utils/address'
 
-export function useGetApproved({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+export function useGetApproved({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, onSuccess?: () => void) {
   return useContractRead({
     address: ensureAddress(collectionAddress),
     abi: mark3dConfig.collectionToken.abi,
     functionName: 'getApproved',
     args: [BigNumber.from(tokenId ?? 0)],
-    suspense: !tokenId,
+    onSuccess,
+    onError: (e) => {
+      console.log(e)
+    },
   })
 }
