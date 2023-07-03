@@ -27,6 +27,8 @@ export class TransferStore implements IStoreRequester,
   isActivated = false
 
   isWaitingForEvent: boolean = false
+  isWaitingForReciept: boolean = false
+
   data?: Transfer = undefined
   tokenFullId?: TokenFullId = undefined
   blockStore: BlockStore
@@ -93,6 +95,10 @@ export class TransferStore implements IStoreRequester,
     this.isWaitingForEvent = isWaiting
   }
 
+  setIsWaitingReciept = (isWaiting: boolean) => {
+    this.isWaitingForReciept = isWaiting
+  }
+
   gotEvent(): void {
     setTimeout(() => this.reload(() => this.setIsWaitingForEvent(false)), indexerProbableDelay)
   }
@@ -113,7 +119,7 @@ export class TransferStore implements IStoreRequester,
           timestamp: Date.now(),
         }],
       }
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -129,7 +135,7 @@ export class TransferStore implements IStoreRequester,
           timestamp: Date.now(),
         }],
       }
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -137,7 +143,7 @@ export class TransferStore implements IStoreRequester,
     console.log('onTransferCompletion')
     this.checkData(tokenId, data => {
       data.to = to
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -149,7 +155,7 @@ export class TransferStore implements IStoreRequester,
         status: TransferStatus.PublicKeySet,
         timestamp: Date.now(),
       })
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -161,7 +167,7 @@ export class TransferStore implements IStoreRequester,
         status: TransferStatus.PasswordSet,
         timestamp: Date.now(),
       })
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -169,7 +175,7 @@ export class TransferStore implements IStoreRequester,
     console.log('onTransferFinished')
     this.checkActivation(tokenId, () => {
       this.data = undefined
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -180,7 +186,7 @@ export class TransferStore implements IStoreRequester,
         status: TransferStatus.FraudReported,
         timestamp: Date.now(),
       })
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -191,7 +197,7 @@ export class TransferStore implements IStoreRequester,
         status: TransferStatus.Finished,
         timestamp: Date.now(),
       })
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
   }
 
@@ -199,7 +205,11 @@ export class TransferStore implements IStoreRequester,
     console.log('onTransferCancel')
     this.checkActivation(tokenId, () => {
       this.data = undefined
-      this.gotEvent()
+      this.setIsWaitingForEvent(false)
     })
+  }
+
+  get isWaitingForContinue() {
+    return this.isWaitingForEvent || this.isWaitingForReciept
   }
 }

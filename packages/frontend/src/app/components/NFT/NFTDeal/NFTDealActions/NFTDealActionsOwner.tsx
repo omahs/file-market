@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite'
 import React, { FC } from 'react'
 
 import { Transfer } from '../../../../../swagger/Api'
-import { useStores } from '../../../../hooks'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useIsApprovedExchange } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
@@ -23,6 +22,7 @@ export interface NFTDealActionsOwnerProps {
   transfer?: Transfer
   onStart?: () => void
   onError?: () => void
+  onEnd?: () => void
   isDisabled?: boolean
 }
 
@@ -33,6 +33,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   tokenFullId,
   onStart,
   onError,
+  onEnd,
   isDisabled,
 }) => {
   const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
@@ -41,7 +42,6 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   // useWatchCollectionEvents({
   //   onApproval: () => { refetch(); transferStore.setIsLoading(false) },
   // }, collectionAddress)
-  const { transferStore } = useStores()
   const refetchFunc = () => {
     setTimeout(async () => {
       let countReload = 0
@@ -50,7 +50,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         const tempData = await refetch()
         if (data.data !== tempData.data || countReload > 8) {
           clearInterval(interval)
-          transferStore.setIsWaitingForEvent(false)
+          onEnd?.()
         }
         countReload++
         data = await refetch()
@@ -87,6 +87,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           transfer={transfer}
           isDisabled={isDisabled}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
@@ -95,6 +96,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           onStart={onStart}
           isDisabled={isDisabled}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancelOrder(transfer)}>
@@ -103,6 +105,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           onStart={onStart}
           isDisabled={isDisabled}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
@@ -111,6 +114,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           onStart={onStart}
           isDisabled={isDisabled}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
@@ -119,6 +123,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           onStart={onStart}
           isDisabled={isDisabled}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!!transfer || isApprovedExchange}>
@@ -127,7 +132,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           isDisabled={isDisabled}
           onError={onError}
           onStart={onStart}
-          onEnd={() => refetchFunc()}
+          onEnd={() => { refetchFunc() }}
         />
       </HideAction>
       <HideAction hide={!!transfer}>
@@ -136,6 +141,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           onStart={onStart}
           isDisabled={isDisabled}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
     </>

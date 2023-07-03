@@ -12,7 +12,6 @@ import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import { Params } from '../../../../../utils/router'
 import { toCurrency } from '../../../../../utils/web3'
-import BaseModal from '../../../../Modal/Modal'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
 import { ActionButtonProps } from './types/types'
 
@@ -30,10 +29,11 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
   const orderStore = useOrderStore(collectionAddress, tokenId)
 
   const { isLoading } = statuses
-  const { modalProps } = useStatusModal({
+  useStatusModal({
     statuses,
     okMsg: 'Order placed! Now be ready to transfer hidden files, if someone fulfills the order.',
     loadingMsg: 'Placing order',
+    isNeedOpenDialog: true,
   })
 
   const { blockStore } = useStores()
@@ -71,7 +71,6 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
           />
         </ModalBody>
       </Modal>
-      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

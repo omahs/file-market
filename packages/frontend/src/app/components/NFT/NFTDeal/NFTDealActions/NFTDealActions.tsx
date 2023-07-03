@@ -48,17 +48,23 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const onActionStart = () => {
     // we disable buttons when user starts contract interaction, and enable back when event arrives
     transferStore.setIsWaitingForEvent(true)
+    transferStore.setIsWaitingReciept(true)
   }
 
   const onActionError = () => {
+    transferStore.setIsWaitingReciept(false)
     transferStore.setIsWaitingForEvent(false)
+  }
+
+  const onActionEnd = () => {
+    transferStore.setIsWaitingReciept(false)
   }
 
   if (error) {
     return <BaseModal {...modalProps} />
   }
 
-  const isDisabled = !blockStore.canContinue || transferStore.isWaitingForEvent
+  const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
 
   return (
     <ButtonsContainer content={blockStore.confirmationsText}>
@@ -68,6 +74,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
           tokenFullId={tokenFullId}
           onStart={onActionStart}
           onError={onActionError}
+          onEnd={onActionEnd}
           isDisabled={isDisabled}
         />
       ) : (
@@ -77,6 +84,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
           tokenFullId={tokenFullId}
           onStart={onActionStart}
           onError={onActionError}
+          onEnd={onActionEnd}
           isDisabled={isDisabled}
         />
       )}

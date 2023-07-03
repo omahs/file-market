@@ -19,6 +19,7 @@ export interface NFTDealActionsBuyerProps {
   order?: Order
   onStart?: () => void
   onError?: () => void
+  onEnd?: () => void
   isDisabled?: boolean
 }
 
@@ -30,6 +31,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   tokenFullId,
   onStart,
   onError,
+  onEnd,
   isDisabled,
 }) => {
   const isBuyer = useIsBuyer(transfer)
@@ -53,6 +55,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           isDisabled={isDisabled}
           onStart={onStart}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
@@ -61,6 +64,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           isDisabled={isDisabled}
           onStart={onStart}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
@@ -70,6 +74,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           onStart={onStart}
           onError={onError}
           order={order}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
@@ -78,6 +83,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           isDisabled={isDisabled}
           onStart={onStart}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
@@ -86,6 +92,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           isDisabled={isDisabled}
           onStart={onStart}
           onError={onError}
+          onEnd={onEnd}
         />
       </HideAction>
     </>
