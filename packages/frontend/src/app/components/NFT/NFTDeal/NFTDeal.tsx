@@ -7,7 +7,8 @@ import { Order, Transfer } from '../../../../swagger/Api'
 import { useStores } from '../../../hooks'
 import { useIsOwner } from '../../../processing'
 import { TokenFullId } from '../../../processing/types'
-import { Loading, PriceBadge, Txt } from '../../../UIkit'
+import { PriceBadge, Txt } from '../../../UIkit'
+import { LoadingOpacity } from '../../../UIkit/Loading/LoadingOpacity'
 import { formatCurrency, formatUsd } from '../../../utils/web3'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
 
@@ -77,7 +78,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
 
   return (
     <NFTDealStyle isNotListed={!transfer && !isOwner}>
-      <Loading isLoading={transferStore.isWaitingForEvent !== transferStore.isWaitingForReciept}>
+      <LoadingOpacity isLoading={transferStore.isWaitingForEvent !== transferStore.isWaitingForReciept}>
         {(children || transfer) && (
           <DealContainerInfo>
             {children}
@@ -103,7 +104,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
             <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>
           </IsNotListedContainer>
         )}
-      </Loading>
+      </LoadingOpacity>
     </NFTDealStyle>
   )
 })
