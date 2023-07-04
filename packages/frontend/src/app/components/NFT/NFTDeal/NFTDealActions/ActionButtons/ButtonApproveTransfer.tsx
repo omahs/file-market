@@ -24,40 +24,33 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
     okMsg: 'You have granted hidden file access to the buyer',
     loadingMsg: 'Sending an encrypted encryption password',
   })
-  const { blockStore, dialogStore } = useStores()
-
-  const openModal = () => {
-    dialogStore.openDialog({
-      component: BaseModal,
-      props: {
-        ...modalProps,
-      },
-    })
-  }
+  const { blockStore } = useStores()
 
   return (
-    <Button
-      primary
-      fullWidth
-      borderRadiusSecond
-      isDisabled={isLoading || isDisabled}
-      onPress={async () => {
-        onStart?.()
-        openModal()
-        const receipt = await approveTransfer({
-          tokenId: tokenFullId.tokenId,
-          publicKey: transfer?.publicKey,
-        }).catch(e => {
-          onError?.()
-          throw e
-        })
-        if (receipt?.blockNumber) {
-          blockStore.setReceiptBlock(receipt.blockNumber)
-        }
-        onEnd?.()
-      }}
-    >
-      Transfer hidden file
-    </Button>
+    <>
+      <BaseModal {...modalProps} />
+      <Button
+        primary
+        fullWidth
+        borderRadiusSecond
+        isDisabled={isLoading || isDisabled}
+        onPress={async () => {
+          onStart?.()
+          const receipt = await approveTransfer({
+            tokenId: tokenFullId.tokenId,
+            publicKey: transfer?.publicKey,
+          }).catch(e => {
+            onError?.()
+            throw e
+          })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
+        }}
+      >
+        Transfer hidden file
+      </Button>
+    </>
   )
 }
