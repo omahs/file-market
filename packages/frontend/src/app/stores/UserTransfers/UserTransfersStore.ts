@@ -90,7 +90,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
 
   requestMore() {
     const lastOutgoingTransferId = lastItem(this.data.incoming ?? [])?.transfer?.id
-    const lastIncomingTransferId = lastItem(this.data.outgoing ?? []).transfer?.id
+    const lastIncomingTransferId = lastItem(this.data.outgoing ?? [])?.transfer?.id
 
     storeRequest<TransfersResponseV2>(
       this,

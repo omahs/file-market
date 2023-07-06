@@ -65,12 +65,12 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   requestMoreTokens() {
-    const { tokenId, collectionAddress } = lastItem(this.data.tokens ?? [])
+    const token = lastItem(this.data.tokens ?? [])
     storeRequest(
       this,
       api.tokens.tokensDetail(this.address, {
-        lastTokenId: tokenId,
-        lastTokenCollectionAddress: collectionAddress,
+        lastTokenId: token?.tokenId,
+        lastTokenCollectionAddress: token?.collectionAddress,
         tokenLimit: 20,
       }),
       (data) => this.addData(data),
