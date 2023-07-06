@@ -36,7 +36,7 @@ const HomeLandSection = () => {
     }
     if (collection?.type === 'Public Collection') {
       result.collectionImgUrl = FileLogo
-      result.collectionName = 'FileMarket'
+      result.collectionName = 'Public Collection'
     }
 
     return result
