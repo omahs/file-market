@@ -47,7 +47,7 @@ const routes: RouteObject[] = [
   },
   {
     path: '*',
-    element: <Navigate to={''} />,
+    element: <Navigate replace to={''} />,
   },
 ]
 
