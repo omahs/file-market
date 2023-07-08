@@ -27,9 +27,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   })
 
   const onPress = wrapAction(async () => {
-    await setPublicKey(tokenFullId).catch(e => {
-      throw e
-    })
+    await setPublicKey(tokenFullId)
   })
 
   return (

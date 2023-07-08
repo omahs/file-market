@@ -35,8 +35,6 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
-    }).catch(e => {
-      throw e
     })
   })
 

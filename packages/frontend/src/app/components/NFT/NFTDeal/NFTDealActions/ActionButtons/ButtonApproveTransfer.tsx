@@ -39,9 +39,6 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
           await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
-          }).catch(e => {
-            console.assert(e)
-            throw e
           })
         })}
       >

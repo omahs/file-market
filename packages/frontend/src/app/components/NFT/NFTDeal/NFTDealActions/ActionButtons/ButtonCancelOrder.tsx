@@ -32,9 +32,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, isD
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
-          await cancelOrder(tokenFullId).catch(e => {
-            throw e
-          })
+          await cancelOrder(tokenFullId)
         })
         }
       >

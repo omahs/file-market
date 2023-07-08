@@ -34,9 +34,7 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
-          await cancelTransfer(tokenFullId).catch(e => {
-            throw e
-          })
+          await cancelTransfer(tokenFullId)
         })}
       >
         Cancel deal

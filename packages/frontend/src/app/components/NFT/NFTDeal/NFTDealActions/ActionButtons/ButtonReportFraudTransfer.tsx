@@ -35,9 +35,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
-          await reportFraud(tokenFullId).catch(e => {
-            throw e
-          })
+          await reportFraud(tokenFullId)
         })}
       >
         Report fraud

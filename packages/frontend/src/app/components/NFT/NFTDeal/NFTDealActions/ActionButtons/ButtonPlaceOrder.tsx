@@ -42,8 +42,6 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
     await placeOrder({
       ...tokenFullId,
       price,
-    }).catch(e => {
-      throw e
     })
     conversionRateStore.data?.rate &&
     orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())

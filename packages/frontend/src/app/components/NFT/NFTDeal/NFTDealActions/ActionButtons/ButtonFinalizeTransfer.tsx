@@ -38,9 +38,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
-          await finalizeTransfer(tokenFullId).catch(e => {
-            throw e
-          })
+          await finalizeTransfer(tokenFullId)
         })}
       >
         {toCurrency(BigNumber.from(order?.price ?? '0')) > 0.000001 ? 'Send payment' : 'Finalize the deal'}
