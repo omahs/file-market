@@ -60,7 +60,7 @@ export default function SubBrandsSection () {
     <>
       <SwitchWrapper>
         <Switch options={options} onChange={handleAssetsChange} />
-        <DownloadButton class={'downloadAllButton'} downloadHref="#" bigBtn>full zip</DownloadButton>
+        <DownloadButton class={'downloadAllButton'} downloadHref="sub-brands-logos.zip" bigBtn>full zip</DownloadButton>
       </SwitchWrapper>
       <AssetsWrapper>
         <DownloadAsset

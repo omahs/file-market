@@ -61,7 +61,7 @@ export default function Assets () {
     <>
       <SwitchWrapper>
         <Switch options={options} onChange={handleAssetsChange} />
-        <DownloadButton class={'downloadAllButton'} downloadHref="#" bigBtn>full zip</DownloadButton>
+        <DownloadButton class={'downloadAllButton'} downloadHref="logos.zip" bigBtn>full zip</DownloadButton>
       </SwitchWrapper>
       <AssetsWrapper>
         <DownloadAsset
