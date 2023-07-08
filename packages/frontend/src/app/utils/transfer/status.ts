@@ -53,16 +53,10 @@ export const transferPermissions = {
     },
   },
   buyer: {
-    canCompleteDraft: (transfer?: Transfer) => {
-      const status = transferStatus(transfer)
-
-      return status === TransferStatus.Drafted
-    },
     canFulfillOrder: (transfer?: Transfer) => {
       const status = transferStatus(transfer)
 
-      return status === TransferStatus.Drafted &&
-        transfer?.orderId !== undefined && transfer?.orderId !== null
+      return status === TransferStatus.Drafted
     },
     canSetPublicKey: (transfer?: Transfer) => {
       const status = transferStatus(transfer)

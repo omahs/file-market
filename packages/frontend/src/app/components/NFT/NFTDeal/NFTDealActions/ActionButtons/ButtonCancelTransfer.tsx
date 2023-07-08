@@ -1,11 +1,12 @@
+import { PressEvent } from '@react-types/shared/src/events'
 import { FC } from 'react'
 
-import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonCancelTransferProps = ActionButtonProps & {
@@ -13,11 +14,11 @@ export type ButtonCancelTransferProps = ActionButtonProps & {
 }
 
 export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
-  tokenFullId, onStart, onEnd, isDisabled, onError,
+  tokenFullId, isDisabled,
 }) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
-  const { blockStore } = useStores()
+  const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Transfer cancelled',
@@ -32,17 +33,11 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
-        onPress={async () => {
-          onStart?.()
-          const receipt = await cancelTransfer(tokenFullId).catch(e => {
-            onError?.()
+        onPress={wrapAction(async () => {
+          await cancelTransfer(tokenFullId).catch(e => {
             throw e
           })
-          if (receipt?.blockNumber) {
-            blockStore.setReceiptBlock(receipt.blockNumber)
-          }
-          onEnd?.()
-        }}
+        })}
       >
         Cancel deal
       </Button>

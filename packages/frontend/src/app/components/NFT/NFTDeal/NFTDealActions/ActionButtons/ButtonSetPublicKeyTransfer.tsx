@@ -1,11 +1,12 @@
+import { PressEvent } from '@react-types/shared/src/events'
 import { FC } from 'react'
 
-import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useSetPublicKey } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonSetPublicKeyTransferProps = ActionButtonProps & {
@@ -14,32 +15,22 @@ export type ButtonSetPublicKeyTransferProps = ActionButtonProps & {
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
-  onStart,
-  onEnd,
   isDisabled,
-  onError,
 }) => {
   const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId })
   const { isLoading } = statuses
+  const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Public key was sent. The owner can now give you access to the hidden file.',
     loadingMsg: 'Sending keys, so owner could encrypt the file password and transfer it to you',
   })
 
-  const { blockStore } = useStores()
-
-  const onPress = async () => {
-    onStart?.()
-    const receipt = await setPublicKey(tokenFullId).catch(e => {
-      onError?.()
+  const onPress = wrapAction(async () => {
+    await setPublicKey(tokenFullId).catch(e => {
       throw e
     })
-    if (receipt?.blockNumber) {
-      blockStore.setReceiptBlock(receipt.blockNumber)
-    }
-    onEnd?.()
-  }
+  })
 
   return (
     <>

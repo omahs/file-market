@@ -20,99 +20,83 @@ export function useWatchHiddenFileTokenEvents(listener: IHiddenFilesTokenEventsL
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferInit,
-    listener: (tokenId: any, from: any, to: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, from: any, to: any, transferNumber: any, block: any) => {
       console.log('onTransferInit')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferInit(tokenId, from, to, transferNumber)
+      console.log(block)
+      listener.onTransferInit(tokenId, from, to, block.blockNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferDraft,
-    listener: (tokenId: any, from: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, from: any, transferNumber: any, block: any) => {
       console.log('onTransferDraft')
       console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferDraft(tokenId, from, transferNumber)
+      listener.onTransferDraft(tokenId, from, block.blockNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferDraftCompletion,
-    listener: (tokenId: any, to: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, to: any, block: any) => {
       console.log('onTransferDraftCompletion')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferDraftCompletion(tokenId, to, transferNumber)
+      listener.onTransferDraftCompletion(tokenId, to, block.blockNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferPublicKeySet,
-    listener: (tokenId: any, publicKeyHex: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, publicKeyHex: any, block: any) => {
       console.log('onTransferPublicKeySet')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferPublicKeySet(tokenId, publicKeyHex, transferNumber)
+      listener.onTransferPublicKeySet(tokenId, publicKeyHex, block.blockNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferPasswordSet,
-    listener: (tokenId: any, encryptedPasswordHex: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, encryptedPasswordHex: any, block: any) => {
       console.log('onTransferDraft')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferPasswordSet(tokenId, encryptedPasswordHex, transferNumber)
+      listener.onTransferPasswordSet(tokenId, encryptedPasswordHex, block.blockNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferFinished,
-    listener: (tokenId: any, transferNumber: any, smth: any) => {
-      console.log('onTransferDraft')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferFinished(tokenId, transferNumber)
+    listener: (tokenId: any) => {
+      console.log('onTransferFinished')
+      listener.onTransferFinished(tokenId)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferFraudReported,
-    listener: (tokenId: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, block: any) => {
       console.log('onTransferFraudReported')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferFraudReported(tokenId, transferNumber)
+      listener.onTransferFraudReported(tokenId, block.blockNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferFraudDecided,
-    listener: (tokenId: any, approved: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, approved: any, block: any) => {
       console.log('onTransferFraudDecided')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferFraudDecided(tokenId, approved, transferNumber)
+      listener.onTransferFraudDecided(tokenId, approved, block.blocNumber)
     },
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferCancellation,
-    listener: (tokenId: any, transferNumber: any, smth: any) => {
+    listener: (tokenId: any, block: any) => {
       console.log('onTransferCancel')
-      console.log(transferNumber)
-      console.log(smth)
-      listener.onTransferCancellation(tokenId, transferNumber)
+      listener.onTransferCancellation(tokenId, block.blockNumber)
     },
   })
 }

@@ -5,10 +5,7 @@ import React, { FC } from 'react'
 import { styled } from '../../../../../styles'
 import { Order, Transfer } from '../../../../../swagger/Api'
 import { useStores } from '../../../../hooks'
-import { useStatusModal } from '../../../../hooks/useStatusModal'
-import { useIsOwner } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
-import BaseModal from '../../../Modal/Modal'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -27,42 +24,25 @@ const ButtonsContainer = styled(Tooltip, {
 
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId
-  transfer?: Transfer
   order?: Order
   reFetchOrder?: () => void
+  transfer?: Transfer
+  isOwner?: boolean
+  isBuyer?: boolean
+  isApprovedExchange?: boolean
+  runIsApprovedRefetch: () => void
 }
 
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
-  transfer,
   order,
+  transfer,
+  isOwner,
+  isApprovedExchange,
+  isBuyer,
+  runIsApprovedRefetch,
 }) => {
-  const { isOwner, error } = useIsOwner(tokenFullId)
   const { blockStore, transferStore } = useStores()
-  const { modalProps } = useStatusModal({
-    statuses: { result: undefined, isLoading: false, error: error as unknown as string },
-    okMsg: '',
-    loadingMsg: '',
-  })
-
-  const onActionStart = () => {
-    // we disable buttons when user starts contract interaction, and enable back when event arrives
-    transferStore.setIsWaitingForEvent(true)
-    transferStore.setIsWaitingReciept(true)
-  }
-
-  const onActionError = () => {
-    transferStore.setIsWaitingReciept(false)
-    transferStore.setIsWaitingForEvent(false)
-  }
-
-  const onActionEnd = () => {
-    transferStore.setIsWaitingReciept(false)
-  }
-
-  if (error) {
-    return <BaseModal {...modalProps} />
-  }
 
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
 
@@ -72,20 +52,17 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
         <NFTDealActionOwner
           transfer={transfer}
           tokenFullId={tokenFullId}
-          onStart={onActionStart}
-          onError={onActionError}
-          onEnd={onActionEnd}
           isDisabled={isDisabled}
+          isApprovedExchange={isApprovedExchange}
+          runIsApprovedRefetch={runIsApprovedRefetch}
         />
       ) : (
         <NFTDealActionsBuyer
           transfer={transfer}
           order={order}
           tokenFullId={tokenFullId}
-          onStart={onActionStart}
-          onError={onActionError}
-          onEnd={onActionEnd}
           isDisabled={isDisabled}
+          isBuyer={isBuyer}
         />
       )}
     </ButtonsContainer>

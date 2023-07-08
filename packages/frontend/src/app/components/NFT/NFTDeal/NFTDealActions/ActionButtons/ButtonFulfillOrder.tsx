@@ -1,13 +1,14 @@
+import { PressEvent } from '@react-types/shared/src/events'
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 
 import { Order } from '../../../../../../swagger/Api'
-import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFulfillOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonFulfillOrderProps = ActionButtonProps & {
@@ -18,13 +19,11 @@ export type ButtonFulfillOrderProps = ActionButtonProps & {
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
-  onStart,
-  onEnd,
   isDisabled,
-  onError,
 }) => {
   const { fulfillOrder, ...statuses } = useFulfillOrder()
   const { isLoading } = statuses
+  const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Order fulfilled! Now wait until owner of the EFT transfers you hidden files. ' +
@@ -32,22 +31,14 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     loadingMsg: 'Fulfilling order',
   })
 
-  const { blockStore } = useStores()
-
-  const onPress = async () => {
-    onStart?.()
-    const receipt = await fulfillOrder({
+  const onPress = wrapAction(async () => {
+    await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
     }).catch(e => {
-      onError?.()
       throw e
     })
-    if (receipt?.blockNumber) {
-      blockStore.setReceiptBlock(receipt.blockNumber)
-    }
-    onEnd?.()
-  }
+  })
 
   return (
     <>

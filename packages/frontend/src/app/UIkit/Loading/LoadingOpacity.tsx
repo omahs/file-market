@@ -38,15 +38,27 @@ export const LoadingOpacity: React.FC<LoadingProps> = ({ isLoading, children }) 
     return isLoading ? LoadingContainer : React.Fragment
   }, [isLoading])
 
+  const loadingContainerProps = useMemo(() => {
+    return isLoading ? {
+      h100: true,
+      w100: true,
+      justifyContent: 'center',
+      css: { minHeight: 24 },
+    } : undefined
+  }, [isLoading])
+
+  const loadingChildrenProps = useMemo(() => {
+    return isLoading ? {
+      isLoading,
+    } : undefined
+  }, [isLoading])
+
   return (
     <LoadingContainerElem
-      h100
-      w100
-      justifyContent='center'
-      css={{ minHeight: 24 }}
+      {...loadingContainerProps}
     >
       {isLoading && <Loading type="points" size='lg' />}
-      <LoadingChildrenElem isLoading={isLoading}>{children}</LoadingChildrenElem>
+      <LoadingChildrenElem {...loadingChildrenProps}>{children}</LoadingChildrenElem>
     </LoadingContainerElem>
   )
 }

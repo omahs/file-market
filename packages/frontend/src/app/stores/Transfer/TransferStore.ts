@@ -9,9 +9,8 @@ import { normalizeCounterId } from '../../processing/utils/id'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { BlockStore } from '../BlockStore/BlockStore'
 import { ErrorStore } from '../Error/ErrorStore'
-
-// frontend rpc might be ahead of indexer, but not too much
-const indexerProbableDelay = 8 * 1000
+import { OrderStore } from '../Order/OrderStore'
+import { TokenStore } from '../Token/TokenStore'
 
 /**
  * Stores only ACTIVE (i.e. created and not finished/cancelled) transfer state
@@ -32,12 +31,25 @@ export class TransferStore implements IStoreRequester,
   data?: Transfer = undefined
   tokenFullId?: TokenFullId = undefined
   blockStore: BlockStore
-  constructor({ errorStore, blockStore }: { errorStore: ErrorStore, blockStore: BlockStore }) {
+  tokenStore: TokenStore
+  orderStore: OrderStore
+
+  onTransferFinishedCall?: () => void
+  onTransferPublicKeySetCall?: () => void
+  constructor({ errorStore, blockStore, tokenStore, orderStore }: {
+    errorStore: ErrorStore
+    blockStore: BlockStore
+    tokenStore: TokenStore
+    orderStore: OrderStore }) {
     this.errorStore = errorStore
     this.blockStore = blockStore
+    this.tokenStore = tokenStore
+    this.orderStore = orderStore
     makeAutoObservable(this, {
       errorStore: false,
       blockStore: false,
+      tokenStore: false,
+      orderStore: false,
     })
   }
 
@@ -91,6 +103,14 @@ export class TransferStore implements IStoreRequester,
     }
   }
 
+  setOnTransferFinished = (callBack: () => void) => {
+    this.onTransferFinishedCall = callBack
+  }
+
+  setOnTransferPublicKeySet = (callBack: () => void) => {
+    this.onTransferPublicKeySetCall = callBack
+  }
+
   setIsWaitingForEvent = (isWaiting: boolean) => {
     this.isWaitingForEvent = isWaiting
   }
@@ -99,14 +119,21 @@ export class TransferStore implements IStoreRequester,
     this.isWaitingForReciept = isWaiting
   }
 
-  gotEvent(): void {
-    setTimeout(() => this.reload(() => this.setIsWaitingForEvent(false)), indexerProbableDelay)
+  setBlockTransfer = (transferNumber?: number) => {
+    this.data = {
+      ...this.data,
+      block: {
+        ...this.data?.block,
+        number: transferNumber,
+      },
+    }
+    this.blockStore.setReceiptBlock(BigNumber.from(transferNumber))
   }
 
   // We listen to only events related to transfer change, not transfer initialization
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 
-  onTransferInit(tokenId: BigNumber, from: string, to: string, transferNumber: BigNumber) {
+  onTransferInit(tokenId: BigNumber, from: string, to: string, transferNumber: number) {
     console.log('onTransferInit')
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
@@ -120,10 +147,11 @@ export class TransferStore implements IStoreRequester,
         }],
       }
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
     })
   }
 
-  onTransferDraft(tokenId: BigNumber, from: string, transferNumber: BigNumber) {
+  onTransferDraft(tokenId: BigNumber, from: string, transferNumber: number) {
     console.log('onTransferDraft')
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
@@ -136,18 +164,21 @@ export class TransferStore implements IStoreRequester,
         }],
       }
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
+      this.orderStore.reload()
     })
   }
 
-  onTransferDraftCompletion(tokenId: BigNumber, to: string, transferNumber: BigNumber) {
+  onTransferDraftCompletion(tokenId: BigNumber, to: string, transferNumber: number) {
     console.log('onTransferCompletion')
     this.checkData(tokenId, data => {
       data.to = to
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
     })
   }
 
-  onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string, transferNumber: BigNumber) {
+  onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string, transferNumber: number) {
     console.log('onTransferPublicKeySet')
     this.checkData(tokenId, data => {
       data.publicKey = publicKeyHex
@@ -156,10 +187,12 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
+      this.onTransferPublicKeySetCall?.()
     })
   }
 
-  onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string, transferNumber: BigNumber) {
+  onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string, transferNumber: number) {
     console.log('onTransferPasswordSet')
     this.checkData(tokenId, data => {
       data.encryptedPassword = encryptedPasswordHex
@@ -168,18 +201,21 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
     })
   }
 
-  onTransferFinished(tokenId: BigNumber, transferNumber: BigNumber) {
+  onTransferFinished(tokenId: BigNumber) {
     console.log('onTransferFinished')
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.setIsWaitingForEvent(false)
+      this.tokenStore.reload()
+      this.onTransferFinishedCall?.()
     })
   }
 
-  onTransferFraudReported(tokenId: BigNumber, transferNumber: BigNumber) {
+  onTransferFraudReported(tokenId: BigNumber, transferNumber: number) {
     console.log('onTransferFraud')
     this.checkData(tokenId, data => {
       data.statuses?.unshift({
@@ -187,10 +223,11 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
     })
   }
 
-  onTransferFraudDecided(tokenId: BigNumber, approved: boolean, transferNumber: BigNumber) {
+  onTransferFraudDecided(tokenId: BigNumber, approved: boolean, transferNumber: number) {
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
       data.statuses?.unshift({
@@ -198,10 +235,11 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.setIsWaitingForEvent(false)
+      this.setBlockTransfer(transferNumber)
     })
   }
 
-  onTransferCancellation(tokenId: BigNumber, transferNumber: BigNumber) {
+  onTransferCancellation(tokenId: BigNumber, transferNumber: number) {
     console.log('onTransferCancel')
     this.checkActivation(tokenId, () => {
       this.data = undefined
