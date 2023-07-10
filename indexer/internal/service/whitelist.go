@@ -24,8 +24,11 @@ func (s *service) AddressInWhitelist(ctx context.Context, address common.Address
 		return nil, internalError
 	}
 
+	count := s.sequencer.Count(ctx, address, rarity)
+
 	return &models.WhitelistResponse{
-		Whitelist: rarity,
+		Whitelist:  rarity,
+		OrdersLeft: count,
 	}, nil
 }
 
