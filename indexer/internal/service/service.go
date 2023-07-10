@@ -101,7 +101,7 @@ type Orders interface {
 }
 
 type Sequencer interface {
-	SequencerAcquire(ctx context.Context, address common.Address, suffix string) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+	SequencerAcquire(ctx context.Context, address common.Address, suffix string, wallet common.Address) (*models.SequencerAcquireResponse, *models.ErrorResponse)
 }
 
 type Whitelist interface {

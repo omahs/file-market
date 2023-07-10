@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -65,18 +64,12 @@ func main() {
 	}
 
 	sequencerCfg := &sequencer.Config{
-		KeyPrefix:     cfg.Sequencer.KeyPrefix,
-		TokenIdTTL:    cfg.Sequencer.TokenIdTTL,
-		CheckInterval: cfg.Sequencer.CheckInterval,
+		KeyPrefix:          cfg.Sequencer.KeyPrefix,
+		TokenIdTTL:         cfg.Sequencer.TokenIdTTL,
+		CheckInterval:      cfg.Sequencer.CheckInterval,
+		SwitchTokenTimeout: cfg.Sequencer.CheckInterval,
 	}
-	pubCollectionAddr := strings.ToLower(cfg.Service.PublicCollectionAddress.String())
-	fileBunniesAddr := strings.ToLower(cfg.Service.FileBunniesCollectionAddress.String())
-	seq := sequencer.New(sequencerCfg, rdb, map[string]sequencer.Range{
-		pubCollectionAddr:                           {0, 1_000_000},
-		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 1500},
-		fmt.Sprintf("%s.uncommon", fileBunniesAddr): {6000, 6500},
-		fmt.Sprintf("%s.payed", fileBunniesAddr):    {7000, 7500},
-	})
+	seq := sequencer.New(sequencerCfg, rdb)
 
 	repositoryCfg := &repository.Config{
 		PublicCollectionAddress:      cfg.Service.PublicCollectionAddress,

@@ -20,9 +20,10 @@ type (
 	}
 
 	SequencerConfig struct {
-		KeyPrefix     string
-		TokenIdTTL    time.Duration
-		CheckInterval time.Duration
+		KeyPrefix          string
+		TokenIdTTL         time.Duration
+		CheckInterval      time.Duration
+		SwitchTokenTimeout time.Duration // when sequencer should return new id for same wallet
 	}
 
 	PostgresConfig struct {
@@ -127,9 +128,10 @@ func Init(configPath string) (*Config, error) {
 			Password: envCfg.GetString("REDIS_PASSWORD"),
 		},
 		Sequencer: &SequencerConfig{
-			KeyPrefix:     jsonCfg.GetString("service.sequencer.keyPrefix"),
-			TokenIdTTL:    jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
-			CheckInterval: jsonCfg.GetDuration("service.sequencer.checkInterval"),
+			KeyPrefix:          jsonCfg.GetString("service.sequencer.keyPrefix"),
+			TokenIdTTL:         jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
+			CheckInterval:      jsonCfg.GetDuration("service.sequencer.checkInterval"),
+			SwitchTokenTimeout: jsonCfg.GetDuration("service.sequencer.switchTokenTimeout"),
 		},
 	}, nil
 }
