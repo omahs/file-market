@@ -41,10 +41,16 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   addData(data: TokensResponse) {
-    this.data.collections?.push(...(data.collections ?? []))
+    if (!this.data.collections) {
+      this.data.collections = []
+    }
+    this.data.collections.push(...(data.collections ?? []))
     this.data.collectionsTotal = data.collectionsTotal
 
-    this.data.tokens?.push(...(data.tokens ?? []))
+    if (!this.data.tokens) {
+      this.data.tokens = []
+    }
+    this.data.tokens.push(...(data.tokens ?? []))
     this.data.tokensTotal = data.tokensTotal
   }
 
@@ -59,12 +65,12 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   requestMoreTokens() {
-    const { tokenId, collectionAddress } = lastItem(this.data.tokens ?? [])
+    const token = lastItem(this.data.tokens ?? [])
     storeRequest(
       this,
       api.tokens.tokensDetail(this.address, {
-        lastTokenId: tokenId,
-        lastTokenCollectionAddress: collectionAddress,
+        lastTokenId: token?.tokenId,
+        lastTokenCollectionAddress: token?.collectionAddress,
         tokenLimit: 20,
       }),
       (data) => this.addData(data),

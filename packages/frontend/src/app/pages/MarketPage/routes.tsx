@@ -8,7 +8,7 @@ import NftSection from './NftSection'
 export const marketRoutes: RouteObject[] = [
   {
     path: '',
-    element: <Navigate to={'efts'} />,
+    element: <Navigate replace to={'efts'} />,
   },
   {
     path: 'efts',
