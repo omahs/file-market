@@ -17,6 +17,9 @@ const AssetLinksWrapper = styled('div', {
   flexDirection: 'column',
   rowGap: '24px',
   padding: '44px 48px',
+  '@lg': {
+    padding: '36px 40px',
+  },
   '@md': {
     alignItems: 'center',
     padding: '30px 36px',
@@ -32,6 +35,9 @@ const AssetName = styled(Txt, {
   fontWeight: '$primary',
   lineHeight: '1',
   color: '$gray700',
+  '@lg': {
+    fontSize: '1.75rem',
+  },
   '@md': {
     fontSize: '$h4',
   },
@@ -48,7 +54,7 @@ const AssetPreviewWrapper = styled('div', {
   top: '-4px',
   right: '-4px',
   marginBottom: '-8px',
-  height: 'calc(100% + 8px)',
+  minHeight: 'calc(100% + 8px)',
   width: 'auto',
   borderRadius: '$4',
   transition: 'all 0.3s ease-in-out',
@@ -81,6 +87,19 @@ const AssetLinks = styled('div', {
     columnGap: '12px',
     a: {
       minWidth: '147px',
+    },
+  },
+  '@xs': {
+    columnGap: '10px',
+    a: {
+      minWidth: '120px',
+    },
+  },
+  '@media (max-width: 360px)': {
+    a: {
+      width: '110px',
+      minWidth: '110px',
+      paddingRight: '10px',
     },
   },
 })

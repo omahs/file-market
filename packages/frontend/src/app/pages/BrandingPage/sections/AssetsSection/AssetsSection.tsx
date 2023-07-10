@@ -88,7 +88,7 @@ export default function Assets () {
           title="Wordmark"
           previewStyle={previewStyle}
         />
-        <DownloadButton downloadHref="#" class={'downloadAllMobileButton'}>full zip</DownloadButton>
+        <DownloadButton downloadHref="logos.zip" class={'downloadAllMobileButton'}>full zip</DownloadButton>
       </AssetsWrapper>
     </>
   )

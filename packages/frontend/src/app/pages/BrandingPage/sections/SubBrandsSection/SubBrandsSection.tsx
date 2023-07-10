@@ -93,7 +93,7 @@ export default function SubBrandsSection () {
           title='FileBunnies logomark'
           previewStyle={previewStyle}
         />
-        <DownloadButton downloadHref="#" class={'downloadAllMobileButton'}>full zip</DownloadButton>
+        <DownloadButton downloadHref="sub-brands-logos.zip" class={'downloadAllMobileButton'}>full zip</DownloadButton>
       </AssetsWrapper>
     </>
   )

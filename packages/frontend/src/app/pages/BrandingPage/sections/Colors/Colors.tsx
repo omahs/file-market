@@ -31,12 +31,18 @@ const ColorName = styled('h3', {
   '@md': {
     fontSize: '$h3',
   },
+  '@xs': {
+    fontSize: '$h4',
+  },
 })
 
 const ColorHex = styled('p', {
   fontFamily: '$body',
   fontSize: '$body2',
   lineHeight: 'ternary3',
+  '@xs': {
+    fontSize: '$body3',
+  },
 })
 
 const ColorsGradientWrapperMobile = styled('section', {

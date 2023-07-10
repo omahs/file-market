@@ -36,6 +36,15 @@ const SwitchWrapper = styled('div', {
       padding: '8px 16px',
       fontSize: '$body4',
     },
+    '@xs': {
+      padding: '6px 14px',
+    },
+    '@media (max-width: 360px)': {
+      padding: '6px 10px',
+    },
+    '@media (max-width: 320px)': {
+      padding: '6px 8px',
+    },
     '&.active': {
       backgroundColor: '#0090FF',
       color: '$white',
