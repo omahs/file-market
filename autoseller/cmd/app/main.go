@@ -35,9 +35,14 @@ loop:
 			processing = true
 
 			start := time.Now()
-			if err := autoseller.ProcessTimers(context.Background()); err != nil {
+			timersProcessed, err := autoseller.ProcessTimers(context.Background())
+			if err != nil {
 				log.Println("failed to process timers: ", err)
 			}
+			if timersProcessed > 0 {
+				log.Printf("Processed %d timers successfully", timersProcessed)
+			}
+
 			processed, err := autoseller.Process(context.Background())
 			if err != nil {
 				log.Println("failed to process response: ", err)

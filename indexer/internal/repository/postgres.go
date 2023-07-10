@@ -30,6 +30,8 @@ type Collections interface {
 	GetCollectionsByOwnerAddress(ctx context.Context, tx pgx.Tx, address common.Address, lastCollectionAddress *common.Address, limit int) ([]*domain.Collection, error)
 	GetCollectionsByOwnerAddressTotal(ctx context.Context, tx pgx.Tx, address common.Address) (uint64, error)
 	GetCollection(ctx context.Context, tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error)
+	GetCollections(ctx context.Context, tx pgx.Tx, lastCollectionAddress *common.Address, limit int) ([]*domain.Collection, error)
+	GetCollectionsTotal(ctx context.Context, tx pgx.Tx) (uint64, error)
 	GetCollectionByTokenId(ctx context.Context, tx pgx.Tx, tokenId *big.Int) (*domain.Collection, error)
 	InsertCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
