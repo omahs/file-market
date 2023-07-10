@@ -9,6 +9,36 @@ schemes:
 host: filemarket.xyz
 basePath: /api
 paths:
+  /collections/:
+    get:
+      tags:
+        - collections
+      description: Получение списка всех коллекций
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекции
+          schema:
+            $ref: "#/definitions/CollectionsResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+      - name: lastCollectionAddress
+        in: query
+        description: Адрес последней коллекции.
+        type: string
+        pattern: "0x[0-9a-f-A-F]{40}"
+      - name: limit
+        in: query
+        description: Максимальное число коллекций, которое вернется на этой странице.
+        type: integer
+        format: int
+        default: 10
+        minimum: 0
+        maximum: 100
   /collections/{address}:
     get:
       tags:
@@ -927,6 +957,18 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Token"
+      total:
+        type: number
+        x-omitempty: false
+        format: uint64
+  CollectionsResponse:
+    type: object
+    description: Коллекции
+    properties:
+      collections:
+        type: array
+        items:
+          $ref: "#/definitions/Collection"
       total:
         type: number
         x-omitempty: false
