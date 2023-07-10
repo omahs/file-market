@@ -35,6 +35,8 @@ const HeroTextWrapper = styled('div', {
 })
 
 const HeroTitle = styled('h1', {
+  position: 'relative',
+  zIndex: '2',
   color: '$gray700',
   fontFamily: '$fourfold',
   fontSize: '3.5rem',
