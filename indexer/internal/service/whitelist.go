@@ -23,8 +23,8 @@ func (s *service) AddressInWhitelist(ctx context.Context, address common.Address
 	if err != nil {
 		return nil, internalError
 	}
-
-	count := s.sequencer.Count(ctx, address, rarity)
+	
+	count := s.sequencer.Count(ctx, s.cfg.FileBunniesCollectionAddress, rarity)
 
 	return &models.WhitelistResponse{
 		Whitelist:  rarity,
