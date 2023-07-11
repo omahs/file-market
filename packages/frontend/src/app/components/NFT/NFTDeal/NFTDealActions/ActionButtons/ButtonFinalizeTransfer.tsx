@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
 import { Order } from '../../../../../../swagger/Api'
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFinalizeTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
@@ -22,6 +23,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
 }) => {
   const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId })
   const { isLoading } = statuses
+  const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
@@ -39,6 +41,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
           await finalizeTransfer(tokenFullId)
+          transferStore.onTransferFinished(BigNumber.from(tokenFullId.tokenId))
         })}
       >
         {toCurrency(BigNumber.from(order?.price ?? '0')) > 0.000001 ? 'Send payment' : 'Finalize the deal'}

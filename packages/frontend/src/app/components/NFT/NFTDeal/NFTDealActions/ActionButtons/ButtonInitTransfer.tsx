@@ -1,6 +1,8 @@
 import { Modal } from '@nextui-org/react'
+import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useInitTransfer } from '../../../../../processing'
@@ -22,6 +24,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
   const { isLoading } = statuses
+  const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<TransferFormValue>()
   const { modalProps } = useStatusModal({
     statuses,
@@ -41,10 +44,13 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
           <TransferForm
             onSubmit={wrapAction(async (form) => {
               closeModal()
-              await initTransfer({
+              const receipt = await initTransfer({
                 tokenId: tokenFullId.tokenId,
                 to: form.address,
               })
+              if (receipt?.blockNumber) {
+                transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
+              }
             })}
           />
         </Modal.Body>

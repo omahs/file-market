@@ -1,9 +1,17 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { FC } from 'react'
+import { BigNumber } from 'ethers'
+import { FC, useMemo } from 'react'
+import { useAccount } from 'wagmi'
 
 import { Transfer } from '../../../../../../swagger/Api'
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
-import { useApproveTransfer } from '../../../../../processing'
+import {
+  bufferToEtherHex,
+  hexToBuffer,
+  useApproveTransfer,
+  useHiddenFileProcessorFactory,
+} from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
@@ -20,12 +28,24 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
 }) => {
   const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
   const { isLoading } = statuses
+  const { transferStore } = useStores()
+  const factory = useHiddenFileProcessorFactory()
+  const { address } = useAccount()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'You have granted hidden file access to the buyer',
     loadingMsg: 'Sending an encrypted encryption password',
   })
+
+  const encryptedPassword = useMemo(async () => {
+    if (address && tokenFullId && transfer?.publicKey) {
+      const owner = await factory.getOwner(address, tokenFullId.collectionAddress, +tokenFullId.tokenId)
+      const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(transfer?.publicKey))
+
+      return bufferToEtherHex(encryptedFilePassword)
+    }
+  }, [address, tokenFullId, transfer])
 
   return (
     <>
@@ -36,10 +56,14 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
-          await approveTransfer({
+          const receipt = await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
           })
+          const encryptedPasswordRes = await encryptedPassword
+          if (receipt?.blockNumber && encryptedPasswordRes) {
+            transferStore.onTransferPasswordSet(BigNumber.from(tokenFullId.tokenId), encryptedPasswordRes, receipt?.blockNumber)
+          }
         })}
       >
         Transfer hidden file

@@ -1,6 +1,8 @@
+import { BigNumber } from 'ethers'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
+import { useStores } from '../../../../../hooks'
 import { useConversionRateStore } from '../../../../../hooks/useConversionRateStore'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useOrderStore } from '../../../../../hooks/useOrderStore'
@@ -29,7 +31,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
   const { wrapAction } = wrapButtonActionsFunction<OrderFormValue>()
   const { collectionAddress, tokenId } = useParams<Params>()
   const orderStore = useOrderStore(collectionAddress, tokenId)
-
+  const { transferStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -39,10 +41,13 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
 
   const onSubmit = wrapAction(async ({ price }: OrderFormValue) => {
     closeModal()
-    await placeOrder({
+    const receipt = await placeOrder({
       ...tokenFullId,
       price,
     })
+    if (receipt?.blockNumber) {
+      transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
+    }
     conversionRateStore.data?.rate &&
     orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
   })

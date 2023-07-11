@@ -103,6 +103,14 @@ export class TransferStore implements IStoreRequester,
     }
   }
 
+  private checkExistStatus (status: TransferStatus): boolean {
+    for (let i = 0; i < (this.data?.statuses?.length ?? 0); i++) {
+      if (this.data?.statuses?.[i].status === status) return true
+    }
+
+    return false
+  }
+
   setOnTransferFinished = (callBack: () => void) => {
     this.onTransferFinishedCall = callBack
   }
@@ -135,6 +143,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferInit(tokenId: BigNumber, from: string, to: string, transferNumber: number) {
     console.log('onTransferInit')
+    if (this.checkExistStatus(TransferStatus.Created)) return
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
         collection: tokenFullId.collectionAddress,
@@ -153,6 +162,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferDraft(tokenId: BigNumber, from: string, transferNumber: number) {
     console.log('onTransferDraft')
+    if (this.checkExistStatus(TransferStatus.Drafted)) return
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
         collection: tokenFullId.collectionAddress,
@@ -180,6 +190,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string, transferNumber: number) {
     console.log('onTransferPublicKeySet')
+    if (this.checkExistStatus(TransferStatus.PublicKeySet)) return
     this.checkData(tokenId, data => {
       data.publicKey = publicKeyHex
       data.statuses?.unshift({
@@ -194,6 +205,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string, transferNumber: number) {
     console.log('onTransferPasswordSet')
+    if (this.checkExistStatus(TransferStatus.PasswordSet)) return
     this.checkData(tokenId, data => {
       data.encryptedPassword = encryptedPasswordHex
       data.statuses?.unshift({
@@ -207,6 +219,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferFinished(tokenId: BigNumber) {
     console.log('onTransferFinished')
+    if (!this.data) return
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.setIsWaitingForEvent(false)
@@ -217,6 +230,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferFraudReported(tokenId: BigNumber, transferNumber: number) {
     console.log('onTransferFraud')
+    if (this.checkExistStatus(TransferStatus.FraudReported)) return
     this.checkData(tokenId, data => {
       data.statuses?.unshift({
         status: TransferStatus.FraudReported,
@@ -228,6 +242,7 @@ export class TransferStore implements IStoreRequester,
   }
 
   onTransferFraudDecided(tokenId: BigNumber, approved: boolean, transferNumber: number) {
+    if (this.checkExistStatus(TransferStatus.Finished)) return
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
       data.statuses?.unshift({

@@ -36,7 +36,7 @@ export class OrderStore implements IStoreRequester,
       api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         console.log(resp)
-        this.data = resp ?? undefined
+        resp && (this.data = resp)
       })
   }
 

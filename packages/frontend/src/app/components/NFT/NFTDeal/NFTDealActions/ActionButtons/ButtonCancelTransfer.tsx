@@ -1,6 +1,8 @@
 import { PressEvent } from '@react-types/shared/src/events'
+import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
@@ -18,6 +20,7 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
 }) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
+  const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
@@ -34,7 +37,10 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
-          await cancelTransfer(tokenFullId)
+          const receipt = await cancelTransfer(tokenFullId)
+          if (receipt?.blockNumber) {
+            transferStore.onTransferCancellation(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
+          }
         })}
       >
         Cancel deal
