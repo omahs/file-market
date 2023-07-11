@@ -181,6 +181,10 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, collectionAddr common.Add
 }
 
 func (s *Sequencer) Count(ctx context.Context, collectionAddr common.Address, suffix string) int64 {
+	if err := s.releaseTokens(ctx, collectionAddr, suffix); err != nil {
+		log.Println("failed to releaseTokens in sequencer: ", err)
+	}
+
 	key := s.getKey(collectionAddr, suffix)
 	length, err := s.client.SCard(ctx, key).Result()
 	if err != nil {
