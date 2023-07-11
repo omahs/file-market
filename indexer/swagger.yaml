@@ -755,6 +755,7 @@ paths:
         description: Адрес кошелька человека, который запрашивает token id
         in: query
         pattern: "0x[0-9a-f-A-F]{40}"
+        required: true
         type: string
   /currency/conversion_rate:
     get:
