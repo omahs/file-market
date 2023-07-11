@@ -26,7 +26,6 @@ export class BlockStore {
 
   setCurrentBlock = (currentBlock: BigNumber) => {
     this.currentBlockNumber = currentBlock
-    console.log(currentBlock)
   }
 
   setReceiptBlock = (recieptBlock: BigNumber | number) => {
@@ -40,7 +39,7 @@ export class BlockStore {
     const remaining = this.receiptBlockNumber.sub(this.lastCurrentBlockNumber).add(extraConfirmations).toString()
 
     return this.canContinue ? ''
-      : `Confirmations: ${progress}/${remaining}`
+      : `Will be available after ${remaining} network confirmations (${progress})`
   }
 
   get canContinue() {

@@ -119,8 +119,6 @@ export const useFileBunniesMint = () => {
 
   const { isLoading: isLoadingFulFill } = statuses
   const isLoading = useComputedMemo(() => {
-    console.log(whiteListStore.isLoading)
-
     return (isLoadingFulFill || whiteListStore.isLoading || isLoadingReq) && (!statuses.error && !statusesReq.error)
   }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill, statuses.error, statusesReq.error])
 

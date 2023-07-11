@@ -1,3 +1,5 @@
+import { PressEvent } from '@react-types/shared/src/events'
+import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
@@ -6,6 +8,7 @@ import { useReportFraud } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonReportFraudTransferProps = ActionButtonProps & {
@@ -14,20 +17,17 @@ export type ButtonReportFraudTransferProps = ActionButtonProps & {
 
 export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
   tokenFullId,
-  onStart,
-  onEnd,
   isDisabled,
-  onError,
 }) => {
   const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId })
   const { isLoading } = statuses
+  const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
+  const { transferStore } = useStores()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Fraud reported! Expect a decision within a few minutes',
     loadingMsg: 'Reporting fraud',
   })
-
-  const { blockStore } = useStores()
 
   return (
     <>
@@ -37,17 +37,12 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
-        onPress={async () => {
-          onStart?.()
-          const receipt = await reportFraud(tokenFullId).catch(e => {
-            onError?.()
-            throw e
-          })
+        onPress={wrapAction(async () => {
+          const receipt = await reportFraud(tokenFullId)
           if (receipt?.blockNumber) {
-            blockStore.setReceiptBlock(receipt.blockNumber)
+            transferStore.onTransferFraudReported(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
           }
-          onEnd?.()
-        }}
+        })}
       >
         Report fraud
       </Button>

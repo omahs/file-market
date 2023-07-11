@@ -1,5 +1,5 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
@@ -60,10 +60,6 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
     loadingMsg: 'File decryption is in progress)',
     waitForSign: false,
   })
-
-  useEffect(() => {
-    console.log(files)
-  }, [files])
 
   const fileName = (name: string | undefined): string | undefined => {
     const maxCountAvailable = 30
