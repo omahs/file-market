@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { styled } from '../../../../../styles'
+import { styled } from '../../../styles'
 
 const SwitchWrapper = styled('div', {
   '.switch': {
