@@ -149,7 +149,7 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, collectionAddr common.Add
 		return err
 	}
 	var okQueue bool
-	if err != redis.Nil {
+	if len(keys) > 0 && err != redis.Nil {
 		params := strings.Split(keys[0], ".")
 		walletAddr := common.HexToAddress(params[4])
 		okQueue = s.deleteFromQueue(ctx, collectionAddr, walletAddr, suffix, tokenId)
@@ -174,7 +174,8 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, collectionAddr common.Add
 
 	okSet := s.deleteFromSet(ctx, collectionAddr, suffix, tokenId)
 	if !okSet && !okQueue {
-		return errors.New("tokenId does not exists")
+		log.Println("failed to delete from sequencer: tokenId does not exists: ", tokenId)
+		return nil
 	}
 	return nil
 }
