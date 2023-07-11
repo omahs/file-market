@@ -943,10 +943,17 @@ definitions:
         x-omitempty: false
         description: Название вайтлиста, в котором есть адрес. Вернет пустую строку, если нет нигде
       ordersLeft:
-        type: number
+        type: object
         description: Количество оставшихся айдишников в сиквенсере
-        format: int64
-        x-omitempty: false
+        properties:
+          free:
+            type: number
+            format: int64
+            x-omitempty: false
+          payed:
+            type: number
+            format: int64
+            x-omitempty: false
   CollectionData:
     type: object
     description: Коллекция со всеми токенами
