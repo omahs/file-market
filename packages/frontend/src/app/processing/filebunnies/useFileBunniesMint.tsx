@@ -78,7 +78,7 @@ export const useFileBunniesMint = () => {
       setIsLoadingReq(false)
       setModalOpen(true)
       setModalBody(<SuccessOkBody
-        description={'Someone was a little faster than you and took the last Free Mint FileBunny'}
+        description={'Someone was a little faster than you and took the last FileBunny'}
         isSuccessImg={false}
         handleClose={() => {
           setModalOpen(false)
