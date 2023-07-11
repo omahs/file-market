@@ -31,19 +31,6 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   isApprovedExchange,
   runIsApprovedRefetch,
 }) => {
-  // useWatchCollectionEvents({
-  //   onApproval: () => { refetch(); transferStore.setIsLoading(false) },
-  // }, collectionAddress)
-
-  // const { modalProps } = useStatusModal({
-  //   statuses: { result: undefined, isLoading: false, error: error as unknown as string },
-  //   okMsg: '',
-  //   loadingMsg: '',
-  // })
-  //
-  // if (error) {
-  //   return <BaseModal {...modalProps} />
-  // }
 
   return (
     <>

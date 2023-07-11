@@ -19,6 +19,24 @@ func (h *handler) handleGetCollection(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, 200, collection)
 }
 
+func (h *handler) handleGetCollections(w http.ResponseWriter, r *http.Request) {
+	lastCollectionAddress := parseCommonAddressParam(r, "lastCollectionAddress")
+	limit, err := parseLimitParam(r, "limit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	res, e := h.service.GetCollections(ctx, lastCollectionAddress, limit)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+	sendResponse(w, 200, res)
+}
+
 func (h *handler) handleGetFullCollection(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
 	lastTokenId, err := parseLastTokenIdParam(r)
@@ -70,7 +88,7 @@ func (h *handler) handleGetFullFileBunniesCollection(w http.ResponseWriter, r *h
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 10000, 10000)
+	limit, err := parseLimitParam(r, "limit", 1, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return

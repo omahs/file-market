@@ -71,6 +71,7 @@ type EthClient interface {
 
 type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
+	GetCollections(ctx context.Context, lastCollectionAddress *common.Address, limit int) (*models.CollectionsResponse, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetPublicCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetFileBunniesCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
@@ -101,7 +102,7 @@ type Orders interface {
 }
 
 type Sequencer interface {
-	SequencerAcquire(ctx context.Context, address common.Address, suffix string) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+	SequencerAcquire(ctx context.Context, address common.Address, suffix string, wallet common.Address) (*models.SequencerAcquireResponse, *models.ErrorResponse)
 }
 
 type Whitelist interface {

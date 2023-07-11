@@ -135,6 +135,89 @@ func (p *postgres) GetCollection(ctx context.Context,
 	return c, nil
 }
 
+func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollectionAddress *common.Address, limit int) ([]*domain.Collection, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT address,creator,owner,name,token_id,meta_uri,description,image,block_number
+		FROM collections
+		WHERE address > $1
+		ORDER BY address
+		LIMIT $2
+	`
+
+	lastCollectionAddressStr := ""
+	if lastCollectionAddress != nil {
+		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
+	}
+	if limit == 0 {
+		limit = 10000
+	}
+
+	rows, err := tx.Query(ctx, query,
+		lastCollectionAddressStr,
+		limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var res []*domain.Collection
+	for rows.Next() {
+		var collectionAddress, creator, owner, tokenId string
+		c := &domain.Collection{}
+		if err := rows.Scan(
+			&collectionAddress,
+			&creator,
+			&owner,
+			&c.Name,
+			&tokenId,
+			&c.MetaUri,
+			&c.Description,
+			&c.Image,
+			&c.BlockNumber,
+		); err != nil {
+			return nil, err
+		}
+
+		c.Address = common.HexToAddress(collectionAddress)
+		c.Owner = common.HexToAddress(owner)
+		c.Creator = common.HexToAddress(creator)
+
+		var ok bool
+		c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+		}
+
+		switch c.Address {
+		case p.cfg.publicCollectionAddress:
+			c.Type = models.CollectionTypePublicCollection
+		case p.cfg.fileBunniesCollectionAddress:
+			c.Type = models.CollectionTypeFileBunniesCollection
+		default:
+			c.Type = models.CollectionTypeFileMarketCollection
+		}
+		res = append(res, c)
+	}
+	return res, nil
+}
+
+func (p *postgres) GetCollectionsTotal(ctx context.Context, tx pgx.Tx) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*)
+		FROM collections
+	`
+
+	var total uint64
+	if err := tx.QueryRow(ctx, query).Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
+
+}
+
 func (p *postgres) GetCollectionByTokenId(
 	ctx context.Context,
 	tx pgx.Tx,

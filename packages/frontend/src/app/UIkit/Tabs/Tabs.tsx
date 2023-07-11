@@ -34,7 +34,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, textAlign }) => {
       tabIndex = 0
     }
     setTab(tabIndex)
-  }, [])
+  }, [location])
 
   return (
     <MuiTabs value={tab} onChange={onChange}>
