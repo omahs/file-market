@@ -58,7 +58,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
 
     let tokenIdBN: BigNumber
     if (isPublicCollection) {
-      const { data } = await api.sequencer.acquireDetail(collectionAddress)
+      const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
       tokenIdBN = BigNumber.from(data.tokenId)
     } else {
       tokenIdBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })
