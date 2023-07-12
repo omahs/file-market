@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useMemo } from 'react'
+import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
@@ -33,7 +34,8 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { payedMint, isLoading, freeMint, whiteList, modalProps } = useFileBunniesMint()
+  const { isConnected } = useAccount()
+  const { payedMint, isLoading, freeMint, whiteList, modalProps, isPayedMintSoldOut, isFreeMintSoldOut } = useFileBunniesMint()
   const rarityModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -61,6 +63,20 @@ const FileBunniesSection = observer(() => {
       },
     })
   }
+
+  const freeButtonVariant = useMemo(() => {
+    if (!whiteList && isConnected) return 'notWl'
+    if (isFreeMintSoldOut) return 'mintedOut'
+
+    return 'free'
+  }, [whiteList, isFreeMintSoldOut, isConnected])
+
+  const payedButtonVariant = useMemo(() => {
+    console.log(isPayedMintSoldOut)
+    if (isPayedMintSoldOut) return 'soldOut'
+
+    return 'mint'
+  }, [isPayedMintSoldOut])
 
   return (
     <>
@@ -117,9 +133,9 @@ const FileBunniesSection = observer(() => {
                   onClick: () => { rarityModalOpen() },
                 }}
                 buttonProps={{
-                  isDisabled: isLoading || whiteList === '',
+                  isDisabled: isLoading || whiteList === '' || isFreeMintSoldOut,
                   onClick: () => { freeMint() },
-                  variant: whiteList === '' ? 'notWl' : 'free',
+                  variant: freeButtonVariant,
                 }}
               />
               <WhitelistCard
@@ -129,8 +145,8 @@ const FileBunniesSection = observer(() => {
                 }}
                 buttonProps={{
                   onClick: () => { payedMint() },
-                  variant: 'mint',
-                  isDisabled: isLoading,
+                  variant: payedButtonVariant,
+                  isDisabled: isPayedMintSoldOut || isLoading,
                 }}
               />
             </CardsBlock>
