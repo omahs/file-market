@@ -1,56 +1,56 @@
-import EFT_logo_color_png from '../../../../../assets/img/BrandingPage/sub-brands/EFT_logo_color.png'
-import EFT_logo_color from '../../../../../assets/img/BrandingPage/sub-brands/EFT_logo_color.svg'
-import EFT_logo_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/EFT_logo_dark.png'
-import EFT_logo_dark from '../../../../../assets/img/BrandingPage/sub-brands/EFT_logo_dark.svg'
-import EFT_logo_light_png from '../../../../../assets/img/BrandingPage/sub-brands/EFT_logo_light.png'
-import EFT_logo_light from '../../../../../assets/img/BrandingPage/sub-brands/EFT_logo_light.svg'
-import FB_logomark_color_png from '../../../../../assets/img/BrandingPage/sub-brands/FB_logomark_color.png'
-import FB_logomark_color from '../../../../../assets/img/BrandingPage/sub-brands/FB_logomark_color.svg'
-import FB_logomark_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/FB_logomark_dark.png'
-import FB_logomark_dark from '../../../../../assets/img/BrandingPage/sub-brands/FB_logomark_dark.svg'
-import FB_logomark_light_png from '../../../../../assets/img/BrandingPage/sub-brands/FB_logomark_light.png'
-import FB_logomark_light from '../../../../../assets/img/BrandingPage/sub-brands/FB_logomark_light.svg'
-import FB_logotype_color_png from '../../../../../assets/img/BrandingPage/sub-brands/FB_logotype_color.png'
-import FB_logotype_color from '../../../../../assets/img/BrandingPage/sub-brands/FB_logotype_color.svg'
-import FB_logotype_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/FB_logotype_dark.png'
-import FB_logotype_dark from '../../../../../assets/img/BrandingPage/sub-brands/FB_logotype_dark.svg'
-import FB_logotype_light_png from '../../../../../assets/img/BrandingPage/sub-brands/FB_logotype_light.png'
-import FB_logotype_light from '../../../../../assets/img/BrandingPage/sub-brands/FB_logotype_light.svg'
-import FW_logomark_blue_png from '../../../../../assets/img/BrandingPage/sub-brands/FW_logomark_blue.png'
-import FW_logomark_blue from '../../../../../assets/img/BrandingPage/sub-brands/FW_logomark_blue.svg'
-import FW_logomark_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/FW_logomark_dark.png'
-import FW_logomark_dark from '../../../../../assets/img/BrandingPage/sub-brands/FW_logomark_dark.svg'
-import FW_logomark_light_png from '../../../../../assets/img/BrandingPage/sub-brands/FW_logomark_light.png'
-import FW_logomark_light from '../../../../../assets/img/BrandingPage/sub-brands/FW_logomark_light.svg'
-import FW_logotype_blue_png from '../../../../../assets/img/BrandingPage/sub-brands/FW_logotype_blue.png'
-import FW_logotype_blue from '../../../../../assets/img/BrandingPage/sub-brands/FW_logotype_blue.svg'
-import FW_logotype_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/FW_logotype_dark.png'
-import FW_logotype_dark from '../../../../../assets/img/BrandingPage/sub-brands/FW_logotype_dark.svg'
-import FW_logotype_light_png from '../../../../../assets/img/BrandingPage/sub-brands/FW_logotype_light.png'
-import FW_logotype_light from '../../../../../assets/img/BrandingPage/sub-brands/FW_logotype_light.svg'
+import eft_logo_color_png from '../../../../../assets/img/BrandingPage/sub-brands/eft_logo_color.png'
+import eft_logo_color_svg from '../../../../../assets/img/BrandingPage/sub-brands/eft_logo_color.svg'
+import eft_logo_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/eft_logo_dark.png'
+import eft_logo_dark_svg from '../../../../../assets/img/BrandingPage/sub-brands/eft_logo_dark.svg'
+import eft_logo_light_png from '../../../../../assets/img/BrandingPage/sub-brands/eft_logo_light.png'
+import eft_logo_light_svg from '../../../../../assets/img/BrandingPage/sub-brands/eft_logo_light.svg'
+import file_bunnies_logomark_color_png from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logomark_color.png'
+import file_bunnies_logomark_color_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logomark_color.svg'
+import file_bunnies_logomark_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logomark_dark.png'
+import file_bunnies_logomark_dark_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logomark_dark.svg'
+import file_bunnies_logomark_light_png from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logomark_light.png'
+import file_bunnies_logomark_light_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logomark_light.svg'
+import file_bunnies_logotype_color_png from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logotype_color.png'
+import file_bunnies_logotype_color_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logotype_color.svg'
+import file_bunnies_logotype_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logotype_dark.png'
+import file_bunnies_logotype_dark_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logotype_dark.svg'
+import file_bunnies_logotype_light_png from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logotype_light.png'
+import file_bunnies_logotype_light_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-bunnies_logotype_light.svg'
+import file_wallet_logomark_blue_png from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logomark_blue.png'
+import file_wallet_logomark_blue_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logomark_blue.svg'
+import file_wallet_logomark_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logomark_dark.png'
+import file_wallet_logomark_dark_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logomark_dark.svg'
+import file_wallet_logomark_light_png from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logomark_light.png'
+import file_wallet_logomark_light_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logomark_light.svg'
+import file_wallet_logotype_blue_png from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logotype_blue.png'
+import file_wallet_logotype_blue_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logotype_blue.svg'
+import file_wallet_logotype_dark_png from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logotype_dark.png'
+import file_wallet_logotype_dark_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logotype_dark.svg'
+import file_wallet_logotype_light_png from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logotype_light.png'
+import file_wallet_logotype_light_svg from '../../../../../assets/img/BrandingPage/sub-brands/file-wallet_logotype_light.svg'
 
 interface ISubBrands {
-  logo: {
+  eft: {
     color: string
     dark: string
     light: string
   }
-  logomarkFB: {
+  fileBunniesLogomark: {
     color: string
     dark: string
     light: string
   }
-  logotype: {
+  fileBunniesLogotype: {
     color: string
     dark: string
     light: string
   }
-  logomarkFW: {
+  fileWalletLogomark: {
     color: string
     dark: string
     light: string
   }
-  logotypeFW: {
+  fileWalletLogotype: {
     color: string
     dark: string
     light: string
@@ -58,57 +58,57 @@ interface ISubBrands {
 }
 
 export const SVG_SUB_BRANDS: ISubBrands = {
-  logo: {
-    color: EFT_logo_color,
-    dark: EFT_logo_dark,
-    light: EFT_logo_light,
+  eft: {
+    color: eft_logo_color_svg,
+    dark: eft_logo_dark_svg,
+    light: eft_logo_light_svg,
   },
-  logomarkFB: {
-    color: FB_logomark_color,
-    dark: FB_logomark_dark,
-    light: FB_logomark_light,
+  fileBunniesLogomark: {
+    color: file_bunnies_logomark_color_svg,
+    dark: file_bunnies_logomark_dark_svg,
+    light: file_bunnies_logomark_light_svg,
   },
-  logotype: {
-    color: FB_logotype_color,
-    dark: FB_logotype_dark,
-    light: FB_logotype_light,
+  fileBunniesLogotype: {
+    color: file_bunnies_logotype_color_svg,
+    dark: file_bunnies_logotype_dark_svg,
+    light: file_bunnies_logotype_light_svg,
   },
-  logomarkFW: {
-    color: FW_logomark_blue,
-    dark: FW_logomark_dark,
-    light: FW_logomark_light,
+  fileWalletLogomark: {
+    color: file_wallet_logomark_blue_svg,
+    dark: file_wallet_logomark_dark_svg,
+    light: file_wallet_logomark_light_svg,
   },
-  logotypeFW: {
-    color: FW_logotype_blue,
-    dark: FW_logotype_dark,
-    light: FW_logotype_light,
+  fileWalletLogotype: {
+    color: file_wallet_logotype_blue_svg,
+    dark: file_wallet_logotype_dark_svg,
+    light: file_wallet_logotype_light_svg,
   },
 }
 
 export const PNG_SUB_BRANDS: ISubBrands = {
-  logo: {
-    color: EFT_logo_color_png,
-    dark: EFT_logo_dark_png,
-    light: EFT_logo_light_png,
+  eft: {
+    color: eft_logo_color_png,
+    dark: eft_logo_dark_png,
+    light: eft_logo_light_png,
   },
-  logomarkFB: {
-    color: FB_logomark_color_png,
-    dark: FB_logomark_dark_png,
-    light: FB_logomark_light_png,
+  fileBunniesLogomark: {
+    color: file_bunnies_logomark_color_png,
+    dark: file_bunnies_logomark_dark_png,
+    light: file_bunnies_logomark_light_png,
   },
-  logotype: {
-    color: FB_logotype_color_png,
-    dark: FB_logotype_dark_png,
-    light: FB_logotype_light_png,
+  fileBunniesLogotype: {
+    color: file_bunnies_logotype_color_png,
+    dark: file_bunnies_logotype_dark_png,
+    light: file_bunnies_logotype_light_png,
   },
-  logomarkFW: {
-    color: FW_logomark_blue_png,
-    dark: FW_logomark_dark_png,
-    light: FW_logomark_light_png,
+  fileWalletLogomark: {
+    color: file_wallet_logomark_blue_png,
+    dark: file_wallet_logomark_dark_png,
+    light: file_wallet_logomark_light_png,
   },
-  logotypeFW: {
-    color: FW_logotype_blue_png,
-    dark: FW_logotype_dark_png,
-    light: FW_logotype_light_png,
+  fileWalletLogotype: {
+    color: file_wallet_logotype_blue_png,
+    dark: file_wallet_logotype_dark_png,
+    light: file_wallet_logotype_light_png,
   },
 }

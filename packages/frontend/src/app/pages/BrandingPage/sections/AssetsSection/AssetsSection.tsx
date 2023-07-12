@@ -65,14 +65,14 @@ export default function Assets () {
       </SwitchWrapper>
       <AssetsWrapper>
         <DownloadAsset
-          pngAsset={PNG_ASSETS.logotype_line[currentAssets]}
-          svgAsset={SVG_ASSETS.logotype_line[currentAssets]}
+          pngAsset={PNG_ASSETS.logoHorizontal[currentAssets]}
+          svgAsset={SVG_ASSETS.logoHorizontal[currentAssets]}
           title='Logotype (line)'
           previewStyle={previewStyle}
         />
         <DownloadAsset
-          pngAsset={PNG_ASSETS.logotype[currentAssets]}
-          svgAsset={SVG_ASSETS.logotype[currentAssets]}
+          pngAsset={PNG_ASSETS.logoVertical[currentAssets]}
+          svgAsset={SVG_ASSETS.logoVertical[currentAssets]}
           title='Logotype'
           previewStyle={previewStyle}
         />
