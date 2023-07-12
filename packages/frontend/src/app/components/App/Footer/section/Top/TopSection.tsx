@@ -63,8 +63,7 @@ const TopSectionStyle = styled('div', {
     },
   },
 })
-
-export const TextLink = styled('a', {
+const styleLink = {
   ...textVariant('secondary2').true,
   fontWeight: '500',
   color: 'white',
@@ -82,6 +81,13 @@ export const TextLink = styled('a', {
       },
     },
   },
+}
+export const TextLink = styled('a', {
+  ...styleLink,
+})
+
+export const TextLinkMock = styled(Link, {
+  ...styleLink,
 })
 
 export const Text = styled('span', {
@@ -151,6 +157,7 @@ export const Card = styled('a', {
 interface ILink {
   text: string
   url: string
+  isMock?: boolean
 }
 
 export const Cards: Array<{ img: string, blackImg: string, text: string, url: string }> = [
@@ -251,7 +258,8 @@ const TopSection = () => {
     },
     {
       text: 'Branding',
-      url: '',
+      url: '/branding',
+      isMock: true,
     },
     {
       text: 'Calendly',
@@ -267,15 +275,37 @@ const TopSection = () => {
       </div>
       <div className="section second">
         <HeaderText>Platform</HeaderText>
-        <SecondContent>{MarketPlaceItems.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+        <SecondContent>
+          {MarketPlaceItems.map((item, index) => {
+            return (
+              item.isMock ? <TextLinkMock key={index} to={item.url}>{item.text}</TextLinkMock>
+                : <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>
+            )
+          },
+          )}
+        </SecondContent>
       </div>
       <div className="section second">
         <HeaderText>Links</HeaderText>
-        <SecondContent>{Links.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+        <SecondContent>
+          {Links.map((item, index) => {
+            return (
+              item.isMock ? <TextLinkMock key={index} to={item.url}>{item.text}</TextLinkMock>
+                : <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>
+            )
+          })}
+        </SecondContent>
       </div>
       <div className="section second">
         <HeaderText>Company</HeaderText>
-        <SecondContent>{Company.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+        <SecondContent>
+          {Company.map((item, index) => {
+            return (
+              item.isMock ? <TextLinkMock key={index} to={item.url}>{item.text}</TextLinkMock>
+                : <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>
+            )
+          })}
+        </SecondContent>
       </div>
       <div className="section third">
         <HeaderText>Join our community</HeaderText>

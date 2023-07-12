@@ -31,7 +31,6 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
-    assert(mark3dConfig.gasPrice, 'gas price is undefined')
 
     const dealNumber = await blockchainDataProvider.getTransferCount(hexToBuffer(collectionAddress), +tokenId)
     const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)

@@ -148,7 +148,6 @@ export default function CreateCollectionPage() {
       <ErrorBody
         message={extractMessageFromError(error)}
         onClose={() => {
-          console.log('CLICCCCCKKK')
           void setModalOpen(false)
         }
         }

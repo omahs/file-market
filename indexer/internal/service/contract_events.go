@@ -13,7 +13,6 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"log"
 	"math/big"
-	"strings"
 	"time"
 )
 
@@ -61,7 +60,7 @@ func (s *service) onCollectionTransferEvent(
 	// Deleting token from sequencer
 	// NOTE: file bunnies tokens got deleted from sequencer only after TransferDraftCompletion
 	if token.CollectionAddress == s.cfg.PublicCollectionAddress {
-		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
+		if err := s.sequencer.DeleteTokenID(ctx, token.CollectionAddress, "", token.TokenId.Int64()); err != nil {
 			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %s. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
 		}
 	}
@@ -280,10 +279,10 @@ func (s *service) onTransferDraftEvent(
 	}
 
 	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 3,
+		InitialInterval: 3 * time.Second,
 		RandFactor:      0.5,
 		Multiplier:      2,
-		MaxInterval:     10,
+		MaxInterval:     10 * time.Second,
 	}
 
 	getOrderRetryOpts := retry.Options{
@@ -472,8 +471,7 @@ func (s *service) onTransferDraftCompletionEvent(
 		} else {
 			suffix = "payed"
 		}
-		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
-		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
+		if err := s.sequencer.DeleteTokenID(ctx, token.CollectionAddress, suffix, token.TokenId.Int64()); err != nil {
 			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
 		}
 	}

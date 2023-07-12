@@ -24,8 +24,14 @@ func (s *service) AddressInWhitelist(ctx context.Context, address common.Address
 		return nil, internalError
 	}
 
+	freeCount := s.sequencer.Count(ctx, s.cfg.FileBunniesCollectionAddress, rarity)
+	payedCount := s.sequencer.Count(ctx, s.cfg.FileBunniesCollectionAddress, "payed")
 	return &models.WhitelistResponse{
 		Whitelist: rarity,
+		OrdersLeft: &models.WhitelistResponseOrdersLeft{
+			Free:  freeCount,
+			Payed: payedCount,
+		},
 	}, nil
 }
 

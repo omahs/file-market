@@ -19,9 +19,10 @@
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
     "sequencer": {
-      "keyPrefix": "sequencer.",
-      "tokenIdTTL": "30m",
-      "checkInterval": "5m"
+      "keyPrefix": "sequencer",
+      "tokenIdTTL": "15m",
+      "checkInterval": "5m",
+      "switchTokenTimeout": "3m"
     },
     "currencyConversionCacheTTL": "1h",
     "mode": "dev"

@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -12,7 +13,8 @@ import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import { Params } from '../../../../../utils/router'
 import { toCurrency } from '../../../../../utils/web3'
-import BaseModal from '../../../../Modal/Modal'
+import { BaseModal } from '../../../../Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
 import { ActionButtonProps } from './types/types'
 
@@ -21,14 +23,15 @@ export type ButtonPlaceOrderProps = ActionButtonProps & {
 }
 
 export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
-  tokenFullId, onStart, onEnd, isDisabled, onError,
+  tokenFullId, isDisabled,
 }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder()
   const conversionRateStore = useConversionRateStore()
+  const { wrapAction } = wrapButtonActionsFunction<OrderFormValue>()
   const { collectionAddress, tokenId } = useParams<Params>()
   const orderStore = useOrderStore(collectionAddress, tokenId)
-
+  const { transferStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -36,24 +39,18 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
     loadingMsg: 'Placing order',
   })
 
-  const { blockStore } = useStores()
-  const onSubmit = async ({ price }: OrderFormValue) => {
+  const onSubmit = wrapAction(async ({ price }: OrderFormValue) => {
     closeModal()
-    onStart?.()
     const receipt = await placeOrder({
       ...tokenFullId,
       price,
-    }).catch(e => {
-      onError?.()
-      throw e
     })
+    if (receipt?.blockNumber) {
+      transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
+    }
     conversionRateStore.data?.rate &&
     orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
-    if (receipt?.blockNumber) {
-      blockStore.setReceiptBlock(receipt.blockNumber)
-    }
-    onEnd?.()
-  }
+  })
 
   return (
     <>

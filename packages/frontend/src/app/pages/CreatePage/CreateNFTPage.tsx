@@ -267,7 +267,6 @@ export const CreateNFTPage: React.FC = observer(() => {
   const saveValue = (value: string | undefined) => {
     if (value && !chosenTags.includes(value)) {
       setChosenTags([...chosenTags, value])
-      console.log(choseTagValue)
       resetField('tags')
     }
   }
