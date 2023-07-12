@@ -27,7 +27,13 @@ const DownloadButtonIcon = styled('img', {
   },
 })
 
-export default function DownloadButton (props: DownloadButtonProps) {
+const getFileName = (href: string) => {
+  const parts = href.split('/')
+
+  return parts[parts.length - 1].toLowerCase() + '?url'
+}
+
+export default function DownloadButton(props: DownloadButtonProps) {
   return (
     <LinkButton
       whiteWithBlue
@@ -37,8 +43,13 @@ export default function DownloadButton (props: DownloadButtonProps) {
       bigHg={props.bigBtn}
       className={props.class}
     >
-      <Txt body2 css={{ fontWeight: '$primary' }}>{props.children}</Txt>
-      <DownloadButtonIcon src={DownloadIconSrc} iconSize={props.bigIcon ? 'big' : 'default'} />
+      <Txt body2 css={{ fontWeight: '$primary' }}>
+        {props.children}
+      </Txt>
+      <DownloadButtonIcon
+        src={DownloadIconSrc}
+        iconSize={props.bigIcon ? 'big' : 'default'}
+      />
     </LinkButton>
   )
 }
