@@ -29,8 +29,9 @@ const DownloadButtonIcon = styled('img', {
 
 const getFileName = (href: string) => {
   const parts = href.split('/')
+  const fileName = parts[parts.length - 1].toLowerCase()
 
-  return parts[parts.length - 1].toLowerCase() + '?url'
+  return fileName
 }
 
 export default function DownloadButton(props: DownloadButtonProps) {
@@ -39,7 +40,7 @@ export default function DownloadButton(props: DownloadButtonProps) {
       whiteWithBlue
       style={{ columnGap: '8px', minHeight: '100%' }}
       href={props.downloadHref}
-      download
+      download={getFileName(props.downloadHref)}
       bigHg={props.bigBtn}
       className={props.class}
     >
