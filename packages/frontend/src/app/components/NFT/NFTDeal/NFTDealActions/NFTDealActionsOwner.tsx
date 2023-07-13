@@ -1,7 +1,9 @@
+import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC } from 'react'
 
 import { Transfer } from '../../../../../swagger/Api'
+import { mark3dConfig } from '../../../../config/mark3d'
 import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
@@ -31,6 +33,9 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   isApprovedExchange,
   runIsApprovedRefetch,
 }) => {
+  const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
+  const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
+  const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
 
   return (
     <>
@@ -69,20 +74,20 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           isDisabled={isDisabled}
         />
       </HideAction>
-      <HideAction hide={!!transfer || !isApprovedExchange}>
+      <HideAction hide={!!transfer || !isApprovedExchange || isFileBunnies}>
         <ButtonPlaceOrder
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
         />
       </HideAction>
-      <HideAction hide={!!transfer || isApprovedExchange}>
+      <HideAction hide={!!transfer || isApprovedExchange || isFileBunnies}>
         <ButtonApproveExchange
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
           onEnd={() => { runIsApprovedRefetch() }}
         />
       </HideAction>
-      <HideAction hide={!!transfer}>
+      <HideAction hide={!!transfer || isFileBunnies}>
         <ButtonInitTransfer
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
