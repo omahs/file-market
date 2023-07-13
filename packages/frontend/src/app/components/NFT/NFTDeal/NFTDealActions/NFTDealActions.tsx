@@ -1,9 +1,11 @@
 import { Tooltip } from '@nextui-org/react'
+import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 
 import { styled } from '../../../../../styles'
 import { Order, Transfer } from '../../../../../swagger/Api'
+import { mark3dConfig } from '../../../../config/mark3d'
 import { useStores } from '../../../../hooks'
 import { TokenFullId } from '../../../../processing/types'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
@@ -46,13 +48,25 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
 
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
 
+  const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
+  const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
+  const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
+
+  const fileBunniesText = useMemo(() => {
+    return isFileBunnies && !transfer ? 'The secondary market will open on August 28th' : ''
+  }, [isFileBunnies, transfer])
+
+  const isDisabledFileBunnies = useMemo(() => {
+    return isFileBunnies && !transfer
+  }, [isFileBunnies, transfer])
+
   return (
-    <ButtonsContainer content={blockStore.confirmationsText}>
+    <ButtonsContainer content={fileBunniesText ?? blockStore.confirmationsText}>
       {isOwner ? (
         <NFTDealActionOwner
           transfer={transfer}
           tokenFullId={tokenFullId}
-          isDisabled={isDisabled}
+          isDisabled={isDisabled || isDisabledFileBunnies}
           isApprovedExchange={isApprovedExchange}
           runIsApprovedRefetch={runIsApprovedRefetch}
         />
