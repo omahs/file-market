@@ -1,9 +1,7 @@
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC } from 'react'
 
 import { Transfer } from '../../../../../swagger/Api'
-import { mark3dConfig } from '../../../../config/mark3d'
 import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
@@ -22,6 +20,7 @@ export interface NFTDealActionsOwnerProps {
   isDisabled?: boolean
   isApprovedExchange?: boolean
   runIsApprovedRefetch: () => void
+  isFileBunnies?: boolean
 }
 
 const permissions = transferPermissions.owner
@@ -32,11 +31,8 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   isDisabled,
   isApprovedExchange,
   runIsApprovedRefetch,
+  isFileBunnies,
 }) => {
-  const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
-  const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
-  const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
-
   return (
     <>
       <HideAction hide={!transfer || !permissions.canWaitBuyer(transfer)}>
@@ -74,20 +70,20 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           isDisabled={isDisabled}
         />
       </HideAction>
-      <HideAction hide={!!transfer || !isApprovedExchange || isFileBunnies}>
+      <HideAction hide={!!transfer || !isApprovedExchange}>
         <ButtonPlaceOrder
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
         />
       </HideAction>
-      <HideAction hide={!!transfer || isApprovedExchange || isFileBunnies}>
+      <HideAction hide={!!transfer || isApprovedExchange}>
         <ButtonApproveExchange
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
           onEnd={() => { runIsApprovedRefetch() }}
         />
       </HideAction>
-      <HideAction hide={!!transfer || isFileBunnies}>
+      <HideAction hide={!!transfer}>
         <ButtonInitTransfer
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
