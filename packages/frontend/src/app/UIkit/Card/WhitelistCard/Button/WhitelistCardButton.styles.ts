@@ -26,6 +26,8 @@ export const StyledButton = styled(Button, {
       mint: { $$color: '#01E3F8' },
       check: { $$color: '#DD5FEA' },
       notWl: { $$color: '$colors$white' },
+      soldOut: { $$color: '$colors$white' },
+      mintedOut: { $$color: '$colors$white' },
     },
   },
 })

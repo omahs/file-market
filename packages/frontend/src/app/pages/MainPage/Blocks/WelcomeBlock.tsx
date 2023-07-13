@@ -9,6 +9,8 @@ import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
 import greenCircles from '../img/GreenCircles.svg'
 import greenSun from '../img/GreenSun.svg'
+import Achievements from './Achievements'
+import Publications from './Publications/Publications'
 import SupportedBy from './SupportedBy'
 
 const BackgroundContainer = styled('section', {
@@ -218,6 +220,8 @@ export default function WelcomeBlock() {
             </div>
           </NavigateBlock>
           <SupportedBy />
+          <Achievements />
+          <Publications />
           <HowToGetStart />
         </WelcomeInfo>
       </WelcomeScreenWrapper>
