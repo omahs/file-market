@@ -143,11 +143,6 @@ export const PreviewNFTFlow = ({
     return false
   }, [hiddenFile, getFile, canViewFile])
 
-  useEffect(() => {
-    console.log(`isCanView - ${isCanView}`)
-    console.log(`isLoading - ${isLoading}`)
-  }, [isCanView, isLoading])
-
   const handleLoadClick = async () => {
     if (!getFile) return
 

@@ -30,9 +30,6 @@ export class SeedProvider implements ISeedProvider {
   async init(): Promise<void> {
     this.seedEncrypted = await this.storage.get(seedStorageKey)
     this.hashSeed = await this.storage.get(hashSeedStorageKey)
-
-    console.log('init finished', this.seedEncrypted)
-    console.log('init finished', this.hashSeed)
   }
 
   private setSeed(seed: ArrayBuffer | undefined) {

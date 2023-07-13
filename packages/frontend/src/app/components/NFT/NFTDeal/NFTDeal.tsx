@@ -3,16 +3,18 @@ import { observer } from 'mobx-react-lite'
 import React, { FC, PropsWithChildren } from 'react'
 
 import { styled } from '../../../../styles'
-import { Order, Transfer } from '../../../../swagger/Api'
-import { useIsOwner } from '../../../processing'
+import { Order } from '../../../../swagger/Api'
+import { useStatusModal } from '../../../hooks/useStatusModal'
+import { useWatchStatusesTransfer } from '../../../processing/nft-interaction/useWatchStatusesTransfer'
 import { TokenFullId } from '../../../processing/types'
 import { PriceBadge, Txt } from '../../../UIkit'
+import { LoadingOpacity } from '../../../UIkit/Loading/LoadingOpacity'
 import { formatCurrency, formatUsd } from '../../../utils/web3'
+import BaseModal from '../../Modal/Modal'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
 
 export type NFTDealProps = PropsWithChildren<{
   tokenFullId: TokenFullId
-  transfer?: Transfer
   order?: Order
   reFetchOrder?: () => void // currently order is refreshed only when it's created and cancelled
 }>
@@ -65,41 +67,56 @@ const IsNotListedContainer = styled('div', {
 })
 
 export const NFTDeal: FC<NFTDealProps> = observer(({
-  transfer,
   order,
   tokenFullId,
   reFetchOrder,
   children,
 }) => {
-  const { isOwner } = useIsOwner(tokenFullId)
+  const { isOwner, isApprovedExchange, isLoading, error, transfer, isBuyer, runIsApprovedRefetch } = useWatchStatusesTransfer({ tokenFullId })
+
+  const { modalProps } = useStatusModal({
+    statuses: { result: undefined, isLoading: false, error: error as unknown as string },
+    okMsg: '',
+    loadingMsg: '',
+  })
+
+  if (error) {
+    return <BaseModal {...modalProps} />
+  }
 
   return (
     <NFTDealStyle isNotListed={!transfer && !isOwner}>
-      {(children || transfer) && (
-        <DealContainerInfo>
-          {children}
-          {transfer && (
-            <PriceBadge
-              title="Price"
-              left={formatCurrency(BigNumber.from(order?.price ?? 0))}
-              right={`~${formatUsd(order?.priceUsd ?? '')}`}
-              size='lg'
-              background='secondary'
-            />
-          )}
-        </DealContainerInfo>
-      )}
-      <NFTDealActions
-        transfer={transfer}
-        order={order}
-        tokenFullId={tokenFullId}
-        reFetchOrder={reFetchOrder}
-      />
-      {(!transfer && !isOwner) && (
-        <IsNotListedContainer>
-          <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>
-        </IsNotListedContainer>
-      )}
+      <LoadingOpacity isLoading={isLoading}>
+        {(children || transfer) && (
+          <DealContainerInfo>
+            {children}
+            {transfer && (
+              <PriceBadge
+                title="Price"
+                left={formatCurrency(BigNumber.from(order?.price ?? 0))}
+                right={`~${formatUsd(order?.priceUsd ?? '')}`}
+                size='lg'
+                background='secondary'
+              />
+            )}
+          </DealContainerInfo>
+        )}
+        <NFTDealActions
+          transfer={transfer}
+          order={order}
+          tokenFullId={tokenFullId}
+          reFetchOrder={reFetchOrder}
+          isOwner={isOwner}
+          isBuyer={isBuyer}
+          isApprovedExchange={isApprovedExchange}
+          runIsApprovedRefetch={runIsApprovedRefetch}
+        />
+        {(!transfer && !isOwner) && (
+          <IsNotListedContainer>
+            <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>
+          </IsNotListedContainer>
+        )}
+      </LoadingOpacity>
     </NFTDealStyle>
   )
 })
