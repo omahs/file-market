@@ -41,7 +41,7 @@ const Box = styled('div', {
 const BoxContent = styled('div', {
   position: 'relative',
   zIndex: '2',
-  border: '4px solid #A9ADB1',
+  border: '2px solid #6B6F76',
   borderRadius: '$3',
   overflow: 'hidden',
   backgroundColor: '$white',
