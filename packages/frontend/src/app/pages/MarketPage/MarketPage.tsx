@@ -3,17 +3,11 @@ import { useMemo } from 'react'
 import { Outlet } from 'react-router'
 import { useLocation } from 'react-router-dom'
 
-import { styled } from '../../../styles'
 import { useCollectionsListStore } from '../../hooks/useCollectionsListStore'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
 import { PageLayout, TabItem, Tabs } from '../../UIkit'
+import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import FileBunniesSection from './FileBunnies/FileBunniesSection/FileBunniesSection'
-
-const TabsContainer = styled('div', {
-  marginBottom: '$4',
-  position: 'relative',
-  width: 'max-content',
-})
 
 const MarketPage = observer(() => {
   const { data: orderData } = useOpenOrderListStore()

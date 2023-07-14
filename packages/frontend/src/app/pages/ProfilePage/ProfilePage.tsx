@@ -9,6 +9,7 @@ import { useCollectionAndTokenListStore } from '../../hooks'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
 import { Container, gradientPlaceholderImg, TabItem, Tabs, textVariant } from '../../UIkit'
+import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router'
@@ -68,10 +69,6 @@ const Inventory = styled(Container, {
   },
   boxShadow: '$footer',
   minHeight: 460, // prevent floating footer
-})
-
-const TabsContainer = styled('div', {
-  marginBottom: '$4',
 })
 
 const ProfilePage: React.FC = observer(() => {

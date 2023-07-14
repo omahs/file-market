@@ -7,6 +7,7 @@ import { styled } from '../../../styles'
 import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { Badge, Container, gradientPlaceholderImg, Link, NavLink, Tabs, textVariant } from '../../UIkit'
+import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
@@ -91,10 +92,6 @@ const Inventory = styled(Container, {
   },
   boxShadow: '$footer',
   minHeight: 460, // prevent floating footer
-})
-
-const TabsContainer = styled('div', {
-  marginBottom: '$4',
 })
 
 const StyledContainer = styled(Container, {
