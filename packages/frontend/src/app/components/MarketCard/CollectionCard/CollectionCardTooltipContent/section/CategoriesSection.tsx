@@ -6,7 +6,7 @@ import {
   CollectionCardSection,
   CollectionCardSectionContent,
   CollectionCardSectionHeader,
-} from '../CollectionCardTooltipContent.module'
+} from '../CollectionCardTooltipContent.styles'
 
 const CategoriesCard = styled(CollectionCardBaseTag, {
   borderRadius: '12px',

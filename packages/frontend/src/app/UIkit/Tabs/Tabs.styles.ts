@@ -16,4 +16,12 @@ export const StyledAmount = styled(SwitchButton, {
   height: '100%',
   width: '245px',
   color: '#898E94',
+  cursor: 'default',
+  '&:hover': {
+    borderColor: '#EAEAEC',
+  },
+  '@sm': {
+    width: '200px',
+    right: '-110px',
+  },
 })

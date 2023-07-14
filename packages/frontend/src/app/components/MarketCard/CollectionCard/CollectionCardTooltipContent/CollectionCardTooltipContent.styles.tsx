@@ -11,6 +11,7 @@ export const CollectionCardTooltipContentStyled = styled('div', {
   gap: '12px',
   padding: '10px 16px 16px',
   width: '480px',
+  marginRight: '50px',
   '@md': {
     width: '400px',
   },

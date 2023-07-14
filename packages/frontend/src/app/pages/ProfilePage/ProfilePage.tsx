@@ -85,12 +85,14 @@ const ProfilePage: React.FC = observer(() => {
   const tabs = useMemo(() => {
     const tabs: TabItem[] = [
       {
-        name: 'Owned',
+        value: 'Owned',
+        label: 'owned',
         url: 'owned',
         amount: collectionAndTokenListStore.data.tokensTotal ?? 0,
       },
       {
-        name: 'History',
+        value: 'history',
+        label: 'History',
         url: 'history',
         amount: transferHistoryStore.total,
       },
@@ -100,7 +102,8 @@ const ProfilePage: React.FC = observer(() => {
       tabs.push({
         amount: userTransferStore.total,
         url: 'transfers',
-        name: 'Transfers',
+        value: 'transfers',
+        label: 'Transfers',
       })
     }
 

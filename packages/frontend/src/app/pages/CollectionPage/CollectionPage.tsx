@@ -175,7 +175,8 @@ const CollectionPage = observer(() => {
           <Tabs
             tabs={[
               {
-                name: 'EFTs',
+                value: 'efts',
+                label: 'EFTs',
                 url: 'efts',
                 amount: collectionAndNfts?.total ?? 0,
               },

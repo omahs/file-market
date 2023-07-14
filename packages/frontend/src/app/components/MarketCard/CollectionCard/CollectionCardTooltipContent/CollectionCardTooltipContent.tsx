@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { CollectionCardTooltipContentStyled } from './CollectionCardTooltipContent.module'
+import { CollectionCardTooltipContentStyled } from './CollectionCardTooltipContent.styles'
 import CategoriesSection from './section/CategoriesSection'
 import FilesSection from './section/FilesSection'
 

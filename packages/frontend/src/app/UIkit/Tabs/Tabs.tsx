@@ -1,7 +1,9 @@
+import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { OptionSwitch, SwitchButton } from '../../components/Switch/Switch'
+import { cutNumber } from '../../utils/number'
 import { StyledAmount, SwitchWrapperTabs } from './Tabs.styles'
 
 export interface TabItem extends OptionSwitch {
@@ -13,7 +15,7 @@ export interface TabsProps {
   tabs: TabItem[]
 }
 
-export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
+export const Tabs: React.FC<TabsProps> = observer(({ tabs }) => {
   const [tab, setTab] = useState<TabItem | undefined>()
   const location = useLocation()
   const navigate = useNavigate()
@@ -32,7 +34,11 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       tabIndex = tabs[0]
     }
     setTab(tabIndex)
-  }, [location])
+  }, [location, tabs])
+
+  useEffect(() => {
+    console.log(tab)
+  }, [tab?.value])
 
   return (
     <>
@@ -44,13 +50,13 @@ export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
               onChange(tabItem)
               navigate(tabItem.url)
             }}
-            activate={tab === tabItem}
+            activate={tab?.value === tabItem.value}
           >
             {tabItem.label}
           </SwitchButton>
         ))}
       </SwitchWrapperTabs>
-      {tab?.amount && <StyledAmount>{'Total 123k'}</StyledAmount>}
+      <StyledAmount>{`Total ${cutNumber(tab?.amount)}`}</StyledAmount>
     </>
   )
-}
+})

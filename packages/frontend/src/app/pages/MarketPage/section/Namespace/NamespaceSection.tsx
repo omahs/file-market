@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { NamespaceCard, NamespaceCardProps } from '../../components/MarketCard/NamespaceCard'
-import namespaceImg from './img/namespace.jpg'
-import userImg from './img/userImg.jpg'
-import { CardsContainer } from './NftSection'
+import { NamespaceCard, NamespaceCardProps } from '../../../../components/MarketCard/NamespaceCard'
+import namespaceImg from '../../img/namespace.jpg'
+import userImg from '../../img/userImg.jpg'
+import { CardsContainer } from '../Nft'
 
 const card: NamespaceCardProps = {
   imageURL: namespaceImg,
