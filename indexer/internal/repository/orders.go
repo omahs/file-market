@@ -38,8 +38,9 @@ func (p *postgres) GetAllActiveOrders(
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
 			WHERE lts.rank = 1 AND 
 			      lts.status NOT IN ('Finished', 'Cancelled') AND 
-			      NOT (t.collection_address=$3 AND t.number=1) AND 
+			      o.visibility = 'Visible' AND
 			      o.exchange_address != '0x' AND
+			      NOT (t.collection_address=$3 AND t.number=1) AND 
 			      o.id < $1
 		)
 		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, fo.block_number,
@@ -127,6 +128,7 @@ func (p *postgres) GetAllActiveOrdersTotal(
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
 			WHERE lts.rank = 1 AND 
 			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      o.visibility = 'Visible' AND
 			      o.exchange_address != '0x' AND
 			      NOT (t.collection_address=$1 AND t.number=1)
 			
@@ -404,7 +406,7 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 
 func (p *postgres) InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING id`,
+	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2,$3,$4,$5, 'Visible') RETURNING id`,
 		order.TransferId,
 		order.Price.String(),
 		strings.ToLower(order.Currency.String()),

@@ -23,6 +23,13 @@ services:
     volumes:
       - ~/logs:/logs
     restart: unless-stopped
+  autoseller-service:
+    image: file-market-autoseller-service:latest
+    volumes:
+      - ~/logs:/logs
+    restart: unless-stopped
+    depends_on:
+      - autoseller-redis
   indexer-swagger:
     image: swaggerapi/swagger-ui:latest
     ports:
@@ -59,8 +66,14 @@ services:
     env_file: ~/.indexer_pg_env
     depends_on:
       - indexer-postgres
+  autoseller-redis:
+    image: redis:7
+    volumes:
+      - autoseller-redis-data:/data
+    command: redis-server --save 60 1
 
 volumes:
   indexer-postgres-data:
   cache-redis-data:
   indexer-redis-data:
+  autoseller-redis-data:

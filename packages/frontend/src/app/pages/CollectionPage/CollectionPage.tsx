@@ -117,6 +117,14 @@ const CollectionPage = observer(() => {
     return gradientPlaceholderImg
   }, [collectionAndNfts?.collection])
 
+  const collectionName = useMemo(() => {
+    if (collectionAndNfts?.collection?.type === 'Public Collection') {
+      return 'Public Collection'
+    }
+
+    return collectionAndNfts?.collection?.name
+  }, [collectionAndNfts?.collection])
+
   return (
     <GrayOverlay>
       <Background />
@@ -125,7 +133,7 @@ const CollectionPage = observer(() => {
           <Profile>
             <ProfileHeader>
               <ProfileImage src={collectionImgUrl} />
-              <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
+              <ProfileName>{collectionName}</ProfileName>
             </ProfileHeader>
             <Badges>
               <NavLink
