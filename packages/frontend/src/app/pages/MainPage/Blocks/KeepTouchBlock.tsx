@@ -12,7 +12,7 @@ const KeepTouchBlockStyled = styled('div', {
   display: 'flex',
   alignItems: 'center',
   background: `url(${CirclesImg}), url(${GridImg})`,
-  backgroundPosition: 'top 50% left 70px, top 50% right 70px',
+  backgroundPosition: 'top 50% left 30px, top 50% right 70px',
   backgroundRepeat: 'no-repeat',
   marginLeft: 'calc(((100vw - $breakpoints$xl) * 0.3 + $space$4) * -1)',
   '@xl': {

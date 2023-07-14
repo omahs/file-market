@@ -4,7 +4,6 @@ import React from 'react'
 
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
-import BoxShadowed from '../BoxShadowed/BoxShadowed'
 
 const ConvertKitStyle = styled(ConvertKitForm, {
   background: 'white',
@@ -77,6 +76,9 @@ const EmailContainer = styled('div', {
   width: '100%',
   alignItems: 'center',
   padding: '32px',
+  borderRadius: '16px',
+  border: '2px solid #6B6F76',
+  background: 'white',
   '@md': {
     gap: '12px',
     padding: '16px',
@@ -86,12 +88,10 @@ const EmailContainer = styled('div', {
 
 const EmailForm = () => {
   return (
-    <BoxShadowed>
-      <EmailContainer>
-        <Title>Keep in touch</Title>
-        <ConvertKitStyle formId={5117091} submitText={'Get Access'} emailPlaceholder={'Email'} />
-      </EmailContainer>
-    </BoxShadowed>
+    <EmailContainer>
+      <Title>Keep in touch</Title>
+      <ConvertKitStyle formId={5117091} submitText={'Get Access'} emailPlaceholder={'Email'} />
+    </EmailContainer>
   )
 }
 
