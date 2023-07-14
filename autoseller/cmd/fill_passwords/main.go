@@ -32,8 +32,8 @@ func main() {
 	}
 	for _, r := range records[1:] {
 		hash, password := r[1], r[2]
-		if err := rdb.Set(context.Background(), fmt.Sprintf("autoseller.keys.%s", hash), password, redis.KeepTTL); err != nil {
-			log.Panicln(err)
+		if res := rdb.Set(context.Background(), fmt.Sprintf("autoseller.keys.%s", hash), password, redis.KeepTTL); res.Err() != nil {
+			log.Panicln(res.Err())
 		}
 	}
 }
