@@ -4,21 +4,30 @@ import React from 'react'
 
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
+import BoxShadowed from '../BoxShadowed/BoxShadowed'
 
 const ConvertKitStyle = styled(ConvertKitForm, {
+  background: 'white',
+  borderRadius: '16px',
   gap: '10px',
   display: 'flex',
-  width: '100%',
   justifyContent: 'center',
+  '@md': {
+    width: '100%',
+  },
   '& input': {
-    border: '1px solid #2F3134',
+    width: '400px',
+    height: '48px',
+    border: '1px solid #232528',
     filter: 'drop-shadow(0px 4px 20px rgba(35, 37, 40, 0.05))',
-    borderRadius: '12px',
-    padding: '14px 16px',
+    borderRadius: '16px',
+    padding: '8px 16px',
     color: '#232528',
     ...textVariant('primary1').true,
     fontWeight: '400',
-    width: '60%',
+    '@md': {
+      width: '70%',
+    },
     '@sm': {
       width: '80%',
       margin: '0 auto',
@@ -31,8 +40,11 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     border: '2px solid #028FFF',
     borderRadius: '12px',
     color: '#028FFF',
-    width: '20%',
+    width: '160px',
     height: '48px',
+    '@md': {
+      width: '30%',
+    },
     '@sm': {
       width: '80%',
       margin: '0 auto',
@@ -46,9 +58,40 @@ const ConvertKitStyle = styled(ConvertKitForm, {
   },
 })
 
+const Title = styled('h3', {
+  ...textVariant('primary1').true,
+  fontWeight: '600',
+  fontSize: '$ternary2',
+  color: 'gray700',
+  '@md': {
+    fontSize: '24px',
+  },
+  '@sm': {
+    fontSize: '16px',
+  },
+})
+
+const EmailContainer = styled('div', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  width: '100%',
+  alignItems: 'center',
+  padding: '32px',
+  '@md': {
+    gap: '12px',
+    padding: '16px',
+    flexDirection: 'column',
+  },
+})
+
 const EmailForm = () => {
   return (
-    <ConvertKitStyle formId={5117091} submitText={'Get Access'} emailPlaceholder={'Email'} />
+    <BoxShadowed>
+      <EmailContainer>
+        <Title>Keep in touch</Title>
+        <ConvertKitStyle formId={5117091} submitText={'Get Access'} emailPlaceholder={'Email'} />
+      </EmailContainer>
+    </BoxShadowed>
   )
 }
 

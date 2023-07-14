@@ -10,6 +10,7 @@ import bgStorage from '../img/bgStorage.svg'
 import greenCircles from '../img/GreenCircles.svg'
 import greenSun from '../img/GreenSun.svg'
 import Achievements from './Achievements'
+import KeepTouchBlock from './KeepTouchBlock'
 import Publications from './Publications/Publications'
 import SupportedBy from './SupportedBy'
 
@@ -223,6 +224,7 @@ export default function WelcomeBlock() {
           <Achievements />
           <Publications />
           <HowToGetStart />
+          <KeepTouchBlock />
         </WelcomeInfo>
       </WelcomeScreenWrapper>
     </BackgroundContainer>
