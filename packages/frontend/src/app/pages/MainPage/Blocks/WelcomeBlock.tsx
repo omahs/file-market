@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { styled } from '../../../../styles'
 import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
+import EmailForm from '../components/EmailForm/EmailForm'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
@@ -223,6 +224,7 @@ export default function WelcomeBlock() {
           <Achievements />
           <Publications />
           <HowToGetStart />
+          <EmailForm />
         </WelcomeInfo>
       </WelcomeScreenWrapper>
     </BackgroundContainer>
