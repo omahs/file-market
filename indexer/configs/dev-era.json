@@ -1,0 +1,30 @@
+{
+  "server": {
+    "port": 9302,
+    "readTimeout": "5s",
+    "writeTimeout": "5s",
+    "maxHeaderBytes": 1024
+  },
+  "handler": {
+    "requestTimeout": "5s",
+    "swaggerHost": "https://dev-indexer-swagger.mark3d.xyz"
+  },
+  "service": {
+    "accessTokenAddress": "",
+    "fraudDeciderWeb2Address": "",
+    "exchangeAddress": "",
+    "publicCollectionAddress": "",
+    "fileBunniesCollectionAddress": "",
+    "fileBunniesCreatorAddress": "",
+    "allowedBlockNumberDifference": 20,
+    "healthCheckInterval": 60,
+    "sequencer": {
+      "keyPrefix": "sequencer",
+      "tokenIdTTL": "15m",
+      "checkInterval": "5m",
+      "switchTokenTimeout": "3m"
+    },
+    "currencyConversionCacheTTL": "1h",
+    "mode": "dev"
+  }
+}
