@@ -1,62 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { Flex } from '../Flex'
-import { MuiTabs } from './MuiTabs'
-import { StyledTab, StyledTabAmount, StyledTabName } from './Tabs.styles'
+import { OptionSwitch, SwitchButton } from '../../components/Switch/Switch'
+import { StyledAmount, SwitchWrapperTabs } from './Tabs.styles'
 
-export interface TabItem {
-  name: string
+export interface TabItem extends OptionSwitch {
   url: string
   amount?: number
 }
 
 export interface TabsProps {
   tabs: TabItem[]
-  textAlign?: 'left'
 }
 
-export const Tabs: React.FC<TabsProps> = ({ tabs, textAlign }) => {
-  const [tab, setTab] = useState<false | number>(false)
+export const Tabs: React.FC<TabsProps> = ({ tabs }) => {
+  const [tab, setTab] = useState<TabItem | undefined>()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const onChange = (event: React.SyntheticEvent, newValue: number) => {
+  const onChange = (newValue: TabItem) => {
     setTab(newValue)
+    navigate(newValue.url)
   }
 
   useEffect(() => {
     const currentTabUrl = location?.pathname?.split('/')?.at(-1) ?? ''
-    let tabIndex = tabs.findIndex((t) =>
-      t.url.match(new RegExp(currentTabUrl, 'i')),
+    let tabIndex = tabs.find((t) =>
+      t.value === currentTabUrl,
     )
-    if (tabIndex === -1) {
-      tabIndex = 0
+    if (!tabIndex) {
+      tabIndex = tabs[0]
     }
     setTab(tabIndex)
   }, [location])
 
   return (
-    <MuiTabs value={tab} onChange={onChange}>
-      {tabs.map((tab) => (
-        <StyledTab
-          key={tab.name}
-          LinkComponent={'a'}
-          sx={{
-            paddingLeft: textAlign === 'left' ? 0 : undefined,
-          }}
-          icon={(
-            <Flex gap='$1' justifyContent='start'>
-              <StyledTabName>{tab.name}</StyledTabName>
-              {tab.amount && <StyledTabAmount>{tab.amount}</StyledTabAmount>}
-            </Flex>
-          )}
-          onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            event.preventDefault()
-            navigate(tab.url)
-          }}
-        />
-      ))}
-    </MuiTabs>
+    <>
+      <SwitchWrapperTabs>
+        {tabs.map((tabItem) => (
+          <SwitchButton
+            key={tabItem.value}
+            onClick={() => {
+              onChange(tabItem)
+              navigate(tabItem.url)
+            }}
+            activate={tab === tabItem}
+          >
+            {tabItem.label}
+          </SwitchButton>
+        ))}
+      </SwitchWrapperTabs>
+      {tab?.amount && <StyledAmount>{'Total 123k'}</StyledAmount>}
+    </>
   )
 }
