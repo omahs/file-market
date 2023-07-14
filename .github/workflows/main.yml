@@ -127,7 +127,7 @@ jobs:
         working-directory: autoseller/
   update:
     runs-on: [self-hosted, main]
-    needs: [ check-changes, build-frontend, build-oracle, build-indexer, build-healthcheck ]
+    needs: [ check-changes, build-frontend, build-oracle, build-indexer, build-healthcheck, build-autoseller ]
     steps:
       - uses: actions/checkout@v3
       - name: Load frontend artifacts
@@ -156,7 +156,7 @@ jobs:
         run: ./check_migration.sh
       - name: Update compose
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' || needs.check-changes.outputs.backend_changes == 'true' || needs.check-changes.outputs.healthcheck_changes == 'true' }}
-        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service healthcheck-service
+        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service healthcheck-service autoseller-redis autoseller-service
       - name: update nginx
         run: |
           sudo mv filemarket.conf /etc/nginx/conf.d/filemarket.conf
