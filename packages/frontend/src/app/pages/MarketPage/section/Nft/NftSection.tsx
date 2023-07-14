@@ -2,16 +2,10 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { styled } from '../../../styles'
-import { NFTCard } from '../../components'
-import Plug from '../../components/Plug/Plug'
-import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
-import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../UIkit'
-
-export const CardsContainer = styled('div', {
-  justifyContent: 'normal',
-  ...nftCardListCss,
-})
+import { NFTCard } from '../../../../components'
+import Plug from '../../../../components/Plug/Plug'
+import { useOpenOrderListStore } from '../../../../hooks/useOrdersListStore'
+import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../../UIkit'
 
 const NftSection: React.FC = observer(() => {
   const openOrderListStore = useOpenOrderListStore()

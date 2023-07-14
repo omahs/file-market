@@ -1,6 +1,7 @@
 import { BlockStore } from './BlockStore/BlockStore'
 import { CollectionStore } from './Collection/CollectionStore'
 import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
+import { CollectionListStore } from './CollectionsList/CollectionListStore'
 import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
 import { ConversionRateStore } from './Currency/ConversionRateStore'
 import { DialogStore } from './Dialog/DialogStore'
@@ -34,6 +35,7 @@ export class RootStore {
   publicCollectionStore: PublicCollectionStore
   conversionRateStore: ConversionRateStore
   whitelistStore: WhiteListStore
+  collectionsListStore: CollectionListStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -53,6 +55,7 @@ export class RootStore {
     this.publicCollectionStore = new PublicCollectionStore(this)
     this.conversionRateStore = new ConversionRateStore(this)
     this.whitelistStore = new WhiteListStore(this)
+    this.collectionsListStore = new CollectionListStore(this)
   }
 }
 
