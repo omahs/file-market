@@ -61,15 +61,7 @@ const SlideIconTitle = styled('img', {
 })
 
 const SlideContent = styled('div', {
-  padding: '8px 24px 20px',
-})
-
-const SlideTag = styled('span', {
-  display: 'block',
-  color: '#6B6F76',
-  fontSize: '$primary3',
-  lineHeight: 'body4',
-  marginBottom: '4px',
+  padding: '14px 24px 20px',
 })
 
 const SlideText = styled('p', {
@@ -123,12 +115,11 @@ const Publications = () => {
           return (
             <SwiperSlide key={index}>
               <BoxShadowed fullHeight>
-                <SlideLink href={item.href}>
+                <SlideLink href={item.href} target="_blank">
                   <SlideHeader>
                     <SlideIconTitle src={item.titleLogo} />
                   </SlideHeader>
                   <SlideContent>
-                    <SlideTag>{item.tag}</SlideTag>
                     <SlideText>
                       {item.text}
                     </SlideText>

@@ -59,7 +59,7 @@ const AchievementItemDescr = styled('p', {
 const AchievementItem = (props: AchievementItemProps) => {
   return (
     <BoxShadowed fullHeight>
-      <AchievementItemLink href={props.href}>
+      <AchievementItemLink href={props.href} target="_blank">
         <AchievementItemIcon src={props.img} />
         <div>
           <AchievementItemTitle>{props.title}</AchievementItemTitle>
