@@ -20,6 +20,7 @@ export interface NFTDealActionsOwnerProps {
   isDisabled?: boolean
   isApprovedExchange?: boolean
   runIsApprovedRefetch: () => void
+  isFileBunnies?: boolean
 }
 
 const permissions = transferPermissions.owner
@@ -30,8 +31,8 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   isDisabled,
   isApprovedExchange,
   runIsApprovedRefetch,
+  isFileBunnies,
 }) => {
-
   return (
     <>
       <HideAction hide={!transfer || !permissions.canWaitBuyer(transfer)}>
