@@ -113,7 +113,7 @@ const Publications = () => {
       <Swiper {...swiperSettings}>
         {PublicationsData.map((item, index) => {
           return (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} className="swiper-slide publications-slide">
               <BoxShadowed fullHeight>
                 <SlideLink href={item.href} target="_blank">
                   <SlideHeader>
