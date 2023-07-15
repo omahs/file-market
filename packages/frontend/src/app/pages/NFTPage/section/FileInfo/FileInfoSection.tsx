@@ -57,7 +57,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'File decrypted and download started',
-    loadingMsg: 'File decryption is in progress)',
+    loadingMsg: 'File decryption is in progress',
     waitForSign: false,
   })
 
