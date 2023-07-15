@@ -1,9 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom'
 
-import CollectionSection from './CollectionSection'
-import CreatorSection from './CreatorSection'
-import NamespaceSection from './NamespaceSection'
-import NftSection from './NftSection'
+import CollectionSection from './section/Collection/CollectionSection'
+import NftSection from './section/Nft/NftSection'
 
 export const marketRoutes: RouteObject[] = [
   {
@@ -18,12 +16,12 @@ export const marketRoutes: RouteObject[] = [
     path: 'collections',
     element: <CollectionSection />,
   },
-  {
-    path: 'creators',
-    element: <CreatorSection />,
-  },
-  {
-    path: 'namespaces',
-    element: <NamespaceSection />,
-  },
+  // {
+  //   path: 'creators',
+  //   element: <CreatorSection />,
+  // },
+  // {
+  //   path: 'namespaces',
+  //   element: <NamespaceSection />,
+  //  },
 ]

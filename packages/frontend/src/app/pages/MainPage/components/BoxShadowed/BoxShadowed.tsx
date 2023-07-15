@@ -1,12 +1,15 @@
+import { ReactNode } from 'react'
+
 import { styled } from '../../../../../styles'
 
 interface BoxShadowedProps {
-  children: React.ReactNode
+  children: ReactNode
   fullHeight?: boolean
 }
 
 const Box = styled('div', {
   position: 'relative',
+  width: '100%',
   '&::before': {
     position: 'absolute',
     top: '8px',
