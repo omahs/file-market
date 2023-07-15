@@ -18,9 +18,6 @@ const AchievementItemLink = styled('a', {
   backgroundColor: '$white',
   padding: '$3',
   '@sm': {
-    padding: '12px',
-  },
-  '@media (max-width: 550px)': {
     padding: '$3',
   },
   '&[href]:hover': {
@@ -34,9 +31,6 @@ const AchievementItemIcon = styled('img', {
   display: 'block',
   width: '65px',
   height: 'auto',
-  '@sm': {
-    width: '50px',
-  },
 })
 
 const AchievementItemTitle = styled('h4', {
@@ -98,10 +92,6 @@ const AchievementsList = styled('div', {
     rowGap: '26px',
   },
   '@sm': {
-    columnGap: '14px',
-    rowGap: '14px',
-  },
-  '@media (max-width: 550px)': {
     display: 'flex',
     flexDirection: 'column',
     rowGap: '18px',
