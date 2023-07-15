@@ -155,7 +155,7 @@ jobs:
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
         run: ./check_migration.sh
       - name: Update compose
-        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' || needs.check-changes.outputs.backend_changes == 'true' || needs.check-changes.outputs.healthcheck_changes == 'true' }}
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' || needs.check-changes.outputs.backend_changes == 'true' || needs.check-changes.outputs.healthcheck_changes == 'true' || needs.check-changes.outputs.autoseller_changes == 'true' }}
         run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service healthcheck-service autoseller-redis autoseller-service
       - name: update nginx
         run: |
