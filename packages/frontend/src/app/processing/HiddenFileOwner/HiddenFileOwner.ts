@@ -29,20 +29,31 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   }
 
   async #getFilePassword(): Promise<ArrayBuffer> {
+    console.log('Start assert')
     assertSeed(this.seedProvider.seed)
 
+    console.log('Creator')
+
     const creator = await this.blockchainDataProvider.getTokenCreator(...this.#tokenFullIdArgs)
+
+    console.log('If')
 
     if (this.address === utils.getAddress(creator)) {
       const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)
 
+      console.log('If success')
+
       return aesKeyAndIv.key
     }
+
+    console.log('If not success')
 
     const {
       encryptedPassword,
       dealNumber,
     } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
+
+    console.log('Eft Rsa Der')
 
     const { priv } = await this.crypto.eftRsaDerivation(
       this.seedProvider.seed,
@@ -50,6 +61,8 @@ export class HiddenFileOwner implements IHiddenFileOwner {
       dealNumber,
       { disableWorker: this.#isFirefox },
     )
+
+    console.log('Return rsa')
 
     return this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
   }
