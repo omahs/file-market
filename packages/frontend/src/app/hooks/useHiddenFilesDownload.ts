@@ -42,8 +42,11 @@ export function useHiddenFileDownload(
       name: hiddenMeta?.name || hiddenFileURI,
       size: hiddenMeta?.size || 0,
       download: async () => {
+        console.log('Encrypted start')
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
+        console.log('Owner start')
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
+        console.log('Decrypt start')
         const file = await owner.decryptFile(encryptedFile, hiddenMeta)
 
         console.log(file)
