@@ -59,10 +59,13 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     if (result) return { ok: true, result }
 
     try {
+      console.log('Password')
       const password = await this.#getFilePassword()
+      console.log('DecryptFile2')
       const decryptedFile = await this.crypto.aesDecrypt(encryptedFile, password)
-
+      console.log('File')
       result = new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type })
+      console.log('Fileset')
       this.filesCache.set(this.#tokenFullIdArgs, result)
 
       return { ok: true, result }
