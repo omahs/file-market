@@ -46,6 +46,8 @@ export function useHiddenFileDownload(
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
         const file = await owner.decryptFile(encryptedFile, hiddenMeta)
 
+        console.log(file)
+
         if (file.ok) {
           saveAs(file.result, file.result.name)
 
