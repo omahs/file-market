@@ -4,6 +4,8 @@ import React from 'react'
 
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
+import CirclesImgSrc from '../../img/KeepTouch/Circles.svg'
+import GridImgSrc from '../../img/KeepTouch/Grid.svg'
 
 const ConvertKitStyle = styled(ConvertKitForm, {
   background: 'white',
@@ -71,6 +73,13 @@ const Title = styled('h3', {
 })
 
 const EmailContainer = styled('div', {
+  position: 'relative',
+  width: '100%',
+})
+
+const EmailContainerInner = styled('div', {
+  position: 'relative',
+  zIndex: 2,
   display: 'flex',
   justifyContent: 'space-between',
   width: '100%',
@@ -86,11 +95,41 @@ const EmailContainer = styled('div', {
   },
 })
 
+const GridImg = styled('img', {
+  position: 'absolute',
+  zIndex: 1,
+  top: '50%',
+  right: '-4.2%',
+  transform: 'translateY(-50%)',
+  '@md': {
+    display: 'none',
+  },
+})
+
+const CirclesImg = styled('img', {
+  position: 'absolute',
+  zIndex: 1,
+  top: '50%',
+  left: '-6.85%',
+  transform: 'translateY(-50%)',
+  '@md': {
+    display: 'none',
+  },
+})
+
 const EmailForm = () => {
   return (
     <EmailContainer>
-      <Title>Keep in touch</Title>
-      <ConvertKitStyle formId={5117091} submitText={'Get Access'} emailPlaceholder={'Email'} />
+      <CirclesImg src={CirclesImgSrc} />
+      <EmailContainerInner>
+        <Title>Keep in touch</Title>
+        <ConvertKitStyle
+          formId={5117091}
+          submitText={'Get Access'}
+          emailPlaceholder={'Email'}
+        />
+      </EmailContainerInner>
+      <GridImg src={ GridImgSrc} />
     </EmailContainer>
   )
 }
