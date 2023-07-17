@@ -8,8 +8,8 @@ const AssetInner = styled('div', {
   border: '4px solid #EAEAEC',
   borderRadius: '$4',
   '@md': {
-    flexDirection: 'column-reverse',
-  },
+    flexDirection: 'column-reverse'
+  }
 })
 
 const AssetLinksWrapper = styled('div', {
@@ -18,15 +18,15 @@ const AssetLinksWrapper = styled('div', {
   rowGap: '24px',
   padding: '44px 48px',
   '@lg': {
-    padding: '36px 40px',
+    padding: '36px 40px'
   },
   '@md': {
     alignItems: 'center',
-    padding: '30px 36px',
+    padding: '30px 36px'
   },
   '@sm': {
-    padding: '16px 24px',
-  },
+    padding: '16px 24px'
+  }
 })
 
 const AssetName = styled(Txt, {
@@ -36,14 +36,14 @@ const AssetName = styled(Txt, {
   lineHeight: '1',
   color: '$gray700',
   '@lg': {
-    fontSize: '1.75rem',
+    fontSize: '1.75rem'
   },
   '@md': {
-    fontSize: '$h4',
+    fontSize: '$h4'
   },
   '@sm': {
-    fontSize: '$h5',
-  },
+    fontSize: '$h5'
+  }
 })
 
 const AssetPreviewWrapper = styled('div', {
@@ -58,26 +58,27 @@ const AssetPreviewWrapper = styled('div', {
   width: 'auto',
   borderRadius: '$4',
   transition: 'all 0.3s ease-in-out',
+  minWidth: '372px',
   variants: {
     previewStyle: {
       light: {
         border: '4px solid #A9ADB1',
-        backgroundColor: '$white',
+        backgroundColor: '$white'
       },
       dark: {
         border: '4px solid #A9ADB1',
-        backgroundColor: '$gray700',
-      },
-    },
+        backgroundColor: '$gray700'
+      }
+    }
   },
   '@md': {
     width: 'calc(100% + 8px)',
     left: '-4px',
     height: '120px',
     img: {
-      height: '100%',
-    },
-  },
+      height: '100%'
+    }
+  }
 })
 
 const AssetLinks = styled('div', {
@@ -86,22 +87,22 @@ const AssetLinks = styled('div', {
   '@sm': {
     columnGap: '12px',
     a: {
-      minWidth: '147px',
-    },
+      minWidth: '147px'
+    }
   },
   '@xs': {
     columnGap: '10px',
     a: {
-      minWidth: '120px',
-    },
+      minWidth: '120px'
+    }
   },
   '@media (max-width: 360px)': {
     a: {
       width: '110px',
       minWidth: '110px',
-      paddingRight: '10px',
-    },
-  },
+      paddingRight: '10px'
+    }
+  }
 })
 
 interface DownloadAssetProps {
@@ -111,7 +112,7 @@ interface DownloadAssetProps {
   previewStyle: 'light' | 'dark'
 }
 
-export default function DownloadAsset (props: DownloadAssetProps) {
+export default function DownloadAsset(props: DownloadAssetProps) {
   return (
     <AssetInner>
       <AssetLinksWrapper>
