@@ -1380,7 +1380,8 @@ func (s *service) processBlock(block *types.Block) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	lastBlock, err := s.repository.GetLastBlock(context.Background())
+	ctx := context.WithValue(context.Background(), "mod", s.cfg.Mode)
+	lastBlock, err := s.repository.GetLastBlock(ctx)
 	if err != nil {
 		if err == redis.Nil {
 			blockNum, err := s.ethClient.GetLatestBlockNumber(context.Background())
@@ -1462,7 +1463,8 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 			return latest, err
 		}
 	}
-	if err := s.repository.SetLastBlock(context.Background(), pending); err != nil {
+	ctx = context.WithValue(context.Background(), "mode", s.cfg.Mode)
+	if err := s.repository.SetLastBlock(ctx, pending); err != nil {
 		log.Println("set last block failed")
 	}
 	return pending, err
