@@ -70,6 +70,8 @@ export const rsaEncryptNative = (crypto: Crypto) =>
 
 export const rsaDecryptNative = (crypto: Crypto) =>
   async (message: ArrayBuffer, privateKey: RsaPrivateKey): Promise<ArrayBuffer> => {
+    console.log('IMPORT PRIVATE KEY')
     const key = await importPrivateKey(crypto)(privateKey)
+    console.log('IMPORT DECRYPT')
     return crypto.subtle.decrypt({name: 'RSA-OAEP'}, key, message)
   }

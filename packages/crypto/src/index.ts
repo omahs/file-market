@@ -62,6 +62,7 @@ export class FileMarketCrypto {
   }
 
   rsaDecrypt = async (data: ArrayBuffer, key: RsaPrivateKey): Promise<ArrayBuffer> => {
+    console.log('RSA DECRYPT NATIVE')
     return rsaDecryptNative(this.crypto)(data, key)
   }
 
