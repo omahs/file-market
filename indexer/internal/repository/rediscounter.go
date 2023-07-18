@@ -22,7 +22,7 @@ type blockCounter struct {
 }
 
 func (b *blockCounter) GetLastBlock(ctx context.Context) (*big.Int, error) {
-	num := b.rdb.Get(ctx, lastBlockKey)
+	num := b.rdb.Get(ctx, getKey(ctx))
 	if num.Err() != nil {
 		log.Printf("key error. Key: %s, err: %s", lastBlockKey, num.Err())
 		return nil, num.Err()
@@ -39,5 +39,17 @@ func (b *blockCounter) GetLastBlock(ctx context.Context) (*big.Int, error) {
 }
 
 func (b *blockCounter) SetLastBlock(ctx context.Context, lastBlock *big.Int) error {
-	return b.rdb.Set(ctx, lastBlockKey, lastBlock.String(), redis.KeepTTL).Err()
+	return b.rdb.Set(ctx, getKey(ctx), lastBlock.String(), redis.KeepTTL).Err()
+}
+
+func getKey(ctx context.Context) string {
+	mode, ok := ctx.Value("mode").(string)
+	if !ok {
+		return ""
+	}
+	key := lastBlockKey
+	if mode != "" {
+		key = fmt.Sprintf("%s:%s", lastBlockKey, mode)
+	}
+	return key
 }

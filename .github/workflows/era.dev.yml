@@ -45,7 +45,7 @@ jobs:
         run: cp ~/.era_indexer_dev_env indexer/.env
       - name: Build contracts
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
-        run: make build-contracts
+        run: make build-zk-contracts
         working-directory: indexer/
       - name: Build models
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
