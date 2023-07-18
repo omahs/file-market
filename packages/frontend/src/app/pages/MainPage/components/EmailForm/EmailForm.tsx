@@ -13,6 +13,11 @@ const ConvertKitStyle = styled(ConvertKitForm, {
   gap: '10px',
   display: 'flex',
   justifyContent: 'center',
+  '@lg': {
+    '& > *': {
+      flexGrow: 1,
+    },
+  },
   '@md': {
     width: '100%',
   },
@@ -27,10 +32,10 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     ...textVariant('primary1').true,
     fontWeight: '400',
     '@md': {
-      width: '70%',
+      width: '100%',
     },
     '@sm': {
-      width: '80%',
+      width: '100%',
       margin: '0 auto',
     },
   },
@@ -47,7 +52,7 @@ const ConvertKitStyle = styled(ConvertKitForm, {
       width: '30%',
     },
     '@sm': {
-      width: '80%',
+      width: '100%',
       margin: '0 auto',
     },
   },
@@ -64,11 +69,14 @@ const Title = styled('h3', {
   fontWeight: '600',
   fontSize: '$ternary2',
   color: 'gray700',
+  '@lg': {
+    textAlign: 'center',
+  },
   '@md': {
     fontSize: '24px',
   },
   '@sm': {
-    fontSize: '16px',
+    textAlign: 'left',
   },
 })
 
@@ -88,10 +96,19 @@ const EmailContainerInner = styled('div', {
   borderRadius: '16px',
   border: '2px solid #6B6F76',
   background: 'white',
-  '@md': {
-    gap: '12px',
-    padding: '16px',
+  '@lg': {
     flexDirection: 'column',
+    rowGap: '24px',
+    alignItems: 'stretch',
+  },
+  '@md': {
+    flexDirection: 'column',
+  },
+  '@sm': {
+    padding: '24px',
+  },
+  '@xs': {
+    padding: '16px',
   },
 })
 
@@ -101,8 +118,22 @@ const GridImg = styled('img', {
   top: '50%',
   right: '-4.2%',
   transform: 'translateY(-50%)',
+  '@xl': {
+    right: '-6.2%',
+  },
+  '@lg': {
+    right: '-8.2%',
+  },
   '@md': {
-    display: 'none',
+    width: '440px',
+    right: '-10.2%',
+  },
+  '@sm': {
+    width: '518px',
+    top: 'auto',
+    left: '50%',
+    bottom: '-107px',
+    transform: 'translateX(-50%)',
   },
 })
 
@@ -110,10 +141,24 @@ const CirclesImg = styled('img', {
   position: 'absolute',
   zIndex: 1,
   top: '50%',
-  left: '-6.85%',
+  left: '-8%',
   transform: 'translateY(-50%)',
+  '@xl': {
+    left: '-11.5%',
+  },
+  '@lg': {
+    left: '-14.5%',
+    width: '240px',
+  },
   '@md': {
-    display: 'none',
+    left: '-16%',
+    width: '200px',
+  },
+  '@sm': {
+    width: '256px',
+    top: '-100px',
+    left: '50%',
+    transform: 'translateX(-50%)',
   },
 })
 
@@ -126,7 +171,7 @@ const EmailForm = () => {
         <ConvertKitStyle
           formId={5117091}
           submitText={'Get Access'}
-          emailPlaceholder={'Email'}
+          emailPlaceholder={'Enter Email'}
         />
       </EmailContainerInner>
       <GridImg src={ GridImgSrc} />

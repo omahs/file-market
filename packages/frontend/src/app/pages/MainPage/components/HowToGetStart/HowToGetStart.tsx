@@ -217,6 +217,12 @@ const HowToGetStart = () => {
             '& .nextui-collapse-title-content': {
               width: '80%',
             },
+            '@media (max-width: 600px)': {
+              padding: '12px 24px',
+            },
+            '@media (max-width: 400px)': {
+              padding: '12px 16px',
+            },
           }}
           arrowIcon={(
             <ArrowContent>

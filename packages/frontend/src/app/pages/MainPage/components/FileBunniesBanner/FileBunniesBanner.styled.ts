@@ -94,6 +94,7 @@ export const MainBanner = styled('div', {
 
 export const MainBannerBlock = styled('div', {
   position: 'relative',
+  margin: '0 auto',
   '@lg': {
     height: '217px',
   },
