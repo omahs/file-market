@@ -38,7 +38,7 @@ export default function DownloadButton(props: DownloadButtonProps) {
   return (
     <LinkButton
       whiteWithBlue
-      style={{ columnGap: '8px', minHeight: '100%' }}
+      style={{ columnGap: '8px', minHeight: '100%', backgroundColor: '#F9F9F9' }}
       href={props.downloadHref}
       download={getFileName(props.downloadHref)}
       bigHg={props.bigBtn}
