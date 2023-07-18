@@ -14,7 +14,7 @@ services:
   era-oracle-service:
     image: file-market-era-oracle-service:latest
     depends_on:
-      - oracle-redis
+      - era-oracle-redis
     volumes:
       - ~/era-logs:/logs
     restart: unless-stopped
