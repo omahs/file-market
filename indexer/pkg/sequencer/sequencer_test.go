@@ -1,36 +1,48 @@
 package sequencer
 
+//import (
+//	"encoding/json"
+//	"github.com/ethereum/go-ethereum/common"
+//	"github.com/go-redis/redis/v8"
+//	"log"
+//	"net/http"
+//	"strconv"
+//	"testing"
+//	"time"
+//)
+//
 //func TestSeq(t *testing.T) {
 //	client := redis.NewClient(&redis.Options{
 //		Addr: "localhost:6379",
 //	})
 //	cfg := &Config{
-//		KeyPrefix:     "sequencer.",
-//		TokenIdTTL:    30 * time.Second,
-//		CheckInterval: 30 * time.Second,
+//		KeyPrefix:          "sequencer",
+//		TokenIdTTL:         3 * time.Minute,
+//		CheckInterval:      30 * time.Second,
+//		SwitchTokenTimeout: 1 * time.Minute,
 //	}
 //
-//	pubCollectionAddr := "1"
-//	fileBunniesAddr := "2"
-//	seq := New(cfg, client, map[string]Range{
-//		pubCollectionAddr:                           {0, 1_00},
-//		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 60},
-//		fmt.Sprintf("%s.uncommon", fileBunniesAddr): {60, 70},
-//		fmt.Sprintf("%s.payed", fileBunniesAddr):    {70, 100},
-//	})
+//	//addr := common.HexToAddress("11")
+//	//addr2 := common.HexToAddress("12")
+//	//for i := 0; i < 10; i++ {
+//	//	client.SAdd(context.TODO(), fmt.Sprintf("%s.%s.common", cfg.KeyPrefix, addr), i)
+//	//	client.SAdd(context.TODO(), fmt.Sprintf("%s.%s.uncommon", cfg.KeyPrefix, addr), i)
+//	//	client.SAdd(context.TODO(), fmt.Sprintf("%s.%s.common", cfg.KeyPrefix, addr2), i)
+//	//	client.SAdd(context.TODO(), fmt.Sprintf("%s.%s.uncommon", cfg.KeyPrefix, addr2), i)
+//	//}
+//
+//	seq := New(cfg, client)
 //
 //	// `curl "localhost/?address=1"`
 //	// `curl -X POST "localhost/?address=1&tokenId=1"`
 //	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-//		address := r.URL.Query().Get("address")
+//		address := common.HexToAddress(r.URL.Query().Get("address"))
+//		wallet := common.HexToAddress(r.URL.Query().Get("wallet"))
 //		suffix := r.URL.Query().Get("suffix")
+//
 //		switch r.Method {
 //		case http.MethodGet:
-//			key := address
-//			if suffix != "" {
-//				key = fmt.Sprintf("%s.%s", address, suffix)
-//			}
-//			tokenId, err := seq.Acquire(r.Context(), key)
+//			tokenId, err := seq.Acquire(r.Context(), address, suffix, wallet)
 //			if err != nil {
 //				http.Error(w, err.Error(), http.StatusInternalServerError)
 //				return
@@ -41,7 +53,7 @@ package sequencer
 //			tokenIdStr := r.URL.Query().Get("tokenId")
 //			tokenId, _ := strconv.ParseInt(tokenIdStr, 10, 64)
 //
-//			if err := seq.DeleteTokenID(r.Context(), address, tokenId); err != nil {
+//			if err := seq.DeleteTokenID(r.Context(), address, suffix, tokenId); err != nil {
 //				http.Error(w, err.Error(), http.StatusInternalServerError)
 //				return
 //			}
@@ -49,7 +61,7 @@ package sequencer
 //			json.NewEncoder(w).Encode(map[string]int64{"tokenId": tokenId})
 //
 //		default:
-//			w.Write([]byte("ERror"))
+//			w.Write([]byte("Error"))
 //		}
 //	})
 //

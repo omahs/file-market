@@ -171,6 +171,7 @@ func NewService(
 }
 
 func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse, *models.ErrorResponse) {
+	ctx = context.WithValue(ctx, "mode", s.cfg.Mode)
 	lastBlockNumber, err := s.repository.GetLastBlock(ctx)
 	if err != nil {
 		return nil, &models.ErrorResponse{
@@ -1380,7 +1381,7 @@ func (s *service) processBlock(block *types.Block) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	ctx := context.WithValue(context.Background(), "mod", s.cfg.Mode)
+	ctx := context.WithValue(context.Background(), "mode", s.cfg.Mode)
 	lastBlock, err := s.repository.GetLastBlock(ctx)
 	if err != nil {
 		if err == redis.Nil {
