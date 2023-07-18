@@ -83,7 +83,7 @@ jobs:
         run: docker-compose -f docker-compose.era.dev.yml up -d era-indexer-postgres era-indexer-redis era-oracle-redis era-indexer-service era-oracle-service era-healthcheck-service
       - name: update nginx
         run: |
-          sudo mv filemarket.era.dev.conf /etc/nginx/conf.d/filemarket.dev.conf
+          sudo mv filemarket.era.dev.conf /etc/nginx/conf.d/filemarket.era.dev.conf
           sudo nginx -s reload
       - name: Set changes
         run: |
