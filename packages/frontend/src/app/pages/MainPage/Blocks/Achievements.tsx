@@ -46,7 +46,7 @@ const AchievementItemTitle = styled('h4', {
 
 const AchievementItemDescr = styled('p', {
   fontSize: '$primary2',
-  lineHeight: '1',
+  lineHeight: '1.1',
   color: '$gray700',
 })
 
@@ -65,7 +65,7 @@ const AchievementItem = (props: AchievementItemProps) => {
 }
 
 const AchievementsSection = styled('section', {
-  marginBottom: '88px',
+  marginBottom: '100px',
   '@lg': {
     marginBottom: '80px',
   },
@@ -83,7 +83,7 @@ const AchievementsSection = styled('section', {
 const AchievementsList = styled('div', {
   display: 'grid',
   gridTemplateColumns: 'repeat(3, 1fr)',
-  gridTemplateRows: 'repeat(4, 1fr)',
+  gridTemplateRows: 'repeat(3, 1fr)',
   columnGap: '32px',
   rowGap: '32px',
   '@md': {

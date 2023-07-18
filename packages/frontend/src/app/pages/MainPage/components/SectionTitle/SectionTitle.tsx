@@ -8,20 +8,30 @@ interface SectionTitleProps {
 
 const Title = styled('h1', {
   ...textVariant('fourfold1').true,
+  lineHeight: '1.2',
   color: '$gray700',
   '@lg': {
-    fontSize: 'calc(1.5vw + 30px)',
+    fontSize: 'calc(1.5vw + 20px)',
+  },
+  '@sm': {
+    fontSize: 24,
+  },
+  '@xs': {
+    fontSize: 22,
   },
   variants: {
     marginBottom: {
       32: {
         marginBottom: '$4',
         '@lg': {
-          marginBottom: 'calc(1.5vw + 15px)',
+          marginBottom: 'calc(1.5vw + 10px)',
         },
       },
       40: {
         marginBottom: '$5',
+        '@lg': {
+          marginBottom: 'calc(1.5vw + 15px)',
+        },
       },
     },
   },

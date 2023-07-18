@@ -251,6 +251,28 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           },
         },
       },
+      whiteWithBlueMd: {
+        true: {
+          background: 'white',
+          ...textVariant('primary1').true,
+          fontSize: '16px',
+          border: '2px solid #028FFF',
+          borderRadius: '12px',
+          color: '#028FFF',
+          '&[data-hovered=true]': {
+            opacity: 1,
+            filter: 'brightness(1.1)',
+          },
+          '&[data-disabled=true]': {
+            color: '$gray400',
+            border: '2px solid $gray400 !important',
+            cursor: 'not-allowed',
+            '& img': {
+              filter: 'contrast(0)',
+            },
+          },
+        },
+      },
       isDisabled: {
         true: {
           color: '$gray400',
