@@ -6,9 +6,8 @@ import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
-import bgStorage from '../img/bgStorage.svg'
-import greenCircles from '../img/GreenCircles.svg'
-import greenSun from '../img/GreenSun.svg'
+import bgStorage from '../img/StorageBG.svg'
+import sunGreen from '../img/SunGreen.svg'
 import Achievements from './Achievements'
 import KeepTouchBlock from './KeepTouchBlock'
 import Publications from './Publications/Publications'
@@ -19,18 +18,19 @@ const BackgroundContainer = styled('section', {
 })
 
 const WelcomeScreenWrapper = styled('section', {
-  background: `url(${bgStorage}), url(${greenCircles})`,
   width: '100%',
   backgroundSize: '480px',
   backgroundRepeat: 'no-repeat',
   $$topPad: '260px',
-  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0',
   position: 'relative',
   '& .greenSun': {
     zIndex: '1',
     position: 'absolute',
-    top: '-50px',
-    left: '-10px',
+    top: '52px',
+    left: '7px',
+    '@media (max-width: 1750px)': {
+      left: '-45px',
+    },
     '@lg': {
       display: 'none',
     },
@@ -44,36 +44,64 @@ const WelcomeScreenWrapper = styled('section', {
 })
 const Title = styled('h1', {
   ...textVariant('fourfold1').true,
+  lineHeight: '1.25',
   color: '$gray800',
   '@lg': {
-    fontSize: 'calc(1.5vw + 30px)',
-    textAlign: 'center',
-    margin: 'auto',
+    fontSize: 'calc(1.5vw + 20px)',
   },
   '@sm': {
-    fontSize: 30,
+    fontSize: 24,
     '& > br': {
       display: 'none',
     },
   },
+  '@xs': {
+    fontSize: 22,
+  },
   maxWidth: '871px',
   marginBottom: 0,
 })
+
 const Description = styled('p', {
   ...textVariant('body1').true,
   fontWeight: 400,
-  color: '$gray800',
+  color: '$gray700',
   maxWidth: 776,
-  marginTop: '$3',
-  paddingBottom: '48px',
+  marginTop: '24px',
+  paddingBottom: '64px',
   '@lg': {
-    textAlign: 'center',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    paddingBottom: '58px',
+  },
+  '@md': {
+    fontSize: '18px',
+    paddingBottom: '54px',
+    marginTop: '20px',
   },
   '@sm': {
-    marginTop: '$5',
-    fontSize: '$body2',
+    fontSize: '16px',
+    marginTop: '16px',
+  },
+  '@xs': {
+    fontSize: '14px',
+    paddingBottom: '48px',
+    marginTop: '12px',
+  },
+})
+
+const EFTLinkWrapper = styled('span', {
+  '& > a': {
+    ...textVariant('body1').true,
+    borderBottom: '1px solid #028FFF',
+    fontWeight: '400',
+    '@md': {
+      fontSize: '18px',
+    },
+    '@sm': {
+      fontSize: '16px',
+    },
+    '@xs': {
+      fontSize: '14px',
+    },
   },
 })
 
@@ -117,31 +145,63 @@ export const ToolDescription = styled('p', {
 })
 
 const NavigateBlock = styled(MainBlock, {
-  maxWidth: 777,
-  padding: '64px 59px',
+  maxWidth: 616,
+  padding: '48px',
   flexDirection: 'column',
-  gap: '42px',
+  rowGap: '32px',
   '& .buttonContainer': {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    columnGap: '32px',
     width: '100%',
-    justifyContent: 'space-between',
+    '@lg': {
+      columnGap: '24px',
+    },
     '@md': {
+      columnGap: '12px',
+    },
+    '@media (max-width: 500px)': {
+      display: 'flex',
       flexDirection: 'column',
-      gap: '12px',
+      rowGap: '8px',
     },
   },
+  '@lg': {
+    maxWidth: 617,
+    rowGap: '28px',
+    padding: '40px',
+  },
   '@md': {
-    padding: '48px 32px !important',
+    rowGap: '24px',
+    maxWidth: 498,
+    padding: '32px',
   },
   '@sm': {
-    padding: '48px 24px !important',
+    padding: '24px',
+  },
+  '@media (max-width: 500px)': {
+    rowGap: '16px',
+  },
+  '@xs': {
+    padding: '16px',
   },
 })
 
 const NavigateTitle = styled('h4', {
-  ...textVariant('fourfold2').true,
+  ...textVariant('fourfold3').true,
+  lineHeight: '1',
   '@md': {
-    ...textVariant('fourfold3').true,
+    fontSize: '20px',
+  },
+  '@media (max-width: 500px)': {
+    lineHeight: '1.25',
+    textAlign: 'center',
+  },
+  br: {
+    display: 'none',
+    '@media (max-width: 500px)': {
+      display: 'block',
+    },
   },
 })
 
@@ -157,7 +217,29 @@ const WelcomeInfo = styled(Container, {
     paddingTop: 'calc($layout$navBarHeight - 60px)',
   },
   '@sm': {
-    paddingBottom: '$5',
+    paddingBottom: '100px',
+  },
+})
+
+const StorageImg = styled('img', {
+  position: 'absolute',
+  top: '2.5%',
+  left: '55%',
+  '@xl': {
+    top: '2%',
+    left: '65%',
+  },
+  '@lg': {
+    top: '2.5%',
+    left: '75%',
+  },
+  '@md': {
+    top: '5%',
+    width: '600px',
+    left: '80%',
+  },
+  '@media (max-width: 800px)': {
+    display: 'none',
   },
 })
 
@@ -168,36 +250,38 @@ export default function WelcomeBlock() {
     <BackgroundContainer>
       <FileBunniesBanner />
       <WelcomeScreenWrapper>
-        <img src={greenSun} className={'greenSun'} />
+        <img src={sunGreen} className={'greenSun'} />
         <WelcomeInfo>
+          <StorageImg src={bgStorage} />
           <Title>
             No code NFT shop builder with privacy layer & perpetual decentralized storage
           </Title>
           <Description>
             {'Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs -'}
             {' '}
-            <Link
-              target={'_blank'}
-              href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}
-              style={{
-                fontSize: '1.25rem',
-                borderBottom: '1px solid #0090FF',
-                fontWeight: '400',
-              }}
-            >
-              Encrypted FileToken (EFT)
+            <EFTLinkWrapper>
+              <Link
+                target={'_blank'}
+                href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}
+              >
+                Encrypted FileToken (EFT)
 
-            </Link>
+              </Link>
+            </EFTLinkWrapper>
             .
           </Description>
           <NavigateBlock>
-            <NavigateTitle>Start tokenizing your content/data today:</NavigateTitle>
+            <NavigateTitle>
+              Start tokenizing your
+              <br />
+              content/data today:
+            </NavigateTitle>
             <div className='buttonContainer'>
               <Button
                 mediumMxWidth
-                whiteWithBlue
-                largeHg
-                style={{ height: '80px', padding: '28px 59px' }}
+                whiteWithBlueMd
+                bigHg
+                style={{ height: '64px', padding: '28px 59px', whiteSpace: 'nowrap' }}
                 onClick={() => {
                   navigate('/create/eft')
                 }}
@@ -206,14 +290,15 @@ export default function WelcomeBlock() {
               </Button>
               <LinkButton
                 mediumMxWidth
-                whiteWithBlue
-                largeHg
+                whiteWithBlueMd
+                bigHg
                 href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
                 target={'_blank'}
                 style={{
-                  height: '80px',
+                  height: '64px',
                   padding: '28px 59px',
                   textAlign: 'center',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Apply for own shop

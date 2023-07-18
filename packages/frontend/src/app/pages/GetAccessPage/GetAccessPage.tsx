@@ -60,10 +60,10 @@ const GetAccessPageStyle = styled('div', {
 
 export const MainBlock = styled('div', {
   padding: '130px 20px',
-  border: '2px solid #0090FF',
+  border: '2px solid #6B6F76',
   display: 'flex',
   justifyContent: 'center',
-  borderRadius: '12px',
+  borderRadius: '16px',
   position: 'relative',
   background: '#F9F9F9',
   '@lg': {
