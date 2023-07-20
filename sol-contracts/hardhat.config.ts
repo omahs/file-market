@@ -44,7 +44,7 @@ const zksyncConfig = {
   timeout: 1000000000,
 };
 const testnetZksyncConfig = {
-  url: "https://zksync2-testnet.zksync.dev",
+  url: "https://testnet.era.zksync.dev",
   accounts: zkSyncTestnetAccounts,
   ethNetwork: "goerli",
   zksync: true,
