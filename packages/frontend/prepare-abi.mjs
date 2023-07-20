@@ -36,7 +36,8 @@ async function main() {
       if (extension === 'sol') {
         const abiPath = `${inputDir}/${dirent.name}/${contractName}.json`
         try {
-          await fs.open(abiPath)
+          const handle = await fs.open(abiPath)
+          handle?.close()
           await handleAbi(abiPath, contractName)
         } catch (e) {
           console.log('File not found', abiPath)
