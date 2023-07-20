@@ -2,12 +2,13 @@ import { Tooltip } from '@nextui-org/react'
 import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC, useMemo } from 'react'
-import { transferPermissions } from '../../../../utils/transfer/status'
+
 import { styled } from '../../../../../styles'
 import { Order, Transfer } from '../../../../../swagger/Api'
 import { mark3dConfig } from '../../../../config/mark3d'
 import { useStores } from '../../../../hooks'
 import { TokenFullId } from '../../../../processing/types'
+import { transferPermissions } from '../../../../utils/transfer/status'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -35,6 +36,8 @@ export interface NFTDealActionsProps {
   runIsApprovedRefetch: () => void
 }
 
+const permissions = transferPermissions.buyer
+
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
   order,
@@ -51,7 +54,6 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
   const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
-const permission = status.buyer
   const fileBunniesText = useMemo(() => {
     return isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer)) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 23.12.2023') : ''
   }, [isFileBunnies, transfer, tokenFullId])
