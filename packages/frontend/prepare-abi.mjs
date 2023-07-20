@@ -35,7 +35,12 @@ async function main() {
       const [contractName, extension] = dirent.name.split('.')
       if (extension === 'sol') {
         const abiPath = `${inputDir}/${dirent.name}/${contractName}.json`
-        await handleAbi(abiPath, contractName)
+        try {
+          await fs.open(abiPath)
+          await handleAbi(abiPath, contractName)
+        } catch (e) {
+          console.log('File not found', abiPath)
+        }
       }
     }
   }
