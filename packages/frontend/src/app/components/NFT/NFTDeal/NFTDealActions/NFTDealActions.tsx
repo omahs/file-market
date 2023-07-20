@@ -55,7 +55,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
   const fileBunniesText = useMemo(() => {
-    return isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer)) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 23.12.2023') : ''
+    return (isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 23.12.2023') : ''
   }, [isFileBunnies, transfer, tokenFullId])
 
   const isDisabledFileBunnies = useMemo(() => {
@@ -79,6 +79,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
           isBuyer={isBuyer}
+          isDisabled={isDisabled || isDisabledFileBunnies}
         />
       )}
     </ButtonsContainer>
