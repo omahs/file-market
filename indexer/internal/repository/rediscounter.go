@@ -22,9 +22,10 @@ type blockCounter struct {
 }
 
 func (b *blockCounter) GetLastBlock(ctx context.Context) (*big.Int, error) {
-	num := b.rdb.Get(ctx, getKey(ctx))
+	key := getKey(ctx)
+	num := b.rdb.Get(ctx, key)
 	if num.Err() != nil {
-		log.Printf("key error. Key: %s, err: %s", lastBlockKey, num.Err())
+		log.Printf("key error. Key: %s, err: %s", key, num.Err())
 		return nil, num.Err()
 	}
 	var blockNum string
