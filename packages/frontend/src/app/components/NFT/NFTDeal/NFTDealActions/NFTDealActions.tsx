@@ -77,7 +77,6 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
           transfer={transfer}
           order={order}
           tokenFullId={tokenFullId}
-          isDisabled={isDisabled}
           isBuyer={isBuyer}
           isDisabled={isDisabled || isDisabledFileBunnies}
         />
