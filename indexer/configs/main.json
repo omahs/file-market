@@ -25,6 +25,7 @@
       "switchTokenTimeout": "3m"
     },
     "currencyConversionCacheTTL": "1h",
-    "mode": "main"
+    "mode": "main",
+    "chainId": "314"
   }
 }

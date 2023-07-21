@@ -33,11 +33,11 @@ type Collections interface {
 	GetCollections(ctx context.Context, tx pgx.Tx, lastCollectionAddress *common.Address, limit int) ([]*domain.Collection, error)
 	GetCollectionsTotal(ctx context.Context, tx pgx.Tx) (uint64, error)
 	GetCollectionByTokenId(ctx context.Context, tx pgx.Tx, tokenId *big.Int) (*domain.Collection, error)
+	GetFileBunniesStats(ctx context.Context, tx pgx.Tx) ([]*domain.CollectionStats, error)
 	InsertCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error
 	CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error)
-	GetFileBunniesStats(ctx context.Context, tx pgx.Tx) ([]*domain.CollectionStats, error)
 }
 
 type Tokens interface {
@@ -46,6 +46,8 @@ type Tokens interface {
 	GetTokensByAddress(ctx context.Context, tx pgx.Tx, address common.Address, lastCollectionAddress *common.Address, lastTokenId *big.Int, limit int) ([]*domain.Token, error)
 	GetTokensByAddressTotal(ctx context.Context, tx pgx.Tx, address common.Address) (uint64, error)
 	GetToken(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Token, error)
+	GetOwnersCountByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (uint64, error)
+	GetTokensContentTypeByCollection(ctx context.Context, tx pgx.Tx, address common.Address) ([]string, []string, []string, error)
 	InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
 	UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
 	GetMetadata(ctx context.Context, tx pgx.Tx, address common.Address, tokenId *big.Int) (*domain.TokenMetadata, error)
@@ -75,12 +77,15 @@ type Transfers interface {
 type Orders interface {
 	GetAllActiveOrders(ctx context.Context, tx pgx.Tx, lastOrderId *int64, limit int) ([]*domain.Order, error)
 	GetAllActiveOrdersTotal(ctx context.Context, tx pgx.Tx) (uint64, error)
+	GetAllActiveOrdersTotalByCollection(ctx context.Context, tx pgx.Tx, collectionAddress common.Address) (uint64, error)
 	GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.Order, error)
 	GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Order, error)
+	GetSalesVolumeByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (*big.Int, error)
+	GetFloorPriceByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (*big.Int, error)
 	InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error)
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
 }

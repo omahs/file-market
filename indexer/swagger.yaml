@@ -1013,6 +1013,45 @@ definitions:
       image:
         type: string
         description: Ссылка на пикчу из метаданных
+      tokensCount:
+        type: number
+        format: uint64
+        description: Количество заминченных токенов в коллекции
+      ordersCount:
+        type: number
+        format: uint64
+        description: Количество открытых ордеров
+      ownersCount:
+        type: number
+        format: uint64
+        description: Количество уникальных адресов, которые владеют хотя бы 1 токеном в коллекции
+      salesVolume:
+        type: string
+        pattern: "^[0-9]+$"
+        description: Сумма цены всех завершенных покупок
+      floorPrice:
+        type: string
+        pattern: "^[0-9]+$"
+        description: Цена самого дешевого токена в коллекции
+      contentTypes:
+        type: object
+        description: Уникальные категории, подкатегории, форматы файлов из всей коллекции
+        properties:
+          categories:
+            type: array
+            items:
+              type: string
+          subcategories:
+            type: array
+            items:
+              type: string
+          fileExtensions:
+            type: array
+            items:
+              type: string
+      chainId:
+        type: string
+        description: ChainId
       type:
         type: string
         description: Тип коллекции <br />
