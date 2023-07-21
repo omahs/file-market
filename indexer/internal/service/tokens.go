@@ -146,6 +146,36 @@ func (s *service) GetTokensByAddress(
 	collectionsRes := make([]*models.Collection, len(collections))
 	for i, c := range collections {
 		res := domain.CollectionToModel(c)
+		tokensCount, err := s.repository.GetCollectionTokensTotal(ctx, tx, c.Address)
+		if err != nil {
+			logger.Errorf("failed to get tokensCount", err, nil)
+			return nil, internalError
+		}
+		ordersCount, err := s.repository.GetAllActiveOrdersTotalByCollection(ctx, tx, c.Address)
+		if err != nil {
+			logger.Errorf("failed to get collection orders count", err, nil)
+			return nil, internalError
+		}
+		ownersCount, err := s.repository.GetOwnersCountByCollection(ctx, tx, c.Address)
+		if err != nil {
+			logger.Errorf("failed to get collection owners count", err, nil)
+			return nil, internalError
+		}
+		fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, c.Address)
+		if err != nil {
+			logger.Errorf("failed to get collection content types", err, nil)
+			return nil, internalError
+		}
+		res.TokensCount = tokensCount
+		res.OrdersCount = ordersCount
+		res.OwnersCount = ownersCount
+		res.ContentTypes = &models.CollectionContentTypes{
+			Categories:     categories,
+			FileExtensions: fileTypes,
+			Subcategories:  subcategories,
+		}
+		res.ChainID = s.cfg.ChainID
+
 		if c.Address == s.cfg.FileBunniesCollectionAddress {
 			stats, err := s.repository.GetFileBunniesStats(ctx, tx)
 			if err != nil {
