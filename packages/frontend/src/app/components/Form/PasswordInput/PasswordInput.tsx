@@ -57,7 +57,7 @@ export const PasswordInput = <T extends FieldValues>(props: PasswordInputProps<T
         {...props.inputProps}
         isDisabledFocusStyle
         controlledInputProps={props.controlledInputProps}
-        placeholder={'Start typing'}
+        placeholder={props.inputProps.placeholder ?? 'Start typing'}
         type={isPasswordVisible ? 'text' : 'password'}
         style={{
           paddingRight: '48px',
