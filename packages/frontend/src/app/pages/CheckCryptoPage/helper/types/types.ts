@@ -24,6 +24,7 @@ export interface ICheckCryptoCycle extends checkCryptoObject {
 export interface IPlayTest {
   play?: boolean
   onTestEnd?: () => void
+  iterNumber: number
 }
 
 export type ITestProps = IPlayTest & ICheckCrypto

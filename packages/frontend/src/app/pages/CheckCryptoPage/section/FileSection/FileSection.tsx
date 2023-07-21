@@ -20,7 +20,7 @@ const FileSection = ({ items }: { items: ITestProps[] }) => {
           {items?.map((item, index) => {
             return (
               <TestPart key={index + 3000}>
-                <FileTest {...item} />
+                <FileTest {...item} iterNumber={index} />
               </TestPart>
             )
           })}

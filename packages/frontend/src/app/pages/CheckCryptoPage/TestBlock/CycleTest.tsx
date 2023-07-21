@@ -19,20 +19,20 @@ const CycleTest = (props: ITestProps) => {
     res: 'waiting',
   })
 
-  const checkCryptoCycle = useCallback(async ({ seed }: ICheckCrypto) => {
+  const checkCryptoCycle = useCallback(async ({ seed }: ICheckCrypto, iter: number) => {
     if (!props.play) return
     try {
       assertAccount(address)
       assertSeed(seed)
       console.log('Start cycle')
       const fc = new FileMarketCrypto(window.crypto)
-      const { key: generatedPassword } = await fc.eftAesDerivation(seed, globalSalt, Buffer.from(address), 0)
+      const { key: generatedPassword } = await fc.eftAesDerivation(seed, globalSalt, Buffer.from(address), iter)
       setCheckCryptoCycleState((prevState) => ({
         ...prevState,
         aesDerivation: 'success',
       }),
       )
-      const { priv, pub } = await fc.eftRsaDerivation(seed, globalSalt, Buffer.from(address), 0, 0)
+      const { priv, pub } = await fc.eftRsaDerivation(seed, globalSalt, Buffer.from(address), iter, iter)
       setCheckCryptoCycleState((prevState) => ({
         ...prevState,
         rsaDerivation: 'success',
@@ -68,7 +68,7 @@ const CycleTest = (props: ITestProps) => {
   }, [props.play])
 
   useEffect(() => {
-    props.play && checkCryptoCycle({ seed: props.seed })
+    props.play && checkCryptoCycle({ seed: props.seed }, props.iterNumber)
   }, [props.play])
 
   return (
