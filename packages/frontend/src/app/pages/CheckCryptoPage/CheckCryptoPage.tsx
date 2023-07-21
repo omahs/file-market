@@ -2,11 +2,16 @@ import { mnemonicToEntropy } from 'bip39'
 import { observer } from 'mobx-react-lite'
 import React, { useCallback, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { useAccount } from 'wagmi'
 
 import { PasswordInput } from '../../components/Form/PasswordInput/PasswordInput'
 import { createMnemonic } from '../../components/Web3/ConnectFileWalletDialog/utils/createMnemonic'
-import { validateImportMnemonic } from '../../components/Web3/ConnectFileWalletDialog/utils/validate'
-import { Button, PageLayout } from '../../UIkit'
+import {
+  validateCollectionAddress,
+  validateImportMnemonic,
+} from '../../components/Web3/ConnectFileWalletDialog/utils/validate'
+import { useAuth } from '../../hooks/useAuth'
+import { Button, Input, PageLayout } from '../../UIkit'
 import { Form } from '../CreatePage/CreateCollectionPage'
 import { TestContainer } from './CheckCryptoPage.styled'
 import { ITestProps } from './helper/types/types'
@@ -15,12 +20,15 @@ import FileSection from './section/FileSection/FileSection'
 
 interface CheckCrypto {
   inputSeed: string
+  collectionAddress: string
 }
 
 const CheckCryptoPage = observer(() => {
   const [playingTestsFile, setPlayingTestsFile] = useState<ITestProps[]>([])
   const [playingTestsCycle, setPlayingTestCycle] = useState<ITestProps[]>([])
+  const { isConnected, address } = useAccount()
   const [seed, setSeed] = useState<ArrayBuffer | undefined>()
+  const [collectionAddress, setCollectionAddress] = useState<string | undefined>()
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false)
   const [isLoadingCycle, setIsLoadingCycle] = useState<boolean>(false)
   const countIter = 10
@@ -31,15 +39,21 @@ const CheckCryptoPage = observer(() => {
     return Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
   }
 
-  const render = (seedProps?: ArrayBuffer) => {
+  const { connect } = useAuth()
+
+  const render = (seedProps?: ArrayBuffer, collectionAddressProps?: string) => {
     const playTempFile: ITestProps[] = []
     const playTempCycle: ITestProps[] = []
     const seed = seedProps ?? randomSeed()
+    const collectionAddress = collectionAddressProps ?? address
     setSeed(seed)
+    setCollectionAddress(collectionAddress)
+    console.log(collectionAddress)
     for (let i = 0; i < countIter; i++) {
       playTempFile.push({
         play: false,
         seed,
+        collectionAddress,
         onTestEnd: () => {
           setPlayingTestsFile(prevState => {
             const temp = [...prevState]
@@ -55,10 +69,12 @@ const CheckCryptoPage = observer(() => {
             return temp
           })
         },
+        iterNumber: i,
       })
       playTempCycle.push({
         play: false,
         seed,
+        collectionAddress,
         onTestEnd: () => {
           setPlayingTestCycle(prevState => {
             const temp = [...prevState]
@@ -74,14 +90,20 @@ const CheckCryptoPage = observer(() => {
             return temp
           })
         },
+        iterNumber: i,
       })
     }
     setPlayingTestsFile(playTempFile)
     setPlayingTestCycle(playTempCycle)
   }
 
-  const iterStart = useCallback((seed?: ArrayBuffer) => {
-    render(seed)
+  const iterStart = useCallback((seed?: ArrayBuffer, collectionAddress?: string) => {
+    if (!isConnected) {
+      connect()
+
+      return
+    }
+    render(seed, collectionAddress)
     setIsLoadingCycle(true)
     setIsLoadingFile(true)
     setPlayingTestsFile(prevState => {
@@ -102,7 +124,7 @@ const CheckCryptoPage = observer(() => {
 
       return temp
     })
-  }, [])
+  }, [isConnected])
 
   const isLoading = useMemo(() => {
     return isLoadingCycle || isLoadingFile
@@ -110,18 +132,21 @@ const CheckCryptoPage = observer(() => {
 
   const onSubmit: SubmitHandler<CheckCrypto> = (data) => {
     let seed
+    let collectionAddress
     if (!!data.inputSeed) seed = Buffer.from(mnemonicToEntropy(data.inputSeed), 'hex')
-    iterStart(seed)
+    if (!!data.collectionAddress) collectionAddress = data.collectionAddress
+    iterStart(seed, collectionAddress)
   }
 
   const inputSeed = watch('inputSeed')
+  const collectionAddressInput = watch('collectionAddress')
 
   return (
     <PageLayout>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <TestContainer>
           <Button
-            disabled={isLoading || (!!(errors.inputSeed) && !!inputSeed)}
+            disabled={isLoading || (!!(errors.inputSeed) && !!inputSeed) || (!!(errors.collectionAddress) && !!collectionAddressInput)}
             style={{
               marginBottom: '16px',
             }}
@@ -134,6 +159,7 @@ const CheckCryptoPage = observer(() => {
               isError: !!errors?.inputSeed,
               isDisabledFocusStyle: false,
               errorMessage: errors?.inputSeed?.message,
+              placeholder: 'Enter seed phrase',
             }}
             controlledInputProps={{
               name: 'inputSeed',
@@ -145,6 +171,21 @@ const CheckCryptoPage = observer(() => {
               },
             }}
           />
+          <Input<CheckCrypto>
+            isError={!!errors?.inputSeed}
+            isDisabledFocusStyle={false}
+            errorMessage={errors?.inputSeed?.message}
+            placeholder={'Enter collection address'}
+            controlledInputProps={{
+              name: 'collectionAddress',
+              control,
+              rules: {
+                validate: (p) => {
+                  if (!!validateCollectionAddress(p) && !!p) return validateCollectionAddress(p)
+                },
+              },
+            }}
+          />
         </TestContainer>
       </Form>
       <TestContainer style={{ overflowX: 'auto' }}>
@@ -152,6 +193,7 @@ const CheckCryptoPage = observer(() => {
         <CycleSection items={playingTestsCycle} />
       </TestContainer>
       {seed && <TestContainer style={{ marginTop: '16px' }}>{Buffer.from(seed).toString('hex')}</TestContainer>}
+      {collectionAddress && <TestContainer style={{ marginTop: '16px' }}>{collectionAddress}</TestContainer>}
     </PageLayout>
 
   )

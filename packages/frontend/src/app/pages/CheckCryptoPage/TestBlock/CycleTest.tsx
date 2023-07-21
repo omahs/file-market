@@ -3,7 +3,7 @@ import { bufferToHex } from 'file-market-crypto/src/lib/utils'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { assertAccount, assertSeed } from '../../../processing'
+import { assertAccount, assertCollection, assertSeed } from '../../../processing'
 import { globalSalt } from '../helper/data/data'
 import { ICheckCrypto, ICheckCryptoCycle, ITestProps } from '../helper/types/types'
 import { setNextFieldToFalseAfterTrue } from '../helper/utils/checkSuccessFunc'
@@ -19,20 +19,21 @@ const CycleTest = (props: ITestProps) => {
     res: 'waiting',
   })
 
-  const checkCryptoCycle = useCallback(async ({ seed }: ICheckCrypto, iter: number) => {
+  const checkCryptoCycle = useCallback(async ({ seed, collectionAddress }: ICheckCrypto, iter: number) => {
     if (!props.play) return
     try {
       assertAccount(address)
       assertSeed(seed)
+      assertCollection(collectionAddress)
       console.log('Start cycle')
       const fc = new FileMarketCrypto(window.crypto)
-      const { key: generatedPassword } = await fc.eftAesDerivation(seed, globalSalt, Buffer.from(address), iter)
+      const { key: generatedPassword } = await fc.eftAesDerivation(seed, globalSalt, Buffer.from(collectionAddress), iter)
       setCheckCryptoCycleState((prevState) => ({
         ...prevState,
         aesDerivation: 'success',
       }),
       )
-      const { priv, pub } = await fc.eftRsaDerivation(seed, globalSalt, Buffer.from(address), iter, iter)
+      const { priv, pub } = await fc.eftRsaDerivation(seed, globalSalt, Buffer.from(collectionAddress), iter, iter)
       setCheckCryptoCycleState((prevState) => ({
         ...prevState,
         rsaDerivation: 'success',
@@ -68,7 +69,7 @@ const CycleTest = (props: ITestProps) => {
   }, [props.play])
 
   useEffect(() => {
-    props.play && checkCryptoCycle({ seed: props.seed }, props.iterNumber)
+    props.play && checkCryptoCycle({ seed: props.seed, collectionAddress: props.collectionAddress }, props.iterNumber)
   }, [props.play])
 
   return (

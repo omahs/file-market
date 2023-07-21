@@ -20,7 +20,7 @@ const CycleSection = ({ items }: { items: ITestProps[] }) => {
           {items?.map((item, index) => {
             return (
               <TestPart key={index + 3000}>
-                <CycleTest {...item} iterNumber={index} />
+                <CycleTest {...item} />
               </TestPart>
             )
           })}

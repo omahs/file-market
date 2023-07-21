@@ -3,8 +3,8 @@ import { eftAesDerivationNative } from 'file-market-crypto/src/lib/eft-derivatio
 import { bufferToHex } from 'file-market-crypto/src/lib/utils'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { assertSeed } from '../../../processing'
-import { collectionAddress, data, globalSalt } from '../helper/data/data'
+import { assertCollection, assertSeed } from '../../../processing'
+import { data, globalSalt } from '../helper/data/data'
 import { ICheckCrypto, ICheckCryptoFile, ITestProps } from '../helper/types/types'
 import { setNextFieldToFalseAfterTrue } from '../helper/utils/checkSuccessFunc'
 import StateDisplay from '../StateDisplay/StateDisplay'
@@ -17,12 +17,13 @@ const FileTest = (props: ITestProps) => {
     res: 'waiting',
   })
 
-  const checkCryptoFile = useCallback(async ({ seed }: ICheckCrypto, iter: number) => {
+  const checkCryptoFile = useCallback(async ({ seed, collectionAddress }: ICheckCrypto, iter: number) => {
     if (!props.play) return
     try {
       console.log('Start file')
       assertSeed(seed)
-      const keyAndIv = await eftAesDerivationNative(window.crypto)(seed, globalSalt, collectionAddress, iter)
+      assertCollection(collectionAddress)
+      const keyAndIv = await eftAesDerivationNative(window.crypto)(seed, globalSalt, Buffer.from(collectionAddress), iter)
       setCheckCryptoFileState((prevState) => (
         {
           ...prevState,
@@ -64,7 +65,7 @@ const FileTest = (props: ITestProps) => {
   }, [props.play])
 
   useEffect(() => {
-    props.play && checkCryptoFile({ seed: props.seed }, props.iterNumber)
+    props.play && checkCryptoFile({ seed: props.seed, collectionAddress: props.collectionAddress }, props.iterNumber)
     console.log(props)
   }, [props.play])
 

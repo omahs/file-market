@@ -4,6 +4,7 @@ export type checkCryptoObject = Record<string, checkCryptoField | undefined>
 
 export interface ICheckCrypto {
   seed?: ArrayBuffer
+  collectionAddress?: string
 }
 
 export interface ICheckCryptoFile extends checkCryptoObject {
