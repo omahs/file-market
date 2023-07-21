@@ -74,12 +74,12 @@ func NewEthClient(urls []string) (EthClient, error) {
 }
 
 func (e *ethClient) BlockByNumber(ctx context.Context, number *big.Int) (types.Block, error) {
-	var err error
 	clients := e.Clients()
 	if len(clients) == 0 {
 		return nil, fmt.Errorf("rpc broken")
 	}
 
+	var err error
 	var block types.Block
 	if e.isZk {
 		for i, c := range e.RpcClients() {
@@ -95,7 +95,8 @@ func (e *ethClient) BlockByNumber(ctx context.Context, number *big.Int) (types.B
 		}
 	} else {
 		for i, c := range clients {
-			b, err := c.BlockByNumber(ctx, number)
+			var b *eth_types.Block
+			b, err = c.BlockByNumber(ctx, number)
 			if err != nil {
 				log.Println("get pending block failed", number.String(), e.urls[i], err)
 				if strings.Contains(err.Error(), "want 512 for Bloom") {
