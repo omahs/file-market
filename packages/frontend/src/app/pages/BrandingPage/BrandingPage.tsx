@@ -15,15 +15,15 @@ const Title = styled('h2', {
   color: '$gray700',
   marginBottom: '$4',
   '@md': {
-    fontSize: '3rem',
+    fontSize: '3rem'
   },
   '@sm': {
-    fontSize: '2.5rem',
-  },
+    fontSize: '2.5rem'
+  }
 })
 
 const Branding = styled('div', {
-  paddingTop: '16px',
+  paddingTop: '16px'
 })
 
 const StyleGuidelines = styled('div', {
@@ -36,16 +36,16 @@ const StyleGuidelines = styled('div', {
   marginBottom: '160px',
   '@md': {
     padding: '35px',
-    marginBottom: '80px',
+    marginBottom: '80px'
   },
   '@sm': {
     flexDirection: 'column',
     padding: '24px',
     rowGap: '24px',
     a: {
-      minWidth: '100%',
-    },
-  },
+      minWidth: '100%'
+    }
+  }
 })
 
 const StyleGuidelinesText = styled(Txt, {
@@ -55,15 +55,15 @@ const StyleGuidelinesText = styled(Txt, {
   lineHeight: '1',
   color: '$gray700',
   '@sm': {
-    fontSize: '$h3',
-  },
+    fontSize: '$h3'
+  }
 })
 
 const SectionWrapper = styled('div', {
   marginBottom: '160px',
   '@md': {
-    marginBottom: '80px',
-  },
+    marginBottom: '80px'
+  }
 })
 
 export default function BrandindPage() {
@@ -71,9 +71,11 @@ export default function BrandindPage() {
     <PageLayout>
       <Branding>
         <Hero />
-        <StyleGuidelines >
+        <StyleGuidelines>
           <StyleGuidelinesText>Style Guidelines</StyleGuidelinesText>
-          <DownloadButton downloadHref="styleguide.zip" bigIcon bigBtn>Download</DownloadButton>
+          <DownloadButton downloadHref='styleguide-new.zip' bigIcon bigBtn>
+            Download
+          </DownloadButton>
         </StyleGuidelines>
         <SectionWrapper>
           <Title>Colors</Title>
