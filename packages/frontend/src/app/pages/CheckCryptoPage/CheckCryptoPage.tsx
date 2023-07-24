@@ -31,7 +31,8 @@ const CheckCryptoPage = observer(() => {
   const [collectionAddress, setCollectionAddress] = useState<string | undefined>()
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false)
   const [isLoadingCycle, setIsLoadingCycle] = useState<boolean>(false)
-  const countIter = 10
+  const [isVisibleCustom, setIsVisibleCustom] = useState<boolean>(false)
+  const countIter = 6
   const { handleSubmit, control, formState: { errors }, watch } = useForm<CheckCrypto>({})
   const randomSeed = () => {
     const newMnemonic = createMnemonic()
@@ -133,59 +134,68 @@ const CheckCryptoPage = observer(() => {
   const onSubmit: SubmitHandler<CheckCrypto> = (data) => {
     let seed
     let collectionAddress
-    if (!!data.inputSeed) seed = Buffer.from(mnemonicToEntropy(data.inputSeed), 'hex')
-    if (!!data.collectionAddress) collectionAddress = data.collectionAddress
+    if (!!data.inputSeed && isVisibleCustom) seed = Buffer.from(mnemonicToEntropy(data.inputSeed), 'hex')
+    if (!!data.collectionAddress && isVisibleCustom) collectionAddress = data.collectionAddress
     iterStart(seed, collectionAddress)
   }
 
   const inputSeed = watch('inputSeed')
   const collectionAddressInput = watch('collectionAddress')
 
+  const isError = useMemo(() => {
+    return ((!!(errors.inputSeed) && !!inputSeed) || (!!(errors.collectionAddress) && !!collectionAddressInput)) && isVisibleCustom
+  }, [inputSeed, errors, collectionAddressInput, isVisibleCustom])
+
   return (
     <PageLayout>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <TestContainer>
           <Button
-            disabled={isLoading || (!!(errors.inputSeed) && !!inputSeed) || (!!(errors.collectionAddress) && !!collectionAddressInput)}
+            disabled={isLoading || isError}
             style={{
               marginBottom: '16px',
             }}
             type={'submit'}
           >
-            {isLoading ? 'Loading' : (!!(errors.inputSeed) && !!inputSeed ? 'Error' : 'Start Tests')}
+            {isLoading ? 'Loading' : (isError ? 'Error' : 'Start Tests')}
           </Button>
-          <PasswordInput<CheckCrypto>
-            inputProps={{
-              isError: !!errors?.inputSeed,
-              isDisabledFocusStyle: false,
-              errorMessage: errors?.inputSeed?.message,
-              placeholder: 'Enter seed phrase',
-            }}
-            controlledInputProps={{
-              name: 'inputSeed',
-              control,
-              rules: {
-                validate: (p) => {
-                  if (!!validateImportMnemonic(p) && !!p) return validateImportMnemonic(p)
-                },
-              },
-            }}
-          />
-          <Input<CheckCrypto>
-            isError={!!errors?.inputSeed}
-            isDisabledFocusStyle={false}
-            errorMessage={errors?.inputSeed?.message}
-            placeholder={'Enter collection address'}
-            controlledInputProps={{
-              name: 'collectionAddress',
-              control,
-              rules: {
-                validate: (p) => {
-                  if (!!validateCollectionAddress(p) && !!p) return validateCollectionAddress(p)
-                },
-              },
-            }}
-          />
+          <input style={{ opacity: '0' }} type={'checkbox'} onChange={() => { setIsVisibleCustom(prevState => !prevState) }} />
+          {isVisibleCustom && (
+            <>
+              <PasswordInput<CheckCrypto>
+                inputProps={{
+                  isError: !!errors?.inputSeed,
+                  isDisabledFocusStyle: false,
+                  errorMessage: errors?.inputSeed?.message,
+                  placeholder: 'Enter seed phrase',
+                }}
+                controlledInputProps={{
+                  name: 'inputSeed',
+                  control,
+                  rules: {
+                    validate: (p) => {
+                      if (!!validateImportMnemonic(p) && !!p) return validateImportMnemonic(p)
+                    },
+                  },
+                }}
+              />
+              <Input<CheckCrypto>
+                isError={!!errors?.inputSeed}
+                isDisabledFocusStyle={false}
+                errorMessage={errors?.inputSeed?.message}
+                placeholder={'Enter collection address'}
+                controlledInputProps={{
+                  name: 'collectionAddress',
+                  control,
+                  rules: {
+                    validate: (p) => {
+                      if (!!validateCollectionAddress(p) && !!p) return validateCollectionAddress(p)
+                    },
+                  },
+                }}
+              />
+            </>
+          )}
         </TestContainer>
       </Form>
       <TestContainer style={{ overflowX: 'auto' }}>
