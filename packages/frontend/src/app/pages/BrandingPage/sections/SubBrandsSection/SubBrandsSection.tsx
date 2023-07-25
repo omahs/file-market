@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 import { styled } from '../../../../../styles'
+import Switch from '../../../../components/Switch/Switch'
 import DownloadAsset from '../../blocks/DownloadAsset/DownloadAsset'
 import DownloadButton from '../../blocks/DownloadButton/DownloadButton'
-import Switch from '../../blocks/Switch/Switch'
 import { PNG_SUB_BRANDS, SVG_SUB_BRANDS } from './assets'
 
 type AssetType = 'color' | 'dark' | 'light'
