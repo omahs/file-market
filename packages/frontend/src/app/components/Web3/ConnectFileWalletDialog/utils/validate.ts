@@ -19,5 +19,13 @@ const error: Record<SupportedLocale, Record<string, string>> = {
   en: {
     INVALID_BET: 'Invalid mnemonic',
     INVALID_PASSWORD: 'Password must be at least 8 characters long',
+    INVALID_COLLECTION: 'Invalid collection address',
   },
+}
+
+export const validateCollectionAddress = (value: string): string | undefined => {
+  if (!value) return
+  if (!(value.match(/0[xX][0-9a-fA-F]+/))) {
+    return error.en.INVALID_COLLECTION
+  }
 }
