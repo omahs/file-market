@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 
 import { styled } from '../../../../../styles'
 
@@ -53,14 +53,23 @@ const BoxContent = styled('div', {
   borderRadius: '$3',
   overflow: 'hidden',
   backgroundColor: '$white',
+  variants: {
+    hoverBlue: {
+      true: {
+        '&:hover': {
+          border: '2px solid #0090FF',
+        },
+      },
+    },
+  },
 })
 
-const BoxShadowed = (props: BoxShadowedProps) => {
+const BoxShadowed = (props: BoxShadowedProps & ComponentProps<typeof BoxContent>) => {
   return (
     <Box
       style={{ height: props.fullHeight ? '100%' : 'auto' }}
     >
-      <BoxContent style={{ height: props.fullHeight ? '100%' : 'auto' }} >{props.children}</BoxContent>
+      <BoxContent hoverBlue={props.hoverBlue} style={{ height: props.fullHeight ? '100%' : 'auto' }} >{props.children}</BoxContent>
     </Box>
   )
 }
