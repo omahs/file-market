@@ -57,9 +57,6 @@ func (p *postgres) GetAllActiveOrders(
 	if lastOrderId != nil {
 		lastOrderIdParam = *lastOrderId
 	}
-	if limit == 0 {
-		limit = 10000
-	}
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit, strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()))
 	if err != nil {
