@@ -67,7 +67,7 @@ func (h *handler) handleGetFullPublicCollection(w http.ResponseWriter, r *http.R
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 10, 100)
+	limit, err := parseLimitParam(r, "limit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
