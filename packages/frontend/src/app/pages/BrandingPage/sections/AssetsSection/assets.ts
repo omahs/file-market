@@ -1,50 +1,82 @@
-import FM_logomark_blue_png from '../../../../../assets/img/BrandingPage/logos/FM_logomark_blue.png'
-import FM_logomark_blue from '../../../../../assets/img/BrandingPage/logos/FM_logomark_blue.svg'
-import FM_logomark_dark_png from '../../../../../assets/img/BrandingPage/logos/FM_logomark_dark.png'
-import FM_logomark_dark from '../../../../../assets/img/BrandingPage/logos/FM_logomark_dark.svg'
-import FM_logomark_green_png from '../../../../../assets/img/BrandingPage/logos/FM_logomark_green.png'
-import FM_logomark_green from '../../../../../assets/img/BrandingPage/logos/FM_logomark_green.svg'
-import FM_logomark_light_png from '../../../../../assets/img/BrandingPage/logos/FM_logomark_light.png'
-import FM_logomark_light from '../../../../../assets/img/BrandingPage/logos/FM_logomark_light.svg'
-import FM_logotype_blue_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_blue.png'
-import FM_logotype_blue from '../../../../../assets/img/BrandingPage/logos/FM_logotype_blue.svg'
-import FM_logotype_dark_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_dark.png'
-import FM_logotype_dark from '../../../../../assets/img/BrandingPage/logos/FM_logotype_dark.svg'
-import FM_logotype_green_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_green.png'
-import FM_logotype_green from '../../../../../assets/img/BrandingPage/logos/FM_logotype_green.svg'
-import FM_logotype_light_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_light.png'
-import FM_logotype_light from '../../../../../assets/img/BrandingPage/logos/FM_logotype_light.svg'
-import FM_logotype_line_blue_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_blue.png'
-import FM_logotype_line_blue from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_blue.svg'
-import FM_logotype_line_dark_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_dark.png'
-import FM_logotype_line_dark from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_dark.svg'
-import FM_logotype_line_green_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_green.png'
-import FM_logotype_line_green from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_green.svg'
-import FM_logotype_line_light_png from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_light.png'
-import FM_logotype_line_light from '../../../../../assets/img/BrandingPage/logos/FM_logotype_line_light.svg'
-import FM_wordmark_blue_png from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_blue.png'
-import FM_wordmark_blue from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_blue.svg'
-import FM_wordmark_dark_png from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_dark.png'
-import FM_wordmark_dark from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_dark.svg'
-import FM_wordmark_green_png from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_green.png'
-import FM_wordmark_green from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_green.svg'
-import FM_wordmark_light_png from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_light.png'
-import FM_wordmark_light from '../../../../../assets/img/BrandingPage/logos/FM_wordmark_light.svg'
+// eslint-disable-next-line
+import filemarket_logomark_black_png from '/logos/filemarket_logomark-black.png'
+// eslint-disable-next-line
+import filemarket_logomark_black_svg from '/logos/filemarket_logomark-black.svg'
+// eslint-disable-next-line
+import filemarket_logomark_blue_png from '/logos/filemarket_logomark-blue.png'
+// eslint-disable-next-line
+import filemarket_logomark_blue_svg from '/logos/filemarket_logomark-blue.svg'
+// eslint-disable-next-line
+import filemarket_logomark_green_png from '/logos/filemarket_logomark-green.png'
+// eslint-disable-next-line
+import filemarket_logomark_green_svg from '/logos/filemarket_logomark-green.svg'
+// eslint-disable-next-line
+import filemarket_logomark_white_png from '/logos/filemarket_logomark-white.png'
+// eslint-disable-next-line
+import filemarket_logomark_white_svg from '/logos/filemarket_logomark-white.svg'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_black_png from '/logos/filemarket_logotype-horizontal-black.png'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_black_svg from '/logos/filemarket_logotype-horizontal-black.svg'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_blue_png from '/logos/filemarket_logotype-horizontal-blue.png'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_blue_svg from '/logos/filemarket_logotype-horizontal-blue.svg'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_green_png from '/logos/filemarket_logotype-horizontal-green.png'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_green_svg from '/logos/filemarket_logotype-horizontal-green.svg'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_white_png from '/logos/filemarket_logotype-horizontal-white.png'
+// eslint-disable-next-line
+import filemarket_logo_horizontal_white_svg from '/logos/filemarket_logotype-horizontal-white.svg'
+// eslint-disable-next-line
+import filemarket_logo_vertical_black_png from '/logos/filemarket_logotype-vertical-black.png'
+// eslint-disable-next-line
+import filemarket_logo_vertical_black_svg from '/logos/filemarket_logotype-vertical-black.svg'
+// eslint-disable-next-line
+import filemarket_logo_vertical_blue_png from '/logos/filemarket_logotype-vertical-blue.png'
+// eslint-disable-next-line
+import filemarket_logo_vertical_blue_svg from '/logos/filemarket_logotype-vertical-blue.svg'
+// eslint-disable-next-line
+import filemarket_logo_vertical_green_png from '/logos/filemarket_logotype-vertical-green.png'
+// eslint-disable-next-line
+import filemarket_logo_vertical_green_svg from '/logos/filemarket_logotype-vertical-green.svg'
+// eslint-disable-next-line
+import filemarket_logo_vertical_white_png from '/logos/filemarket_logotype-vertical-white.png'
+// eslint-disable-next-line
+import filemarket_logo_vertical_white_svg from '/logos/filemarket_logotype-vertical-white.svg'
+// eslint-disable-next-line
+import filemarket_wordmark_black_png from '/logos/filemarket_wordmark-black.png'
+// eslint-disable-next-line
+import filemarket_wordmark_black_svg from '/logos/filemarket_wordmark-black.svg'
+// eslint-disable-next-line
+import filemarket_wordmark_blue_png from '/logos/filemarket_wordmark-blue.png'
+// eslint-disable-next-line
+import filemarket_wordmark_blue_svg from '/logos/filemarket_wordmark-blue.svg'
+// eslint-disable-next-line
+import filemarket_wordmark_green_png from '/logos/filemarket_wordmark-green.png'
+// eslint-disable-next-line
+import filemarket_wordmark_green_svg from '/logos/filemarket_wordmark-green.svg'
+// eslint-disable-next-line
+import filemarket_wordmark_white_png from '/logos/filemarket_wordmark-white.png'
+// eslint-disable-next-line
+import filemarket_wordmark_white_svg from '/logos/filemarket_wordmark-white.svg'
 
 interface IAssets {
+  logoHorizontal: {
+    blue: string
+    dark: string
+    green: string
+    light: string
+  }
+  logoVertical: {
+    blue: string
+    dark: string
+    green: string
+    light: string
+  }
   logomark: {
-    blue: string
-    dark: string
-    green: string
-    light: string
-  }
-  logotype: {
-    blue: string
-    dark: string
-    green: string
-    light: string
-  }
-  logotype_line: {
     blue: string
     dark: string
     green: string
@@ -59,55 +91,55 @@ interface IAssets {
 }
 
 export const SVG_ASSETS: IAssets = {
+  logoHorizontal: {
+    blue: filemarket_logo_horizontal_blue_svg,
+    dark: filemarket_logo_horizontal_black_svg,
+    green: filemarket_logo_horizontal_green_svg,
+    light: filemarket_logo_horizontal_white_svg,
+  },
+  logoVertical: {
+    blue: filemarket_logo_vertical_blue_svg,
+    dark: filemarket_logo_vertical_black_svg,
+    green: filemarket_logo_vertical_green_svg,
+    light: filemarket_logo_vertical_white_svg,
+  },
   logomark: {
-    blue: FM_logomark_blue,
-    dark: FM_logomark_dark,
-    green: FM_logomark_green,
-    light: FM_logomark_light,
-  },
-  logotype: {
-    blue: FM_logotype_blue,
-    dark: FM_logotype_dark,
-    green: FM_logotype_green,
-    light: FM_logotype_light,
-  },
-  logotype_line: {
-    blue: FM_logotype_line_blue,
-    dark: FM_logotype_line_dark,
-    green: FM_logotype_line_green,
-    light: FM_logotype_line_light,
+    blue: filemarket_logomark_blue_svg,
+    dark: filemarket_logomark_black_svg,
+    green: filemarket_logomark_green_svg,
+    light: filemarket_logomark_white_svg,
   },
   wordmark: {
-    blue: FM_wordmark_blue,
-    dark: FM_wordmark_dark,
-    green: FM_wordmark_green,
-    light: FM_wordmark_light,
+    blue: filemarket_wordmark_blue_svg,
+    dark: filemarket_wordmark_black_svg,
+    green: filemarket_wordmark_green_svg,
+    light: filemarket_wordmark_white_svg,
   },
 }
 
 export const PNG_ASSETS: IAssets = {
+  logoHorizontal: {
+    blue: filemarket_logo_horizontal_blue_png,
+    dark: filemarket_logo_horizontal_black_png,
+    green: filemarket_logo_horizontal_green_png,
+    light: filemarket_logo_horizontal_white_png,
+  },
+  logoVertical: {
+    blue: filemarket_logo_vertical_blue_png,
+    dark: filemarket_logo_vertical_black_png,
+    green: filemarket_logo_vertical_green_png,
+    light: filemarket_logo_vertical_white_png,
+  },
   logomark: {
-    blue: FM_logomark_blue_png,
-    dark: FM_logomark_dark_png,
-    green: FM_logomark_green_png,
-    light: FM_logomark_light_png,
-  },
-  logotype: {
-    blue: FM_logotype_blue_png,
-    dark: FM_logotype_dark_png,
-    green: FM_logotype_green_png,
-    light: FM_logotype_light_png,
-  },
-  logotype_line: {
-    blue: FM_logotype_line_blue_png,
-    dark: FM_logotype_line_dark_png,
-    green: FM_logotype_line_green_png,
-    light: FM_logotype_line_light_png,
+    blue: filemarket_logomark_blue_png,
+    dark: filemarket_logomark_black_png,
+    green: filemarket_logomark_green_png,
+    light: filemarket_logomark_white_png,
   },
   wordmark: {
-    blue: FM_wordmark_blue_png,
-    dark: FM_wordmark_dark_png,
-    green: FM_wordmark_green_png,
-    light: FM_wordmark_light_png,
+    blue: filemarket_wordmark_blue_png,
+    dark: filemarket_wordmark_black_png,
+    green: filemarket_wordmark_green_png,
+    light: filemarket_wordmark_white_png,
   },
 }

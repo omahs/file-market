@@ -58,6 +58,7 @@ const AssetPreviewWrapper = styled('div', {
   width: 'auto',
   borderRadius: '$4',
   transition: 'all 0.3s ease-in-out',
+  minWidth: '372px',
   variants: {
     previewStyle: {
       light: {
@@ -111,7 +112,7 @@ interface DownloadAssetProps {
   previewStyle: 'light' | 'dark'
 }
 
-export default function DownloadAsset (props: DownloadAssetProps) {
+export default function DownloadAsset(props: DownloadAssetProps) {
   return (
     <AssetInner>
       <AssetLinksWrapper>

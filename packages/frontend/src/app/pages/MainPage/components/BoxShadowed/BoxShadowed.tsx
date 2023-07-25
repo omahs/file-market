@@ -5,6 +5,7 @@ import { styled } from '../../../../../styles'
 interface BoxShadowedProps {
   children: ReactNode
   fullHeight?: boolean
+  mediumBorderRadius?: boolean
 }
 
 const Box = styled('div', {
@@ -30,6 +31,13 @@ const Box = styled('div', {
       left: '6px',
     },
   },
+  variants: {
+    mediumBorderRadius: {
+      true: {
+        borderRadius: '8px',
+      },
+    },
+  },
   '&:hover': {
     '&::before': {
       top: 0,
@@ -49,8 +57,10 @@ const BoxContent = styled('div', {
 
 const BoxShadowed = (props: BoxShadowedProps) => {
   return (
-    <Box style={{ height: props.fullHeight ? '100%' : 'auto' }}>
-      <BoxContent style={{ height: props.fullHeight ? '100%' : 'auto' }}>{props.children}</BoxContent>
+    <Box
+      style={{ height: props.fullHeight ? '100%' : 'auto' }}
+    >
+      <BoxContent style={{ height: props.fullHeight ? '100%' : 'auto' }} >{props.children}</BoxContent>
     </Box>
   )
 }

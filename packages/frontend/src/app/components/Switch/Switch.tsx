@@ -8,7 +8,7 @@ export const SwitchWrapper = styled('div', {
   padding: '$2',
   borderRadius: '$4',
   border: '2px solid #0090FF',
-  background: 'white',
+  background: '$gray100',
   '@md': {
     padding: '6px',
   },

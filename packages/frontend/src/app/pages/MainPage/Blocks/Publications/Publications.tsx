@@ -17,9 +17,9 @@ export interface SlideProps {
 }
 
 const PublicationsSection = styled('section', {
-  marginBottom: '112px',
+  marginBottom: '100px',
   '@lg': {
-    marginBottom: '90px',
+    marginBottom: '80px',
   },
   '@md': {
     marginBottom: '70px',
@@ -62,6 +62,9 @@ const SlideIconTitle = styled('img', {
 
 const SlideContent = styled('div', {
   padding: '14px 24px 20px',
+  '@xs': {
+    padding: '14px 16px 20px',
+  },
 })
 
 const SlideText = styled('p', {
