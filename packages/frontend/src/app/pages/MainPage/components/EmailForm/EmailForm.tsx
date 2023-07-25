@@ -48,6 +48,27 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     color: '#028FFF',
     width: '160px',
     height: '48px',
+    transition: 'all 0.3s ease-out',
+    overflow: 'hidden',
+    '&:hover': {
+      color: '$white',
+      opacity: 1,
+      filter: 'brightness(1.1)',
+      '&::before': {
+        height: '100%',
+      },
+    },
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      width: '100%',
+      height: '0',
+      top: 0,
+      left: 0,
+      backgroundColor: '$blue500',
+      zIndex: '-1',
+      transition: 'all 0.3s ease-out',
+    },
     '@md': {
       width: '30%',
     },
