@@ -20,6 +20,10 @@ const SelectBlockchainBlockStyle = styled('div', {
   },
 })
 
+const BoxShadowedSelect = styled(BoxShadowed, {
+  width: 'inherit',
+})
+
 interface ISelectBlockchainBlock {
   name: string
   img: string
@@ -28,12 +32,12 @@ interface ISelectBlockchainBlock {
 
 const SelectBlockchainBlock = ({ name, img, onClick }: ISelectBlockchainBlock) => {
   return (
-    <BoxShadowed>
+    <BoxShadowedSelect hoverBlue>
       <SelectBlockchainBlockStyle onClick={ () => { onClick() } }>
         <img src={img} />
         <Txt primary1>{name}</Txt>
       </SelectBlockchainBlockStyle>
-    </BoxShadowed>
+    </BoxShadowedSelect>
   )
 }
 
