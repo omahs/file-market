@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
 import { AppLayout } from '../components/App'
 import { Params } from '../utils/router/Params'
 import BrandingPage from './BrandingPage/BrandingPage'
+import CheckCryptoPage from './CheckCryptoPage/CheckCryptoPage'
 import CollectionPage from './CollectionPage/CollectionPage'
 import { collectionPageRoutes } from './CollectionPage/routes'
 import { createRoutes } from './CreatePage/routes'
@@ -13,6 +14,7 @@ import { marketRoutes } from './MarketPage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
+import SuccessSubscribePage from './SuccessSubscribePage/SuccessSubscribePage'
 
 const routes: RouteObject[] = [
   {
@@ -22,6 +24,10 @@ const routes: RouteObject[] = [
   {
     path: 'branding',
     element: <BrandingPage />,
+  },
+  {
+    path: 'successGetAccess',
+    element: <SuccessSubscribePage />
   },
   {
     path: '/',
@@ -49,6 +55,10 @@ const routes: RouteObject[] = [
   {
     path: `collection/:${Params.collectionAddress}/:${Params.tokenId}`,
     element: <NFTPage />,
+  },
+  {
+    path: 'checkCrypto',
+    element: <CheckCryptoPage />,
   },
   {
     path: '*',

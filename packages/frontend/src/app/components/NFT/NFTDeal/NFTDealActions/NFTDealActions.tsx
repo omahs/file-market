@@ -8,6 +8,7 @@ import { Order, Transfer } from '../../../../../swagger/Api'
 import { mark3dConfig } from '../../../../config/mark3d'
 import { useStores } from '../../../../hooks'
 import { TokenFullId } from '../../../../processing/types'
+import { transferPermissions } from '../../../../utils/transfer/status'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -35,6 +36,8 @@ export interface NFTDealActionsProps {
   runIsApprovedRefetch: () => void
 }
 
+const permissions = transferPermissions.buyer
+
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
   order,
@@ -51,13 +54,12 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
   const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
-
   const fileBunniesText = useMemo(() => {
-    return isFileBunnies && !transfer ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 23.12.2023') : ''
+    return (isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 23.12.2023') : ''
   }, [isFileBunnies, transfer, tokenFullId])
 
   const isDisabledFileBunnies = useMemo(() => {
-    return isFileBunnies && !transfer
+    return isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))
   }, [isFileBunnies, transfer])
 
   return (
@@ -75,8 +77,8 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
           transfer={transfer}
           order={order}
           tokenFullId={tokenFullId}
-          isDisabled={isDisabled}
           isBuyer={isBuyer}
+          isDisabled={isDisabled || isDisabledFileBunnies}
         />
       )}
     </ButtonsContainer>
