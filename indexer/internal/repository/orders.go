@@ -57,9 +57,6 @@ func (p *postgres) GetAllActiveOrders(
 	if lastOrderId != nil {
 		lastOrderIdParam = *lastOrderId
 	}
-	if limit == 0 {
-		limit = 10000
-	}
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit, strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()))
 	if err != nil {
@@ -448,7 +445,7 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 func (p *postgres) GetSalesVolumeByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (*big.Int, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT SUM(o.price::BIGINT)::VARCHAR(255)
+		SELECT SUM(o.price::NUMERIC)::VARCHAR(255)
 		FROM orders o
 		JOIN transfers t on 
 		    o.transfer_id = t.id and 
