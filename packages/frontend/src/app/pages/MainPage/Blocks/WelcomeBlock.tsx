@@ -6,7 +6,7 @@ import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
-import bgStorage from '../img/StorageBG.svg'
+import bgStorage from '../img/BgStorageNew.svg'
 import sunGreen from '../img/SunGreen.svg'
 import Achievements from './Achievements'
 import KeepTouchBlock from './KeepTouchBlock'
