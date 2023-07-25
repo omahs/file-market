@@ -44,7 +44,7 @@ func (h *handler) handleGetFullCollection(w http.ResponseWriter, r *http.Request
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 10000, 10000)
+	limit, err := parseLimitParam(r, "limit", 10, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -67,7 +67,7 @@ func (h *handler) handleGetFullPublicCollection(w http.ResponseWriter, r *http.R
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 10000, 10000)
+	limit, err := parseLimitParam(r, "limit", 10, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -88,7 +88,7 @@ func (h *handler) handleGetFullFileBunniesCollection(w http.ResponseWriter, r *h
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 1, 10000)
+	limit, err := parseLimitParam(r, "limit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
