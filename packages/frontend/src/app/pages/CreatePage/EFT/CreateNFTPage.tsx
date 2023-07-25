@@ -33,7 +33,7 @@ import {
   TextBold,
   TextGray,
   TitleGroup,
-} from '../Collection/CreateCollectionPage'
+} from '../Collection/sections/CreateCollection/CreateCollectionSection.styled'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from '../helper/data/data'
 import { useCreateNft } from '../hooks/useCreateNft'
 import { useModalProperties } from '../hooks/useModalProperties'

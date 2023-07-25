@@ -2,11 +2,13 @@ import React, { useMemo } from 'react'
 
 import { styled } from '../../../../styles'
 import { PageLayout, textVariant, Txt } from '../../../UIkit'
+import FileCoinImg from '../helper/assets/img/BCHBlockIcon.png'
 import {
   selectBlockchainDescription,
   selectBlockchainTitle,
   selectBlockchainType,
 } from '../helper/data/SelectBlockchainData'
+import SelectBlockchainBlock from './SelectBlockchainBlock/SelectBlockchainBlock'
 
 const SelectBlockchainStyle = styled(PageLayout, {
   display: 'flex',
@@ -55,14 +57,17 @@ const SelectBlockchain = ({ type, title: titleProps, description: descriptionPro
   }, [type, descriptionProps])
 
   return (
-    <SelectBlockchainStyle>
-      <SelectBlockchainContent>
-        <TextBlock>
-          <TitleStyled>{title}</TitleStyled>
-          <DescriptionStyled>{description}</DescriptionStyled>
-        </TextBlock>
-      </SelectBlockchainContent>
-    </SelectBlockchainStyle>
+    <PageLayout style={{ minHeight: '100vh' }}>
+      <SelectBlockchainStyle>
+        <SelectBlockchainContent>
+          <TextBlock>
+            <TitleStyled>{title}</TitleStyled>
+            <DescriptionStyled>{description}</DescriptionStyled>
+            <SelectBlockchainBlock name={'Filecoin'} img={FileCoinImg} onClick={() => {} } />
+          </TextBlock>
+        </SelectBlockchainContent>
+      </SelectBlockchainStyle>
+    </PageLayout>
   )
 }
 

@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { Label } from '../../../pages/CreatePage/Collection/CreateCollectionPage'
+import { Label } from '../../../pages/CreatePage/Collection/sections/CreateCollection/CreateCollectionSection.styled'
 import { Button } from '../../../UIkit'
 import { FormControl } from '../../../UIkit/Form/FormControl'
 import { Input } from '../../../UIkit/Form/Input'

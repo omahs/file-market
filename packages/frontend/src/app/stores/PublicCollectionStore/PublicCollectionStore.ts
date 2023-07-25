@@ -31,7 +31,7 @@ export class PublicCollectionStore implements IActivateDeactivate, IStoreRequest
   private request() {
     storeRequest(
       this,
-      api.collections.fullPublicList(),
+      api.collections.fullPublicList({ limit: 20 }),
       (data) => this.setData(data),
     )
   }
