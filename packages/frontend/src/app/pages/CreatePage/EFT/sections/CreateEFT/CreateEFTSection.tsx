@@ -5,25 +5,30 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
-import { styled } from '../../../styles'
 import BaseModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
   SuccessNavBody,
-} from '../../components/Modal/Modal'
-import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
-import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
-import { useCollectionAndTokenListStore, useStores } from '../../hooks'
-import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
-import { useMediaMui } from '../../hooks/useMediaMui'
-import { usePublicCollectionStore } from '../../hooks/usePublicCollectionStore'
-import { Button, Link, PageLayout, textVariant, Txt } from '../../UIkit'
-import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
-import { FormControl } from '../../UIkit/Form/FormControl'
-import { Input } from '../../UIkit/Form/Input'
-import { TextArea } from '../../UIkit/Form/Textarea'
-import TagsSection from '../NFTPage/section/Tags/TagsSection'
+} from '../../../../../components/Modal/Modal'
+import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
+import NftLoader from '../../../../../components/Uploaders/NftLoader/NftLoader'
+import { useCollectionAndTokenListStore, useStores } from '../../../../../hooks'
+import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
+import { useMediaMui } from '../../../../../hooks/useMediaMui'
+import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
+import {
+  Button,
+  ComboBoxOption,
+  ControlledComboBox,
+  FormControl,
+  Input,
+  Link,
+  PageLayout,
+  TextArea,
+  Txt,
+} from '../../../../../UIkit'
+import TagsSection from '../../../../NFTPage/section/Tags/TagsSection'
 import {
   ButtonContainer,
   Form,
@@ -33,131 +38,14 @@ import {
   TextBold,
   TextGray,
   TitleGroup,
-} from './CreateCollectionPage'
-import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from './helper/data/data'
-import { useCreateNft } from './hooks/useCreateNft'
-import { useModalProperties } from './hooks/useModalProperties'
-import PlusIcon from './img/plus-icon.svg'
+} from '../../../Collection/CreateCollectionPage'
+import { categoryOptions, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
+import { useCreateNft } from '../../../hooks/useCreateNft'
+import { useModalProperties } from '../../../hooks/useModalProperties'
+import PlusIcon from '../../../img/plus-icon.svg'
+import { CreateNFTForm, Description } from '../../CreateNFTPage'
 
-export const Description = styled('div', {
-  ...textVariant('secondary1').true,
-  fontSize: '14px',
-  lineHeight: '18px',
-  color: '$gray600',
-  marginBottom: '$3',
-  variants: {
-    secondary: {
-      true: {
-        ...textVariant('primary1').true,
-        fontSize: '14px',
-        fontWeight: '400',
-      },
-    },
-  },
-})
-
-const AddCollectionButton = styled(Button, {
-  width: 48,
-  height: 48,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '$3',
-  minWidth: 0,
-  padding: 0,
-  backgroundColor: '$white',
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
-})
-
-const Icon = styled('img', {
-  width: 16,
-  height: 16,
-})
-
-const CollectionPickerContainer = styled('div', {
-  display: 'flex',
-  gap: '$2',
-  justifyContent: 'space-between',
-  '& div:first-child': {
-    flexGrow: 1,
-  },
-
-  // set width to full width of form
-  // calc inside calcs is taken from container props
-  '& ul': {
-    width: 'calc(100% - 2 * calc((100% - $breakpoints$xl) * 0.5 + $space$3))',
-    '@xl': {
-      width:
-        'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)',
-    },
-    '@lg': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$4))',
-    },
-    '@md': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$3))',
-    },
-    '@sm': {
-      width: 'calc(100% - 2 * $space$3)',
-    },
-  },
-})
-
-const SubTitle = styled('div', {
-  color: '$gray600',
-})
-
-const CategoryAndSubcategory = styled('div', {
-  display: 'flex',
-  gap: '30px',
-  '@sm': {
-    flexDirection: 'column',
-  },
-})
-
-const ContentField = styled(CollectionPickerContainer, {
-  padding: '$3',
-  border: '1px solid #e9e9e9',
-  borderRadius: '20px',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  gap: '$3',
-  '& ul': {
-    maxWidth: '562px',
-    '@lg': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$5))',
-    },
-    '@md': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$4))',
-    },
-    '@sm': {
-      width: 'calc(100% - 2 * $space$4)',
-    },
-  },
-
-})
-
-const NFTLicense = styled('div', {
-  '& a': {
-    fontSize: '14px',
-  },
-})
-
-export interface CreateNFTForm {
-  image: FileList
-  hiddenFile: FileList
-  name: string
-  collection: ComboBoxOption
-  description: string
-  tags: ComboBoxOption
-  category: ComboBoxOption
-  subcategory: ComboBoxOption
-  license: ComboBoxOption
-  licenseUrl: string
-  tagsValue: string[]
-  royalty: number
-}
-
-export const CreateNFTPage: React.FC = observer(() => {
+export const CreateEFTSection: React.FC = observer(() => {
   const { address } = useAccount()
   const location = useLocation()
   const predefinedCollection: {

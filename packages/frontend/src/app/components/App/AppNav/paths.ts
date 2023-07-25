@@ -15,5 +15,8 @@ export const paths: NavBarItemData[] = [
     label: 'How to get FIL',
     isLink: true,
   },
+]
 
+export const pathsWithCurrentBlockchain: string[] = [
+  'market', 'profile',
 ]

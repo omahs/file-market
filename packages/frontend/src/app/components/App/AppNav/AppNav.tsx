@@ -7,7 +7,7 @@ import { useScrollWindow } from '../../../hooks/useScrollWindow'
 import { NavBar } from '../../../UIkit'
 import { AppConnectWidget } from '../AppConnectWidget'
 import { AppLogoButton } from '../AppLogoButton'
-import { paths } from './paths'
+import { paths, pathsWithCurrentBlockchain } from './paths'
 
 const mobileBp: BreakpointsOptions = 'lg'
 
@@ -33,6 +33,18 @@ export const AppNav: FC = () => {
     return scrollY < 1
   }, [scrollY])
 
+  const isCurrentBlockchainVisibleByScroll = useMemo(() => {
+    return scrollY < 1
+  }, [scrollY])
+
+  const isCurrentBlockchainVisibleByPath = useMemo(() => {
+    return location?.pathname?.split('/').findIndex(item => pathsWithCurrentBlockchain.includes(item)) > -1
+  }, [location])
+
+  const isCurrentBlockchainVisible = useMemo(() => {
+    return isCurrentBlockchainVisibleByPath && isCurrentBlockchainVisibleByScroll
+  }, [isCurrentBlockchainVisibleByScroll, isCurrentBlockchainVisibleByPath])
+
   return (
     <NavBar
       noneBlurShadow={noneBlurShadow && isMarketPage}
@@ -41,6 +53,7 @@ export const AppNav: FC = () => {
       brand={<AppLogoButton to='/' hideNameIn={mobileBp} />}
       items={paths}
       actions={<AppConnectWidget />}
+      isCurrentBlockchainVisible={isCurrentBlockchainVisible}
     />
   )
 }

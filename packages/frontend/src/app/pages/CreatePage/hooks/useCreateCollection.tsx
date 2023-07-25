@@ -5,7 +5,7 @@ import {
   CreateCollectionForm as FormDataToTransfer,
   useMintCollection,
 } from '../../../processing/nft-interaction'
-import { CreateCollectionForm } from '../CreateCollectionPage'
+import { CreateCollectionForm } from '../Collection/CreateCollectionPage'
 
 const convertFormDataToCollectionDTO = (
   form: CreateCollectionForm,
