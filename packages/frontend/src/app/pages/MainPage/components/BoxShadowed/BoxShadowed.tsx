@@ -4,13 +4,12 @@ import { styled } from '../../../../../styles'
 
 interface BoxShadowedProps {
   children: ReactNode
-  fullHeight?: boolean
-  mediumBorderRadius?: boolean
 }
 
 const Box = styled('div', {
   position: 'relative',
   width: '100%',
+  height: 'auto',
   '&::before': {
     position: 'absolute',
     top: '8px',
@@ -37,6 +36,16 @@ const Box = styled('div', {
         borderRadius: '8px',
       },
     },
+    widthInherit: {
+      true: {
+        width: 'inherit',
+      },
+    },
+    fullHeight: {
+      true: {
+        height: '100%',
+      },
+    },
   },
   '&:hover': {
     '&::before': {
@@ -44,6 +53,7 @@ const Box = styled('div', {
       left: 0,
     },
   },
+
 })
 
 const BoxContent = styled('div', {
@@ -53,6 +63,7 @@ const BoxContent = styled('div', {
   borderRadius: '$3',
   overflow: 'hidden',
   backgroundColor: '$white',
+  height: 'auto',
   variants: {
     hoverBlue: {
       true: {
@@ -61,15 +72,22 @@ const BoxContent = styled('div', {
         },
       },
     },
+    fullHeight: {
+      true: {
+        height: '100%',
+      },
+    },
   },
 })
 
-const BoxShadowed = (props: BoxShadowedProps & ComponentProps<typeof BoxContent>) => {
+const BoxShadowed = (props: BoxShadowedProps & ComponentProps<typeof BoxContent> & ComponentProps<typeof Box>) => {
   return (
     <Box
-      style={{ height: props.fullHeight ? '100%' : 'auto' }}
+      widthInherit={props.widthInherit}
+      fullHeight={props.fullHeight}
+      mediumBorderRadius={props.mediumBorderRadius}
     >
-      <BoxContent hoverBlue={props.hoverBlue} style={{ height: props.fullHeight ? '100%' : 'auto' }} >{props.children}</BoxContent>
+      <BoxContent hoverBlue={props.hoverBlue} fullHeight={props.fullHeight} >{props.children}</BoxContent>
     </Box>
   )
 }
