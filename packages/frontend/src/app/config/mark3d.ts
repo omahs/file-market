@@ -30,7 +30,6 @@ const filecoinCalibration: Chain = {
       url: 'https://calibration.filscan.io',
     },
   },
-
 }
 
 const filecoinMainnet: Chain = {

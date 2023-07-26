@@ -1,6 +1,8 @@
+import { observer } from 'mobx-react-lite'
 import React from 'react'
 
 import { styled } from '../../../../../styles'
+import { useMediaMui } from '../../../../hooks/useMediaMui'
 import BoxShadowed from '../../../../pages/MainPage/components/BoxShadowed/BoxShadowed'
 import { Txt } from '../../../../UIkit'
 
@@ -18,10 +20,12 @@ const SelectBlockchainBlockStyle = styled('div', {
     width: '48px',
     height: '48px',
   },
-})
-
-const BoxShadowedSelect = styled(BoxShadowed, {
-  width: 'inherit',
+  '&:hover': {
+    color: '#0090FF',
+  },
+  '@md': {
+    width: '100%',
+  },
 })
 
 interface ISelectBlockchainBlock {
@@ -30,15 +34,17 @@ interface ISelectBlockchainBlock {
   onClick: () => void
 }
 
-const SelectBlockchainBlock = ({ name, img, onClick }: ISelectBlockchainBlock) => {
+const SelectBlockchainBlock = observer(({ name, img, onClick }: ISelectBlockchainBlock) => {
+  const { mdValue } = useMediaMui()
+
   return (
-    <BoxShadowedSelect hoverBlue>
+    <BoxShadowed widthInherit={!mdValue} hoverBlue>
       <SelectBlockchainBlockStyle onClick={ () => { onClick() } }>
         <img src={img} />
         <Txt primary1>{name}</Txt>
       </SelectBlockchainBlockStyle>
-    </BoxShadowedSelect>
+    </BoxShadowed>
   )
-}
+})
 
 export default SelectBlockchainBlock

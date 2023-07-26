@@ -1,0 +1,146 @@
+[
+  {
+    "chain": {
+      "id": 314,
+      "name": "filecoin",
+      "network": "FVM - Mainnet",
+      "nativeCurrency": {
+        "name": "FIL",
+        "symbol": "FIL",
+        "decimals": "18"
+      },
+      "rpcUrls": {
+        "default": {
+          "http": [
+            "https://rpc.ankr.com/filecoin",
+            "https://filecoin.chainup.net/rpc/v1",
+            "https://api.node.glif.io"
+          ]
+        },
+        "public": {
+          "http": [
+            "https://rpc.ankr.com/filecoin",
+            "https://filecoin.chainup.net/rpc/v1",
+            "https://api.node.glif.io"
+          ]
+        }
+      },
+      "blockExplorers": {
+        "default": {
+          "name": "FVM Mainnet explorer",
+          "url": "https://filfox.info/en"
+        }
+      }
+    },
+    "img": "https://cryptologos.cc/logos/filecoin-fil-logo.svg?v=025",
+    "accessTokenAddress": "",
+    "exchangeTokenAddress": "",
+    "isDefault": "true",
+    "baseUrl": ""
+  },
+  {
+    "chain": {
+      "id": 314159,
+      "name": "filecoin",
+      "network": "Filecoin - Calibration testnet",
+      "nativeCurrency": {
+        "name": "TFIL",
+        "symbol": "TFIL",
+        "decimals": 18
+      },
+      "rpcUrls": {
+        "default": {
+          "http": [
+            "https://rpc.ankr.com/filecoin_testnet"
+          ]
+        },
+        "public": {
+          "http": [
+            "https://filecoin-calibration.chainup.net/rpc/v1"
+          ]
+        }
+      },
+      "blockExplorers": {
+        "default": {
+          "name": "Calibration filscan",
+          "url": "https://calibration.filscan.io"
+        }
+      },
+      "testnet": "true"
+    },
+    "img": "https://cryptologos.cc/logos/filecoin-fil-logo.svg?v=025",
+    "accessTokenAddress": "",
+    "exchangeTokenAddress": "",
+    "isDefault": "true",
+    "baseUrl": ""
+  },
+  {
+    "chain": {
+      "id": 324,
+      "name": "zkSync",
+      "network": "zkSync Era Mainnet",
+      "nativeCurrency": {
+        "name": "ETH",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      "rpcUrls": {
+        "default": {
+          "http": [
+            "https://mainnet.era.zksync.io"
+          ]
+        },
+        "public": {
+          "http": [
+            "https://mainnet.era.zksync.io"
+          ]
+        }
+      },
+      "blockExplorers": {
+        "default": {
+          "name": "Explorer zksync",
+          "url": "https://explorer.zksync.io/"
+        }
+      }
+    },
+    "img": "https://svgshare.com/i/vmG.svg",
+    "accessTokenAddress": "",
+    "exchangeTokenAddress": "",
+    "baseUrl": ""
+  },
+  {
+    "chain": {
+      "id": 280,
+      "name": "zkSync",
+      "network": "zkSync Era Testnet",
+      "nativeCurrency": {
+        "name": "ETH",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      "rpcUrls": {
+        "default": {
+          "http": [
+            "https://testnet.era.zksync.dev"
+          ]
+        },
+        "public": {
+          "http": [
+            "https://testnet.era.zksync.dev"
+          ]
+        }
+      },
+      "blockExplorers": {
+        "default": {
+          "name": "Explorer zksync",
+          "url": "https://goerli.explorer.zksync.io/"
+        }
+      },
+      "testnet": "true"
+    },
+    "img": "https://svgshare.com/i/vmG.svg",
+    "accessTokenAddress": "",
+    "exchangeTokenAddress": "",
+    "baseUrl": ""
+  }
+]

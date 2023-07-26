@@ -4,9 +4,18 @@ import { FC } from 'react'
 import { configureChains, createClient } from 'wagmi'
 
 import { theme } from '../../styles'
-import { mark3dConfig } from './mark3d'
+import multichainConfig from './multiChainConfig.json'
+import { IMultiChainConfig } from './multiChainConfigType'
 
-const chains = [mark3dConfig.chain]
+export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiChainConfig[])
+  .map(item => item.chain)
+  .filter(item => {
+    console.log(item)
+    console.log(import.meta.env.VITE_IS_MAINNET)
+
+    // @ts-expect-error
+    return (item.testnet === 'true') === !!import.meta.env.VITE_IS_MAINNET
+  })
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 

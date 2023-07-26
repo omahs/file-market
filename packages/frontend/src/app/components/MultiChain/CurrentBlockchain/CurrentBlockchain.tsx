@@ -1,7 +1,11 @@
 import { ComponentProps } from '@stitches/react'
-import React from 'react'
+import { observer } from 'mobx-react-lite'
+import React, { useEffect } from 'react'
 
 import { styled } from '../../../../styles'
+import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
+import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
+import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { Txt } from '../../../UIkit'
 import CurrentBlockchainBlock from './CurrentBlockchainBlock/CurrentBlockchainBlock'
 
@@ -31,15 +35,38 @@ const LinearText = styled(Txt, {
 type ICurrentBlockchain = ComponentProps<typeof CurrentBlockchainStyle> & {
   isVisible?: boolean
 }
-const CurrentBlockchain = ({ isVisible, isLight }: ICurrentBlockchain) => {
+const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
+  const multiChainStore = useMultiChainStore()
+  const currentChainStore = useCurrentBlockChain()
+  const { changeNetwork, isLoading, error } = useChangeNetwork()
+
+  useEffect(() => {
+    console.log(isLoading)
+    console.log(error)
+  }, [isLoading, error])
+
   return (
     <>
       {isVisible && (
         <CurrentBlockchainStyle isLight={isLight}>
           <Txt>Current blockchain:</Txt>
-          <CurrentBlockchainBlock isLight={isLight} isActive />
-          <CurrentBlockchainBlock isLight={isLight} />
-          <CurrentBlockchainBlock isLight={isLight} />
+          <>
+            {multiChainStore.data?.map(item => {
+              return (
+                <CurrentBlockchainBlock
+                  key={item.chain.id.toString()}
+                  isLight={isLight}
+                  isActive={currentChainStore.chainId === item.chain.id}
+                  name={item.chain.name}
+                  img={item.img}
+                  isDisable={isLoading && !error}
+                  onClick={() => {
+                    changeNetwork(item.chain.id)
+                  }}
+                />
+              )
+            })}
+          </>
           <LinearText>
             Ethereum will be available coming soon!
           </LinearText>
@@ -47,6 +74,6 @@ const CurrentBlockchain = ({ isVisible, isLight }: ICurrentBlockchain) => {
       )}
     </>
   )
-}
+})
 
 export default CurrentBlockchain

@@ -3,7 +3,6 @@ import React from 'react'
 
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
-import BlockImg from '../../helper/assets/img/BCHBlockIcon.png'
 
 const CurrentBlockchainBlockStyle = styled('div', {
   display: 'flex',
@@ -33,19 +32,34 @@ const CurrentBlockchainBlockStyle = styled('div', {
         outlineColor: '#0090FF',
       },
     },
+    isDisable: {
+      true: {
+        filter: 'brightness(80%)',
+        cursor: 'default',
+        '&:hover': {
+          color: '#4E5156',
+        },
+      },
+    },
   },
   '&:hover': {
     color: '#0090FF',
   },
 })
 
-export type ICurrentBlockchainBlock = ComponentProps<typeof CurrentBlockchainBlockStyle>
+export type ICurrentBlockchainBlock = ComponentProps<typeof CurrentBlockchainBlockStyle> & {
+  name: string
+  img: string
+  onClick: () => void
+}
 
 const CurrentBlockchainBlock = (props: ICurrentBlockchainBlock) => {
+  const { name, img, onClick, isDisable, ...styleProps } = props
+
   return (
-    <CurrentBlockchainBlockStyle {...props}>
-      <img src={BlockImg} />
-      FileCoin
+    <CurrentBlockchainBlockStyle isDisable={isDisable} {...styleProps} onClick={() => !isDisable && onClick()}>
+      <img src={img} />
+      {name}
     </CurrentBlockchainBlockStyle>
   )
 }

@@ -53,7 +53,7 @@ const NavBarStyled = styled('nav', {
     },
     isCurrentBlockchainVisible: {
       true: {
-        borderBottom: '2px solid $gray600',
+        borderBottom: '2px solid #eaeaec',
       },
     },
   },
