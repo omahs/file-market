@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -18,6 +19,7 @@ type Postgres interface {
 	Transfers
 	Orders
 	Whitelist
+	AuthRepository
 }
 
 type Transactions interface {
@@ -88,6 +90,17 @@ type Orders interface {
 	GetFloorPriceByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (*big.Int, error)
 	InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error)
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
+}
+
+type AuthRepository interface {
+	GetAuthMessage(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.AuthMessage, error)
+	InsertAuthMessage(ctx context.Context, tx pgx.Tx, msg domain.AuthMessage) error
+	DeleteAuthMessage(ctx context.Context, tx pgx.Tx, address common.Address) error
+	GetJwtTokenNumber(ctx context.Context, tx pgx.Tx, address common.Address, purpose jwt.Purpose) (int, error)
+	InsertJwtToken(ctx context.Context, tx pgx.Tx, tokenData jwt.TokenData) error
+	DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address, number int) error
+	DropAllJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address) error
+	GetJwtTokenSecret(ctx context.Context, tx pgx.Tx, address common.Address, number int, purpose jwt.Purpose) (string, error)
 }
 
 type Whitelist interface {
