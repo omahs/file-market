@@ -1,8 +1,9 @@
 import { ComponentProps } from '@stitches/react'
 import { observer } from 'mobx-react-lite'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { styled } from '../../../../styles'
+import { useAutorunEffect } from '../../../hooks/useAutoRunEffect'
 import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
@@ -40,10 +41,9 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork, isLoading, error } = useChangeNetwork()
 
-  useEffect(() => {
-    console.log(isLoading)
-    console.log(error)
-  }, [isLoading, error])
+  useAutorunEffect(() => {
+    console.log(currentChainStore.chainId)
+  }, [currentChainStore.chainId])
 
   return (
     <>

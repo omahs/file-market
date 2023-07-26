@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { chains } from '../config/web3Modal'
 import { IStoreRequester } from '../utils/store'
 import { useAuth } from './useAuth'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
 import { useStores } from './useStores'
 
-export const useChangeNetwork = () => {
+export const useChangeNetwork = (props?: { onSuccess?: () => void }) => {
   const currentChainStore = useCurrentBlockChain()
   const { isConnected } = useAccount()
   const { connect } = useAuth()
@@ -17,15 +16,16 @@ export const useChangeNetwork = () => {
     onSuccess: (data) => {
       currentChainStore.setCurrentBlockChain(data.id)
       setIsLoading(false)
+      props?.onSuccess?.()
       reloadStores()
     },
   })
 
-  const { chain } = useNetwork()
-
   function isIStoreRequest(object: any): object is IStoreRequester {
     return 'reload' in object
   }
+
+  const { chain } = useNetwork()
 
   const reloadStores = () => {
     for (const key in rootStore) {
@@ -46,15 +46,11 @@ export const useChangeNetwork = () => {
     if ((currentChainStore.chainId !== chainId || isWarningNetwork) && chain?.id !== chainId) { setIsLoading(true); switchNetwork?.(chainId) }
     // Меняем значение в сторе, если текущая сеть кошелька !== переданной сети
     if (chain?.id === chainId) {
+      console.log(chainId)
+      currentChainStore.setCurrentBlockChain(chainId ?? 0)
       reloadStores()
     }
   }, [currentChainStore.chainId, isConnected])
-
-  useEffect(() => {
-    console.log(chain)
-    if (!chain) return
-    if (chain?.id !== currentChainStore.chainId && chains.find(item => item.id === chain?.id)) changeNetwork(chain?.id)
-  }, [chain])
 
   return {
     changeNetwork,

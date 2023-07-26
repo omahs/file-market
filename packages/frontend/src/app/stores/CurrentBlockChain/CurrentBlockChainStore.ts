@@ -57,10 +57,6 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
     storeReset(this)
   }
 
-  reload(): void {
-    this.request()
-  }
-
   get baseUrl(): string | undefined {
     const chain = this.multiChainStore.data?.find(item => (item.chain.id === this.chainId))
 

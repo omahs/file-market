@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from 'react'
 
+import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import SelectBlockchain from '../../SelectBlockchain/SelectBlockchain'
 
 interface IMultiChainController {
@@ -8,10 +9,15 @@ interface IMultiChainController {
 
 const MultiChainController = ({ renderElem }: IMultiChainController) => {
   const [isChoosen, setIsChoosen] = useState<boolean>(false)
+  const { changeNetwork } = useChangeNetwork({
+    onSuccess: () => {
+      setIsChoosen(true)
+    },
+  })
 
   return (
     <>
-      {isChoosen ? renderElem : <SelectBlockchain on />}
+      {isChoosen ? renderElem : <SelectBlockchain onChange={(chainId) => { changeNetwork(chainId) }} />}
     </>
   )
 }
