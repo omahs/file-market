@@ -155,11 +155,11 @@ func (p *postgres) GetAllActiveOrdersTotalByCollection(
 			FROM transfer_statuses
 		),
 		latest_order_statuses AS (
-			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			SELECT order_id, status, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
 			FROM order_statuses
 		),
 		filtered_orders AS (
-			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
+			SELECT o.id
 			FROM orders AS o
 			JOIN transfers t on o.transfer_id = t.id
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id

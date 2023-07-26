@@ -99,6 +99,7 @@ func (s *service) GetCollections(
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
 	collections, err := s.repository.GetCollections(ctx, tx, lastCollectionAddress, limit)
 	if err != nil {
 		logger.Errorf("get collections failed", err)
@@ -115,22 +116,22 @@ func (s *service) GetCollections(
 		c := domain.CollectionToModel(collection)
 		tokensCount, err := s.repository.GetCollectionTokensTotal(ctx, tx, collection.Address)
 		if err != nil {
-			logger.Errorf("failed to get tokensCount", err, nil)
+			logger.Error("failed to get tokensCount", err, nil)
 			return nil, internalError
 		}
 		ordersCount, err := s.repository.GetAllActiveOrdersTotalByCollection(ctx, tx, collection.Address)
 		if err != nil {
-			logger.Errorf("failed to get collection orders count", err, nil)
+			logger.Error("failed to get collection orders count", err, nil)
 			return nil, internalError
 		}
 		ownersCount, err := s.repository.GetOwnersCountByCollection(ctx, tx, collection.Address)
 		if err != nil {
-			logger.Errorf("failed to get collection owners count", err, nil)
+			logger.Error("failed to get collection owners count", err, nil)
 			return nil, internalError
 		}
 		fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, collection.Address)
 		if err != nil {
-			logger.Errorf("failed to get collection content types", err, nil)
+			logger.Error("failed to get collection content types", err, nil)
 			return nil, internalError
 		}
 		c.TokensCount = tokensCount

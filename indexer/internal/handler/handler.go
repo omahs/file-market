@@ -41,7 +41,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/collections/full/file-bunnies", h.handleGetFullFileBunniesCollection)
 	router.HandleFunc("/collections/full/{address:0x[0-9a-f-A-F]{40}}", h.handleGetFullCollection)
 	router.HandleFunc("/collections/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollection)
-	router.HandleFunc("/collections/", h.handleGetCollections)
+	router.HandleFunc("/collections", h.handleGetCollections)
 	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}/encrypted_password", h.handleGetTokenEncryptedPassword)
 	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetToken)
 	router.HandleFunc("/tokens/by_collection/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollectionTokens)
