@@ -54,6 +54,7 @@ export const useChangeNetwork = (props?: { onSuccess?: () => void }) => {
 
   return {
     changeNetwork,
+    chain,
     isLoading,
     error,
   }

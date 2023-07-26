@@ -1,8 +1,8 @@
 import React from 'react'
 
-// import CreateCollectionSection from './sections/CreateCollection/CreateCollectionSection'
-import SelectBlockchain from '../../../components/MultiChain/SelectBlockchain/SelectBlockchain'
+import MultiChainController from '../../../components/MultiChain/Controller/MultiChainController/MultiChainController'
+import CreateCollectionSection from './sections/CreateCollection/CreateCollectionSection'
 
 export default function CreateCollectionPage() {
-  return <SelectBlockchain type={'collection'} />
+  return <MultiChainController renderElem={<CreateCollectionSection />} />
 }

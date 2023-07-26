@@ -9,7 +9,7 @@ interface IMultiChainController {
 
 const MultiChainController = ({ renderElem }: IMultiChainController) => {
   const [isChoosen, setIsChoosen] = useState<boolean>(false)
-  const { changeNetwork } = useChangeNetwork({
+  const { changeNetwork, chain } = useChangeNetwork({
     onSuccess: () => {
       setIsChoosen(true)
     },
@@ -17,7 +17,13 @@ const MultiChainController = ({ renderElem }: IMultiChainController) => {
 
   return (
     <>
-      {isChoosen ? renderElem : <SelectBlockchain onChange={(chainId) => { changeNetwork(chainId) }} />}
+      {isChoosen ? renderElem : (
+        <SelectBlockchain onChange={(chainId) => {
+          if (chain?.id === chainId) setIsChoosen(true)
+          else changeNetwork(chainId)
+        }}
+        />
+      )}
     </>
   )
 }

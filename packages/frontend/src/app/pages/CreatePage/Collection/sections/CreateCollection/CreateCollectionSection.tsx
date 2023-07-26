@@ -5,8 +5,6 @@ import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessN
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
 import { Description } from '../../../EFT/CreateNFTPage'
-import { useCreateCollection } from '../../../hooks/useCreateCollection'
-import { useModalProperties } from '../../../hooks/useModalProperties'
 import {
   ButtonContainer,
   Form,
@@ -15,7 +13,9 @@ import {
   TextBold, TextGray,
   Title,
   TitleGroup,
-} from './CreateCollectionSection.styled'
+} from '../../../helper/style/style'
+import { useCreateCollection } from '../../../hooks/useCreateCollection'
+import { useModalProperties } from '../../../hooks/useModalProperties'
 
 interface CreateCollectionForm {
   image: FileList

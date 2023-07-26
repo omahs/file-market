@@ -29,6 +29,7 @@ import {
   Txt,
 } from '../../../../../UIkit'
 import TagsSection from '../../../../NFTPage/section/Tags/TagsSection'
+import { categoryOptions, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
 import {
   ButtonContainer,
   Form,
@@ -38,12 +39,34 @@ import {
   TextBold,
   TextGray,
   TitleGroup,
-} from '../../../Collection/CreateCollectionPage'
-import { categoryOptions, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
+} from '../../../helper/style/style'
 import { useCreateNft } from '../../../hooks/useCreateNft'
 import { useModalProperties } from '../../../hooks/useModalProperties'
 import PlusIcon from '../../../img/plus-icon.svg'
-import { CreateNFTForm, Description } from '../../CreateNFTPage'
+import {
+  AddCollectionButton,
+  CategoryAndSubcategory,
+  CollectionPickerContainer,
+  ContentField,
+  Icon,
+  NFTLicense,
+  SubTitle,
+} from './CreateEFTSection.styles'
+
+export interface CreateNFTForm {
+  image: FileList
+  hiddenFile: FileList
+  name: string
+  collection: ComboBoxOption
+  description: string
+  tags: ComboBoxOption
+  category: ComboBoxOption
+  subcategory: ComboBoxOption
+  license: ComboBoxOption
+  licenseUrl: string
+  tagsValue: string[]
+  royalty: number
+}
 
 export const CreateEFTSection: React.FC = observer(() => {
   const { address } = useAccount()
