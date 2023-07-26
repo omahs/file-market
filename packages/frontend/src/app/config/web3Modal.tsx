@@ -14,7 +14,7 @@ export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiCha
     console.log(import.meta.env.VITE_IS_MAINNET)
 
     // @ts-expect-error
-    return (item.testnet === 'true') === !!import.meta.env.VITE_IS_MAINNET
+    return (item.testnet === 'true') === !import.meta.env.VITE_IS_MAINNET
   })
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID

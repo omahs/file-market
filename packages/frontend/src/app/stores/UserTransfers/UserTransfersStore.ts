@@ -2,7 +2,6 @@ import { makeAutoObservable } from 'mobx'
 
 import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
 import { TransferCardProps } from '../../components/MarketCard/TransferCard'
-import { api } from '../../config/api'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
@@ -15,6 +14,7 @@ import {
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
@@ -41,6 +41,7 @@ const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
 
 export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -55,10 +56,13 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
 
   address = ''
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
+
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -83,7 +87,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   private request() {
     storeRequest<TransfersResponseV2>(
       this,
-      api.v2.transfersDetail(this.address, { outgoingLimit: 10, incomingLimit: 10 }),
+      this.currentBlockChainStore.api.v2.transfersDetail(this.address, { outgoingLimit: 10, incomingLimit: 10 }),
       (data) => this.setData(data),
     )
   }
@@ -94,7 +98,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
 
     storeRequest<TransfersResponseV2>(
       this,
-      api.v2.transfersDetail(this.address, {
+      this.currentBlockChainStore.api.v2.transfersDetail(this.address, {
         lastIncomingTransferId,
         lastOutgoingTransferId,
         outgoingLimit: 10,

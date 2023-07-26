@@ -2,12 +2,12 @@ import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
 import { Transfer, TransferStatus } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { TokenFullId } from '../../processing/types'
 import { normalizeCounterId } from '../../processing/utils/id'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { BlockStore } from '../BlockStore/BlockStore'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 import { OrderStore } from '../Order/OrderStore'
 import { TokenStore } from '../Token/TokenStore'
@@ -18,6 +18,7 @@ import { TokenStore } from '../Token/TokenStore'
 export class TransferStore implements IStoreRequester,
   IActivateDeactivate<[string, string]>, IHiddenFilesTokenEventsListener {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -36,27 +37,31 @@ export class TransferStore implements IStoreRequester,
 
   onTransferFinishedCall?: () => void
   onTransferPublicKeySetCall?: () => void
-  constructor({ errorStore, blockStore, tokenStore, orderStore }: {
+  constructor({ errorStore, blockStore, tokenStore, orderStore, currentBlockChainStore }: {
     errorStore: ErrorStore
     blockStore: BlockStore
     tokenStore: TokenStore
-    orderStore: OrderStore }) {
+    orderStore: OrderStore
+    currentBlockChainStore: CurrentBlockChainStore
+  }) {
     this.errorStore = errorStore
     this.blockStore = blockStore
     this.tokenStore = tokenStore
     this.orderStore = orderStore
+    this.currentBlockChainStore = currentBlockChainStore
     makeAutoObservable(this, {
       errorStore: false,
       blockStore: false,
       tokenStore: false,
       orderStore: false,
+      currentBlockChainStore: false,
     })
   }
 
   private request(tokenFullId: TokenFullId, onSuccess?: () => void) {
     storeRequest<Transfer | null>(
       this,
-      api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      this.currentBlockChainStore.api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp ?? undefined
         if (resp?.block?.number) {

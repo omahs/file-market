@@ -35,9 +35,9 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
   private request() {
     const multiChains: IMultiChainConfig[] = JSON.parse(JSON.stringify(multichainConfig))
     // @ts-expect-error
-    this.data = multiChains?.filter((item) => (item.chain.testnet === 'true') === !!import.meta.env.VITE_IS_MAINNET)
+    this.data = multiChains?.filter((item) => (item.chain.testnet === 'true') === !import.meta.env.VITE_IS_MAINNET)
     // @ts-expect-error
-    console.log(multiChains?.filter((item) => (item.chain.testnet === 'true') === !!import.meta.env.VITE_IS_MAINNET))
+    console.log(multiChains?.filter((item) => (item.chain.testnet === 'true') === !import.meta.env.VITE_IS_MAINNET))
   }
 
   activate(): void {

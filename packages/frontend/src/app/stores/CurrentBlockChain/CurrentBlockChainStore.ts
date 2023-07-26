@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
+import { Api } from '../../../swagger/Api'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -24,7 +25,6 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   isActivated = false
 
   chainId?: number
-
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore
@@ -59,5 +59,15 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
 
   reload(): void {
     this.request()
+  }
+
+  get baseUrl(): string | undefined {
+    const chain = this.multiChainStore.data?.find(item => (item.chain.id === this.chainId))
+
+    return chain?.baseUrl
+  }
+
+  get api() {
+    return new Api({ baseUrl: this.baseUrl })
   }
 }

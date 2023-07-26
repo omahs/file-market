@@ -3,9 +3,9 @@ import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { api } from '../../config/api'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useApi } from '../../hooks/useApi'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
@@ -45,6 +45,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
   const upload = useUploadLighthouse()
+  const api = useApi()
 
   const mintNFT = useCallback(wrapPromise(async (form) => {
     assertContract(contract, mark3dConfig.collectionToken.name)

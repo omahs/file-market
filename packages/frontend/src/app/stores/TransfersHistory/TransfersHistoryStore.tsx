@@ -8,7 +8,6 @@ import {
   TransferWithData,
 } from '../../../swagger/Api'
 import { ITableRow } from '../../components/Table/TableBuilder'
-import { api } from '../../config/api'
 import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
 import { Badge } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -22,6 +21,7 @@ import {
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
@@ -126,6 +126,7 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
 
 export class TransfersHistoryStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -140,10 +141,13 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
 
   collectionAddress = ''
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
+
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -168,7 +172,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
   private request() {
     storeRequest(
       this,
-      api.v2.transfersHistoryDetail(this.collectionAddress, { outgoingLimit: 10, incomingLimit: 10 }),
+      this.currentBlockChainStore.api.v2.transfersHistoryDetail(this.collectionAddress, { outgoingLimit: 10, incomingLimit: 10 }),
       (data) => this.setData(data),
     )
   }
@@ -179,7 +183,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
 
     storeRequest(
       this,
-      api.v2.transfersHistoryDetail(this.collectionAddress, {
+      this.currentBlockChainStore.api.v2.transfersHistoryDetail(this.collectionAddress, {
         lastIncomingTransferId,
         lastOutgoingTransferId,
         outgoingLimit: 10,

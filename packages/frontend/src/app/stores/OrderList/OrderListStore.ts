@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
 import { OrdersAllActiveResponse, OrderStatus } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
@@ -14,6 +13,7 @@ import {
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 /**
@@ -22,6 +22,7 @@ import { ErrorStore } from '../Error/ErrorStore'
  */
 export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -33,10 +34,12 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     total: 0,
   }
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -55,7 +58,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   private request() {
     storeRequest(
       this,
-      api.orders.allActiveList({ limit: 20 }),
+      this.currentBlockChainStore.api.orders.allActiveList({ limit: 20 }),
       (data) => this.setData(data),
     )
   }
@@ -64,7 +67,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     const lastOrderId = lastItem(this.data.items ?? [])?.order?.id
     storeRequest(
       this,
-      api.orders.allActiveList({ lastOrderId, limit: 20 }),
+      this.currentBlockChainStore.api.orders.allActiveList({ lastOrderId, limit: 20 }),
       (data) => this.addData(data),
     )
   }

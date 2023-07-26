@@ -72,7 +72,7 @@
     "accessTokenAddress": "",
     "exchangeTokenAddress": "",
     "isDefault": "true",
-    "baseUrl": ""
+    "baseUrl": "https://dev.filemarket.xyz/api"
   },
   {
     "chain": {
@@ -141,6 +141,6 @@
     "img": "https://svgshare.com/i/vmG.svg",
     "accessTokenAddress": "",
     "exchangeTokenAddress": "",
-    "baseUrl": ""
+    "baseUrl": "https://era-dev.filemarket.xyz/api"
   }
 ]

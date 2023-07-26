@@ -1,13 +1,14 @@
 import { makeAutoObservable } from 'mobx'
 
 import { Transfer, TransfersResponse } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { stringifyTokenFullId } from '../../processing/utils/id'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 export class TransferListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -19,10 +20,12 @@ export class TransferListStore implements IActivateDeactivate<[string]>, IStoreR
   outgoing: Transfer[] = []
   address = ''
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -45,7 +48,7 @@ export class TransferListStore implements IActivateDeactivate<[string]>, IStoreR
   private request(address: string) {
     storeRequest<TransfersResponse>(
       this,
-      api.transfers.transfersDetail(address),
+      this.currentBlockChainStore.api.transfers.transfersDetail(address),
       data => {
         if (data.incoming) {
           this.incoming = data.incoming

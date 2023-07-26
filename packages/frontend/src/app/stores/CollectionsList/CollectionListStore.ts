@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
 import { CollectionsResponse } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -10,6 +9,7 @@ import {
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 /**
@@ -18,6 +18,7 @@ import { ErrorStore } from '../Error/ErrorStore'
  */
 export class CollectionListStore implements IStoreRequester, IActivateDeactivate {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -29,10 +30,13 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
     total: 0,
   }
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
+
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -51,7 +55,7 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
   private request() {
     storeRequest(
       this,
-      api.collections.collectionsList({ limit: 20 }),
+      this.currentBlockChainStore.api.collections.collectionsList({ limit: 20 }),
       (data) => this.setData(data),
     )
   }
@@ -60,7 +64,7 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
     const lastCollectionAddress = lastItem(this.data.collections ?? [])?.address
     storeRequest(
       this,
-      api.collections.collectionsList({ lastCollectionAddress, limit: 20 }),
+      this.currentBlockChainStore.api.collections.collectionsList({ lastCollectionAddress, limit: 20 }),
       (data) => this.addData(data),
     )
   }

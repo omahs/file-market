@@ -1,13 +1,13 @@
 import { makeAutoObservable } from 'mobx'
 
 import { CollectionData } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
-import type { RootStore } from '../RootStore'
 
 export class PublicCollectionStore implements IActivateDeactivate, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -19,9 +19,14 @@ export class PublicCollectionStore implements IActivateDeactivate, IStoreRequest
     total: 0,
   }
 
-  constructor({ errorStore }: RootStore) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
-    makeAutoObservable(this)
+    this.currentBlockChainStore = currentBlockChainStore
+
+    makeAutoObservable(this, {
+      errorStore: false,
+      currentBlockChainStore: false,
+    })
   }
 
   setData(data: CollectionData) {
@@ -31,7 +36,7 @@ export class PublicCollectionStore implements IActivateDeactivate, IStoreRequest
   private request() {
     storeRequest(
       this,
-      api.collections.fullPublicList({ limit: 20 }),
+      this.currentBlockChainStore.api.collections.fullPublicList({ limit: 20 }),
       (data) => this.setData(data),
     )
   }

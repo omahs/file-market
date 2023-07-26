@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx'
 
 import { Order } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { TokenFullId } from '../../processing/types'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 /**
@@ -13,6 +13,7 @@ import { ErrorStore } from '../Error/ErrorStore'
 export class OrderStore implements IStoreRequester,
   IActivateDeactivate<[string, string]> {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -23,17 +24,19 @@ export class OrderStore implements IStoreRequester,
   data?: Order = undefined
   tokenFullId?: TokenFullId = undefined
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
   private request(tokenFullId: TokenFullId) {
     storeRequest<Order | null>(
       this,
-      api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      this.currentBlockChainStore.api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         console.log(resp)
         resp && (this.data = resp)
