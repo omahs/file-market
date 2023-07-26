@@ -16,6 +16,7 @@ export interface IStoreRequester {
   requestCount: number
   currentRequest?: RequestContext // current request. Helps to prevent concurrent request
   reset: () => void
+  reload: () => void
 }
 
 export interface RequestContext {
