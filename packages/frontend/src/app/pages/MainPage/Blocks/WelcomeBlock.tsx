@@ -279,7 +279,7 @@ export default function WelcomeBlock() {
             <div className='buttonContainer'>
               <Button
                 mediumMxWidth
-                whiteWithBlueMd
+                whiteWithBlueBlindsMd
                 bigHg
                 style={{ height: '64px', padding: '28px 59px', whiteSpace: 'nowrap' }}
                 onClick={() => {
@@ -290,7 +290,7 @@ export default function WelcomeBlock() {
               </Button>
               <LinkButton
                 mediumMxWidth
-                whiteWithBlueMd
+                whiteWithBlueBlindsMd
                 bigHg
                 href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
                 target={'_blank'}

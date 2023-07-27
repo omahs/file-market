@@ -41,7 +41,7 @@ const getFileName = (href: string) => {
 export default function DownloadButton(props: DownloadButtonProps) {
   return (
     <LinkButton
-      whiteWithBlue
+      whiteWithBlueBlinds
       style={{ columnGap: '8px', minHeight: '100%', backgroundColor: '#F9F9F9' }}
       href={props.downloadHref}
       download={getFileName(props.downloadHref)}

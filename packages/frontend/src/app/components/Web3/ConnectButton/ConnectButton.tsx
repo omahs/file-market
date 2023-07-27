@@ -10,9 +10,8 @@ export const ConnectButton: FC<ConnectButtonProps> = ({ connectFunc }) => {
   // onClick instead of onPress, cos web3modal closes when using onPress
   return (
     <Button
-      header
       small
-      secondary
+      secondaryWithBlinds
       onClick={async () => connectFunc()}
     >
       Connect

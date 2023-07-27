@@ -41,33 +41,19 @@ const ConvertKitStyle = styled(ConvertKitForm, {
   },
   '& button': {
     cursor: 'pointer',
-    background: 'none',
     ...textVariant('primary1').true,
     border: '2px solid #028FFF',
     borderRadius: '12px',
     color: '#028FFF',
     width: '160px',
     height: '48px',
-    transition: 'all 0.3s ease-out',
-    overflow: 'hidden',
+    background: 'linear-gradient(to bottom, $white 50%, #028FFF 50%)',
+    backgroundSize: '100% 200%',
+    backgroundPosition: '0 0%',
+    transition: 'background-position 0.3s ease-out, color 0.3s ease-out',
     '&:hover': {
       color: '$white',
-      opacity: 1,
-      filter: 'brightness(1.1)',
-      '&::before': {
-        height: '100%',
-      },
-    },
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      width: '100%',
-      height: '0',
-      top: 0,
-      left: 0,
-      backgroundColor: '$blue500',
-      zIndex: '-1',
-      transition: 'all 0.3s ease-out',
+      backgroundPosition: '0 100%',
     },
     '@md': {
       width: '30%',
@@ -195,7 +181,7 @@ const EmailForm = () => {
           emailPlaceholder={'Enter Email'}
         />
       </EmailContainerInner>
-      <GridImg src={ GridImgSrc} />
+      <GridImg src={GridImgSrc} />
     </EmailContainer>
   )
 }
