@@ -66,6 +66,32 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           },
         },
       },
+      secondaryWithBlinds: {
+        true: {
+          color: '$white',
+          fill: '$white',
+          background: 'linear-gradient(to top, #028FFF 50%, transparent 50%)',
+          backgroundSize: '100% 200%',
+          backgroundPosition: '0 100%',
+          transition: 'background-position 0.3s ease-out, color 0.3s ease-out',
+          border: '1px solid #028FFF',
+          '&[data-hovered=true]': {
+            opacity: 1,
+            color: '#028FFF',
+            backgroundPosition: '0 0',
+          },
+          '&[data-focus-ring=true]': {
+            focusRing: '$blue500',
+          },
+          '&[data-disabled=true]': {
+            background: '$gray200',
+            color: '$gray600',
+            fill: '$gray600',
+            cursor: 'not-allowed',
+            border: '2px solid $gray300',
+          },
+        },
+      },
       tertiary: {
         true: {
           color: '$blue500',
@@ -262,6 +288,58 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           '&[data-hovered=true]': {
             opacity: 1,
             filter: 'brightness(1.1)',
+          },
+          '&[data-disabled=true]': {
+            color: '$gray400',
+            border: '2px solid $gray400 !important',
+            cursor: 'not-allowed',
+            '& img': {
+              filter: 'contrast(0)',
+            },
+          },
+        },
+      },
+      whiteWithBlueBlinds: {
+        true: {
+          ...textVariant('primary1').true,
+          fontSize: '18px',
+          border: '2px solid #028FFF',
+          borderRadius: '12px',
+          color: '#028FFF',
+          background: 'linear-gradient(to bottom, $white 50%, #028FFF 50%)',
+          backgroundSize: '100% 200%',
+          backgroundPosition: '0 0',
+          transition: 'background-position 0.3s ease-out, color 0.3s ease-out',
+          '&[data-hovered=true]': {
+            opacity: 1,
+            color: '$white',
+            backgroundPosition: '0 100%',
+          },
+          '&[data-disabled=true]': {
+            color: '$gray400',
+            border: '2px solid $gray400 !important',
+            cursor: 'not-allowed',
+            '& img': {
+              filter: 'contrast(0)',
+            },
+          },
+        },
+      },
+      whiteWithBlueBlindsMd: {
+        true: {
+          ...textVariant('primary1').true,
+          fontSize: '16px',
+          border: '2px solid #028FFF',
+          borderRadius: '12px',
+          color: '#028FFF',
+          background: 'linear-gradient(to bottom, $white 50%, #028FFF 50%)',
+          backgroundSize: '100% 200%',
+          backgroundPosition: '0 0',
+          transition: 'background-position 0.3s ease-out, color 0.3s ease-out',
+          '&[data-hovered=true]': {
+            opacity: 1,
+            color: '$white',
+            backgroundPosition: '0 100%',
           },
           '&[data-disabled=true]': {
             color: '$gray400',
