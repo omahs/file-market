@@ -6,7 +6,7 @@ import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
-import bgStorage from '../img/StorageBG.svg'
+import bgStorage from '../img/BgStorageNew.svg'
 import sunGreen from '../img/SunGreen.svg'
 import Achievements from './Achievements'
 import KeepTouchBlock from './KeepTouchBlock'
@@ -279,7 +279,7 @@ export default function WelcomeBlock() {
             <div className='buttonContainer'>
               <Button
                 mediumMxWidth
-                whiteWithBlueMd
+                whiteWithBlueBlindsMd
                 bigHg
                 style={{ height: '64px', padding: '28px 59px', whiteSpace: 'nowrap' }}
                 onClick={() => {
@@ -290,7 +290,7 @@ export default function WelcomeBlock() {
               </Button>
               <LinkButton
                 mediumMxWidth
-                whiteWithBlueMd
+                whiteWithBlueBlindsMd
                 bigHg
                 href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
                 target={'_blank'}
