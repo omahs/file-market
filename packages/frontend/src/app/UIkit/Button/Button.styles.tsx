@@ -237,14 +237,9 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           border: '2px solid #028FFF',
           borderRadius: '12px',
           color: '#028FFF',
-          transition: 'all 0.3s ease-out',
           '&[data-hovered=true]': {
-            color: '$white',
             opacity: 1,
             filter: 'brightness(1.1)',
-            '&::before': {
-              height: '100%',
-            },
           },
           '&[data-disabled=true]': {
             color: '$gray400',
@@ -253,17 +248,6 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             '& img': {
               filter: 'contrast(0)',
             },
-          },
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            width: '100%',
-            height: '0',
-            top: 0,
-            left: 0,
-            backgroundColor: '$blue500',
-            zIndex: '-1',
-            transition: 'all 0.3s ease-out',
           },
         },
       },
@@ -275,14 +259,9 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           border: '2px solid #028FFF',
           borderRadius: '12px',
           color: '#028FFF',
-          transition: 'all 0.3s ease-out',
           '&[data-hovered=true]': {
-            color: '$white',
             opacity: 1,
             filter: 'brightness(1.1)',
-            '&::before': {
-              height: '100%',
-            },
           },
           '&[data-disabled=true]': {
             color: '$gray400',
@@ -291,17 +270,6 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             '& img': {
               filter: 'contrast(0)',
             },
-          },
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            width: '100%',
-            height: '0',
-            top: 0,
-            left: 0,
-            backgroundColor: '$blue500',
-            zIndex: '-1',
-            transition: 'all 0.3s ease-out',
           },
         },
       },
