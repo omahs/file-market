@@ -4,9 +4,9 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessNavBody } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
-import { Description } from '../../../EFT/CreateNFTPage'
 import {
   ButtonContainer,
+  Description,
   Form,
   Label,
   LabelWithCounter, LetterCounter,

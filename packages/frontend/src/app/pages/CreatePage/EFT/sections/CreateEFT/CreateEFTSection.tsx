@@ -29,9 +29,10 @@ import {
   Txt,
 } from '../../../../../UIkit'
 import TagsSection from '../../../../NFTPage/section/Tags/TagsSection'
-import { categoryOptions, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
+import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
 import {
   ButtonContainer,
+  Description,
   Form,
   Label,
   LabelWithCounter,

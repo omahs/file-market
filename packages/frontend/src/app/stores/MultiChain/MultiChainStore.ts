@@ -57,4 +57,10 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
   reload(): void {
     this.request()
   }
+
+  getChainById(chainId: number | undefined): IMultiChainConfig | undefined {
+    if (chainId === undefined) return
+
+    return this.data?.find(item => item.chain?.id === chainId)
+  }
 }

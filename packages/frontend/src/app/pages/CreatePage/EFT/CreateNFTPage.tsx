@@ -4,7 +4,7 @@ import MultiChainController from '../../../components/MultiChain/Controller/Mult
 import { CreateEFTSection } from './sections/CreateEFT/CreateEFTSection'
 
 const CreateNftPage = () => {
-  return <MultiChainController renderElem={<CreateEFTSection />} />
+  return <MultiChainController type={'eft'} renderElem={<CreateEFTSection />} />
 }
 
 export default CreateNftPage

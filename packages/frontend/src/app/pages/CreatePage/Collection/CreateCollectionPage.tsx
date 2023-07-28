@@ -4,5 +4,5 @@ import MultiChainController from '../../../components/MultiChain/Controller/Mult
 import CreateCollectionSection from './sections/CreateCollection/CreateCollectionSection'
 
 export default function CreateCollectionPage() {
-  return <MultiChainController renderElem={<CreateCollectionSection />} />
+  return <MultiChainController type={'collection'} renderElem={<CreateCollectionSection />} />
 }

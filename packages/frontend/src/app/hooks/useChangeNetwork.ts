@@ -6,7 +6,7 @@ import { useAuth } from './useAuth'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
 import { useStores } from './useStores'
 
-export const useChangeNetwork = (props?: { onSuccess?: () => void }) => {
+export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => void }) => {
   const currentChainStore = useCurrentBlockChain()
   const { isConnected } = useAccount()
   const { connect } = useAuth()
@@ -16,7 +16,7 @@ export const useChangeNetwork = (props?: { onSuccess?: () => void }) => {
     onSuccess: (data) => {
       currentChainStore.setCurrentBlockChain(data.id)
       setIsLoading(false)
-      props?.onSuccess?.()
+      props?.onSuccess?.(data.id)
       reloadStores()
     },
   })
@@ -43,7 +43,7 @@ export const useChangeNetwork = (props?: { onSuccess?: () => void }) => {
     console.log(chainId)
     if (!isConnected) connect()
     // Меняем сеть, если сеть в сторе !== сети кошелька или если сеть кошелька просто не равна переданной сети
-    if ((currentChainStore.chainId !== chainId || isWarningNetwork) && chain?.id !== chainId) { setIsLoading(true); switchNetwork?.(chainId) }
+    if ((currentChainStore.chainId !== chainId || isWarningNetwork) || chain?.id !== chainId) { setIsLoading(true); switchNetwork?.(chainId) }
     // Меняем значение в сторе, если текущая сеть кошелька !== переданной сети
     if (chain?.id === chainId) {
       console.log(chainId)

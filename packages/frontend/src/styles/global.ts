@@ -100,4 +100,10 @@ export const globalStyles = globalCss({
   '#root': {
     height: '100%',
   },
+  '& .nextui-c-cVVQUL': {
+    background: 'none !important',
+    overflow: 'inherit !important',
+    border: 'none !important',
+    boxShadow: 'none !important',
+  },
 })
