@@ -1,19 +1,19 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Token } from '../../../swagger/Api'
+import { Api, Token } from '../../../swagger/Api'
 import { TokenFullId } from '../../processing/types'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
+import { MultiChainStore } from '../MultiChain/MultiChainStore'
 
 /**
  * Stores token state, referenced by the TokenFullId
  * Does not listen for updates, need to reload manually.
  */
 export class TokenStore implements IStoreRequester,
-  IActivateDeactivate<[string, string]> {
+  IActivateDeactivate<[string, string, string]> {
   errorStore: ErrorStore
-  currentBlockChainStore: CurrentBlockChainStore
+  multiChainStore: MultiChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -23,28 +23,34 @@ export class TokenStore implements IStoreRequester,
 
   data?: Token = undefined
   tokenFullId?: TokenFullId = undefined
+  api?: Api<{}>
 
-  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
+  constructor({ errorStore, multiChainStore }: {
+    errorStore: ErrorStore
+    multiChainStore: MultiChainStore
+  }) {
     this.errorStore = errorStore
-    this.currentBlockChainStore = currentBlockChainStore
+    this.multiChainStore = multiChainStore
     makeAutoObservable(this, {
       errorStore: false,
-      currentBlockChainStore: false,
+      multiChainStore: false,
     })
   }
 
   private request(tokenFullId: TokenFullId) {
+    if (!this.api) return
     storeRequest<Token>(
       this,
-      this.currentBlockChainStore.api.tokens.tokensDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      this.api.tokens.tokensDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp
       })
   }
 
-  activate(collectionAddress: string, tokenId: string): void {
+  activate(collectionAddress: string, tokenId: string, chainName: string): void {
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
+    this.api = this.multiChainStore.getApiByName(chainName)
     this.request(this.tokenFullId)
   }
 

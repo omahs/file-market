@@ -32,7 +32,8 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
       // eslint-disable-next-line no-prototype-builtins
       if (rootStore.hasOwnProperty(key)) {
         const value = rootStore[key as keyof typeof rootStore]
-        if (isIStoreRequest(value) && value.isActivated) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (isIStoreRequest(value) && value.isActivated && !value.hasOwnProperty('api')) {
           value.reload()
         }
       }

@@ -110,9 +110,9 @@ const ControlStickyBlock = styled('div', {
 })
 
 const NFTPage: React.FC = observer(() => {
-  const { collectionAddress, tokenId } = useParams<Params>()
-  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
-  const tokenStore = useTokenStore(collectionAddress, tokenId)
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
+  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId, chainName)
+  const tokenStore = useTokenStore(collectionAddress, tokenId, chainName)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
   const tokenFullId = useMemo(

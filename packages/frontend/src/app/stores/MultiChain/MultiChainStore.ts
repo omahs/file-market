@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
+import { Api } from '../../../swagger/Api'
 import multichainConfig from '../../config/multiChainConfig.json'
 import { IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
@@ -62,5 +63,17 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
     if (chainId === undefined) return
 
     return this.data?.find(item => item.chain?.id === chainId)
+  }
+
+  getChainByName(chainName: string | undefined): IMultiChainConfig | undefined {
+    if (chainName === undefined) return
+
+    return this.data?.find(item => item.chain?.name === chainName)
+  }
+
+  getApiByName(chainName: string | undefined): Api<{}> | undefined {
+    if (chainName === undefined) return
+
+    return new Api({ baseUrl: this.getApiByName(chainName)?.baseUrl })
   }
 }
