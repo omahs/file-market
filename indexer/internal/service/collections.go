@@ -58,9 +58,12 @@ func (s *service) GetCollection(
 		return nil, internalError
 	}
 	floorPrice, err := s.repository.GetFloorPriceByCollection(ctx, tx, address)
-	if err != nil {
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		logger.Errorf("failed to get collection floor price", err, nil)
 		return nil, internalError
+	}
+	if errors.Is(err, pgx.ErrNoRows) {
+		floorPrice = big.NewInt(0)
 	}
 
 	c.TokensCount = tokensCount
