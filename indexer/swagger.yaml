@@ -1017,14 +1017,17 @@ definitions:
         type: number
         format: uint64
         description: Количество заминченных токенов в коллекции
+        x-omitempty: false
       ordersCount:
         type: number
         format: uint64
         description: Количество открытых ордеров
+        x-omitempty: false
       ownersCount:
         type: number
         format: uint64
         description: Количество уникальных адресов, которые владеют хотя бы 1 токеном в коллекции
+        x-omitempty: false
       salesVolume:
         type: string
         pattern: "^[0-9]+$"

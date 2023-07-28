@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
@@ -223,9 +224,12 @@ func (s *service) GetCollectionWithTokens(
 		return nil, internalError
 	}
 	floorPrice, err := s.repository.GetFloorPriceByCollection(ctx, tx, address)
-	if err != nil {
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		logger.Errorf("failed to get collection floor price", err, nil)
 		return nil, internalError
+	}
+	if errors.Is(err, pgx.ErrNoRows) {
+		floorPrice = big.NewInt(0)
 	}
 
 	c.TokensCount = tokensCount
