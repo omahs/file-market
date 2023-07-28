@@ -272,7 +272,7 @@ export default function WelcomeBlock() {
           </Description>
           <NavigateBlock>
             <NavigateTitle>
-              Start tokenizing your
+              Start tokenizing your&nbsp;
               <br />
               content/data today:
             </NavigateTitle>
