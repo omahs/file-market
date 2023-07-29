@@ -14,12 +14,14 @@ import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainB
 const CurrentBlockchainMobile = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
-  const { changeNetwork, isLoading, error } = useChangeNetwork()
+  const { changeNetwork, isLoading, error } = useChangeNetwork({
+    onError: () => {
+      setSelected(new Set([currentChainStore.chainId?.toString()]))
+    },
+  })
   const [selected, setSelected] = React.useState(new Set([currentChainStore.chainId?.toString()]))
 
   const selectedValue = React.useCallback((value: any): string => {
-    console.log(value)
-
     return Array.from(value).join(', ')
   }, [selected])
 

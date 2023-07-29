@@ -93,6 +93,7 @@ export class TransferStore implements IStoreRequester,
     if (this.tokenFullId) {
       this.request(this.tokenFullId, onSuccess)
     }
+    console.log('Reload')
   }
 
   private checkData(tokenId: BigNumber, ifDataOk: (data: Transfer) => void) {

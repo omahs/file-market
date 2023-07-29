@@ -1,17 +1,17 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { FC, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { fee } from '../../../../config/mark3d'
 import { useSaleAmountWillReceived } from '../../../../hooks'
+import { useCurrency } from '../../../../hooks/useCurrency'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
 import { TokenFullId } from '../../../../processing/types'
 import { ButtonGlowing, Flex, FormControl, Input, PriceBadge } from '../../../../UIkit'
 import { formatNumber } from '../../../../utils/number'
-import { formatRoyalty, fromCurrency, toCurrency } from '../../../../utils/web3'
 import { StyledFlex, StyledPriceDescription } from './OrderForm.styles'
 
 export interface OrderFormValue {
@@ -21,14 +21,6 @@ export interface OrderFormValue {
 interface OrderFormRawValue {
   price: number | string
 }
-
-const importFormValue = (value?: OrderFormValue): OrderFormRawValue => ({
-  price: value ? toCurrency(value.price) : '',
-})
-
-const exportFormValue = (rawValue: OrderFormRawValue): OrderFormValue => ({
-  price: fromCurrency(+rawValue.price ?? 0),
-})
 
 export interface OrderFormProps {
   defaultValues?: OrderFormValue
@@ -41,7 +33,17 @@ export const OrderForm: FC<OrderFormProps> = observer(({
   onSubmit,
   tokenFullId,
 }) => {
+  const { formatRoyalty, toCurrency, fromCurrency } = useCurrency()
   const tokenStore = useTokenStore(tokenFullId.collectionAddress, tokenFullId.tokenId)
+
+  const importFormValue = useCallback((value?: OrderFormValue): OrderFormRawValue => ({
+    price: value ? toCurrency(value.price) : '',
+  }), [toCurrency])
+
+  const exportFormValue = useCallback((rawValue: OrderFormRawValue): OrderFormValue => ({
+    price: fromCurrency(+rawValue.price ?? 0),
+  }), [fromCurrency])
+
   const { handleSubmit, control, watch } = useForm<OrderFormRawValue>({
     defaultValues: importFormValue(defaultValues),
   })

@@ -20,6 +20,8 @@ export interface TransferCardProps {
   }
   price?: string
   status: string
+  chainName?: string
+  chainImg?: string
 }
 
 export const TransferCard: React.FC<TransferCardProps> = ({
@@ -31,6 +33,8 @@ export const TransferCard: React.FC<TransferCardProps> = ({
   price,
   status,
   button,
+  chainName,
+  chainImg,
 }) => {
   return (
     <NftCardBase
@@ -40,6 +44,8 @@ export const TransferCard: React.FC<TransferCardProps> = ({
       collectionName={collectionName}
       fileType={<FileType hiddenFileMeta={hiddenFileMeta} />}
       button={{ to: button.link, text: button.text }}
+      chainName={chainName}
+      chainImg={chainImg}
     >
       <NftCardUserInfo img={user.img} address={user.address} />
       <PriceBadge

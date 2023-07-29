@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import { useStores } from '../../../../../hooks'
 import { useConversionRateStore } from '../../../../../hooks/useConversionRateStore'
+import { useCurrency } from '../../../../../hooks/useCurrency'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useOrderStore } from '../../../../../hooks/useOrderStore'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -12,7 +13,6 @@ import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import { Params } from '../../../../../utils/router'
-import { toCurrency } from '../../../../../utils/web3'
 import { BaseModal } from '../../../../Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
@@ -29,9 +29,10 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
   const { placeOrder, ...statuses } = usePlaceOrder()
   const conversionRateStore = useConversionRateStore()
   const { wrapAction } = wrapButtonActionsFunction<OrderFormValue>()
-  const { collectionAddress, tokenId } = useParams<Params>()
-  const orderStore = useOrderStore(collectionAddress, tokenId)
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
+  const orderStore = useOrderStore(collectionAddress, tokenId, chainName)
   const { transferStore } = useStores()
+  const { toCurrency } = useCurrency()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,

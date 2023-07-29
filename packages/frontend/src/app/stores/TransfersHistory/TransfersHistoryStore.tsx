@@ -1,3 +1,4 @@
+import { Chain } from '@web3modal/ethereum'
 import dayjs from 'dayjs'
 import { makeAutoObservable } from 'mobx'
 
@@ -47,7 +48,7 @@ const EthImg = styled('img', {
   objectFit: 'contain',
 })
 
-const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
+const convertTransferToTableRows = (target: 'incoming' | 'outgoing', chain: Chain | undefined) => {
   const eventOptions =
     target === 'incoming' ? ['Receive', 'Buy'] : ['Send', 'Sale']
 
@@ -99,7 +100,7 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
           <PriceContainer>
             <Price>
               {transfer.order?.price !== undefined
-                ? formatCurrency(transfer.order.price)
+                ? formatCurrency(transfer.order.price, chain)
                 : '—'
               }
             </Price>
@@ -232,10 +233,10 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
     }
 
     const incomingRows = incoming.map<ITableRow>(
-      convertTransferToTableRows('incoming'),
+      convertTransferToTableRows('incoming', this.currentBlockChainStore.chain),
     )
     const outgoingRows = outgoing.map<ITableRow>(
-      convertTransferToTableRows('outgoing'),
+      convertTransferToTableRows('outgoing', this.currentBlockChainStore.chain),
     )
 
     return incomingRows.concat(outgoingRows)

@@ -1,6 +1,8 @@
+import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
 
 import { Api } from '../../../swagger/Api'
+import { IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -65,5 +67,13 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
 
   get api() {
     return new Api({ baseUrl: this.baseUrl })
+  }
+
+  get chain(): Chain | undefined {
+    return this.multiChainStore.data?.find(item => item.chain.id === this.chainId)?.chain
+  }
+
+  get configChain(): IMultiChainConfig | undefined {
+    return this.multiChainStore.data?.find(item => item.chain.id === this.chainId)
   }
 }

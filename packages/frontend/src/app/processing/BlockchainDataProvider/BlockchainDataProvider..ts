@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers'
 
+import { rootStore } from '../../stores/RootStore'
 import { ContractProvider, contractProvider } from '../ContractProvider'
 import { bufferToEtherHex, callContractGetter, hexToBuffer } from '../utils'
 import { IBlockchainDataProvider } from './IBlockchainDataProvider'
@@ -9,9 +10,8 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   constructor(
     private readonly contractProvider: ContractProvider,
-    readonly baseUrl: string = '/api',
   ) {
-    this.#url = baseUrl
+    this.#url = rootStore.multiChainStore.getChainById(rootStore.currentBlockChainStore.chainId)?.baseUrl ?? '/api'
   }
 
   async #stringifyResponse(response: Response) {
@@ -35,6 +35,9 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
+
+    console.log(contract)
+    console.log()
 
     const globalSalt = await callContractGetter<`0x${string}`>({ contract, method: 'globalSalt' })
 

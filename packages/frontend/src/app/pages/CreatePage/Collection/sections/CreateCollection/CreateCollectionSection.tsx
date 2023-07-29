@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 
 import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessNavBody } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
+import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
 import {
   ButtonContainer,
@@ -48,6 +49,8 @@ export default function CreateCollectionSection() {
   const { modalBody, setModalBody, modalOpen, setModalOpen } =
     useModalProperties()
 
+  const currentBlockChainStore = useCurrentBlockChain()
+
   useEffect(() => {
     if (!isLoading) return
 
@@ -61,7 +64,7 @@ export default function CreateCollectionSection() {
     void setModalBody(
       <SuccessNavBody
         buttonText='View collection'
-        link={`/collection/${result.collectionAddress}`}
+        link={`/collection/${currentBlockChainStore.chain?.name}/${result.collectionAddress}`}
         onPress={() => {
           setModalOpen(false)
         }}

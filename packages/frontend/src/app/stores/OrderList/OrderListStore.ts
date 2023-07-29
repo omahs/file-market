@@ -45,6 +45,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
 
   setData(data: OrdersAllActiveResponse) {
     this.data = data
+    console.log(data)
   }
 
   addData(data: OrdersAllActiveResponse) {
@@ -58,7 +59,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   private request() {
     storeRequest(
       this,
-      this.currentBlockChainStore.api.orders.allActiveList({ limit: 20 }),
+      this.currentBlockChainStore.api.orders.allActiveList({ limit: 1 }),
       (data) => this.setData(data),
     )
   }
@@ -67,7 +68,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     const lastOrderId = lastItem(this.data.items ?? [])?.order?.id
     storeRequest(
       this,
-      this.currentBlockChainStore.api.orders.allActiveList({ lastOrderId, limit: 20 }),
+      this.currentBlockChainStore.api.orders.allActiveList({ lastOrderId, limit: 1 }),
       (data) => this.addData(data),
     )
   }
@@ -111,11 +112,13 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
           address: reduceAddress(token?.owner ?? ''),
         },
         button: {
-          link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
+          link: `/collection/${this.currentBlockChainStore.chain?.name}/${token?.collectionAddress}/${token?.tokenId}`,
           text: 'View & Buy',
         },
         priceUsd: order?.priceUsd,
         price: order?.price,
+        chainName: this.currentBlockChainStore.chain?.name,
+        chainImg: this.currentBlockChainStore.configChain?.img,
       }))
   }
 }

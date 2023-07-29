@@ -55,7 +55,7 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
   private request() {
     storeRequest(
       this,
-      this.currentBlockChainStore.api.collections.collectionsList({ limit: 20 }),
+      this.currentBlockChainStore.api.collections.collectionsList({ limit: 5 }),
       (data) => this.setData(data),
     )
   }
@@ -64,7 +64,7 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
     const lastCollectionAddress = lastItem(this.data.collections ?? [])?.address
     storeRequest(
       this,
-      this.currentBlockChainStore.api.collections.collectionsList({ lastCollectionAddress, limit: 20 }),
+      this.currentBlockChainStore.api.collections.collectionsList({ lastCollectionAddress, limit: 5 }),
       (data) => this.addData(data),
     )
   }

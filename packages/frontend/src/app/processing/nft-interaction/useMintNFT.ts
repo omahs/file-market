@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useApi } from '../../hooks/useApi'
+import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
@@ -46,9 +47,10 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const factory = useHiddenFileProcessorFactory()
   const upload = useUploadLighthouse()
   const api = useApi()
+  const config = useConfig()
 
   const mintNFT = useCallback(wrapPromise(async (form) => {
-    assertContract(contract, mark3dConfig.collectionToken.name)
+    assertContract(contract, config?.collectionToken.name ?? '')
     assertSigner(signer)
     assertAccount(address)
 

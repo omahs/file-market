@@ -48,7 +48,7 @@ const routes: RouteObject[] = [
     children: profileRoutes,
   },
   {
-    path: `collection/:${Params.collectionAddress}`,
+    path: `collection/:${Params.chainName}/:${Params.collectionAddress}`,
     element: <CollectionPage />,
     children: collectionPageRoutes,
   },

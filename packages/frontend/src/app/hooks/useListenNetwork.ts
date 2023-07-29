@@ -11,6 +11,7 @@ export const useListenNetwork = () => {
   const { changeNetwork } = useChangeNetwork()
 
   useEffect(() => {
+    console.log('CHAIN CHANGED')
     console.log(chain)
     if (!chain) return
     if (chain?.id !== currentChainStore.chainId && chains.find(item => item.id === chain?.id)) changeNetwork(chain?.id)

@@ -107,11 +107,13 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
         address: reduceAddress(this.data.collection?.owner ?? ''),
       },
       button: {
-        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
+        link: `/collection/${this.currentBlockChainStore.chain?.name}/${token.collectionAddress}/${token.tokenId}`,
         text: 'Go to page',
       },
       hiddenFile: token.hiddenFileMeta,
       hiddenFileMeta: token.hiddenFileMeta,
+      chainName: this.currentBlockChainStore.chain?.name,
+      chainImg: this.currentBlockChainStore.configChain?.img,
     }))
   }
 }

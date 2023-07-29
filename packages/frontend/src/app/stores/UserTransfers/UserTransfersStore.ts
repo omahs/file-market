@@ -1,3 +1,4 @@
+import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
 
 import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
@@ -17,7 +18,7 @@ import { formatCurrency } from '../../utils/web3/currency'
 import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
-const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
+const convertTransferToTransferCards = (target: 'incoming' | 'outgoing', chain: Chain | undefined) => {
   const eventOptions =
     target === 'incoming' ? ['Receiving', 'Buying'] : ['Sending', 'Selling']
 
@@ -35,7 +36,7 @@ const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
       address: reduceAddress(transfer.token?.owner ?? '—'),
       img: getProfileImageUrl(transfer.token?.owner ?? ''),
     },
-    price: transfer.order?.price ? formatCurrency(transfer.order?.price) : undefined,
+    price: transfer.order?.price ? formatCurrency(transfer.order?.price, chain) : undefined,
   })
 }
 
@@ -143,10 +144,10 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     const { incoming = [], outgoing = [] } = this.data
 
     const incomingCards = incoming.map<TransferCardProps>(
-      convertTransferToTransferCards('incoming'),
+      convertTransferToTransferCards('incoming', this.currentBlockChainStore.chain),
     )
     const outgoingCards = outgoing.map<TransferCardProps>(
-      convertTransferToTransferCards('outgoing'),
+      convertTransferToTransferCards('outgoing', this.currentBlockChainStore.chain),
     )
 
     return incomingCards.concat(outgoingCards)

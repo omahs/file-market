@@ -51,6 +51,7 @@ export class TokenStore implements IStoreRequester,
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
     this.api = this.multiChainStore.getApiByName(chainName)
+    console.log('Activate')
     this.request(this.tokenFullId)
   }
 
@@ -67,5 +68,6 @@ export class TokenStore implements IStoreRequester,
     if (this.tokenFullId) {
       this.request(this.tokenFullId)
     }
+    console.log('Reload')
   }
 }

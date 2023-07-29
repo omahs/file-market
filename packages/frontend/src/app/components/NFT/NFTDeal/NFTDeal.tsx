@@ -4,12 +4,12 @@ import React, { FC, PropsWithChildren } from 'react'
 
 import { styled } from '../../../../styles'
 import { Order } from '../../../../swagger/Api'
+import { useCurrency } from '../../../hooks/useCurrency'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useWatchStatusesTransfer } from '../../../processing/nft-interaction/useWatchStatusesTransfer'
 import { TokenFullId } from '../../../processing/types'
 import { PriceBadge, Txt } from '../../../UIkit'
 import { LoadingOpacity } from '../../../UIkit/Loading/LoadingOpacity'
-import { formatCurrency, formatUsd } from '../../../utils/web3'
 import BaseModal from '../../Modal/Modal'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
 
@@ -73,7 +73,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   children,
 }) => {
   const { isOwner, isApprovedExchange, isLoading, error, transfer, isBuyer, runIsApprovedRefetch } = useWatchStatusesTransfer({ tokenFullId })
-
+  const { formatCurrency, formatUsd } = useCurrency()
   const { modalProps } = useStatusModal({
     statuses: { result: undefined, isLoading: false, error: error as unknown as string },
     okMsg: '',

@@ -119,7 +119,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       hiddenFileMeta: token.hiddenFileMeta,
       button: {
         text: 'Go to page',
-        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
+        link: `/collection/${this.currentBlockChainStore.chain?.name}/${token.collectionAddress}/${token.tokenId}`,
       },
     }))
   }

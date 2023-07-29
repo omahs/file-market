@@ -10,9 +10,6 @@ import { IMultiChainConfig } from './multiChainConfigType'
 export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiChainConfig[])
   .map(item => item.chain)
   .filter(item => {
-    console.log(item)
-    console.log(import.meta.env.VITE_IS_MAINNET)
-
     // @ts-expect-error
     return (item.testnet === 'true') === !import.meta.env.VITE_IS_MAINNET
   })
