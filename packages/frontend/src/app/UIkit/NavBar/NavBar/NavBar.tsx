@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 
 import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import CurrentBlockchain from '../../../components/MultiChain/CurrentBlockchain/CurrentBlockchain'
-import { useMediaMui } from '../../../hooks/useMediaMui'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarCollapseItem } from '../NavBarCollapseItem'
@@ -28,7 +27,6 @@ export interface NavBarProps {
 
 const NavBarStyled = styled('nav', {
   width: '100%',
-  height: '$layout$navBarHeight',
   position: 'fixed',
   zIndex: 10,
   top: 0,
@@ -52,26 +50,12 @@ const NavBarStyled = styled('nav', {
         boxShadow: 'none',
       },
     },
-    isCurrentBlockchainVisible: {
-      true: {
-        borderBottom: '2px solid #eaeaec',
-      },
-    },
   },
-  compoundVariants: [
-    {
-      isTransparent: true,
-      isCurrentBlockchainVisible: true,
-      css: {
-        border: 'none',
-      },
-    },
-  ],
 })
 
 const horizontalGap = 30
 const NavBarHorizontalSpacer = styled('div', {
-  height: '100%',
+  height: '$layout$navBarHeight',
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
@@ -104,7 +88,6 @@ export const NavBar: FC<NavBarProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { pathname } = useLocation()
-  const { mdValue } = useMediaMui()
   useEffect(() => {
     setIsExpanded(false)
   }, [pathname])
@@ -114,7 +97,6 @@ export const NavBar: FC<NavBarProps> = ({
       <NavBarStyled
         isTransparent={isTransparent}
         noneBlurShadow={noneBlurShadow}
-        isCurrentBlockchainVisible={isCurrentBlockchainVisible}
       >
         <Container css={{ height: '100%' }}>
           <NavBarHorizontalSpacer>
@@ -155,8 +137,8 @@ export const NavBar: FC<NavBarProps> = ({
               {actions}
             </ActionsContainer>
           </NavBarHorizontalSpacer>
-          <CurrentBlockchain isLight={isTransparent || mdValue} isVisible={isCurrentBlockchainVisible} />
         </Container>
+        <CurrentBlockchain isLight={isTransparent} isVisible={isCurrentBlockchainVisible} />
       </NavBarStyled>
       {items && items.length > 0 && (
         <NavBarCollapse

@@ -5,6 +5,7 @@ import React from 'react'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { ICurrentBlockchain } from '../helper/types/currentBlockChainTypes'
 import CurrentBlockchainBigScreen from './BigScreen/CurrentBlockchainBigScreen'
+import { CurrentBlockchainContainer } from './CurrentBlockchain.styles'
 import CurrentBlockchainMobile from './Mobile/CurrentBlockChainModile'
 
 const CurrentBlockchain = observer((props: ICurrentBlockchain) => {
@@ -12,7 +13,13 @@ const CurrentBlockchain = observer((props: ICurrentBlockchain) => {
 
   return (
     <>
-      {mdValue ? <CurrentBlockchainMobile {...props} /> : <CurrentBlockchainBigScreen {...props} />}
+      {
+        props.isVisible && (
+          <CurrentBlockchainContainer isBorderDisabled={props.isLight}>
+            {mdValue ? <CurrentBlockchainMobile {...props} /> : <CurrentBlockchainBigScreen {...props} />}
+          </CurrentBlockchainContainer>
+        )
+      }
     </>
   )
 })

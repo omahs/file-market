@@ -11,7 +11,7 @@ import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
-const CurrentBlockchainMobile = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
+const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork, isLoading, error } = useChangeNetwork({
@@ -29,16 +29,16 @@ const CurrentBlockchainMobile = observer(({ isVisible, isLight }: ICurrentBlockc
     setSelected(new Set([currentChainStore.chainId?.toString()]))
   }, [currentChainStore.chainId])
 
-  return isVisible ? (
+  return (
     <>
-      {multiChainStore.data ? (
+      {multiChainStore.data && (
         <Dropdown
           isDisabled={isLoading && !error}
           placement={'bottom'}
           borderWeight={'black'}
         >
           {
-            // @ts-expect-error
+          // @ts-expect-error
             <Dropdown.Trigger style={{ width: 'max-content' }}>
               <CurrentBlockchainStyle isLight={isLight} style={{ width: 'max-content ' }}>
                 <Txt>Current blockchain:</Txt>
@@ -55,13 +55,13 @@ const CurrentBlockchainMobile = observer(({ isVisible, isLight }: ICurrentBlockc
           {
             <BoxShadowed>
               <Dropdown.Menu
-                aria-label="Single selection actions"
+                aria-label='Single selection actions'
                 disallowEmptySelection
-                selectionMode="single"
+                selectionMode='single'
                 // @ts-expect-error
                 selectedKeys={selected}
                 onSelectionChange={(keys) => {
-                  // @ts-expect-error
+                // @ts-expect-error
                   setSelected(keys)
                   changeNetwork(+selectedValue(keys))
                 }}
@@ -109,10 +109,9 @@ const CurrentBlockchainMobile = observer(({ isVisible, isLight }: ICurrentBlockc
             </BoxShadowed>
           }
         </Dropdown>
-      )
-        : null}
+      )}
     </>
-  ) : null
+  )
 })
 
 export default CurrentBlockchainMobile

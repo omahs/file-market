@@ -113,7 +113,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
       hiddenFile: token.hiddenFileMeta,
       hiddenFileMeta: token.hiddenFileMeta,
       chainName: this.currentBlockChainStore.chain?.name,
-      chainImg: this.currentBlockChainStore.configChain?.img,
+      chainImg: this.currentBlockChainStore.configChain?.imgGray,
     }))
   }
 }

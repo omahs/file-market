@@ -59,7 +59,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   private request() {
     storeRequest(
       this,
-      this.currentBlockChainStore.api.orders.allActiveList({ limit: 1 }),
+      this.currentBlockChainStore.api.orders.allActiveList({ limit: 10 }),
       (data) => this.setData(data),
     )
   }
@@ -68,7 +68,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     const lastOrderId = lastItem(this.data.items ?? [])?.order?.id
     storeRequest(
       this,
-      this.currentBlockChainStore.api.orders.allActiveList({ lastOrderId, limit: 1 }),
+      this.currentBlockChainStore.api.orders.allActiveList({ lastOrderId, limit: 10 }),
       (data) => this.addData(data),
     )
   }
@@ -118,7 +118,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
         priceUsd: order?.priceUsd,
         price: order?.price,
         chainName: this.currentBlockChainStore.chain?.name,
-        chainImg: this.currentBlockChainStore.configChain?.img,
+        chainImg: this.currentBlockChainStore.configChain?.imgGray,
       }))
   }
 }

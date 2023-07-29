@@ -20,33 +20,29 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
   }, [currentChainStore.chainId])
 
   return (
-    <>
-      {isVisible && (
-        <CurrentBlockchainStyle isLight={isLight}>
-          <Txt>Current blockchain:</Txt>
-          <>
-            {multiChainStore.data?.map(item => {
-              return (
-                <CurrentBlockchainBlock
-                  key={item.chain.id.toString()}
-                  isLight={isLight}
-                  isActive={currentChainStore.chainId === item.chain.id}
-                  name={item.chain.name}
-                  img={item.img}
-                  isDisable={isLoading && !error}
-                  onClick={() => {
-                    changeNetwork(item.chain.id)
-                  }}
-                />
-              )
-            })}
-          </>
-          <LinearText>
-            Ethereum will be available coming soon!
-          </LinearText>
-        </CurrentBlockchainStyle>
-      )}
-    </>
+    <CurrentBlockchainStyle isLight={isLight}>
+      <Txt>Current blockchain:</Txt>
+      <>
+        {multiChainStore.data?.map(item => {
+          return (
+            <CurrentBlockchainBlock
+              key={item.chain.id.toString()}
+              isLight={isLight}
+              isActive={currentChainStore.chainId === item.chain.id}
+              name={item.chain.name}
+              img={item.img}
+              isDisable={isLoading && !error}
+              onClick={() => {
+                changeNetwork(item.chain.id)
+              }}
+            />
+          )
+        })}
+      </>
+      <LinearText>
+        Ethereum will be available coming soon!
+      </LinearText>
+    </CurrentBlockchainStyle>
   )
 })
 

@@ -37,7 +37,7 @@ const BaseInfoSection = () => {
       <NftName>{token?.name}</NftName>
       <Flex flexDirection='column' gap='$2' alignItems='start'>
         <Flex flexDirection='row' gap='$2' alignItems='center'>
-          <img src={multiChainStore.getChainByName(chainName)?.img} style={{ width: '20px', height: '20px' }} />
+          <img src={multiChainStore.getChainByName(chainName)?.imgGray} style={{ width: '20px', height: '20px' }} />
           {token?.mintTxTimestamp && (
             <Link
               iconRedirect
