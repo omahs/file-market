@@ -35,6 +35,7 @@ const CurrentBlockchainMobile = observer(({ isVisible, isLight }: ICurrentBlockc
         <Dropdown
           isDisabled={isLoading && !error}
           placement={'bottom'}
+          borderWeight={'black'}
         >
           {
             // @ts-expect-error
