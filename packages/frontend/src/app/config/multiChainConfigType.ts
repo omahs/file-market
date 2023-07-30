@@ -8,4 +8,5 @@ export interface IMultiChainConfig {
   exchangeTokenAddress: string
   isDefault?: boolean
   baseUrl: string
+  explorer: string
 }

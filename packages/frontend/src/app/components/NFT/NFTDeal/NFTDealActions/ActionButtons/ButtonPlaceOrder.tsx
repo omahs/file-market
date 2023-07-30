@@ -1,18 +1,13 @@
 import { BigNumber } from 'ethers'
 import React from 'react'
-import { useParams } from 'react-router-dom'
 
 import { useStores } from '../../../../../hooks'
-import { useConversionRateStore } from '../../../../../hooks/useConversionRateStore'
-import { useCurrency } from '../../../../../hooks/useCurrency'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
-import { useOrderStore } from '../../../../../hooks/useOrderStore'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
-import { Params } from '../../../../../utils/router'
 import { BaseModal } from '../../../../Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
@@ -27,12 +22,8 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
 }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder()
-  const conversionRateStore = useConversionRateStore()
   const { wrapAction } = wrapButtonActionsFunction<OrderFormValue>()
-  const { collectionAddress, tokenId, chainName } = useParams<Params>()
-  const orderStore = useOrderStore(collectionAddress, tokenId, chainName)
   const { transferStore } = useStores()
-  const { toCurrency } = useCurrency()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -49,8 +40,6 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
     if (receipt?.blockNumber) {
       transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
     }
-    conversionRateStore.data?.rate &&
-    orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
   })
 
   return (

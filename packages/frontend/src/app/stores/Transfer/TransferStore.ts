@@ -38,6 +38,8 @@ export class TransferStore implements IStoreRequester,
 
   onTransferFinishedCall?: () => void
   onTransferPublicKeySetCall?: () => void
+  onTransferDraftCall?: () => void
+  onTransferCancelCall?: () => void
   constructor({ errorStore, blockStore, tokenStore, orderStore, multiChainStore }: {
     errorStore: ErrorStore
     blockStore: BlockStore
@@ -130,6 +132,14 @@ export class TransferStore implements IStoreRequester,
     this.onTransferPublicKeySetCall = callBack
   }
 
+  setOnTransferDrafted = (callBack: () => void) => {
+    this.onTransferDraftCall = callBack
+  }
+
+  setOnTransferCancel = (callBack: () => void) => {
+    this.onTransferCancelCall = callBack
+  }
+
   setIsWaitingForEvent = (isWaiting: boolean) => {
     this.isWaitingForEvent = isWaiting
   }
@@ -182,7 +192,7 @@ export class TransferStore implements IStoreRequester,
       }
       this.setIsWaitingForEvent(false)
       this.setBlockTransfer(blockNumber)
-      this.orderStore.reload()
+      this.onTransferDraftCall?.()
     })
   }
 
@@ -266,6 +276,7 @@ export class TransferStore implements IStoreRequester,
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.setIsWaitingForEvent(false)
+      this.onTransferCancelCall?.()
     })
   }
 

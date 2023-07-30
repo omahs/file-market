@@ -69,15 +69,7 @@ export class OrderStore implements IStoreRequester,
     }
   }
 
-  setDataPrice = (price: string, priceUsd: string) => {
-    if (this.data) {
-      this.data.price = price
-      this.data.priceUsd = priceUsd
-    } else {
-      this.data = {
-        price,
-        priceUsd,
-      }
-    }
+  setData(data: Order | undefined) {
+    this.data = data
   }
 }

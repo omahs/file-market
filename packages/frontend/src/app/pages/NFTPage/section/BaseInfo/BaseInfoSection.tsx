@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../../../styles'
 import { useCurrency } from '../../../../hooks/useCurrency'
+import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Flex, Link, textVariant } from '../../../../UIkit'
@@ -25,12 +26,12 @@ const BaseInfoSection = () => {
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   const multiChainStore = useMultiChainStore()
-
+  const currentChainStore = useCurrentBlockChain()
   const { formatRoyalty } = useCurrency()
 
   const transactionUrl = useMemo(() => {
-    return `https://filfox.info/en/message/${token?.mintTxHash}`
-  }, [token?.mintTxHash])
+    if (currentChainStore.configChain?.explorer && token?.mintTxHash) return currentChainStore.configChain?.explorer + token?.mintTxHash
+  }, [token?.mintTxHash, currentChainStore.configChain])
 
   return (
     <GridBlock style={{ gridArea: 'BaseInfo' }}>

@@ -25,7 +25,7 @@ export interface IUseWatchStatusesTransfer {
 }
 
 export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
-  const { transferStore } = useStores()
+  const { transferStore, orderStore } = useStores()
   const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner({
     ...tokenFullId,
     isDisable: isNetworkIncorrect,
@@ -43,7 +43,12 @@ export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: us
   const { flush: flushIsApprovedRefetch, run: runIsApprovedRefetch } = useIntervalAsync(() => {
     return refetchIsApproved()
   }, 3000)
-
+  const { flush: flushReloadOrder, run: runReloadOrder } = useIntervalAsync(() => {
+    return new Promise(() => {
+      console.log(orderStore.data)
+      orderStore.reload()
+    })
+  }, 3000)
   useEffect(() => {
     transferStore.setOnTransferFinished(() => {
       runIsApprovedRefetch()
@@ -52,11 +57,23 @@ export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: us
     transferStore.setOnTransferPublicKeySet(() => {
       refetchIsApproved()
     })
+    transferStore.setOnTransferDrafted(() => {
+      runReloadOrder()
+    })
+    transferStore.setOnTransferCancel(() => {
+      orderStore.setData(undefined)
+    })
   }, [])
 
   useEffect(() => {
     flushIsOwnerRefetch()
   }, [isOwner])
+
+  useEffect(() => {
+    console.log('STOP')
+    console.log(orderStore.data)
+    flushReloadOrder()
+  }, [orderStore.data])
 
   useEffect(() => {
     flushIsApprovedRefetch()

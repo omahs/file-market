@@ -2,7 +2,7 @@
   {
     "chain": {
       "id": 314,
-      "name": "filecoin",
+      "name": "Filecoin",
       "network": "FVM - Mainnet",
       "nativeCurrency": {
         "name": "FIL",
@@ -37,12 +37,13 @@
     "accessTokenAddress": "0xdcbF452fEA133e28759F050C9BDD827C805B3030",
     "exchangeTokenAddress": "0x2f255f048c1510485bd3F7D65520EDFB9EbC9362",
     "isDefault": "true",
-    "baseUrl": "filemarket.xyz/api"
+    "baseUrl": "filemarket.xyz/api",
+    "explorer": "https://filfox.info/en/message/"
   },
   {
     "chain": {
       "id": 314159,
-      "name": "filecoin",
+      "name": "Filecoin",
       "network": "Filecoin - Calibration testnet",
       "nativeCurrency": {
         "name": "TFIL",
@@ -74,12 +75,13 @@
     "accessTokenAddress": "0xC3F07F620715Fec92db305f718C7FA10C708Bf7A",
     "exchangeTokenAddress": "0x2301D80E8A7e4Cf59a349ffC20A51367cb27A4fc",
     "isDefault": "true",
-    "baseUrl": "https://dev.filemarket.xyz/api"
+    "baseUrl": "https://dev.filemarket.xyz/api",
+    "explorer": "https://calibration.filfox.info/"
   },
   {
     "chain": {
       "id": 324,
-      "name": "zkSync",
+      "name": "ZkSync",
       "network": "zkSync Era Mainnet",
       "nativeCurrency": {
         "name": "ETH",
@@ -109,12 +111,13 @@
     "imgGray": "https://svgshare.com/i/vwN.svg",
     "accessTokenAddress": "",
     "exchangeTokenAddress": "",
-    "baseUrl": ""
+    "baseUrl": "",
+    "explorer": "https://goerli.explorer.zksync.io/tx/"
   },
   {
     "chain": {
       "id": 280,
-      "name": "zkSync",
+      "name": "ZkSync",
       "network": "zkSync Era Testnet",
       "nativeCurrency": {
         "name": "TETH",
@@ -145,6 +148,7 @@
     "imgGray": "https://svgshare.com/i/vwN.svg",
     "accessTokenAddress": "0x53B7A53465fE0d7951Aec67200eCa1B9B306DcF4",
     "exchangeTokenAddress": "0xc0a3b362Bf9088F63cBf880ce06F369C17d958A9",
-    "baseUrl": "https://era-dev.filemarket.xyz/api"
+    "baseUrl": "https://era-dev.filemarket.xyz/api",
+    "explorer": "https://explorer.zksync.io/tx/"
   }
 ]
