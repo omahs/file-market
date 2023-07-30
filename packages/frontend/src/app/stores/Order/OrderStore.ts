@@ -67,7 +67,6 @@ export class OrderStore implements IStoreRequester,
     if (this.tokenFullId) {
       this.request(this.tokenFullId, this.api)
     }
-    console.log('Reload')
   }
 
   setDataPrice = (price: string, priceUsd: string) => {

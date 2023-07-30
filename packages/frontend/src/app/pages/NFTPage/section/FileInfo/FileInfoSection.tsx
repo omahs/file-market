@@ -1,7 +1,5 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { Chain } from '@web3modal/ethereum'
-import React, { FC, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { FC } from 'react'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
@@ -13,7 +11,6 @@ import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { Txt } from '../../../../UIkit'
 import { formatFileSize } from '../../../../utils/nfts'
-import { Params } from '../../../../utils/router'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const FileInfoSectionStyle = styled('div', {
@@ -54,7 +51,7 @@ interface FileInfoSectionProps {
   canViewHiddenFiles: boolean
   files: HiddenFileDownload[]
   filesMeta: HiddenFileMetaData[]
-  chain?: Chain
+  isNetworkIncorrect?: boolean
 }
 
 const FileInfoSection: FC<FileInfoSectionProps> = ({
@@ -62,10 +59,9 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({
   files,
   canViewHiddenFiles,
   filesMeta,
-  chain,
+  isNetworkIncorrect,
 }) => {
   const { statuses, wrapPromise } = useStatusState<boolean | void, PressEvent>()
-  const { chainName } = useParams<Params>()
   const { isConnected } = useAccount()
   const { modalProps } = useStatusModal({
     statuses,
@@ -83,10 +79,6 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({
 
     return `${firstPartName}...${secondPartName}`
   }
-
-  const isNetworkIncorrect = useMemo(() => {
-    return chain?.name !== chainName
-  }, [chain, chainName])
 
   return (
     <>

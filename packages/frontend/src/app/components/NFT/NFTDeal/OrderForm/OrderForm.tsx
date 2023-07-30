@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { fee } from '../../../../config/mark3d'
 import { useSaleAmountWillReceived } from '../../../../hooks'
 import { useCurrency } from '../../../../hooks/useCurrency'
+import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
 import { TokenFullId } from '../../../../processing/types'
@@ -34,6 +35,8 @@ export const OrderForm: FC<OrderFormProps> = observer(({
   tokenFullId,
 }) => {
   const { formatRoyalty, toCurrency, fromCurrency } = useCurrency()
+  const currentBlockChainStore = useCurrentBlockChain()
+
   const tokenStore = useTokenStore(tokenFullId.collectionAddress, tokenFullId.tokenId)
 
   const importFormValue = useCallback((value?: OrderFormValue): OrderFormRawValue => ({
@@ -66,7 +69,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
             type="number"
             step="any"
             placeholder='Enter value'
-            after="FIL"
+            after={currentBlockChainStore.chain?.nativeCurrency.symbol}
             controlledInputProps={{
               control,
               name: 'price',

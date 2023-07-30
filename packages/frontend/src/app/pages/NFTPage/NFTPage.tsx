@@ -4,7 +4,7 @@ import React, { Fragment, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
-import { useChangeNetwork } from '../../hooks/useChangeNetwork'
+import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
@@ -113,13 +113,13 @@ const ControlStickyBlock = styled('div', {
 const NFTPage: React.FC = observer(() => {
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId, chainName)
-  const { chain } = useChangeNetwork()
+  const currentBlockChainStore = useCurrentBlockChain()
   const tokenStore = useTokenStore(collectionAddress, tokenId, chainName)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
   const isNetworkIncorrect = useMemo(() => {
-    return chain?.name !== chainName
-  }, [chain, chainName])
+    return currentBlockChainStore.chain?.name !== chainName
+  }, [currentBlockChainStore.chain, chainName])
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
     [collectionAddress, tokenId],

@@ -117,8 +117,8 @@
       "name": "zkSync",
       "network": "zkSync Era Testnet",
       "nativeCurrency": {
-        "name": "ETH",
-        "symbol": "ETH",
+        "name": "TETH",
+        "symbol": "TETH",
         "decimals": 18
       },
       "rpcUrls": {
