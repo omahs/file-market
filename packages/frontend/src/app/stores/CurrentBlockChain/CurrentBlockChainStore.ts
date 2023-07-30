@@ -41,7 +41,8 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   }
 
   private request() {
-    const defaultChain = this.multiChainStore.data?.find(item => (item.chain.testnet === import.meta.env.VITE_IS_MAINNET && item.isDefault))
+    const defaultChain = this.multiChainStore.data?.find(item => (item.isDefault === 'true'))
+    console.log(defaultChain)
     this.chainId = defaultChain ? defaultChain.chain.id : this.multiChainStore.data?.[0].chain.id
   }
 
@@ -66,7 +67,7 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   }
 
   get api() {
-    return new Api({ baseUrl: this.baseUrl })
+    return new Api({ baseUrl: this.baseUrl ?? '/api' })
   }
 
   get chain(): Chain | undefined {

@@ -138,7 +138,7 @@ export const NavBar: FC<NavBarProps> = ({
             </ActionsContainer>
           </NavBarHorizontalSpacer>
         </Container>
-        <CurrentBlockchain isLight={isTransparent} isVisible={isCurrentBlockchainVisible} />
+        {!isExpanded && <CurrentBlockchain isLight={isTransparent} isVisible={isCurrentBlockchainVisible} />}
       </NavBarStyled>
       {items && items.length > 0 && (
         <NavBarCollapse
