@@ -35,12 +35,12 @@ export class OrderStore implements IStoreRequester,
     })
   }
 
-  private request(tokenFullId: TokenFullId) {
-    if (!this.api) return
+  private request(tokenFullId: TokenFullId, api?: Api<{}>) {
+    if (!api) return
 
     storeRequest<Order | null>(
       this,
-      this.api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         console.log(resp)
         resp && (this.data = resp)
@@ -51,8 +51,7 @@ export class OrderStore implements IStoreRequester,
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
     this.api = this.multiChainStore.getApiByName(chainName)
-    console.log('Activate')
-    this.request(this.tokenFullId)
+    this.request(this.tokenFullId, this.api)
   }
 
   deactivate(): void {
@@ -66,7 +65,7 @@ export class OrderStore implements IStoreRequester,
 
   reload(): void {
     if (this.tokenFullId) {
-      this.request(this.tokenFullId)
+      this.request(this.tokenFullId, this.api)
     }
     console.log('Reload')
   }

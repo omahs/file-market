@@ -47,6 +47,8 @@ const BaseInfoSection = () => {
             >
               Minted on
               {' '}
+              {multiChainStore.getChainByName(chainName)?.chain.name}
+              {' '}
               {new Date(token?.mintTxTimestamp * 1000).toDateString().substring(4)}
             </Link>
           )}

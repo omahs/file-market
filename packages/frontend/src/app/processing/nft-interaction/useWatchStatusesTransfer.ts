@@ -10,6 +10,7 @@ import { useIsOwner } from './useIsOwner'
 
 export interface useWatchStatusesTransferProps {
   tokenFullId: TokenFullId
+  isNetworkIncorrect?: boolean
 }
 
 export interface IUseWatchStatusesTransfer {
@@ -23,12 +24,18 @@ export interface IUseWatchStatusesTransfer {
   runIsOwnerRefetch: () => void
 }
 
-export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
+export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
   const { transferStore } = useStores()
-  const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner(tokenFullId)
+  const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner({
+    ...tokenFullId,
+    isDisable: isNetworkIncorrect,
+  })
   const isBuyer = useIsBuyer(transferStore.data)
 
-  const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange(tokenFullId)
+  const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange({
+    ...tokenFullId,
+    isDisable: isNetworkIncorrect,
+  })
 
   const { flush: flushIsOwnerRefetch, run: runIsOwnerRefetch } = useIntervalAsync(() => {
     return refetchIsOwner()

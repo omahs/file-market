@@ -1,5 +1,8 @@
 import { PressEvent } from '@react-types/shared/src/events'
+import { Chain } from '@web3modal/ethereum'
 import React, { FC } from 'react'
+import { useParams } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
@@ -10,6 +13,7 @@ import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { Txt } from '../../../../UIkit'
 import { formatFileSize } from '../../../../utils/nfts'
+import { Params } from '../../../../utils/router'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const FileInfoSectionStyle = styled('div', {
@@ -50,10 +54,19 @@ interface FileInfoSectionProps {
   canViewHiddenFiles: boolean
   files: HiddenFileDownload[]
   filesMeta: HiddenFileMetaData[]
+  chain?: Chain
 }
 
-const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles, filesMeta }) => {
+const FileInfoSection: FC<FileInfoSectionProps> = ({
+  isOwner,
+  files,
+  canViewHiddenFiles,
+  filesMeta,
+  chain,
+}) => {
   const { statuses, wrapPromise } = useStatusState<boolean | void, PressEvent>()
+  const { chainName } = useParams<Params>()
+  const { isConnected } = useAccount()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'File decrypted and download started',
@@ -98,7 +111,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                       <>
                         <Txt>{formatFileSize(size ?? 0)}</Txt>
                         <Line />
-                        <Txt>Available only to the owner</Txt>
+                        <Txt>{isConnected ? ((chainName !== chain?.name) ? 'Please, switch the network' : 'Available only to the owner') : 'Please, connect the wallet'}</Txt>
                       </>
                     )}
                   />

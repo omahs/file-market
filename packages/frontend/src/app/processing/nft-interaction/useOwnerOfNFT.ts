@@ -5,7 +5,7 @@ import { useConfig } from '../../hooks/useConfig'
 import { TokenFullId } from '../types'
 import { ensureAddress } from '../utils/address'
 
-export function useOwnerOfNFT({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+export function useOwnerOfNFT({ collectionAddress, tokenId, isDisable }: Partial<TokenFullId> & { isDisable?: boolean }) {
   const config = useConfig()
 
   return useContractRead({
@@ -14,5 +14,6 @@ export function useOwnerOfNFT({ collectionAddress, tokenId }: Partial<TokenFullI
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId)],
     suspense: !tokenId,
+    enabled: !isDisable,
   })
 }

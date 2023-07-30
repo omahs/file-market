@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Collection } from '../../../swagger/Api'
+import { Api, Collection } from '../../../swagger/Api'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -8,12 +8,12 @@ import {
   storeRequest,
   storeReset,
 } from '../../utils/store'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
+import { MultiChainStore } from '../MultiChain/MultiChainStore'
 
 export class CollectionStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
-  currentBlockChainStore: CurrentBlockChainStore
+  multiChainStore: MultiChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -24,29 +24,33 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   collection?: Collection
   address: string = ''
 
-  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
+  api?: Api<{}>
+
+  constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
-    this.currentBlockChainStore = currentBlockChainStore
+    this.multiChainStore = multiChainStore
     makeAutoObservable(this, {
       errorStore: false,
-      currentBlockChainStore: false,
+      multiChainStore: false,
     })
   }
 
-  private request(address: string) {
+  private request(address: string, api?: Api<{}>) {
+    if (!api) return
     storeRequest<Collection>(
       this,
-      this.currentBlockChainStore.api.collections.collectionsDetail(address),
+      api.collections.collectionsDetail(address),
       (resp) => {
         this.collection = resp
       },
     )
   }
 
-  activate(address: string): void {
+  activate(address: string, chainName?: string): void {
     this.isActivated = true
     this.address = address
-    this.request(address)
+    this.api = this.multiChainStore.getApiByName(chainName)
+    this.request(address, this.api)
   }
 
   deactivate(): void {
@@ -59,6 +63,6 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request(this.address, this.api)
   }
 }

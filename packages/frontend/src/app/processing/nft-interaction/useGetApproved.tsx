@@ -5,7 +5,7 @@ import { useConfig } from '../../hooks/useConfig'
 import { TokenFullId } from '../types'
 import { ensureAddress } from '../utils/address'
 
-export function useGetApproved({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+export function useGetApproved({ collectionAddress, tokenId }: Partial<TokenFullId>) {
   const config = useConfig()
 
   return useContractRead({

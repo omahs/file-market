@@ -59,12 +59,12 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  private request(tokenFullId: TokenFullId, onSuccess?: () => void) {
-    if (!this.api) return
-
+  private request(tokenFullId: TokenFullId, api?: Api<{}>, onSuccess?: () => void) {
+    if (!api) return
+    console.log('REQUESTT')
     storeRequest<Transfer | null>(
       this,
-      this.api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp ?? undefined
         if (resp?.block?.number) {
@@ -78,6 +78,8 @@ export class TransferStore implements IStoreRequester,
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
     this.api = this.multiChainStore.getApiByName(chainName)
+    this.request(this.tokenFullId, this.api)
+    console.log('ACTIVVVVEAT')
   }
 
   deactivate(): void {
@@ -91,7 +93,7 @@ export class TransferStore implements IStoreRequester,
 
   reload(onSuccess?: () => void): void {
     if (this.tokenFullId) {
-      this.request(this.tokenFullId, onSuccess)
+      this.request(this.tokenFullId, this.api, onSuccess)
     }
     console.log('Reload')
   }
