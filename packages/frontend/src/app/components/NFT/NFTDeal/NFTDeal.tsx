@@ -9,6 +9,7 @@ import { Order } from '../../../../swagger/Api'
 import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
 import { useCurrency } from '../../../hooks/useCurrency'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
+import { useWatchStatusesTransfer } from '../../../processing/nft-interaction/useWatchStatusesTransfer'
 import { TokenFullId } from '../../../processing/types'
 import { Button, PriceBadge } from '../../../UIkit'
 import { Params } from '../../../utils/router'
@@ -37,7 +38,6 @@ const NFTDealStyle = styled('div', {
     isNotListed: {
       true: {
         background: 'none',
-        height: '64px',
         padding: '0',
       },
     },
@@ -67,13 +67,14 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   const { chain, changeNetwork } = useChangeNetwork()
   const { chainName } = useParams<Params>()
   const multiChainStore = useMultiChainStore()
-
   const isNetworkIncorrect = useMemo(() => {
     return chain?.name !== chainName
   }, [chain, chainName])
 
+  const { transfer, isOwner } = useWatchStatusesTransfer({ tokenFullId, isNetworkIncorrect })
+
   return (
-    <NFTDealStyle>
+    <NFTDealStyle isNotListed={!transfer && !isOwner}>
       {(children || order) && (
         <DealContainerInfo>
           {children}

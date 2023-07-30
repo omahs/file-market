@@ -1,6 +1,6 @@
 import { PressEvent } from '@react-types/shared/src/events'
 import { Chain } from '@web3modal/ethereum'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
@@ -84,6 +84,10 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({
     return `${firstPartName}...${secondPartName}`
   }
 
+  const isNetworkIncorrect = useMemo(() => {
+    return chain?.name !== chainName
+  }, [chain, chainName])
+
   return (
     <>
       <BaseModal {...modalProps} />
@@ -111,7 +115,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({
                       <>
                         <Txt>{formatFileSize(size ?? 0)}</Txt>
                         <Line />
-                        <Txt>{isConnected ? ((chainName !== chain?.name) ? 'Please, switch the network' : 'Available only to the owner') : 'Please, connect the wallet'}</Txt>
+                        <Txt>{isConnected ? ((!isNetworkIncorrect) ? 'Please, switch the network' : 'Available only to the owner') : 'Please, connect the wallet'}</Txt>
                       </>
                     )}
                   />

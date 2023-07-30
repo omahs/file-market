@@ -4,7 +4,7 @@ import { useConfig } from '../../hooks/useConfig'
 import { TokenFullId } from '../types'
 import { useGetApproved } from './useGetApproved'
 
-export function useIsApprovedExchange(tokenFullId: Partial<TokenFullId> = {}) {
+export function useIsApprovedExchange(tokenFullId: Partial<TokenFullId> & { isDisable?: boolean }) {
   const { data, ...statuses } = useGetApproved(tokenFullId)
   const config = useConfig()
 

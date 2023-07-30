@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import React, { PropsWithChildren } from 'react'
 
 import { styled } from '../../../../../styles'
@@ -27,9 +28,10 @@ const IsNotListedContainer = styled('div', {
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'not-allowed',
+  paddingTB: '16px',
 })
 
-const NftDealContainer = ({
+const NftDealContainer = observer(({
   tokenFullId,
   order,
   reFetchOrder,
@@ -66,6 +68,6 @@ const NftDealContainer = ({
       )}
     </LoadingOpacity>
   )
-}
+})
 
 export default NftDealContainer

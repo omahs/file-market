@@ -56,7 +56,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   private request() {
     storeRequest(
       this,
-      this.currentBlockChainStore.api.collections.fullDetail(this.collectionAddress, { limit: 20 }),
+      this.currentBlockChainStore.api.collections.fullDetail(this.collectionAddress, { limit: 10 }),
       (data) => this.setData(data),
     )
   }
@@ -65,7 +65,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
     const lastTokenId = lastItem(this.data.tokens ?? [])?.tokenId
     storeRequest(
       this,
-      this.currentBlockChainStore.api.collections.fullDetail(this.collectionAddress, { lastTokenId, limit: 20 }),
+      this.currentBlockChainStore.api.collections.fullDetail(this.collectionAddress, { lastTokenId, limit: 10 }),
       (data) => this.addData(data),
     )
   }
