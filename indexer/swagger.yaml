@@ -871,6 +871,52 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /report/collection:
+    post:
+      tags:
+        - report
+      description: Репорт коллекции
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: report_collection_request
+          schema:
+            $ref: '#/definitions/ReportCollectionRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /report/token:
+    post:
+      tags:
+        - report
+      description: Репорт токена
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: report_token_request
+          schema:
+            $ref: '#/definitions/ReportTokenRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /ws/subscribe/block_number:
     get:
       summary: Subscribe to last block updates
@@ -943,6 +989,31 @@ definitions:
     required:
       - token
       - expires_at
+  ReportCollectionRequest:
+    type: object
+    description: Запрос на репорт коллекции
+    properties:
+      collection_address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+    required:
+      - collection_address
+  ReportTokenRequest:
+    type: object
+    description: Запрос на репорт токена
+    properties:
+      collection_address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+    required:
+      - collection_address
+      - tokenId
   SuccessResponse:
     type: object
     required: [success]

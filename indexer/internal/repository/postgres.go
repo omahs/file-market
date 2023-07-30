@@ -19,7 +19,9 @@ type Postgres interface {
 	Transfers
 	Orders
 	Whitelist
-	AuthRepository
+	Auth
+	Users
+	Moderation
 }
 
 type Transactions interface {
@@ -92,7 +94,7 @@ type Orders interface {
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
 }
 
-type AuthRepository interface {
+type Auth interface {
 	GetAuthMessage(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.AuthMessage, error)
 	InsertAuthMessage(ctx context.Context, tx pgx.Tx, msg domain.AuthMessage) error
 	DeleteAuthMessage(ctx context.Context, tx pgx.Tx, address common.Address) error
@@ -101,6 +103,15 @@ type AuthRepository interface {
 	DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address, number int) error
 	DropAllJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address) error
 	GetJwtTokenSecret(ctx context.Context, tx pgx.Tx, address common.Address, number int, purpose jwt.Purpose) (string, error)
+}
+
+type Users interface {
+	IsAdmin(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error)
+}
+
+type Moderation interface {
+	ReportCollection(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, userAddress common.Address) error
+	ReportToken(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, tokenId *big.Int, userAddress common.Address) error
 }
 
 type Whitelist interface {

@@ -43,9 +43,9 @@ func (h *handler) Init() http.Handler {
 
 	router.HandleFunc("/auth/message", h.handleGetAuthMessage).Methods(http.MethodPost)
 	router.HandleFunc("/auth/by_signature", h.handleAuthBySignature).Methods(http.MethodPost)
-	router.Handle("/auth/refresh", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleRefresh)))
-	router.Handle("/auth/logout", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleLogout)))
-	router.Handle("/auth/full_logout", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleFullLogout)))
+	router.Handle("/auth/refresh", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleRefresh))).Methods(http.MethodPost)
+	router.Handle("/auth/logout", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleLogout))).Methods(http.MethodPost)
+	router.Handle("/auth/full_logout", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleFullLogout))).Methods(http.MethodPost)
 
 	router.HandleFunc("/collections/file-bunnies/whitelist/{rarity}/sign/{address:0x[0-9a-f-A-F]{40}}", h.handleGetWhitelistSignature)
 	router.HandleFunc("/collections/file-bunnies/whitelist/{address:0x[0-9a-f-A-F]{40}}", h.handleGetAddressInWhitelist)
@@ -72,6 +72,9 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/orders_history/{address:0x[0-9a-f-A-F]{40}}", h.handleGetOrdersHistory)
 	router.HandleFunc("/orders/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetOrder)
 	router.HandleFunc("/orders/all_active", h.handleGetAllActiveOrders)
+
+	router.Handle("/report/collection", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleReportCollection))).Methods(http.MethodPost)
+	router.Handle("/report/token", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleReportToken))).Methods(http.MethodPost)
 
 	router.HandleFunc("/sequencer/acquire/{address:0x[0-9a-f-A-F]{40}}", h.handleSequencerAcquire)
 	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)

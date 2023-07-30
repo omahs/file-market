@@ -58,7 +58,8 @@ type Service interface {
 	Sequencer
 	Whitelist
 	Currency
-	AuthService
+	Auth
+	Moderation
 	ListenBlockchain() error
 	Shutdown()
 
@@ -116,13 +117,18 @@ type Currency interface {
 	GetCurrencyConversionRate(ctx context.Context, from, to string) (*models.ConversionRateResponse, *models.ErrorResponse)
 }
 
-type AuthService interface {
+type Auth interface {
 	GetAuthMessage(ctx context.Context, req models.AuthMessageRequest) (*models.AuthMessageResponse, *models.ErrorResponse)
 	AuthBySignature(ctx context.Context, req models.AuthBySignatureRequest) (*models.AuthResponse, *models.ErrorResponse)
 	RefreshJwtTokens(ctx context.Context, address common.Address, number int64) (*models.AuthResponse, *models.ErrorResponse)
 	GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, token string) (*domain.User, *models.ErrorResponse)
 	Logout(ctx context.Context, address common.Address, number int64) *models.ErrorResponse
 	FullLogout(ctx context.Context, address common.Address) *models.ErrorResponse
+}
+
+type Moderation interface {
+	ReportCollection(ctx context.Context, userAddress common.Address, req *models.ReportCollectionRequest) *models.ErrorResponse
+	ReportToken(ctx context.Context, userAddress common.Address, req *models.ReportTokenRequest) *models.ErrorResponse
 }
 
 type service struct {
@@ -140,8 +146,7 @@ type service struct {
 	currencyConverter           currencyconversion.CurrencyConversionProvider
 	commonSigner                *ethsigner.EthSigner
 	uncommonSigner              *ethsigner.EthSigner
-	closeCh                     chan struct {
-	}
+	closeCh                     chan struct{}
 }
 
 func NewService(

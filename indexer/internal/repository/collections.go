@@ -24,9 +24,16 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		SELECT address,creator,owner,name,token_id,meta_uri,description,image,block_number
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1) OR 
-		    c.address=$2) AND
-		    address > $3
+			   EXISTS (SELECT 1 
+			           FROM tokens AS t 
+			           WHERE t.collection_address=c.address AND 
+			                 t.owner=$1 AND
+			                 (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			           )
+		       ) OR 
+		       c.address=$2 AND 
+		       address > $3 AND 
+		       address NOT IN (SELECT collection_address FROM rejected_collections)
 		ORDER BY address
 		LIMIT $4
 	`
@@ -91,8 +98,15 @@ func (p *postgres) GetCollectionsByOwnerAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) OR 
-		    c.address=$2
+		       EXISTS (SELECT 1 
+		               FROM tokens AS t 
+		               WHERE t.collection_address=c.address AND 
+		                     t.owner=$1 AND
+		                     (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+					   )
+		       ) OR 
+		       c.address=$2 AND
+		       address NOT IN (SELECT collection_address FROM rejected_collections)
 	`
 	var total uint64
 	row := tx.QueryRow(ctx, query,
@@ -109,8 +123,12 @@ func (p *postgres) GetCollectionsByOwnerAddressTotal(
 func (p *postgres) GetCollection(ctx context.Context,
 	tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,
-       image, block_number FROM collections WHERE address=$1`, strings.ToLower(contractAddress.String()))
+	row := tx.QueryRow(ctx, `
+			SELECT address,creator,owner,name,token_id,meta_uri,description,image, block_number 
+			FROM collections 
+			WHERE address=$1 AND
+				  address NOT IN (SELECT collection_address FROM rejected_collections)`,
+		strings.ToLower(contractAddress.String()))
 	var collectionAddress, creator, owner, tokenId string
 	c := &domain.Collection{}
 	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId,
@@ -140,7 +158,8 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 	query := `
 		SELECT address,creator,owner,name,token_id,meta_uri,description,image,block_number
 		FROM collections
-		WHERE address > $1
+		WHERE address > $1 AND
+			  address NOT IN (SELECT collection_address FROM rejected_collections)
 		ORDER BY address
 		LIMIT $2
 	`
@@ -207,6 +226,7 @@ func (p *postgres) GetCollectionsTotal(ctx context.Context, tx pgx.Tx) (uint64, 
 	query := `
 		SELECT COUNT(*)
 		FROM collections
+		WHERE address NOT IN (SELECT collection_address FROM rejected_collections)
 	`
 
 	var total uint64
@@ -227,7 +247,8 @@ func (p *postgres) GetCollectionByTokenId(
 	query := `
 	SELECT address,creator,owner,name,meta_uri,description,image,block_number
 	FROM collections 
-	WHERE token_id=$1
+	WHERE token_id=$1 AND
+	      address NOT IN (SELECT collection_address FROM rejected_collections)
 	`
 	row := tx.QueryRow(ctx, query, tokenId.String())
 	var collectionAddress, creator, owner string
@@ -329,7 +350,8 @@ func (p *postgres) GetFileBunniesStats(
 			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 THEN 1 ELSE 0 END) AS payed_minted_amount,
 			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 AND meta_uri != '' THEN 1 ELSE 0 END) AS payed_bought_amount
 		FROM public.tokens
-		WHERE collection_address=$1
+		WHERE collection_address=$1 AND
+		      (token_id, collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	stats := make([]int, 6)
 	if err := tx.QueryRow(ctx, query,
