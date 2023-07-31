@@ -117,7 +117,6 @@ func (p *postgres) GetCollectionTokensTotal(
 	query := `
 		SELECT COUNT(*) as total
 		FROM tokens t
-		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.collection_address=$1 AND
 		      t.meta_uri != '' AND
 		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
@@ -245,7 +244,6 @@ func (p *postgres) GetTokensByAddressTotal(
 	query := `
 		SELECT COUNT(*) AS total
 		FROM tokens t
-		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.owner=$1 AND 
 		      t.meta_uri != '' AND
 		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
@@ -790,28 +788,6 @@ func (p *postgres) UpdateTokenTxData(
 		return err
 	}
 	return nil
-}
-
-func (p *postgres) GetOwnersCountByCollection(
-	ctx context.Context,
-	tx pgx.Tx,
-	address common.Address,
-) (uint64, error) {
-	// language=PostgreSQL
-	query := `
-		SELECT COUNT(DISTINCT(owner)) AS total
-		FROM tokens AS t
-		WHERE t.collection_address=$1
-	`
-	var total uint64
-	row := tx.QueryRow(ctx, query,
-		strings.ToLower(address.String()),
-	)
-	if err := row.Scan(&total); err != nil {
-		return 0, err
-	}
-
-	return total, nil
 }
 
 func (p *postgres) GetTokensContentTypeByCollection(
