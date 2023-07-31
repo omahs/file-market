@@ -17,9 +17,9 @@ export interface SlideProps {
 }
 
 const PublicationsSection = styled('section', {
-  marginBottom: '112px',
+  marginBottom: '100px',
   '@lg': {
-    marginBottom: '90px',
+    marginBottom: '80px',
   },
   '@md': {
     marginBottom: '70px',
@@ -61,15 +61,10 @@ const SlideIconTitle = styled('img', {
 })
 
 const SlideContent = styled('div', {
-  padding: '8px 24px 20px',
-})
-
-const SlideTag = styled('span', {
-  display: 'block',
-  color: '#6B6F76',
-  fontSize: '$primary3',
-  lineHeight: 'body4',
-  marginBottom: '4px',
+  padding: '14px 24px 20px',
+  '@xs': {
+    padding: '14px 16px 20px',
+  },
 })
 
 const SlideText = styled('p', {
@@ -121,14 +116,13 @@ const Publications = () => {
       <Swiper {...swiperSettings}>
         {PublicationsData.map((item, index) => {
           return (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} className="swiper-slide publications-slide">
               <BoxShadowed fullHeight>
-                <SlideLink href={item.href}>
+                <SlideLink href={item.href} target="_blank">
                   <SlideHeader>
                     <SlideIconTitle src={item.titleLogo} />
                   </SlideHeader>
                   <SlideContent>
-                    <SlideTag>{item.tag}</SlideTag>
                     <SlideText>
                       {item.text}
                     </SlideText>

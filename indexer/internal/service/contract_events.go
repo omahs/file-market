@@ -5,12 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
+	eth_types "github.com/ethereum/go-ethereum/core/types"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/types"
 	"log"
 	"math/big"
 	"time"
@@ -19,8 +20,8 @@ import (
 func (s *service) onCollectionTransferEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	block *types.Block,
+	t types.Transaction,
+	block types.Block,
 	tokenId *big.Int,
 	to common.Address,
 ) error {
@@ -70,8 +71,8 @@ func (s *service) onCollectionTransferEvent(
 func (s *service) onFileBunniesCollectionTransferEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	block *types.Block,
+	t types.Transaction,
+	block types.Block,
 	tokenId *big.Int,
 ) error {
 	collectionAddress := *t.To()
@@ -84,7 +85,7 @@ func (s *service) onFileBunniesCollectionTransferEvent(
 	return nil
 }
 
-func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
+func processRoyalty(ctx context.Context, s *service, block types.Block, token *domain.Token) (*big.Int, error) {
 	royaltyRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			collectionAddress, caOk := args[0].(common.Address)
@@ -208,8 +209,8 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 func (s *service) onCollectionTransferInitEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	from common.Address,
 	to common.Address,
@@ -256,8 +257,8 @@ func (s *service) onCollectionTransferInitEvent(
 func (s *service) onTransferDraftEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	from common.Address,
 	transferNumber *big.Int,
@@ -395,8 +396,8 @@ func (s *service) onTransferDraftEvent(
 func (s *service) onTransferDraftCompletionEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	to common.Address,
 	blockNumber *big.Int,
@@ -482,8 +483,8 @@ func (s *service) onTransferDraftCompletionEvent(
 func (s *service) onPublicKeySetEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	publicKey string,
 	blockNumber *big.Int,
@@ -524,8 +525,8 @@ func (s *service) onPublicKeySetEvent(
 func (s *service) onPasswordSetEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	encryptedPassword string,
 	blockNumber *big.Int,
@@ -566,8 +567,8 @@ func (s *service) onPasswordSetEvent(
 func (s *service) onTransferFinishEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	blockNumber *big.Int,
 ) error {
@@ -623,8 +624,8 @@ func (s *service) onTransferFinishEvent(
 func (s *service) onTransferFraudReportedEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFraudReported))
@@ -659,8 +660,8 @@ func (s *service) onTransferFraudReportedEvent(
 func (s *service) onTransferFraudDecidedEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 	approved bool,
 	blockNumber *big.Int,
@@ -729,8 +730,8 @@ func (s *service) onTransferFraudDecidedEvent(
 func (s *service) onTransferCancel(
 	ctx context.Context,
 	tx pgx.Tx,
-	t *types.Transaction,
-	l *types.Log,
+	t types.Transaction,
+	l *eth_types.Log,
 	tokenId *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCancelled))

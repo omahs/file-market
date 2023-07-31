@@ -1,14 +1,28 @@
-# Build stage
-FROM golang:1.20-alpine AS build
+FROM golang:1.20 as build-deps
 
-WORKDIR /app
+ENV GO111MODULE=on
+
+WORKDIR /usr/src/backend
+COPY go.mod go.mod
+COPY go.sum go.sum
+RUN go mod download
+
 COPY . .
-RUN go build -o main cmd/app/main.go
 
-# Run stage
-FROM alpine:3.17.3
-WORKDIR /app
-COPY --from=build /app/main .
+WORKDIR /usr/src/backend
 
-EXPOSE 8080
-CMD ["/app/main"]
+RUN go build cmd/app/main.go
+
+FROM ubuntu:18.04
+
+RUN apt-get -y update && apt-get -y install ca-certificates
+
+WORKDIR /usr/src/app
+
+COPY --from=build-deps /usr/src/backend/run.sh run.sh
+COPY --from=build-deps /usr/src/backend/main main
+COPY --from=build-deps /usr/src/backend/.env .env
+
+ENV LOG_PATH=/logs/file-market-autoseller.log
+
+ENTRYPOINT ["./run.sh"]

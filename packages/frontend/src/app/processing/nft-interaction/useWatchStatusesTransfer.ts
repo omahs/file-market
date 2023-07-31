@@ -10,6 +10,7 @@ import { useIsOwner } from './useIsOwner'
 
 export interface useWatchStatusesTransferProps {
   tokenFullId: TokenFullId
+  isNetworkIncorrect?: boolean
 }
 
 export interface IUseWatchStatusesTransfer {
@@ -23,12 +24,18 @@ export interface IUseWatchStatusesTransfer {
   runIsOwnerRefetch: () => void
 }
 
-export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
-  const { transferStore } = useStores()
-  const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner(tokenFullId)
+export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
+  const { transferStore, orderStore } = useStores()
+  const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner({
+    ...tokenFullId,
+    isDisable: isNetworkIncorrect,
+  })
   const isBuyer = useIsBuyer(transferStore.data)
 
-  const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange(tokenFullId)
+  const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange({
+    ...tokenFullId,
+    isDisable: isNetworkIncorrect,
+  })
 
   const { flush: flushIsOwnerRefetch, run: runIsOwnerRefetch } = useIntervalAsync(() => {
     return refetchIsOwner()
@@ -36,7 +43,12 @@ export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransf
   const { flush: flushIsApprovedRefetch, run: runIsApprovedRefetch } = useIntervalAsync(() => {
     return refetchIsApproved()
   }, 3000)
-
+  const { flush: flushReloadOrder, run: runReloadOrder } = useIntervalAsync(() => {
+    return new Promise(() => {
+      console.log(orderStore.data)
+      orderStore.reload()
+    })
+  }, 3000)
   useEffect(() => {
     transferStore.setOnTransferFinished(() => {
       runIsApprovedRefetch()
@@ -45,11 +57,23 @@ export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransf
     transferStore.setOnTransferPublicKeySet(() => {
       refetchIsApproved()
     })
+    transferStore.setOnTransferDrafted(() => {
+      runReloadOrder()
+    })
+    transferStore.setOnTransferCancel(() => {
+      orderStore.setData(undefined)
+    })
   }, [])
 
   useEffect(() => {
     flushIsOwnerRefetch()
   }, [isOwner])
+
+  useEffect(() => {
+    console.log('STOP')
+    console.log(orderStore.data)
+    flushReloadOrder()
+  }, [orderStore.data])
 
   useEffect(() => {
     flushIsApprovedRefetch()

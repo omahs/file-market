@@ -1,37 +1,48 @@
 import { getContract, Provider } from '@wagmi/core'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { wagmiClient } from '../../config/web3Modal'
+import { rootStore } from '../../stores/RootStore'
+import { assertConfig } from '../utils'
 
 export class ContractProvider {
   constructor(
     private readonly provider: Provider,
-    private readonly config: typeof mark3dConfig,
   ) {}
 
   getCollectionContract(address: string) {
+    const config = rootStore.multiChainStore.getConfigById(rootStore.currentBlockChainStore.chainId)
+    assertConfig(config)
+
     return getContract({
       address,
-      abi: this.config.collectionToken.abi,
+      abi: config.collectionToken.abi,
       signerOrProvider: this.provider,
     })
   }
 
   getAccessTokenContract() {
+    const config = rootStore.multiChainStore.getConfigById(rootStore.currentBlockChainStore.chainId)
+    assertConfig(config)
+
+    console.log(config)
+
     return getContract({
-      address: this.config.accessToken.address,
-      abi: this.config.accessToken.abi,
+      address: config.accessToken.address,
+      abi: config.accessToken.abi,
       signerOrProvider: this.provider,
     })
   }
 
   getExchangeContract() {
+    const config = rootStore.multiChainStore.getConfigById(rootStore.currentBlockChainStore.chainId)
+    assertConfig(config)
+
     return getContract({
-      address: this.config.exchangeToken.address,
-      abi: this.config.exchangeToken.abi,
+      address: config.exchangeToken.address,
+      abi: config.exchangeToken.abi,
       signerOrProvider: this.provider,
     })
   }
 }
 
-export const contractProvider = new ContractProvider(wagmiClient.provider, mark3dConfig)
+export const contractProvider = new ContractProvider(wagmiClient.provider)

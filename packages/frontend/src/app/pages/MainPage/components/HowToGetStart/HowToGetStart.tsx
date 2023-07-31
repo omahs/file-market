@@ -157,6 +157,48 @@ const Title = styled('h3', {
   },
 })
 
+const VideoWrapper = styled('div', {
+  width: '752px',
+  '@lg': {
+    width: '100%',
+  },
+})
+
+const VideoPaddingHack = styled('div', {
+  position: 'relative',
+  minWidth: '100%',
+  paddingTop: '56.81%',
+  borderRadius: '$3',
+  border: '1px solid  $gray300',
+  marginTop: '24px',
+})
+
+const VideoFrameInner = styled('div', {
+  position: 'absolute',
+  top: '16px',
+  left: '16px',
+  width: 'calc(100% - 32px)',
+  height: 'calc(100% - 32px)',
+  borderRadius: '$2',
+  border: '2px solid $gray700',
+  overflow: 'hidden',
+  '@md': {
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    border: 0,
+  },
+})
+
+const Video = styled('iframe', {
+  position: 'relative',
+  left: '-1%',
+  top: '-1%',
+  width: '102%',
+  height: '102%',
+})
+
 const HowToGetStart = () => {
   const { open } = useWeb3Modal()
   const { isConnected } = useAccount()
@@ -174,6 +216,12 @@ const HowToGetStart = () => {
             padding: '12px 32px',
             '& .nextui-collapse-title-content': {
               width: '80%',
+            },
+            '@media (max-width: 600px)': {
+              padding: '12px 24px',
+            },
+            '@media (max-width: 400px)': {
+              padding: '12px 16px',
             },
           }}
           arrowIcon={(
@@ -459,6 +507,17 @@ const HowToGetStart = () => {
                 />
               </CardBlocks>
             </Block>
+            <VideoWrapper>
+              <Header>{'How it works? Video demo'}</Header>
+              <VideoPaddingHack>
+                <VideoFrameInner>
+                  <Video
+                    src="https://www.youtube.com/embed/MSOpSJnoFvQ"
+                    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  />
+                </VideoFrameInner>
+              </VideoPaddingHack>
+            </VideoWrapper>
           </HowToGetStartStyle>
         </Collapse>
       </BoxShadowed>

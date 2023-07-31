@@ -1,14 +1,14 @@
 import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
-import { Transfer, TransferStatus } from '../../../swagger/Api'
-import { api } from '../../config/api'
+import { Api, Transfer, TransferStatus } from '../../../swagger/Api'
 import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { TokenFullId } from '../../processing/types'
 import { normalizeCounterId } from '../../processing/utils/id'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { BlockStore } from '../BlockStore/BlockStore'
 import { ErrorStore } from '../Error/ErrorStore'
+import { MultiChainStore } from '../MultiChain/MultiChainStore'
 import { OrderStore } from '../Order/OrderStore'
 import { TokenStore } from '../Token/TokenStore'
 
@@ -16,8 +16,9 @@ import { TokenStore } from '../Token/TokenStore'
  * Stores only ACTIVE (i.e. created and not finished/cancelled) transfer state
  */
 export class TransferStore implements IStoreRequester,
-  IActivateDeactivate<[string, string]>, IHiddenFilesTokenEventsListener {
+  IActivateDeactivate<[string, string, string]>, IHiddenFilesTokenEventsListener {
   errorStore: ErrorStore
+  multiChainStore: MultiChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -30,30 +31,41 @@ export class TransferStore implements IStoreRequester,
 
   data?: Transfer = undefined
   tokenFullId?: TokenFullId = undefined
+  api?: Api<{}>
   blockStore: BlockStore
   tokenStore: TokenStore
   orderStore: OrderStore
 
+  isCustomApi: boolean = true
+
   onTransferFinishedCall?: () => void
   onTransferPublicKeySetCall?: () => void
-  constructor({ errorStore, blockStore, tokenStore, orderStore }: {
+  onTransferDraftCall?: () => void
+  onTransferCancelCall?: () => void
+  constructor({ errorStore, blockStore, tokenStore, orderStore, multiChainStore }: {
     errorStore: ErrorStore
     blockStore: BlockStore
     tokenStore: TokenStore
-    orderStore: OrderStore }) {
+    orderStore: OrderStore
+    multiChainStore: MultiChainStore
+  }) {
     this.errorStore = errorStore
     this.blockStore = blockStore
     this.tokenStore = tokenStore
     this.orderStore = orderStore
+    this.multiChainStore = multiChainStore
     makeAutoObservable(this, {
       errorStore: false,
       blockStore: false,
       tokenStore: false,
       orderStore: false,
+      multiChainStore: false,
     })
   }
 
-  private request(tokenFullId: TokenFullId, onSuccess?: () => void) {
+  private request(tokenFullId: TokenFullId, api?: Api<{}>, onSuccess?: () => void) {
+    if (!api) return
+    console.log('REQUESTT')
     storeRequest<Transfer | null>(
       this,
       api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
@@ -66,10 +78,12 @@ export class TransferStore implements IStoreRequester,
       })
   }
 
-  activate(collectionAddress: string, tokenId: string): void {
+  activate(collectionAddress: string, tokenId: string, chainName: string): void {
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
-    this.request(this.tokenFullId)
+    this.api = this.multiChainStore.getApiByName(chainName)
+    this.request(this.tokenFullId, this.api)
+    console.log('ACTIVVVVEAT')
   }
 
   deactivate(): void {
@@ -83,8 +97,9 @@ export class TransferStore implements IStoreRequester,
 
   reload(onSuccess?: () => void): void {
     if (this.tokenFullId) {
-      this.request(this.tokenFullId, onSuccess)
+      this.request(this.tokenFullId, this.api, onSuccess)
     }
+    console.log('Reload')
   }
 
   private checkData(tokenId: BigNumber, ifDataOk: (data: Transfer) => void) {
@@ -117,6 +132,14 @@ export class TransferStore implements IStoreRequester,
 
   setOnTransferPublicKeySet = (callBack: () => void) => {
     this.onTransferPublicKeySetCall = callBack
+  }
+
+  setOnTransferDrafted = (callBack: () => void) => {
+    this.onTransferDraftCall = callBack
+  }
+
+  setOnTransferCancel = (callBack: () => void) => {
+    this.onTransferCancelCall = callBack
   }
 
   setIsWaitingForEvent = (isWaiting: boolean) => {
@@ -171,7 +194,7 @@ export class TransferStore implements IStoreRequester,
       }
       this.setIsWaitingForEvent(false)
       this.setBlockTransfer(blockNumber)
-      this.orderStore.reload()
+      this.onTransferDraftCall?.()
     })
   }
 
@@ -255,6 +278,7 @@ export class TransferStore implements IStoreRequester,
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.setIsWaitingForEvent(false)
+      this.onTransferCancelCall?.()
     })
   }
 

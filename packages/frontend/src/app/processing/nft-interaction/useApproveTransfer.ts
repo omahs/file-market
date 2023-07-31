@@ -3,8 +3,8 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
@@ -25,8 +25,10 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
 
+  const config = useConfig()
+
   const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey }) => {
-    assertContract(contract, mark3dConfig.collectionToken.name)
+    assertContract(contract, config?.collectionToken.name)
     assertSigner(signer)
     assertAccount(address)
     assertCollection(collectionAddress)
@@ -43,7 +45,7 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     return callContract({ contract, method: 'approveTransfer' },
       BigNumber.from(tokenId),
       bufferToEtherHex(encryptedFilePassword),
-      { gasPrice: mark3dConfig.gasPrice },
+      { gasPrice: config?.gasPrice },
     )
   }), [contract, signer, address, wrapPromise])
 

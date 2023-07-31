@@ -39,9 +39,6 @@ func (p *postgres) GetCollectionTokens(
 	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
 	}
-	if limit == 0 {
-		limit = 10000
-	}
 
 	err := func(res *[]*domain.Token, query string) error {
 		rows, err := tx.Query(ctx, query,
@@ -160,10 +157,6 @@ func (p *postgres) GetTokensByAddress(
 	lastTokenIdStr := ""
 	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
-	}
-
-	if limit == 0 {
-		limit = 10000
 	}
 
 	err := func(res *[]*domain.Token, query string) error {
@@ -779,4 +772,95 @@ func (p *postgres) UpdateTokenTxData(
 		return err
 	}
 	return nil
+}
+
+func (p *postgres) GetOwnersCountByCollection(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(DISTINCT(owner)) AS total
+		FROM tokens AS t
+		WHERE t.collection_address=$1
+	`
+	var total uint64
+	row := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+	)
+	if err := row.Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}
+
+func (p *postgres) GetTokensContentTypeByCollection(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) ([]string, []string, []string, error) {
+	getStringSliceFunc := func(res *[]string, query string) error {
+		rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var record string
+			if err := rows.Scan(&record); err != nil {
+				return err
+			}
+			*res = append(*res, record)
+		}
+		return nil
+	}
+
+	// language=PostgreSQL
+	getTypesQuery := `
+		SELECT DISTINCT(type)
+		FROM hidden_file_metadata
+		WHERE collection_address=$1
+		`
+	fileTypes := make([]string, 0)
+	err := getStringSliceFunc(&fileTypes, getTypesQuery)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	// language=PostgreSQL
+	categoriesQuery := `
+		SELECT DISTINCT(category)
+		FROM token_metadata_categories
+		WHERE metadata_id IN (
+			SELECT id 
+			FROM token_metadata
+			WHERE collection_address = $1
+		)
+		`
+	categories := make([]string, 0)
+	err = getStringSliceFunc(&categories, categoriesQuery)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	// language=PostgreSQL
+	subcategoryQuery := `
+		SELECT DISTINCT(subcategory)
+		FROM token_metadata_subcategories
+		WHERE metadata_id IN (
+			SELECT id 
+			FROM token_metadata
+			WHERE collection_address = $1
+		)
+		`
+	subcategories := make([]string, 0)
+	err = getStringSliceFunc(&subcategories, subcategoryQuery)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return fileTypes, categories, subcategories, nil
 }

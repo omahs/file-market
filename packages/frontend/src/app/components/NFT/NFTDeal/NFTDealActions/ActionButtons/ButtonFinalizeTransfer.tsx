@@ -4,11 +4,11 @@ import { FC } from 'react'
 
 import { Order } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
+import { useCurrency } from '../../../../../hooks/useCurrency'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFinalizeTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import { toCurrency } from '../../../../../utils/web3'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
@@ -25,6 +25,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
+  const { toCurrency } = useCurrency()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'The deal is finished!',

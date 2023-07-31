@@ -18,9 +18,6 @@ const AchievementItemLink = styled('a', {
   backgroundColor: '$white',
   padding: '$3',
   '@sm': {
-    padding: '12px',
-  },
-  '@media (max-width: 550px)': {
     padding: '$3',
   },
   '&[href]:hover': {
@@ -34,9 +31,6 @@ const AchievementItemIcon = styled('img', {
   display: 'block',
   width: '65px',
   height: 'auto',
-  '@sm': {
-    width: '50px',
-  },
 })
 
 const AchievementItemTitle = styled('h4', {
@@ -52,14 +46,14 @@ const AchievementItemTitle = styled('h4', {
 
 const AchievementItemDescr = styled('p', {
   fontSize: '$primary2',
-  lineHeight: '1',
+  lineHeight: '1.1',
   color: '$gray700',
 })
 
 const AchievementItem = (props: AchievementItemProps) => {
   return (
     <BoxShadowed fullHeight>
-      <AchievementItemLink href={props.href}>
+      <AchievementItemLink href={props.href} target="_blank">
         <AchievementItemIcon src={props.img} />
         <div>
           <AchievementItemTitle>{props.title}</AchievementItemTitle>
@@ -71,7 +65,7 @@ const AchievementItem = (props: AchievementItemProps) => {
 }
 
 const AchievementsSection = styled('section', {
-  marginBottom: '88px',
+  marginBottom: '100px',
   '@lg': {
     marginBottom: '80px',
   },
@@ -89,7 +83,7 @@ const AchievementsSection = styled('section', {
 const AchievementsList = styled('div', {
   display: 'grid',
   gridTemplateColumns: 'repeat(3, 1fr)',
-  gridTemplateRows: 'repeat(4, 1fr)',
+  gridTemplateRows: 'repeat(3, 1fr)',
   columnGap: '32px',
   rowGap: '32px',
   '@md': {
@@ -98,10 +92,6 @@ const AchievementsList = styled('div', {
     rowGap: '26px',
   },
   '@sm': {
-    columnGap: '14px',
-    rowGap: '14px',
-  },
-  '@media (max-width: 550px)': {
     display: 'flex',
     flexDirection: 'column',
     rowGap: '18px',

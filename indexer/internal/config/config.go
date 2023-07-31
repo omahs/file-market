@@ -63,6 +63,7 @@ type (
 		CommonSignerKey              string
 		UncommonSignerKey            string
 		Mode                         string
+		ChainID                      string
 	}
 
 	RedisConfig struct {
@@ -122,6 +123,7 @@ func Init(configPath string) (*Config, error) {
 			CommonSignerKey:              envCfg.GetString("COMMON_SIGNER_KEY"),
 			UncommonSignerKey:            envCfg.GetString("UNCOMMON_SIGNER_KEY"),
 			Mode:                         jsonCfg.GetString("service.mode"),
+			ChainID:                      jsonCfg.GetString("service.chainId"),
 		},
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),

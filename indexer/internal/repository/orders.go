@@ -38,8 +38,9 @@ func (p *postgres) GetAllActiveOrders(
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
 			WHERE lts.rank = 1 AND 
 			      lts.status NOT IN ('Finished', 'Cancelled') AND 
-			      NOT (t.collection_address=$3 AND t.number=1) AND 
+			      o.visibility = 'Visible' AND
 			      o.exchange_address != '0x' AND
+			      NOT (t.collection_address=$3 AND t.number=1) AND 
 			      o.id < $1
 		)
 		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, fo.block_number,
@@ -55,9 +56,6 @@ func (p *postgres) GetAllActiveOrders(
 	var lastOrderIdParam int64 = math.MaxInt64
 	if lastOrderId != nil {
 		lastOrderIdParam = *lastOrderId
-	}
-	if limit == 0 {
-		limit = 10000
 	}
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit, strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()))
@@ -127,6 +125,7 @@ func (p *postgres) GetAllActiveOrdersTotal(
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
 			WHERE lts.rank = 1 AND 
 			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      o.visibility = 'Visible' AND
 			      o.exchange_address != '0x' AND
 			      NOT (t.collection_address=$1 AND t.number=1)
 			
@@ -139,6 +138,47 @@ func (p *postgres) GetAllActiveOrdersTotal(
 
 	var total uint64
 	if err := tx.QueryRow(ctx, query, strings.ToLower(p.cfg.fileBunniesCollectionAddress.String())).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (p *postgres) GetAllActiveOrdersTotalByCollection(
+	ctx context.Context,
+	tx pgx.Tx,
+	collectionAddress common.Address,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		latest_order_statuses AS (
+			SELECT order_id, status, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			FROM order_statuses
+		),
+		filtered_orders AS (
+			SELECT o.id
+			FROM orders AS o
+			JOIN transfers t on o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND 
+			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      t.collection_address = $1 AND
+			      o.visibility = 'Visible' AND
+			      o.exchange_address != '0x'
+		)
+		SELECT COUNT(*) as total
+		FROM filtered_orders fo
+		JOIN latest_order_statuses los ON fo.id = los.order_id
+		WHERE los.rank = 1 AND los.status = 'Created'
+	`
+
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(collectionAddress.String()),
+	).Scan(&total); err != nil {
 		return 0, err
 	}
 	return total, nil
@@ -402,9 +442,76 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 	return o, nil
 }
 
+func (p *postgres) GetSalesVolumeByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (*big.Int, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COALESCE(SUM(o.price::NUMERIC)::VARCHAR(255), '0')
+		FROM orders o
+		JOIN transfers t on 
+		    o.transfer_id = t.id and 
+		    t.collection_address=$1
+		RIGHT JOIN order_statuses os on 
+		    o.id = os.order_id and 
+		    os.status='Finished'
+	`
+	var volumeStr string
+	if err := tx.QueryRow(ctx, query, strings.ToLower(address.String())).Scan(&volumeStr); err != nil {
+		return nil, err
+	}
+
+	volume, ok := big.NewInt(0).SetString(volumeStr, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse volume")
+	}
+
+	return volume, nil
+}
+
+func (p *postgres) GetFloorPriceByCollection(ctx context.Context, tx pgx.Tx, address common.Address) (*big.Int, error) {
+	// language=PostgreSQL
+	query := `
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		latest_order_statuses AS (
+			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			FROM order_statuses
+		),
+		filtered_orders AS (
+			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
+			FROM orders AS o
+			JOIN transfers t on o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND 
+			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      t.collection_address = $1 AND
+			      o.visibility = 'Visible' AND
+			      o.exchange_address != '0x'
+		)
+		SELECT fo.price
+		FROM filtered_orders fo
+		JOIN latest_order_statuses los ON fo.id = los.order_id
+		WHERE los.rank = 1 AND los.status = 'Created'
+		ORDER BY fo.price
+		LIMIT 1
+	`
+	var volumeStr string
+	if err := tx.QueryRow(ctx, query, strings.ToLower(address.String())).Scan(&volumeStr); err != nil {
+		return nil, err
+	}
+
+	volume, ok := big.NewInt(0).SetString(volumeStr, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse volume")
+	}
+
+	return volume, nil
+}
+
 func (p *postgres) InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING id`,
+	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2,$3,$4,$5, 'Visible') RETURNING id`,
 		order.TransferId,
 		order.Price.String(),
 		strings.ToLower(order.Currency.String()),

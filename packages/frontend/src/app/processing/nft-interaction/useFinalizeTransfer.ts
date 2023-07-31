@@ -1,8 +1,8 @@
 import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
@@ -17,9 +17,10 @@ interface IFinalizeTransfer {
 export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IFinalizeTransfer>()
+  const config = useConfig()
 
   const finalizeTransfer = useCallback(wrapPromise(async ({ tokenId }: IFinalizeTransfer) => {
-    assertContract(contract, mark3dConfig.collectionToken.name)
+    assertContract(contract, config?.collectionToken.name ?? '')
     assertSigner(signer)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -27,7 +28,7 @@ export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer 
 
     return callContract({ contract, method: 'finalizeTransfer' },
       BigNumber.from(tokenId),
-      { gasPrice: mark3dConfig.gasPrice },
+      { gasPrice: config?.gasPrice },
     )
   }), [contract, signer, wrapPromise])
 

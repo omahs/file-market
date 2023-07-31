@@ -151,7 +151,14 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, collectionAddr common.Add
 	var okQueue bool
 	if len(keys) > 0 && err != redis.Nil {
 		params := strings.Split(keys[0], ".")
-		walletAddr := common.HexToAddress(params[4])
+
+		var walletAddr common.Address
+		if suffix != "" {
+			walletAddr = common.HexToAddress(params[4])
+		} else {
+			walletAddr = common.HexToAddress(params[3])
+		}
+
 		okQueue = s.deleteFromQueue(ctx, collectionAddr, walletAddr, suffix, tokenId)
 
 		// delete last_id record

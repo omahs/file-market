@@ -13,89 +13,89 @@ const GetAccessPageStyle = styled('div', {
   alignItems: 'center',
   background: '#F9F9F9',
   '& img': {
-    position: 'absolute'
+    position: 'absolute',
   },
   '& .fourthImg': {
     top: '-47px',
-    left: '-66px'
+    left: '-66px',
   },
   '& .firstImg': {
     bottom: '-30px',
-    right: '-81px'
+    right: '-81px',
   },
   '& .secondImg': {
     bottom: '-160px',
-    left: '-141px'
+    left: '-141px',
   },
   '& .thirdImg': {
     top: '-107px',
-    right: '-116px'
+    right: '-116px',
   },
   '@md': {
     '& .thirdImg, .secondImg': {
-      transform: 'scale(0.5)'
+      transform: 'scale(0.5)',
     },
     '& .fourthImg': {
-      top: '-36px'
-    }
+      top: '-36px',
+    },
   },
   '@sm': {
     '& .firstImg': {
       bottom: '-22px',
       right: '-58px',
-      transform: 'scale(0.6)'
+      transform: 'scale(0.6)',
     },
     '& .thirdImg, .secondImg': {
-      transform: 'scale(0.37)'
+      transform: 'scale(0.37)',
     },
     '& .fourthImg': {
       top: '-22px',
-      transform: 'scale(0.7)'
-    }
-  }
+      transform: 'scale(0.7)',
+    },
+  },
 })
 
 export const MainBlock = styled('div', {
   padding: '130px 20px',
-  border: '2px solid #0090FF',
+  border: '2px solid #6B6F76',
   display: 'flex',
   justifyContent: 'center',
-  borderRadius: '12px',
+  borderRadius: '16px',
   position: 'relative',
   background: '#F9F9F9',
   '@lg': {
-    padding: '80px 20px'
+    padding: '80px 20px',
   },
   '@md': {
-    padding: '80px 0'
-  }
+    padding: '80px 0',
+  },
 })
 
 const Container = styled('div', {
   width: '777px',
   position: 'relative',
   '@lg': {
-    width: '600px'
+    width: '600px',
   },
   '@md': {
-    width: '450px'
+    width: '450px',
   },
   '@sm': {
-    width: '300px'
-  }
+    width: '300px',
+  },
 })
 
 const Text = styled('h1', {
   ...textVariant('h2').true,
   '@lg': {
-    fontSize: '32px'
+    fontSize: '32px',
   },
   '@md': {
-    fontSize: '24px'
+    fontSize: '24px',
   },
   '@sm': {
-    fontSize: '16px'
-  }
+    fontSize: '16px',
+  },
 })
 
 const GetAccessPage = () => {

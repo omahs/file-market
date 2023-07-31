@@ -64,32 +64,32 @@ export default function SubBrandsSection () {
       </SwitchWrapper>
       <AssetsWrapper>
         <DownloadAsset
-          pngAsset={PNG_SUB_BRANDS.logo[currentAssets]}
-          svgAsset={SVG_SUB_BRANDS.logo[currentAssets]}
+          pngAsset={PNG_SUB_BRANDS.eft[currentAssets]}
+          svgAsset={SVG_SUB_BRANDS.eft[currentAssets]}
           title='EFT logotype'
           previewStyle={previewStyle}
         />
         <DownloadAsset
-          pngAsset={PNG_SUB_BRANDS.logotypeFW[currentAssets]}
-          svgAsset={SVG_SUB_BRANDS.logotypeFW[currentAssets]}
+          pngAsset={PNG_SUB_BRANDS.fileWalletLogotype[currentAssets]}
+          svgAsset={SVG_SUB_BRANDS.fileWalletLogotype[currentAssets]}
           title='FileWallet logotype'
           previewStyle={previewStyle}
         />
         <DownloadAsset
-          pngAsset={PNG_SUB_BRANDS.logomarkFW[currentAssets]}
-          svgAsset={SVG_SUB_BRANDS.logomarkFW[currentAssets]}
+          pngAsset={PNG_SUB_BRANDS.fileWalletLogomark[currentAssets]}
+          svgAsset={SVG_SUB_BRANDS.fileWalletLogomark[currentAssets]}
           title='FileWallet logomark'
           previewStyle={previewStyle}
         />
         <DownloadAsset
-          pngAsset={PNG_SUB_BRANDS.logotype[currentAssets]}
-          svgAsset={SVG_SUB_BRANDS.logotype[currentAssets]}
+          pngAsset={PNG_SUB_BRANDS.fileBunniesLogotype[currentAssets]}
+          svgAsset={SVG_SUB_BRANDS.fileBunniesLogotype[currentAssets]}
           title='FileBunnies logotype'
           previewStyle={previewStyle}
         />
         <DownloadAsset
-          pngAsset={PNG_SUB_BRANDS.logomarkFB[currentAssets]}
-          svgAsset={SVG_SUB_BRANDS.logomarkFB[currentAssets]}
+          pngAsset={PNG_SUB_BRANDS.fileBunniesLogomark[currentAssets]}
+          svgAsset={SVG_SUB_BRANDS.fileBunniesLogomark[currentAssets]}
           title='FileBunnies logomark'
           previewStyle={previewStyle}
         />

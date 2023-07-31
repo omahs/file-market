@@ -1,5 +1,6 @@
 import { PressEvent } from '@react-types/shared/src/events'
 import React, { FC } from 'react'
+import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
@@ -50,14 +51,22 @@ interface FileInfoSectionProps {
   canViewHiddenFiles: boolean
   files: HiddenFileDownload[]
   filesMeta: HiddenFileMetaData[]
+  isNetworkIncorrect?: boolean
 }
 
-const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles, filesMeta }) => {
+const FileInfoSection: FC<FileInfoSectionProps> = ({
+  isOwner,
+  files,
+  canViewHiddenFiles,
+  filesMeta,
+  isNetworkIncorrect,
+}) => {
   const { statuses, wrapPromise } = useStatusState<boolean | void, PressEvent>()
+  const { isConnected } = useAccount()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'File decrypted and download started',
-    loadingMsg: 'File decryption is in progress)',
+    loadingMsg: 'File decryption is in progress',
     waitForSign: false,
   })
 
@@ -98,7 +107,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                       <>
                         <Txt>{formatFileSize(size ?? 0)}</Txt>
                         <Line />
-                        <Txt>Available only to the owner</Txt>
+                        <Txt>{isConnected ? ((!isNetworkIncorrect) ? 'Please, switch the network' : 'Available only to the owner') : 'Please, connect the wallet'}</Txt>
                       </>
                     )}
                   />
