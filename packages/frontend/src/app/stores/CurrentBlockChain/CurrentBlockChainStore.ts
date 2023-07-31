@@ -48,6 +48,8 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
 
   private request() {
     const defaultChain = this.multiChainStore.data?.find(item => (item.isDefault === true))
+    console.log(this.multiChainStore.data)
+    console.log(defaultChain)
     this.chainId = defaultChain ? defaultChain.chain.id : this.multiChainStore.data?.[0].chain.id
   }
 
