@@ -11,7 +11,7 @@ export function useGetApproved({ collectionAddress, tokenId, isDisable }: Partia
   return useContractRead({
     address: ensureAddress(collectionAddress),
     abi: config?.collectionToken.abi,
-    functionName: 'getApproved',
+    functionName: !isDisable ? 'getApproved' : undefined,
     args: [BigNumber.from(tokenId ?? 0)],
     suspense: !tokenId,
     enabled: !isDisable,

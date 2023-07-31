@@ -27,6 +27,8 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   isActivated = false
 
   chainId?: number
+  chainNameByPage?: string
+
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore
@@ -38,6 +40,10 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
 
   setCurrentBlockChain(chainId: number) {
     if (chainId !== this.chainId) this.chainId = chainId
+  }
+
+  setCurrentBlockChainByPage(chainName: string | undefined) {
+    if (chainName !== this.chainNameByPage) this.chainNameByPage = chainName
   }
 
   private request() {
@@ -75,5 +81,11 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
 
   get configChain(): IMultiChainConfig | undefined {
     return this.multiChainStore.data?.find(item => item.chain.id === this.chainId)
+  }
+
+  get configByChainName(): IMultiChainConfig | undefined {
+    console.log(this.multiChainStore.data?.find(item => item.chain.name === this.chainNameByPage))
+
+    return this.multiChainStore.data?.find(item => item.chain.name === this.chainNameByPage)
   }
 }

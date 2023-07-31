@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 import { useNetwork } from 'wagmi'
 
 import { chains } from '../config/web3Modal'
+import { Params } from '../utils/router'
 import { useChangeNetwork } from './useChangeNetwork'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
 
@@ -9,6 +11,11 @@ export const useListenNetwork = () => {
   const { chain } = useNetwork()
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork } = useChangeNetwork()
+  const { chainName } = useParams<Params>()
+  const location = useLocation()
+  useEffect(() => {
+    currentChainStore.setCurrentBlockChainByPage(chainName)
+  }, [location])
 
   useEffect(() => {
     console.log('CHAIN CHANGED')
