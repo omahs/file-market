@@ -28,7 +28,7 @@ const CollectionSection = observer(() => {
           isLoading={collectionListStore.isLoading}
           currentItemCount={collectionListStore.data.collections?.length ?? 0}
           fetchMore={() => collectionListStore.requestMore()}
-          render={({ index }) => <CollectionCard {...collectionListStore.data.collections?.[index] as Collection} />}
+          render={({ index }) => <CollectionCard {...collectionListStore.data.collections?.[index] as Collection} key={index} />}
           listCss={collectionListCss}
         />
         {!collectionListStore.data.collections?.length && !collectionListStore.isLoading && (
