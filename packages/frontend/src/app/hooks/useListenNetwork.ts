@@ -6,10 +6,12 @@ import { chains } from '../config/web3Modal'
 import { Params } from '../utils/router'
 import { useChangeNetwork } from './useChangeNetwork'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
+import { useMultiChainStore } from './useMultiChainStore'
 
 export const useListenNetwork = () => {
   const { chain } = useNetwork()
-  const currentChainStore = useCurrentBlockChain()
+  const multiChainStore = useMultiChainStore()
+  const currentChainStore = useCurrentBlockChain(multiChainStore.data)
   const { changeNetwork } = useChangeNetwork()
   const { chainName } = useParams<Params>()
   const location = useLocation()

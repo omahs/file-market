@@ -16,7 +16,7 @@ import { MultiChainStore } from '../MultiChain/MultiChainStore'
  * Stores only ACTIVE order state.
  * Does not listen for updates, need to reload manually.
  */
-export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactivate {
+export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactivate<[IMultiChainConfig[]]> {
   errorStore: ErrorStore
   multiChainStore: MultiChainStore
 
@@ -46,16 +46,14 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
     if (chainName !== this.chainNameByPage) this.chainNameByPage = chainName
   }
 
-  private request() {
-    const defaultChain = this.multiChainStore.data?.find(item => (item.isDefault === true))
-    console.log(this.multiChainStore.data)
-    console.log(defaultChain)
-    this.chainId = defaultChain ? defaultChain.chain.id : this.multiChainStore.data?.[0].chain.id
+  private request(data: IMultiChainConfig[] | undefined) {
+    const defaultChain = data?.find(item => (item.isDefault === true))
+    this.chainId = defaultChain ? defaultChain.chain.id : data?.[0].chain.id
   }
 
-  activate(): void {
+  activate(data: IMultiChainConfig[] | undefined): void {
     this.isActivated = true
-    this.request()
+    this.request(data)
   }
 
   deactivate(): void {
