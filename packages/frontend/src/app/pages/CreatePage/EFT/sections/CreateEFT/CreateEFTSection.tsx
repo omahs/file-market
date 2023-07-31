@@ -14,6 +14,7 @@ import BaseModal, {
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../../../../components/Uploaders/NftLoader/NftLoader'
 import { useCollectionAndTokenListStore, useStores } from '../../../../../hooks'
+import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../../../../hooks/useMediaMui'
 import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
@@ -86,7 +87,7 @@ export const CreateEFTSection: React.FC = observer(() => {
   const publicCollectionStore = usePublicCollectionStore()
 
   const { collectionAndTokenList } = useStores()
-
+  const currentBlockChainStore = useCurrentBlockChain()
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
 
@@ -155,7 +156,7 @@ export const CreateEFTSection: React.FC = observer(() => {
       setModalBody(
         <SuccessNavBody
           buttonText='View EFT'
-          link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
+          link={`/collection/${currentBlockChainStore.chain?.name}/${nftResult.receipt.to}/${nftResult.tokenId}`}
           onPress={() => {
             setModalOpen(false)
           }}

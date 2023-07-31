@@ -25,6 +25,8 @@ export class TokenStore implements IStoreRequester,
   tokenFullId?: TokenFullId = undefined
   api?: Api<{}>
 
+  isCustomApi: boolean = true
+
   constructor({ errorStore, multiChainStore }: {
     errorStore: ErrorStore
     multiChainStore: MultiChainStore

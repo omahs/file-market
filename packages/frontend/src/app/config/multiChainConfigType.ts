@@ -6,7 +6,7 @@ export interface IMultiChainConfig {
   imgGray: string
   accessTokenAddress: string
   exchangeTokenAddress: string
-  isDefault?: string
+  isDefault?: boolean
   baseUrl: string
   explorer: string
 }

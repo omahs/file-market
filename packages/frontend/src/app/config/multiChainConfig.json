@@ -36,7 +36,7 @@
     "imgGray": "https://svgshare.com/i/vuR.svg",
     "accessTokenAddress": "0xdcbF452fEA133e28759F050C9BDD827C805B3030",
     "exchangeTokenAddress": "0x2f255f048c1510485bd3F7D65520EDFB9EbC9362",
-    "isDefault": "true",
+    "isDefault": true,
     "baseUrl": "filemarket.xyz/api",
     "explorer": "https://filfox.info/en/message/"
   },
@@ -68,13 +68,13 @@
           "url": "https://calibration.filscan.io"
         }
       },
-      "testnet": "true"
+      "testnet": true
     },
     "img": "https://cryptologos.cc/logos/filecoin-fil-logo.svg?v=025",
     "imgGray": "https://svgshare.com/i/vuR.svg",
     "accessTokenAddress": "0xC3F07F620715Fec92db305f718C7FA10C708Bf7A",
     "exchangeTokenAddress": "0x2301D80E8A7e4Cf59a349ffC20A51367cb27A4fc",
-    "isDefault": "true",
+    "isDefault": true,
     "baseUrl": "https://dev.filemarket.xyz/api",
     "explorer": "https://calibration.filfox.info/"
   },
@@ -142,7 +142,7 @@
           "url": "https://goerli.explorer.zksync.io/"
         }
       },
-      "testnet": "true"
+      "testnet": true
     },
     "img": "https://svgshare.com/i/vmG.svg",
     "imgGray": "https://svgshare.com/i/vwN.svg",

@@ -1,6 +1,5 @@
 import { getContract, Provider } from '@wagmi/core'
 
-import { getConfigById } from '../../config/mark3d'
 import { wagmiClient } from '../../config/web3Modal'
 import { rootStore } from '../../stores/RootStore'
 import { assertConfig } from '../utils'
@@ -11,7 +10,7 @@ export class ContractProvider {
   ) {}
 
   getCollectionContract(address: string) {
-    const config = getConfigById(rootStore.currentBlockChainStore.chainId)
+    const config = rootStore.multiChainStore.getConfigById(rootStore.currentBlockChainStore.chainId)
     assertConfig(config)
 
     return getContract({
@@ -22,7 +21,7 @@ export class ContractProvider {
   }
 
   getAccessTokenContract() {
-    const config = getConfigById(rootStore.currentBlockChainStore.chainId)
+    const config = rootStore.multiChainStore.getConfigById(rootStore.currentBlockChainStore.chainId)
     assertConfig(config)
 
     console.log(config)
@@ -35,7 +34,7 @@ export class ContractProvider {
   }
 
   getExchangeContract() {
-    const config = getConfigById(rootStore.currentBlockChainStore.chainId)
+    const config = rootStore.multiChainStore.getConfigById(rootStore.currentBlockChainStore.chainId)
     assertConfig(config)
 
     return getContract({

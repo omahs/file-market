@@ -3,17 +3,14 @@ import { formatUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
 
 import { formatNumber } from '../utils/number'
+import { formatCurrency as formatCurrencyProps } from '../utils/web3'
 import { useConfig } from './useConfig'
 
 export const useCurrency = () => {
   const config = useConfig()
 
   const formatCurrency = useCallback((value: BigNumberish) => {
-    const decimals = config?.chain.nativeCurrency?.decimals ?? 18
-    const symbol = config?.chain.nativeCurrency?.symbol ?? 'BNB'
-    const computedValue = utils.formatUnits(value, decimals)
-
-    return `${parseFloat(computedValue) > 0.0000001 ? computedValue : '~0'} ${symbol}`
+    return formatCurrencyProps(value, config?.chain)
   }, [config])
 
   const toCurrency = useCallback((value: BigNumber): number => {

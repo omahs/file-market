@@ -26,6 +26,8 @@ export class OrderStore implements IStoreRequester,
   data?: Order = undefined
   tokenFullId?: TokenFullId = undefined
 
+  isCustomApi: boolean = true
+
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore

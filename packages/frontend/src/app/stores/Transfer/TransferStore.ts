@@ -36,6 +36,8 @@ export class TransferStore implements IStoreRequester,
   tokenStore: TokenStore
   orderStore: OrderStore
 
+  isCustomApi: boolean = true
+
   onTransferFinishedCall?: () => void
   onTransferPublicKeySetCall?: () => void
   onTransferDraftCall?: () => void

@@ -26,6 +26,8 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
 
   api?: Api<{}>
 
+  isCustomApi: boolean = true
+
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore

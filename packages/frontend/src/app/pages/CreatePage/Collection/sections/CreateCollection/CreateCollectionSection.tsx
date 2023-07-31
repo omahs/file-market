@@ -101,7 +101,7 @@ export default function CreateCollectionSection() {
           setModalOpen(false)
         }}
       />
-      <PageLayout css={{ minHeight: '100vh' }}>
+      <PageLayout css={{ minHeight: '100vh' }} isHasSelectBlockChain>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup><Title>Create New Collection</Title></TitleGroup>
 

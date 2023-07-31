@@ -61,7 +61,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     storeRequest(
       this,
       this.currentBlockChainStore.api.tokens.tokensDetail(this.address, {
-        tokenLimit: 20,
+        tokenLimit: 10,
       }),
       data => this.setData(data),
     )
@@ -74,7 +74,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       this.currentBlockChainStore.api.tokens.tokensDetail(this.address, {
         lastTokenId: token?.tokenId,
         lastTokenCollectionAddress: token?.collectionAddress,
-        tokenLimit: 20,
+        tokenLimit: 10,
       }),
       (data) => this.addData(data),
     )

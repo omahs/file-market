@@ -10,8 +10,7 @@ import { IMultiChainConfig } from './multiChainConfigType'
 export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiChainConfig[])
   .map(item => item.chain)
   .filter(item => {
-    // @ts-expect-error
-    return (item.testnet === 'true') === !import.meta.env.VITE_IS_MAINNET
+    return (item.testnet === true) === !import.meta.env.VITE_IS_MAINNET
   })
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID

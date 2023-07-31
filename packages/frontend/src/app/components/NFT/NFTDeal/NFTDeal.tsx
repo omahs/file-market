@@ -121,7 +121,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
               borderRadiusSecond
               onPress={() => { changeNetwork(multiChainStore.getChainByName(chainName)?.chain.id) }}
             >
-              {isConnected ? `Switch network to ${chainName}` : 'Connect wallet'}
+              {isConnected ? `Switch network to ${chainName}` : 'Check status'}
             </Button>
           </DealContainerInfo>
         )

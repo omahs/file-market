@@ -1,17 +1,26 @@
 import { BigNumber } from 'ethers'
+import { makeAutoObservable } from 'mobx'
 
+import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
 import { rootStore } from '../../stores/RootStore'
 import { ContractProvider, contractProvider } from '../ContractProvider'
 import { bufferToEtherHex, callContractGetter, hexToBuffer } from '../utils'
 import { IBlockchainDataProvider } from './IBlockchainDataProvider'
 
 export class BlockchainDataProvider implements IBlockchainDataProvider {
-  readonly #url: string
+  currentBlockChainStore: CurrentBlockChainStore
 
   constructor(
     private readonly contractProvider: ContractProvider,
   ) {
-    this.#url = rootStore.multiChainStore.getChainById(rootStore.currentBlockChainStore.chainId)?.baseUrl ?? '/api'
+    this.currentBlockChainStore = rootStore.currentBlockChainStore
+    makeAutoObservable(this)
+  }
+
+  private get url() {
+    console.log(this.currentBlockChainStore.configChain?.baseUrl ?? '/api')
+
+    return this.currentBlockChainStore.configChain?.baseUrl ?? '/api'
   }
 
   async #stringifyResponse(response: Response) {
@@ -26,7 +35,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getLastTransferInfo(collectionAddress: ArrayBuffer, tokenId: number) {
     const response = await fetch(
-      `${this.#url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
+      `${this.url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
       { method: 'GET' },
     )
 
@@ -46,7 +55,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getTokenCreator(collectionAddress: ArrayBuffer, tokenId: number) {
     const response = await fetch(
-      `${this.#url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}`,
+      `${this.url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}`,
       { method: 'GET' },
     )
 

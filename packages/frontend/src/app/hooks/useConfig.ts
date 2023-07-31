@@ -1,9 +1,10 @@
 
-import { getConfigById } from '../config/mark3d'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
+import { useMultiChainStore } from './useMultiChainStore'
 
 export const useConfig = () => {
   const currentBlockChainStore = useCurrentBlockChain()
+  const multiChainStore = useMultiChainStore()
 
-  return getConfigById(currentBlockChainStore.chainId)
+  return multiChainStore.getConfigById(currentBlockChainStore.chainId)
 }
