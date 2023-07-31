@@ -3,8 +3,8 @@ import { Web3Modal } from '@web3modal/react'
 import { FC } from 'react'
 import { configureChains, createClient } from 'wagmi'
 
+import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
-import multichainConfig from './multiChainConfig.json'
 import { IMultiChainConfig } from './multiChainConfigType'
 
 export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiChainConfig[])

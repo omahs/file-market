@@ -1,12 +1,12 @@
 import { utils } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
+import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import fileBunniesCollection from '../../../abi/FileBunniesCollection'
 import collectionToken from '../../../abi/FilemarketCollectionV2'
 import exchangeToken from '../../../abi/FilemarketExchangeV2'
 import accessToken from '../../../abi/Mark3dAccessTokenV2'
 import { Api } from '../../../swagger/Api'
-import multichainConfig from '../../config/multiChainConfig.json'
 import { IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
   IActivateDeactivate,

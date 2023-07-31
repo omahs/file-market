@@ -18,7 +18,7 @@ import {
 import { useCreateCollection } from '../../../hooks/useCreateCollection'
 import { useModalProperties } from '../../../hooks/useModalProperties'
 
-interface CreateCollectionForm {
+export interface CreateCollectionForm {
   image: FileList
   name: string
   symbol: string
