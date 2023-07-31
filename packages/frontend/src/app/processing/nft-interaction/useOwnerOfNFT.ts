@@ -11,7 +11,7 @@ export function useOwnerOfNFT({ collectionAddress, tokenId, isDisable }: Partial
   return useContractRead({
     address: ensureAddress(collectionAddress),
     abi: config?.collectionToken.abi,
-    functionName: 'ownerOf',
+    functionName: !isDisable ? 'ownerOf' : undefined,
     args: [BigNumber.from(tokenId)],
     suspense: !tokenId,
     enabled: !isDisable,
