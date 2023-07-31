@@ -41,9 +41,6 @@ func (p *postgres) GetCollectionTokens(
 	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
 	}
-	if limit == 0 {
-		limit = 10000
-	}
 
 	err := func(res *[]*domain.Token, query string) error {
 		rows, err := tx.Query(ctx, query,
@@ -165,10 +162,6 @@ func (p *postgres) GetTokensByAddress(
 	lastTokenIdStr := ""
 	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
-	}
-
-	if limit == 0 {
-		limit = 10000
 	}
 
 	err := func(res *[]*domain.Token, query string) error {

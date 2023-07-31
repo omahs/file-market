@@ -246,9 +246,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /collections/full/public:
     get:
       tags:
@@ -277,9 +277,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 0
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /collections/full/file-bunnies:
     get:
       tags:
@@ -308,9 +308,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 0
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /tokens/{address}:
     get:
       tags:
@@ -349,9 +349,9 @@ paths:
           description: Максимальное число коллекций, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
         - name: lastTokenId
           in: query
           description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -363,9 +363,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /tokens/{collection}/{id}:
     get:
       tags:
@@ -453,9 +453,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /transfers/{address}:
     get:
       tags:
@@ -489,9 +489,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -502,9 +502,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /transfers/{address}/{id}:
     get:
       tags:
@@ -566,9 +566,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -579,9 +579,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /v2/transfers/{address}:
     get:
       tags:
@@ -615,9 +615,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -628,9 +628,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /v2/transfers/{address}/{id}:
     get:
       tags:
@@ -692,9 +692,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -705,9 +705,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /orders/all_active:
     get:
       tags:
@@ -735,9 +735,9 @@ paths:
           description: Максимальное число ордеров, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10000
+          default: 10
           minimum: 0
-          maximum: 10000
+          maximum: 100
   /orders/{address}:
     get:
       tags:
@@ -1251,14 +1251,17 @@ definitions:
         type: number
         format: uint64
         description: Количество заминченных токенов в коллекции
+        x-omitempty: false
       ordersCount:
         type: number
         format: uint64
         description: Количество открытых ордеров
+        x-omitempty: false
       ownersCount:
         type: number
         format: uint64
         description: Количество уникальных адресов, которые владеют хотя бы 1 токеном в коллекции
+        x-omitempty: false
       salesVolume:
         type: string
         pattern: "^[0-9]+$"

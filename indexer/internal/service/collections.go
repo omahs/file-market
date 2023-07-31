@@ -68,6 +68,7 @@ func (s *service) GetCollections(
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
 	collections, err := s.repository.GetCollections(ctx, tx, lastCollectionAddress, limit)
 	if err != nil {
 		logger.Errorf("get collections failed", err)
@@ -84,7 +85,7 @@ func (s *service) GetCollections(
 		c := domain.CollectionToModel(collection)
 		fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, collection.Address)
 		if err != nil {
-			logger.Errorf("failed to get collection content types", err, nil)
+			logger.Error("failed to get collection content types", err, nil)
 			return nil, internalError
 		}
 		c.ContentTypes = &models.CollectionContentTypes{

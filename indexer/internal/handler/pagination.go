@@ -25,11 +25,11 @@ func parseLimitParam(r *http.Request, key string, defaultValue, maxValue int) (i
 		}
 	}
 
-	if limit < 1 {
+	if limit < 0 {
 		return 0, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Detail:  "",
-			Message: fmt.Sprintf("'%s' must be greater then 0", key),
+			Message: fmt.Sprintf("'%s' must be greater then or equal 0", key),
 		}
 	}
 

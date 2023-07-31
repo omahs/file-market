@@ -101,7 +101,7 @@ export const FileBunniesLayout = styled(PageLayout, {
   },
   '@sm': {
     paddingLR: '$3',
-    paddingTop: '94px',
+    paddingTop: '115px',
     paddingBottom: '27px',
   },
 })

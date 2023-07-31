@@ -3,7 +3,7 @@ import { utils } from 'ethers'
 import React, { FC } from 'react'
 
 import { styled } from '../../../../../styles'
-import { mark3dConfig } from '../../../../config/mark3d'
+import { useConfig } from '../../../../hooks/useConfig'
 import { Button, gradientPlaceholderImg, Txt } from '../../../../UIkit'
 import { BasicCardSquareImg } from '../../../MarketCard/BasicCard'
 import { Price } from '../../../MarketCard/NamespaceCard/NamespaceCard.styles'
@@ -217,6 +217,8 @@ type FakeMintNftProps = ComponentProps<typeof CardRarity> & {
 }
 
 const FakeMintNft: FC<FakeMintNftProps> = ({ rarity, imageURL, chance, price }) => {
+  const config = useConfig()
+
   return (
     <HeightContainer>
       <BorderLayoutFakeNft rarity={rarity}>
@@ -250,9 +252,9 @@ const FakeMintNft: FC<FakeMintNftProps> = ({ rarity, imageURL, chance, price }) 
               <Txt h5>Gifts Bundle</Txt>
             </CardFakeNftText>
             <PriceFakeNft>
-              {utils.formatUnits(price ?? '0', mark3dConfig.chain.nativeCurrency.decimals).split('.')[0]}
+              {utils.formatUnits(price ?? '0', config?.chain.nativeCurrency.decimals).split('.')[0]}
               {' '}
-              {mark3dConfig.chain.nativeCurrency.symbol}
+              {config?.chain.nativeCurrency.symbol}
             </PriceFakeNft>
             <ButtonContainer>
               <Button

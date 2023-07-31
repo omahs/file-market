@@ -85,14 +85,13 @@ export default function Hero() {
       </HeroTitle>
       <HeroTextWrapper>
         <Txt body2>
-          Thank you for your participation in working with FileMarket,
-          <br />
-          and welcome to our community!
+          Welcome to FileMarket&apos;s Branding Page!
         </Txt>
         <Txt body2>
-          Follow the guidelines when using the FileMarket brand identity
-          <br />
-          on all marketing channels.
+          Discover our logos, guidelines, and corporate styles here, all designed to ensure brand consistency.
+        </Txt>
+        <Txt body2>
+          Use these resources wisely to accurately represent our brands.
         </Txt>
       </HeroTextWrapper>
       <HeroLogo src={heroLogoSrc} />

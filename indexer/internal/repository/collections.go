@@ -79,9 +79,6 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 	if lastCollectionAddress != nil {
 		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
 	}
-	if limit == 0 {
-		limit = 10000
-	}
 
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
@@ -350,9 +347,6 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 	lastCollectionAddressStr := ""
 	if lastCollectionAddress != nil {
 		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
-	}
-	if limit == 0 {
-		limit = 10000
 	}
 
 	rows, err := tx.Query(ctx, query,

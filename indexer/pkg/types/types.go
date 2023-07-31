@@ -115,6 +115,7 @@ func (t *DefaultTransaction) UnmarshalJSON(input []byte) error {
 		t.chainId = (*big.Int)(dec.ChainId)
 	}
 	t.hash = dec.Hash
+	t.from = dec.From
 
 	return nil
 }

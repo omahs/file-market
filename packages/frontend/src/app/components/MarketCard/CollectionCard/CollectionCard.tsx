@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import FileLogo from '../../../../assets/FilemarketFileLogo.png'
 import { Collection } from '../../../../swagger/Api'
+import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { gradientPlaceholderImg } from '../../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../../utils/nfts'
@@ -26,6 +27,7 @@ export default function CollectionCard({ name, address, image, type }: Collectio
   const chainId = '314'
   const [isShowNumber, setIsShowNumber] = useState<boolean>(false)
   const navigate = useNavigate()
+  const currentBlockChain = useCurrentBlockChain()
   const { smValue, mdValue } = useMediaMui()
   const chainIcon: string = useMemo(() => {
     return getImg(chainId)
@@ -51,7 +53,7 @@ export default function CollectionCard({ name, address, image, type }: Collectio
       onMouseLeave={() => { setIsShowNumber(false) }}
       onMouseDown={() => { setIsShowNumber(true) }}
       onMouseUp={() => { setIsShowNumber(false) }}
-      onClick={() => { navigate(`/collection/${address}`) }}
+      onClick={() => { navigate(`/${currentBlockChain.chain?.name}/collection/${address}`) }}
     >
       <StyledCollectionGrid>
         <InsideContainer>

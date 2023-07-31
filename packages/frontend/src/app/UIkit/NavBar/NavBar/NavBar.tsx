@@ -2,6 +2,7 @@ import { FC, ReactNode, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
+import CurrentBlockchain from '../../../components/MultiChain/CurrentBlockchain/CurrentBlockchain'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarCollapseItem } from '../NavBarCollapseItem'
@@ -21,11 +22,11 @@ export interface NavBarProps {
   mobileBp?: BreakpointsOptions
   isTransparent?: boolean
   noneBlurShadow?: boolean
+  isCurrentBlockchainVisible?: boolean
 }
 
 const NavBarStyled = styled('nav', {
   width: '100%',
-  height: '$layout$navBarHeight',
   position: 'fixed',
   zIndex: 10,
   top: 0,
@@ -54,7 +55,7 @@ const NavBarStyled = styled('nav', {
 
 const horizontalGap = 30
 const NavBarHorizontalSpacer = styled('div', {
-  height: '100%',
+  height: '$layout$navBarHeight',
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
@@ -83,6 +84,7 @@ export const NavBar: FC<NavBarProps> = ({
   mobileBp,
   isTransparent,
   noneBlurShadow,
+  isCurrentBlockchainVisible,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { pathname } = useLocation()
@@ -92,7 +94,10 @@ export const NavBar: FC<NavBarProps> = ({
 
   return (
     <>
-      <NavBarStyled isTransparent={isTransparent} noneBlurShadow={noneBlurShadow}>
+      <NavBarStyled
+        isTransparent={isTransparent}
+        noneBlurShadow={noneBlurShadow}
+      >
         <Container css={{ height: '100%' }}>
           <NavBarHorizontalSpacer>
             <NavBarToggle
@@ -133,6 +138,7 @@ export const NavBar: FC<NavBarProps> = ({
             </ActionsContainer>
           </NavBarHorizontalSpacer>
         </Container>
+        {!isExpanded && <CurrentBlockchain isLight={isTransparent} isVisible={isCurrentBlockchainVisible} />}
       </NavBarStyled>
       {items && items.length > 0 && (
         <NavBarCollapse

@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
 import { CollectionData } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
@@ -14,10 +13,12 @@ import {
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -31,10 +32,12 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
 
   collectionAddress = ''
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -53,7 +56,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   private request() {
     storeRequest(
       this,
-      api.collections.fullDetail(this.collectionAddress, { limit: 20 }),
+      this.currentBlockChainStore.api.collections.fullDetail(this.collectionAddress, { limit: 10 }),
       (data) => this.setData(data),
     )
   }
@@ -62,7 +65,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
     const lastTokenId = lastItem(this.data.tokens ?? [])?.tokenId
     storeRequest(
       this,
-      api.collections.fullDetail(this.collectionAddress, { lastTokenId, limit: 20 }),
+      this.currentBlockChainStore.api.collections.fullDetail(this.collectionAddress, { lastTokenId, limit: 10 }),
       (data) => this.addData(data),
     )
   }
@@ -104,11 +107,13 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
         address: reduceAddress(this.data.collection?.owner ?? ''),
       },
       button: {
-        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
+        link: `/collection/${this.currentBlockChainStore.chain?.name}/${token.collectionAddress}/${token.tokenId}`,
         text: 'Go to page',
       },
       hiddenFile: token.hiddenFileMeta,
       hiddenFileMeta: token.hiddenFileMeta,
+      chainName: this.currentBlockChainStore.chain?.name,
+      chainImg: this.currentBlockChainStore.configChain?.imgGray,
     }))
   }
 }
