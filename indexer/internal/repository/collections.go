@@ -339,6 +339,7 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 				 LEFT JOIN total_owners AS tow ON tow.collection_address = c.address
 				 LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
 		WHERE c.address > $1 AND
+			  tot.total > 0 AND
 			  c.address NOT IN (SELECT collection_address FROM rejected_collections)
 		ORDER BY c.address
 		LIMIT $2

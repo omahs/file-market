@@ -807,7 +807,7 @@ func (p *postgres) GetTokensContentTypeByCollection(
 
 	// language=PostgreSQL
 	getTypesQuery := `
-		SELECT DISTINCT(type)
+		SELECT DISTINCT SUBSTRING(name FROM '\.([^\.]*)$')
 		FROM hidden_file_metadata
 		WHERE collection_address=$1
 		`
