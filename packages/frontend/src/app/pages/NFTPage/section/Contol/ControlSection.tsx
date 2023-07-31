@@ -10,9 +10,9 @@ import { Params } from '../../../../utils/router'
 import { GridBlock } from '../../helper/styles/style'
 
 const ControlSection = observer(() => {
-  const { collectionAddress, tokenId } = useParams<Params>()
-  const transferStore = useTransferStore(collectionAddress, tokenId) // watch events is called inside nft page
-  const orderStore = useOrderStore(collectionAddress, tokenId)
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
+  const transferStore = useTransferStore(collectionAddress, tokenId, chainName) // watch events is called inside nft page
+  const orderStore = useOrderStore(collectionAddress, tokenId, chainName)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
     [collectionAddress, tokenId],
@@ -29,6 +29,7 @@ const ControlSection = observer(() => {
             transferStore.reload()
           }}
         />
+
       )}
     </GridBlock>
   )

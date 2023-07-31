@@ -1,10 +1,9 @@
-import assert from 'assert'
 import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useBlockchainDataProvider } from '../BlockchainDataProvider'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
@@ -21,12 +20,13 @@ interface ISetPublicKey {
 export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
+  const config = useConfig()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, ISetPublicKey>()
   const factory = useHiddenFileProcessorFactory()
   const blockchainDataProvider = useBlockchainDataProvider()
 
   const setPublicKey = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, mark3dConfig.exchangeToken.name)
+    assertContract(contract, config?.exchangeToken.name ?? '')
     assertSigner(signer)
     assertAccount(address)
     assertCollection(collectionAddress)
@@ -41,7 +41,7 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
       BigNumber.from(tokenId),
       bufferToEtherHex(publicKey),
       BigNumber.from(dealNumber),
-      { gasPrice: mark3dConfig.gasPrice },
+      { gasPrice: config?.gasPrice },
     )
   }), [contract, signer, address, wrapPromise])
 

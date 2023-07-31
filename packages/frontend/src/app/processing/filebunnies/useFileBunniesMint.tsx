@@ -3,9 +3,9 @@ import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { SuccessNavBody, SuccessOkBody } from '../../components/Modal/Modal'
-import { api } from '../../config/api'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useApi } from '../../hooks/useApi'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
@@ -24,7 +24,7 @@ interface IGetSignWhiteList {
 export const useFileBunniesMint = () => {
   const { address, isConnected } = useAccount()
   const whiteListStore = useCheckWhiteListStore(address)
-
+  const api = useApi()
   const [isFreeMintSoldOut, setIsFreeMintSoldOut] = useState<boolean>(false)
   const [isPayedMintSoldOut, setIsPayedMintSoldOut] = useState<boolean>(false)
 

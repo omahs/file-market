@@ -1,12 +1,13 @@
 import { useContract, useSigner } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
+import { useConfig } from '../../hooks/useConfig'
 
 export function useCollectionContract(address?: string) {
   const { data: signer } = useSigner()
+  const config = useConfig()
   const contract = useContract({
     address,
-    abi: mark3dConfig.collectionToken.abi,
+    abi: config?.collectionToken.abi,
     signerOrProvider: signer,
   })
 

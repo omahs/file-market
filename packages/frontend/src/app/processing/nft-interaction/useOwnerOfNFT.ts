@@ -1,16 +1,19 @@
 import { BigNumber } from 'ethers'
 import { useContractRead } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
+import { useConfig } from '../../hooks/useConfig'
 import { TokenFullId } from '../types'
 import { ensureAddress } from '../utils/address'
 
-export function useOwnerOfNFT({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+export function useOwnerOfNFT({ collectionAddress, tokenId, isDisable }: Partial<TokenFullId> & { isDisable?: boolean }) {
+  const config = useConfig()
+
   return useContractRead({
     address: ensureAddress(collectionAddress),
-    abi: mark3dConfig.collectionToken.abi,
+    abi: config?.collectionToken.abi,
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId)],
     suspense: !tokenId,
+    enabled: !isDisable,
   })
 }

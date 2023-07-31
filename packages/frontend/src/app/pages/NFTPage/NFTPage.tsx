@@ -4,6 +4,7 @@ import React, { Fragment, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
+import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
@@ -110,16 +111,23 @@ const ControlStickyBlock = styled('div', {
 })
 
 const NFTPage: React.FC = observer(() => {
-  const { collectionAddress, tokenId } = useParams<Params>()
-  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
-  const tokenStore = useTokenStore(collectionAddress, tokenId)
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
+  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId, chainName)
+  const currentBlockChainStore = useCurrentBlockChain()
+  const tokenStore = useTokenStore(collectionAddress, tokenId, chainName)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
+  const isNetworkIncorrect = useMemo(() => {
+    return currentBlockChainStore.chain?.name !== chainName
+  }, [currentBlockChainStore.chain, chainName])
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
     [collectionAddress, tokenId],
   )
-  const { isOwner } = useIsOwner(tokenFullId)
+  const { isOwner } = useIsOwner({
+    ...tokenFullId,
+    isDisable: isNetworkIncorrect,
+  })
   const isBuyer = useIsBuyer(transferStore.data)
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data,

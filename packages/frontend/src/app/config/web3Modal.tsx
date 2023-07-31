@@ -3,10 +3,15 @@ import { Web3Modal } from '@web3modal/react'
 import { FC } from 'react'
 import { configureChains, createClient } from 'wagmi'
 
+import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
-import { mark3dConfig } from './mark3d'
+import { IMultiChainConfig } from './multiChainConfigType'
 
-const chains = [mark3dConfig.chain]
+export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiChainConfig[])
+  .map(item => item.chain)
+  .filter(item => {
+    return (item.testnet === true) === !import.meta.env.VITE_IS_MAINNET
+  })
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 
