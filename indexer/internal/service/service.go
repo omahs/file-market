@@ -133,7 +133,7 @@ type Moderation interface {
 
 type service struct {
 	repository                  repository.Repository
-	healthNotifier              healthnotifier.HealthNotifyer
+	healthNotifier              healthnotifier.HealthNotifier
 	cfg                         *config.ServiceConfig
 	ethClient                   ethclient2.EthClient
 	realTimeNotificationService *realtime_notification.RealTimeNotificationService
@@ -143,7 +143,7 @@ type service struct {
 	accessTokenInstance         *access_token.Mark3dAccessTokenV2
 	exchangeAddress             common.Address
 	exchangeInstance            *exchange.FilemarketExchangeV2
-	currencyConverter           currencyconversion.CurrencyConversionProvider
+	currencyConverter           currencyconversion.Provider
 	commonSigner                *ethsigner.EthSigner
 	uncommonSigner              *ethsigner.EthSigner
 	closeCh                     chan struct{}
@@ -155,8 +155,8 @@ func NewService(
 	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
 	sequencer *sequencer.Sequencer,
 	jwtManager jwt.TokenManager,
-	healthNotifier healthnotifier.HealthNotifyer,
-	currencyConverter currencyconversion.CurrencyConversionProvider,
+	healthNotifier healthnotifier.HealthNotifier,
+	currencyConverter currencyconversion.Provider,
 	commonSigner *ethsigner.EthSigner,
 	uncommonSigner *ethsigner.EthSigner,
 	cfg *config.ServiceConfig,

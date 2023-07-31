@@ -99,7 +99,7 @@ func (p *postgres) GetJwtTokenNumber(ctx context.Context, tx pgx.Tx, address com
 	return nextNum, nil
 }
 
-func (r *postgres) InsertJwtToken(ctx context.Context, tx pgx.Tx, tokenData jwt.TokenData) error {
+func (p *postgres) InsertJwtToken(ctx context.Context, tx pgx.Tx, tokenData jwt.TokenData) error {
 	if _, err := tx.Exec(ctx, `INSERT INTO auth_tokens VALUES($1, $2, $3, $4, $5)`,
 		tokenData.Address,
 		tokenData.Number,
@@ -113,7 +113,7 @@ func (r *postgres) InsertJwtToken(ctx context.Context, tx pgx.Tx, tokenData jwt.
 	return nil
 }
 
-func (r *postgres) DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address, number int) error {
+func (p *postgres) DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address, number int) error {
 	_, err := tx.Exec(ctx, `DELETE FROM auth_tokens WHERE address=$1 AND number=$2`,
 		strings.ToLower(address.String()),
 		number,
@@ -122,7 +122,7 @@ func (r *postgres) DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.
 	return err
 }
 
-func (r *postgres) DropAllJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address) error {
+func (p *postgres) DropAllJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address) error {
 	_, err := tx.Exec(ctx, `DELETE FROM auth_tokens WHERE address=$1`, strings.ToLower(address.String()))
 
 	return err

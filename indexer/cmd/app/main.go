@@ -8,7 +8,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
-	log "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"net/http"
 	"os"

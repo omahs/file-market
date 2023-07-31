@@ -190,7 +190,7 @@ func (s *service) generateTokensWithNumber(ctx context.Context, transaction pgx.
 		Address:   strings.ToLower(address.String()),
 		Number:    number,
 		ExpiresAt: refreshExpiresAt,
-		Secret:    generateSecret(int(0), address, number, jwt.PurposeRefresh),
+		Secret:    generateSecret(0, address, number, jwt.PurposeRefresh),
 	}
 	refreshToken, err := s.jwtManager.GenerateJwtToken(refreshTokenData)
 	if err != nil {
