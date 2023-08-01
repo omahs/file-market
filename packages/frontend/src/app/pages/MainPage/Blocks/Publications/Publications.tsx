@@ -5,7 +5,7 @@ import './swiper.css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { styled } from '../../../../../styles'
-import BoxShadowed from '../../components/BoxShadowed/BoxShadowed'
+import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
 import Title from '../../components/SectionTitle/SectionTitle'
 import { PublicationsData } from '../../helper/Publications/data'
 
@@ -117,7 +117,7 @@ const Publications = () => {
         {PublicationsData.map((item, index) => {
           return (
             <SwiperSlide key={index} className="swiper-slide publications-slide">
-              <BoxShadowed fullHeight>
+              <BoxShadowed fullHeight large>
                 <SlideLink href={item.href} target="_blank">
                   <SlideHeader>
                     <SlideIconTitle src={item.titleLogo} />
