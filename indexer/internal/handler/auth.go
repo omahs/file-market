@@ -9,6 +9,8 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -22,6 +24,15 @@ const (
 
 func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
 	var req models.AuthMessageRequest
+
+	b, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(b))
+	return
+
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		fmt.Println(req)
 		logger.Error("failed to parse auth message request", err, nil)
@@ -65,6 +76,7 @@ func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) 
 		})
 		return
 	}
+	defer r.Body.Close()
 
 	if err := req.Validate(strfmt.Default); err != nil {
 		logger.Error("failed to validate authBySignature request", err, nil)
@@ -75,7 +87,6 @@ func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) 
 		})
 		return
 	}
-	defer r.Body.Close()
 
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
