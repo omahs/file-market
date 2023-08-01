@@ -48,7 +48,6 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 		return nil, internalError
 	}
 
-	fmt.Println(msg.CreatedAt.String(), time.Now().String(), time.Since(msg.CreatedAt).String(), s.cfg.AuthMessageTTL.String())
 	if time.Since(msg.CreatedAt) >= s.cfg.AuthMessageTTL {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
@@ -178,7 +177,7 @@ func (s *service) generateTokens(ctx context.Context, tx pgx.Tx, address common.
 }
 
 func (s *service) generateTokensWithNumber(ctx context.Context, transaction pgx.Tx, address common.Address, number int) (*models.JwtTokenInfo, *models.JwtTokenInfo, error) {
-	accessExpiresAt := now.Now().Add(s.cfg.AccessTokenTTL * time.Millisecond)
+	accessExpiresAt := now.Now().Add(s.cfg.AccessTokenTTL)
 	accessTokenData := &jwt.TokenData{
 		Purpose:   jwt.PurposeAccess,
 		Address:   strings.ToLower(address.String()),
