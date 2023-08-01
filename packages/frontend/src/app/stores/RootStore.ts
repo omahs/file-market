@@ -1,3 +1,4 @@
+import { AuthStore } from './auth/AuthStore'
 import { BlockStore } from './BlockStore/BlockStore'
 import { CollectionStore } from './Collection/CollectionStore'
 import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
@@ -18,6 +19,7 @@ import { UserTransferStore } from './UserTransfers/UserTransfersStore'
 import { WhiteListStore } from './WhiteList/WhiteListStore'
 
 export class RootStore {
+  authStore: AuthStore
   dialogStore: DialogStore
   blockStore: BlockStore
   errorStore: ErrorStore
@@ -41,6 +43,7 @@ export class RootStore {
     this.dialogStore = new DialogStore()
     this.blockStore = new BlockStore()
     this.errorStore = new ErrorStore(this)
+    this.authStore = new AuthStore(this)
     this.collectionAndTokenList = new CollectionAndTokenListStore(this)
     this.transferListStore = new TransferListStore(this)
     this.collectionTokenList = new CollectionTokenListStore(this)
