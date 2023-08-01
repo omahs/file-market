@@ -91,6 +91,7 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 	return &models.AuthResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		Profile:      &models.UserProfile{Name: "temp"},
 	}, nil
 }
 

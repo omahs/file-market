@@ -974,6 +974,8 @@ definitions:
         $ref: '#/definitions/JwtTokenInfo'
       refresh_token:
         $ref: '#/definitions/JwtTokenInfo'
+      profile:
+        $ref: '#/definitions/UserProfile'
   JwtTokenInfo:
     type: object
     description: Данные jwt-токена
@@ -989,6 +991,12 @@ definitions:
     required:
       - token
       - expires_at
+  UserProfile:
+    type: object
+    description: Профиль юзера
+    properties:
+      name:
+        type: string
   ReportCollectionRequest:
     type: object
     description: Запрос на репорт коллекции
