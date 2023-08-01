@@ -40,8 +40,6 @@ export class ContractProvider {
     const config = this.getConfig()
     assertConfig(config)
 
-    console.log(wagmiClient.provider)
-
     return getContract({
       address: config.accessToken.address,
       abi: config.accessToken.abi,

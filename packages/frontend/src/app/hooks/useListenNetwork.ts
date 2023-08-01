@@ -10,8 +10,8 @@ import { useMultiChainStore } from './useMultiChainStore'
 
 export const useListenNetwork = () => {
   const { chain } = useNetwork()
-  const multiChainStore = useMultiChainStore()
-  const currentChainStore = useCurrentBlockChain(multiChainStore.data)
+  useMultiChainStore()
+  const currentChainStore = useCurrentBlockChain()
   const { changeNetwork } = useChangeNetwork()
   const { chainName } = useParams<Params>()
   const location = useLocation()
