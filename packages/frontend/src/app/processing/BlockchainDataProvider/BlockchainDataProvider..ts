@@ -17,10 +17,8 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
     makeAutoObservable(this)
   }
 
-  private get url() {
-    console.log(this.currentBlockChainStore.configChain?.baseUrl ?? '/api')
-
-    return this.currentBlockChainStore.configChain?.baseUrl ?? '/api'
+  private getUrl() {
+    return (this.currentBlockChainStore.configByChainName?.baseUrl ?? this.currentBlockChainStore.configChain?.baseUrl) ?? '/api'
   }
 
   async #stringifyResponse(response: Response) {
@@ -35,7 +33,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getLastTransferInfo(collectionAddress: ArrayBuffer, tokenId: number) {
     const response = await fetch(
-      `${this.url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
+      `${this.getUrl()}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
       { method: 'GET' },
     )
 
@@ -55,7 +53,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getTokenCreator(collectionAddress: ArrayBuffer, tokenId: number) {
     const response = await fetch(
-      `${this.url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}`,
+      `${this.getUrl()}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}`,
       { method: 'GET' },
     )
 

@@ -1,6 +1,7 @@
 import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
 
+import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import { Api } from '../../../swagger/Api'
 import { IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
@@ -27,6 +28,8 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   isActivated = false
 
   chainId?: number
+  chainNameByPage?: string
+
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore
@@ -40,9 +43,15 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
     if (chainId !== this.chainId) this.chainId = chainId
   }
 
+  setCurrentBlockChainByPage(chainName: string | undefined) {
+    if (chainName !== this.chainNameByPage) this.chainNameByPage = chainName
+  }
+
   private request() {
-    const defaultChain = this.multiChainStore.data?.find(item => (item.isDefault === true))
-    this.chainId = defaultChain ? defaultChain.chain.id : this.multiChainStore.data?.[0].chain.id
+    const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
+    const data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
+    const defaultChain = data?.find(item => (item.isDefault === true))
+    this.chainId = defaultChain ? defaultChain.chain.id : data?.[0].chain.id
   }
 
   activate(): void {
@@ -75,5 +84,11 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
 
   get configChain(): IMultiChainConfig | undefined {
     return this.multiChainStore.data?.find(item => item.chain.id === this.chainId)
+  }
+
+  get configByChainName(): IMultiChainConfig | undefined {
+    console.log(this.multiChainStore.data?.find(item => item.chain.name === this.chainNameByPage))
+
+    return this.multiChainStore.data?.find(item => item.chain.name === this.chainNameByPage)
   }
 }
