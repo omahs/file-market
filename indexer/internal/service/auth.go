@@ -38,10 +38,17 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 
 	msg, err := s.repository.GetAuthMessage(ctx, tx, address)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, &models.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "message for the address is not found",
+			}
+		}
 		logger.Error("failed to get auth message", err, nil)
 		return nil, internalError
 	}
 
+	fmt.Println(msg.CreatedAt.String(), time.Now().String(), time.Since(msg.CreatedAt).String(), s.cfg.AuthMessageTTL.String())
 	if time.Since(msg.CreatedAt) >= s.cfg.AuthMessageTTL {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,

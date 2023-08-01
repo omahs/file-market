@@ -23,7 +23,7 @@ func (p *postgres) GetAuthMessage(ctx context.Context, tx pgx.Tx, address common
 	var createdAt int64
 	err := tx.QueryRow(ctx, query,
 		strings.ToLower(address.String()),
-	).Scan(&msg.Message, createdAt)
+	).Scan(&msg.Message, &createdAt)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get auth message: %w", err)
 	}
