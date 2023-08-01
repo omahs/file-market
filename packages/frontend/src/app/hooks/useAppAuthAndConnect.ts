@@ -14,7 +14,7 @@ export default function useAppAuthAndConnect() {
   const [addressState, setAddressState] = useState<string | undefined>()
   const { authStore } = useStores()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { open } = useWeb3Modal()
+  const { open, setDefaultChain } = useWeb3Modal()
   const errorFunc = useErrorWindow()
   const { signMessage } = useSignMessage({
     async onSuccess(data) {
@@ -72,5 +72,5 @@ export default function useAppAuthAndConnect() {
     }
   }, [isConnected, address])
 
-  return { connect, isLoading }
+  return { connect, isLoading, setDefaultChain }
 }

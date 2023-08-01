@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Collection } from '../../../swagger/Api'
-import { api } from '../../config/api'
+import { Api, Collection } from '../../../swagger/Api'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -10,9 +9,11 @@ import {
   storeReset,
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
+import { MultiChainStore } from '../MultiChain/MultiChainStore'
 
 export class CollectionStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
+  multiChainStore: MultiChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -23,14 +24,21 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   collection?: Collection
   address: string = ''
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  api?: Api<{}>
+
+  isCustomApi: boolean = true
+
+  constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
+    this.multiChainStore = multiChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      multiChainStore: false,
     })
   }
 
-  private request(address: string) {
+  private request(address: string, api?: Api<{}>) {
+    if (!api) return
     storeRequest<Collection>(
       this,
       api.collections.collectionsDetail(address),
@@ -40,10 +48,11 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
     )
   }
 
-  activate(address: string): void {
+  activate(address: string, chainName?: string): void {
     this.isActivated = true
     this.address = address
-    this.request(address)
+    this.api = this.multiChainStore.getApiByName(chainName)
+    this.request(address, this.api)
   }
 
   deactivate(): void {
@@ -56,6 +65,6 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request(this.address, this.api)
   }
 }

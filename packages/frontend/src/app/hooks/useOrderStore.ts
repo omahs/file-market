@@ -1,3 +1,4 @@
+
 import { useActivateDeactivateRequireParams } from './useActivateDeactivateStore'
 import { useStores } from './useStores'
 
@@ -7,9 +8,9 @@ import { useStores } from './useStores'
  * @param collectionAddress
  * @param tokenId
  */
-export function useOrderStore(collectionAddress?: string, tokenId?: string) {
+export function useOrderStore(collectionAddress?: string, tokenId?: string, chainName?: string) {
   const { orderStore } = useStores()
-  useActivateDeactivateRequireParams(orderStore, collectionAddress, tokenId)
+  useActivateDeactivateRequireParams(orderStore, collectionAddress, tokenId, chainName)
 
   return orderStore
 }

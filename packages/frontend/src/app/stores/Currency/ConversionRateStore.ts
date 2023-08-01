@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
 import { ConversionRateResponse } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -9,11 +8,12 @@ import {
   storeRequest,
   storeReset,
 } from '../../utils/store'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
-import type { RootStore } from '../RootStore'
 
 export class ConversionRateStore implements IActivateDeactivate, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -23,9 +23,13 @@ export class ConversionRateStore implements IActivateDeactivate, IStoreRequester
 
   data?: ConversionRateResponse = undefined
 
-  constructor({ errorStore }: RootStore) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
-    makeAutoObservable(this)
+    this.currentBlockChainStore = currentBlockChainStore
+    makeAutoObservable(this, {
+      errorStore: false,
+      currentBlockChainStore: false,
+    })
   }
 
   setData(data: ConversionRateResponse) {
@@ -35,7 +39,7 @@ export class ConversionRateStore implements IActivateDeactivate, IStoreRequester
   private request() {
     storeRequest(
       this,
-      api.currency.conversionRateList(),
+      this.currentBlockChainStore.api.currency.conversionRateList(),
       (data) => this.setData(data),
     )
   }

@@ -12,7 +12,7 @@ export const formatNumber = (number?: string | number, toFixed?: number): string
 }
 
 export const cutNumber = (number?: string | number): string => {
-  if (!number) return ''
+  if (!number && number !== 0) return ''
 
   if (+number < 1000) return number.toString()
   if (+number < 1000000) return parseFloat((+number / 1000).toFixed(2)).toString() + 'K'

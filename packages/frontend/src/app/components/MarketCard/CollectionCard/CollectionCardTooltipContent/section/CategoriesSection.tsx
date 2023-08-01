@@ -12,14 +12,14 @@ const CategoriesCard = styled(CollectionCardBaseTag, {
   borderRadius: '12px',
 })
 
-const CategoriesSection = ({ categories }: { categories: string[] }) => {
+const CategoriesSection = ({ categories }: { categories?: string[] }) => {
   return (
     <CollectionCardSection>
       <CollectionCardSectionHeader>
         Categories
       </CollectionCardSectionHeader>
       <CollectionCardSectionContent>
-        {categories.map((item, index) => {
+        {categories?.map((item, index) => {
           return <CategoriesCard key={index}>{item}</CategoriesCard>
         })}
       </CollectionCardSectionContent>

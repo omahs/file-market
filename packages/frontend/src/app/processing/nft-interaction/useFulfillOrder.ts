@@ -3,8 +3,8 @@ import { BigNumber, BigNumberish, ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import {
@@ -35,10 +35,11 @@ export function useFulfillOrder() {
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
+  const config = useConfig()
 
   const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price, signature }) => {
     assertCollection(collectionAddress)
-    assertContract(contract, mark3dConfig.exchangeToken.name)
+    assertContract(contract, config?.exchangeToken.name ?? '')
     assertSigner(signer)
     assertTokenId(tokenId)
     assertAccount(address)
@@ -56,7 +57,7 @@ export function useFulfillOrder() {
       signature ? `0x${signature}` : '0x00',
       {
         value: BigNumber.from(price),
-        gasPrice: mark3dConfig.gasPrice,
+        gasPrice: config?.gasPrice,
       },
     )
   }), [contract, address, wrapPromise, signer])

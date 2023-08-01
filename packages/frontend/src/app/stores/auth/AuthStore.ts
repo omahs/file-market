@@ -1,13 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 
+import { DialogStore } from '../Dialog/DialogStore'
+import { ProfileStore } from '../Profile/ProfileStore'
+
 export class AuthStore {
   isLoading: boolean
   address?: `0x${string}`
-  authService: Auth
   dialogStore: DialogStore
   dateStore: DateStore
   isFirstConnect: boolean
-  playerStore: PlayerStore
+  profileStore: ProfileStore
   constructor(rootStore: { dialogStore: DialogStore }) {
     this.isLoading = false
     this.isFirstConnect = true

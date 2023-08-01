@@ -93,8 +93,7 @@ async function main() {
       "FileMarket",
       "",
       "0x" + globalSalt,
-      // collectionToClone.address,
-        "0x7F23a2BAf3718ab587f8051d2333079C250eD7b8",
+      collectionToClone.address,
       true,
       fraudDecider.address,
     ]);
