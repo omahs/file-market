@@ -48,7 +48,6 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 		return nil, internalError
 	}
 
-	fmt.Println(msg.CreatedAt.String(), time.Now().String(), time.Since(msg.CreatedAt).String(), s.cfg.AuthMessageTTL.String())
 	if time.Since(msg.CreatedAt) >= s.cfg.AuthMessageTTL {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
