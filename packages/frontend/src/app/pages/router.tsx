@@ -27,7 +27,7 @@ const routes: RouteObject[] = [
   },
   {
     path: 'successGetAccess',
-    element: <SuccessSubscribePage />
+    element: <SuccessSubscribePage />,
   },
   {
     path: '/',
@@ -48,12 +48,12 @@ const routes: RouteObject[] = [
     children: profileRoutes,
   },
   {
-    path: `collection/:${Params.collectionAddress}`,
+    path: `collection/:${Params.chainName}/:${Params.collectionAddress}`,
     element: <CollectionPage />,
     children: collectionPageRoutes,
   },
   {
-    path: `collection/:${Params.collectionAddress}/:${Params.tokenId}`,
+    path: `collection/:${Params.chainName}/:${Params.collectionAddress}/:${Params.tokenId}`,
     element: <NFTPage />,
   },
   {

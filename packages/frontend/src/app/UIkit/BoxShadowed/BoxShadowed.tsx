@@ -55,7 +55,7 @@ const Box = styled('div', {
     },
     widthInherit: {
       true: {
-        width: 'inherit',
+        width: 'fit-content',
       },
     },
     fullHeight: {

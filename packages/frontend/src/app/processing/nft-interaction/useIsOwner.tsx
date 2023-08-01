@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { TokenFullId } from '../types'
 import { useOwnerOfNFT } from './useOwnerOfNFT'
 
-export function useIsOwner(tokenFullId: Partial<TokenFullId> = {}) {
+export function useIsOwner(tokenFullId: Partial<TokenFullId> & { isDisable?: boolean }) {
   const { data: ownerAddress, ...statuses } = useOwnerOfNFT(tokenFullId)
   const { address } = useAccount()
   const isOwner = ownerAddress && address && utils.getAddress(ownerAddress) === utils.getAddress(address)

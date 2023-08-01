@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { useContractEvent } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
+import { useConfig } from '../../hooks/useConfig'
 import { IHiddenFilesTokenEventsListener } from '../HiddenFilesTokenEventsListener'
 import { HiddenFilesTokenEventNames } from '../types'
 import { ensureAddress } from '../utils'
@@ -13,7 +13,8 @@ import { ensureAddress } from '../utils'
  */
 export function useWatchHiddenFileTokenEvents(listener: IHiddenFilesTokenEventsListener, contractAddress?: string) {
   // TODO: refactor to use ethers.Provider to also receive tx that caused event emission
-  const abi = mark3dConfig.collectionToken.abi
+  const config = useConfig()
+  const abi = config?.collectionToken.abi
   const address = ensureAddress(contractAddress)
   // Sorry for any type. During one of wagmi updates typing was broken
   useContractEvent({

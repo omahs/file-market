@@ -22,9 +22,9 @@ const BadgesContainer = styled('div', {
 })
 
 const HomeLandSection = () => {
-  const { collectionAddress, tokenId } = useParams<Params>()
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
-  const { collection } = useCollectionStore(collectionAddress)
+  const { collection } = useCollectionStore(collectionAddress, chainName)
 
   const { collectionImgUrl, collectionName } = useMemo(() => {
     const result = {

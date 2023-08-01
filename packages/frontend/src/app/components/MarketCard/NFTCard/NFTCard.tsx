@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { HiddenFileMetaData } from '../../../../swagger/Api'
+import { useCurrency } from '../../../hooks/useCurrency'
 import { NftCardBase, NftCardUserInfo, PriceBadge } from '../../../UIkit'
-import { formatCurrency, formatUsd } from '../../../utils/web3'
 import { FileType } from '../FileType/FileType'
 
 export interface NFTCardProps {
@@ -20,6 +20,8 @@ export interface NFTCardProps {
   priceUsd?: string
   price?: string
   hiddenFileMeta?: HiddenFileMetaData
+  chainName?: string
+  chainImg?: string
 }
 
 export const NFTCard: React.FC<NFTCardProps> = ({
@@ -31,7 +33,11 @@ export const NFTCard: React.FC<NFTCardProps> = ({
   user,
   price,
   priceUsd,
+  chainImg,
+  chainName,
 }) => {
+  const { formatCurrency, formatUsd } = useCurrency()
+
   return (
     <NftCardBase
       to={button.link}
@@ -43,6 +49,8 @@ export const NFTCard: React.FC<NFTCardProps> = ({
         to: button.link,
         text: button.text,
       }}
+      chainName={chainName}
+      chainImg={chainImg}
     >
       <NftCardUserInfo img={user.img} address={user.address} />
       {price && (

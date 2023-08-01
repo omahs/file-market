@@ -1,6 +1,7 @@
 import { ErrorResponse } from '../../../swagger/Api'
 
 export function stringifyError(error: any): string {
+  console.log(error)
   if (typeof error === 'string') {
     return error
   }

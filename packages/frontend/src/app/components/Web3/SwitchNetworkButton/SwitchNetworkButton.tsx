@@ -1,29 +1,33 @@
 import { PressEvent } from '@react-types/shared/src/events'
+import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
-import { useSwitchNetwork } from 'wagmi'
 
-import { mark3dConfig } from '../../../config/mark3d'
+import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
+import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
+import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { Link } from '../../../UIkit'
 
 export interface SwitchNetworkButtonProps {
   onPress?: (e: PressEvent) => void
 }
 
-export const SwitchNetworkButton: FC<SwitchNetworkButtonProps> = ({ onPress }) => {
-  const { switchNetwork, isLoading } = useSwitchNetwork()
+export const SwitchNetworkButton: FC<SwitchNetworkButtonProps> = observer(({ onPress }) => {
+  const { changeNetwork, isLoading } = useChangeNetwork()
+  const currentBlockChainStore = useCurrentBlockChain()
+  const multiChainStore = useMultiChainStore()
 
   return (
     <Link
       red
-      isDisabled={!switchNetwork || isLoading}
+      isDisabled={isLoading}
       onPress={(e) => {
-        switchNetwork?.(mark3dConfig.chain.id)
+        changeNetwork?.(currentBlockChainStore.chainId, true)
         onPress?.(e)
       }}
     >
       Switch chain to
       {' '}
-      {mark3dConfig.chain.name}
+      {multiChainStore.data?.find(item => item.chain.id === currentBlockChainStore.chainId)?.chain.name}
     </Link>
   )
-}
+})

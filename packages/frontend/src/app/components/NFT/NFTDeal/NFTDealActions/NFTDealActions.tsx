@@ -5,8 +5,8 @@ import React, { FC, useMemo } from 'react'
 
 import { styled } from '../../../../../styles'
 import { Order, Transfer } from '../../../../../swagger/Api'
-import { mark3dConfig } from '../../../../config/mark3d'
 import { useStores } from '../../../../hooks'
+import { useConfig } from '../../../../hooks/useConfig'
 import { TokenFullId } from '../../../../processing/types'
 import { transferPermissions } from '../../../../utils/transfer/status'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
@@ -50,9 +50,9 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const { blockStore, transferStore } = useStores()
 
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
-
+  const config = useConfig()
   const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
-  const fileBunniesAddressNormalized = utils.getAddress(mark3dConfig.fileBunniesCollectionToken.address)
+  const fileBunniesAddressNormalized = utils.getAddress(config?.fileBunniesCollectionToken.address ?? '')
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
   const fileBunniesText = useMemo(() => {
     return (isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 24.12.2023') : ''

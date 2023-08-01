@@ -35,6 +35,40 @@ build-contracts:
         --type FilemarketExchangeV2 \
         --out contracts/exchange/exchange.go
 
+build-zk-contracts:
+	mkdir -p contracts/build
+	(cd ../sol-contracts && yarn && HARDHAT_NETWORK=zksync yarn hardhat compile && cp -r artifacts-zk/contracts/* ../indexer/contracts/build)
+	mkdir -p contracts/access_token
+	mkdir -p contracts/collection
+	mkdir -p contracts/publicCollection
+	mkdir -p contracts/filebunniesCollection
+	mkdir -p contracts/exchange
+	jq ".abi" contracts/build/ZkMark3dAccessTokenV2.sol/Mark3dAccessTokenV2.json > contracts/build/ZkMark3dAccessTokenV2.sol/Mark3dAccessTokenV2.abi
+	jq ".abi" contracts/build/ZkFilemarketCollectionV2.sol/FilemarketCollectionV2.json > contracts/build/ZkFilemarketCollectionV2.sol/FilemarketCollectionV2.abi
+	jq ".abi" contracts/build/ZkPublicCollection.sol/PublicCollection.json > contracts/build/ZkPublicCollection.sol/PublicCollection.abi
+	jq ".abi" contracts/build/FileBunniesCollection.sol/FileBunniesCollection.json > contracts/build/FileBunniesCollection.sol/FileBunniesCollection.abi
+	jq ".abi" contracts/build/ZkFilemarketExchangeV2.sol/FilemarketExchangeV2.json > contracts/build/ZkFilemarketExchangeV2.sol/FilemarketExchangeV2.abi
+	abigen --abi contracts/build/ZkMark3dAccessTokenV2.sol/Mark3dAccessTokenV2.abi \
+		--pkg access_token \
+		--type Mark3dAccessTokenV2 \
+		--out contracts/access_token/access_token.go
+	abigen --abi contracts/build/ZkFilemarketCollectionV2.sol/FilemarketCollectionV2.abi \
+        --pkg collection \
+        --type FilemarketCollectionV2 \
+        --out contracts/collection/collection.go
+	abigen --abi contracts/build/ZkPublicCollection.sol/PublicCollection.abi \
+        --pkg publicCollection \
+        --type PublicCollection \
+        --out contracts/publicCollection/publicCollection.go
+	abigen --abi contracts/build/FileBunniesCollection.sol/FileBunniesCollection.abi \
+        --pkg filebunniesCollection \
+        --type FileBunniesCollection \
+        --out contracts/filebunniesCollection/filebunniesCollection.go
+	abigen --abi contracts/build/ZkFilemarketExchangeV2.sol/FilemarketExchangeV2.abi \
+        --pkg exchange \
+        --type FilemarketExchangeV2 \
+        --out contracts/exchange/exchange.go
+
 build-models:
 	docker run --rm --user $(shell id -u):$(shell id -g) -e GOPATH=$(go env GOPATH):/go -v ${HOME}:${HOME} -w $(shell pwd) quay.io/goswagger/swagger generate model --spec=./swagger.yaml
 	go mod tidy

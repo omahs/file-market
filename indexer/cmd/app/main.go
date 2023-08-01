@@ -4,10 +4,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
-	log "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"net/http"
 	"os"
@@ -39,6 +41,8 @@ func main() {
 	if err != nil {
 		logger.WithFields(log.Fields{"error": err}).Fatal("failed to init config", nil)
 	}
+
+	domain.SetConfig(cfg)
 
 	ctx := context.Background()
 
@@ -99,6 +103,7 @@ func main() {
 		client,
 		realtimeNotificationService,
 		seq,
+		jwt.NewTokenManager(cfg.TokenManager.SigningKey),
 		healthNotifier,
 		currencyConverterCache,
 		commonSigner,
