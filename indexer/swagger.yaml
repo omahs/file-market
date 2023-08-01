@@ -109,7 +109,7 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /collections/:
+  /collections:
     get:
       tags:
         - collections
