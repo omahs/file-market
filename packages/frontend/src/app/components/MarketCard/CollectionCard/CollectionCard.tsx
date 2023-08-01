@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import FileLogo from '../../../../assets/FilemarketFileLogo.png'
 import { Collection } from '../../../../swagger/Api'
 import { IMultiChainConfig } from '../../../config/multiChainConfigType'
-import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { gradientPlaceholderImg, Txt } from '../../../UIkit'
@@ -27,7 +26,6 @@ import CollectionCardTooltipContent from './CollectionCardTooltipContent/Collect
 export default function CollectionCard({ name, address, image, type, chainId, ordersCount, ownersCount, tokensCount, contentTypes }: Collection) {
   const [isShowNumber, setIsShowNumber] = useState<boolean>(false)
   const navigate = useNavigate()
-  const currentBlockChain = useCurrentBlockChain()
   const multiChainStore = useMultiChainStore()
   const { smValue, mdValue } = useMediaMui()
   const chain: IMultiChainConfig | undefined = useMemo(() => {
@@ -54,7 +52,7 @@ export default function CollectionCard({ name, address, image, type, chainId, or
       onMouseLeave={() => { setIsShowNumber(false) }}
       onMouseDown={() => { setIsShowNumber(true) }}
       onMouseUp={() => { setIsShowNumber(false) }}
-      onClick={() => { navigate(`/${currentBlockChain.chain?.name}/collection/${address}`) }}
+      onClick={() => { navigate(`/collection/${chain?.chain.name}/${address}`) }}
     >
       <StyledCollectionGrid>
         <InsideContainer>
@@ -96,7 +94,7 @@ export default function CollectionCard({ name, address, image, type, chainId, or
           </ThemeProvider>
         </InsideContainer>
       </StyledCollectionGrid>
-      <Tooltip title={<Txt primary2>{chain?.chain.name}</Txt>}><img src={chain?.img} style={{ height: '24px' }} /></Tooltip>
+      <Tooltip placement={'top'} title={<Txt primary2>{chain?.chain.name}</Txt>}><img src={chain?.img} style={{ height: '24px' }} /></Tooltip>
     </StyledCollectionCard>
   )
 }
