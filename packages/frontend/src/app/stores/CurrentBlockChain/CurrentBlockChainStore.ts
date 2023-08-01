@@ -1,6 +1,7 @@
 import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
 
+import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import { Api } from '../../../swagger/Api'
 import { IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
@@ -16,7 +17,7 @@ import { MultiChainStore } from '../MultiChain/MultiChainStore'
  * Stores only ACTIVE order state.
  * Does not listen for updates, need to reload manually.
  */
-export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactivate<[IMultiChainConfig[]]> {
+export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactivate {
   errorStore: ErrorStore
   multiChainStore: MultiChainStore
 
@@ -46,14 +47,16 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
     if (chainName !== this.chainNameByPage) this.chainNameByPage = chainName
   }
 
-  private request(data: IMultiChainConfig[] | undefined) {
+  private request() {
+    const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
+    const data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
     const defaultChain = data?.find(item => (item.isDefault === true))
     this.chainId = defaultChain ? defaultChain.chain.id : data?.[0].chain.id
   }
 
-  activate(data: IMultiChainConfig[] | undefined): void {
+  activate(): void {
     this.isActivated = true
-    this.request(data)
+    this.request()
   }
 
   deactivate(): void {
