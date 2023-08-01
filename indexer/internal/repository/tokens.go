@@ -30,7 +30,9 @@ func (p *postgres) GetCollectionTokens(
 		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.collection_address=$1 AND 
 		      t.token_id > $2 AND
-		      t.meta_uri != ''
+		      t.meta_uri != '' AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		ORDER BY t.token_id
 		LIMIT $3
 	`
@@ -112,9 +114,10 @@ func (p *postgres) GetCollectionTokensTotal(
 	query := `
 		SELECT COUNT(*) as total
 		FROM tokens t
-		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.collection_address=$1 AND
-		      t.meta_uri != ''
+		      t.meta_uri != '' AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	var total uint64
 	row := tx.QueryRow(ctx, query, strings.ToLower(collectionAddress.String()))
@@ -142,6 +145,8 @@ func (p *postgres) GetTokensByAddress(
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.owner=$1 AND 
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens) AND
 		      (t.collection_address, t.token_id) > ($2, $3) AND
 		      t.meta_uri!=''
 		ORDER BY t.collection_address, t.token_id
@@ -232,8 +237,10 @@ func (p *postgres) GetTokensByAddressTotal(
 	query := `
 		SELECT COUNT(*) AS total
 		FROM tokens t
-		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.owner=$1 AND t.meta_uri != ''
+		WHERE t.owner=$1 AND 
+		      t.meta_uri != '' AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	var total uint64
 	row := tx.QueryRow(ctx, query, strings.ToLower(ownerAddress.String()))
@@ -258,8 +265,10 @@ func (p *postgres) GetToken(
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON t.collection_address = c.address
-		WHERE t.collection_address=$1 
-		  AND t.token_id=$2
+		WHERE t.collection_address=$1 AND 
+		      t.token_id=$2 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		`
 	row := tx.QueryRow(ctx, query,
 		strings.ToLower(contractAddress.String()),
@@ -774,28 +783,6 @@ func (p *postgres) UpdateTokenTxData(
 	return nil
 }
 
-func (p *postgres) GetOwnersCountByCollection(
-	ctx context.Context,
-	tx pgx.Tx,
-	address common.Address,
-) (uint64, error) {
-	// language=PostgreSQL
-	query := `
-		SELECT COUNT(DISTINCT(owner)) AS total
-		FROM tokens AS t
-		WHERE t.collection_address=$1
-	`
-	var total uint64
-	row := tx.QueryRow(ctx, query,
-		strings.ToLower(address.String()),
-	)
-	if err := row.Scan(&total); err != nil {
-		return 0, err
-	}
-
-	return total, nil
-}
-
 func (p *postgres) GetTokensContentTypeByCollection(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -820,7 +807,7 @@ func (p *postgres) GetTokensContentTypeByCollection(
 
 	// language=PostgreSQL
 	getTypesQuery := `
-		SELECT DISTINCT(type)
+		SELECT DISTINCT SUBSTRING(name FROM '\.([^\.]*)$')
 		FROM hidden_file_metadata
 		WHERE collection_address=$1
 		`

@@ -21,14 +21,58 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 ) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address,creator,owner,name,token_id,meta_uri,description,image,block_number
-		FROM collections AS c 
-		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1) OR 
-		    c.address=$2) AND
-		    address > $3
-		ORDER BY address
-		LIMIT $4
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		total_orders AS (
+			SELECT t.collection_address, COUNT(*) AS total
+			FROM orders AS o
+				  JOIN transfers t ON o.transfer_id = t.id
+				  JOIN latest_transfer_statuses lts ON lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND
+				 lts.status IN ('Created', 'Drafted') AND
+				 o.visibility = 'Visible' AND
+				 o.exchange_address != '0x' AND
+			 	 NOT (t.collection_address=$3 AND t.number=1) AND
+				 (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		total_owners AS (
+			SELECT t.collection_address, COUNT(DISTINCT(t.owner)) AS total
+			FROM tokens t
+			WHERE (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		total_tokens AS (
+			SELECT t.collection_address, COUNT(*) as total
+			FROM tokens t
+			WHERE t.meta_uri != '' AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		)
+		SELECT c.address, c.creator, c.owner, c.name, c.token_id, c.meta_uri, c.description, c.image, c.block_number,
+			COALESCE(tor.total, 0) as orders_count,
+			COALESCE(tow.total, 0) as owners_count,
+			COALESCE(tot.total, 0) as tokens_count
+		FROM collections c
+				 LEFT JOIN total_orders AS tor ON tor.collection_address = c.address
+				 LEFT JOIN total_owners AS tow ON tow.collection_address = c.address
+				 LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
+		WHERE (c.owner=$1 OR
+		       EXISTS (SELECT 1
+		               FROM tokens AS t
+		               WHERE t.collection_address=c.address AND
+		                     t.owner=$1 AND
+		                     (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+		               )
+		    ) OR
+		    c.address > $4 AND
+            c.address = $2 AND 
+			c.address NOT IN (SELECT collection_address FROM rejected_collections)
+		ORDER BY c.address
+		LIMIT $5
 	`
 
 	lastCollectionAddressStr := ""
@@ -39,6 +83,7 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
 		strings.ToLower(p.cfg.publicCollectionAddress.String()),
+		strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()),
 		lastCollectionAddressStr,
 		limit,
 	)
@@ -50,8 +95,20 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 	for rows.Next() {
 		var collectionAddress, creator, owner, tokenId string
 		c := &domain.Collection{}
-		if err := rows.Scan(&collectionAddress, &creator, &owner, &c.Name,
-			&tokenId, &c.MetaUri, &c.Description, &c.Image, &c.BlockNumber); err != nil {
+		if err := rows.Scan(
+			&collectionAddress,
+			&creator,
+			&owner,
+			&c.Name,
+			&tokenId,
+			&c.MetaUri,
+			&c.Description,
+			&c.Image,
+			&c.BlockNumber,
+			&c.OrdersCount,
+			&c.OwnersCount,
+			&c.TokensCount,
+		); err != nil {
 			return nil, err
 		}
 
@@ -88,8 +145,15 @@ func (p *postgres) GetCollectionsByOwnerAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) OR 
-		    c.address=$2
+		       EXISTS (SELECT 1 
+		               FROM tokens AS t 
+		               WHERE t.collection_address=c.address AND 
+		                     t.owner=$1 AND
+		                     (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+					   )
+		       ) OR 
+		       c.address=$2 AND
+		       address NOT IN (SELECT collection_address FROM rejected_collections)
 	`
 	var total uint64
 	row := tx.QueryRow(ctx, query,
@@ -106,19 +170,119 @@ func (p *postgres) GetCollectionsByOwnerAddressTotal(
 func (p *postgres) GetCollection(ctx context.Context,
 	tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,
-       image, block_number FROM collections WHERE address=$1`, strings.ToLower(contractAddress.String()))
-	var collectionAddress, creator, owner, tokenId string
+	query := `
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		filtered_orders AS (
+			SELECT *
+			FROM orders AS o
+			    JOIN transfers t ON o.transfer_id = t.id
+			    JOIN latest_transfer_statuses lts ON lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND
+					lts.status IN ('Created', 'Drafted') AND
+					o.visibility = 'Visible' AND
+					o.exchange_address != '0x' AND
+			 	 	NOT (t.collection_address=$2 AND t.number=1) AND
+				 	(t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+		),
+		total_orders AS (
+			SELECT fo.collection_address, COUNT(*) AS total
+			FROM filtered_orders fo
+			GROUP BY fo.collection_address
+		),
+		total_owners AS (
+			SELECT t.collection_address, COUNT(DISTINCT(t.owner)) AS total
+			FROM tokens t
+			WHERE (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		total_tokens AS (
+			SELECT t.collection_address, COUNT(*) as total
+			FROM tokens t
+			WHERE t.meta_uri != '' AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		sales_volumes AS (
+			SELECT t.collection_address, SUM(o.price::NUMERIC)::VARCHAR(255) AS volume
+			FROM orders o
+			    JOIN transfers t on o.transfer_id = t.id
+			    RIGHT JOIN order_statuses os on o.id = os.order_id
+			WHERE os.status='Finished' AND
+			      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+			      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+     	),
+		floor_prices AS (
+			SELECT fo.collection_address, fo.price
+			FROM filtered_orders fo
+			WHERE fo.price =(
+					SELECT price
+					FROM filtered_orders
+					WHERE collection_address = fo.collection_address
+					ORDER BY length(price),
+							 price
+					LIMIT 1
+				)
+			GROUP BY fo.collection_address,
+					 fo.price
+		)
+		SELECT c.address, c.creator, c.owner, c.name, c.token_id, c.meta_uri, c.description, c.image, c.block_number,
+			COALESCE(tor.total, 0) as orders_count,
+			COALESCE(tow.total, 0) as owners_count,
+			COALESCE(tot.total, 0) as tokens_count,
+       		COALESCE(sv.volume, '0') as sales_volume,
+       		COALESCE(fp.price, '0') as floor_price
+		FROM collections c
+		    LEFT JOIN total_orders AS tor ON tor.collection_address = c.address
+		    LEFT JOIN total_owners AS tow ON tow.collection_address = c.address
+		    LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
+		    LEFT JOIN sales_volumes AS sv ON sv.collection_address = c.address
+         	LEFT JOIN floor_prices AS fp ON fp.collection_address = c.address
+		WHERE c.address = $1 AND
+			  c.address NOT IN (SELECT collection_address FROM rejected_collections)
+`
+	row := tx.QueryRow(ctx, query,
+		strings.ToLower(contractAddress.String()),
+		strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()),
+	)
+	var collectionAddress, creator, owner, tokenId, salesVolume, floorPrice string
 	c := &domain.Collection{}
-	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId,
-		&c.MetaUri, &c.Description, &c.Image, &c.BlockNumber); err != nil {
+	if err := row.Scan(
+		&collectionAddress,
+		&creator,
+		&owner,
+		&c.Name,
+		&tokenId,
+		&c.MetaUri,
+		&c.Description,
+		&c.Image,
+		&c.BlockNumber,
+		&c.OrdersCount,
+		&c.OwnersCount,
+		&c.TokensCount,
+		&salesVolume,
+		&floorPrice,
+	); err != nil {
 		return nil, err
 	}
+
 	c.Address, c.Owner, c.Creator = contractAddress, common.HexToAddress(creator), common.HexToAddress(owner)
 	var ok bool
 	c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 	if !ok {
 		return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+	}
+	c.SalesVolume, ok = big.NewInt(0).SetString(salesVolume, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse big int: %s", salesVolume)
+	}
+	c.FloorPrice, ok = big.NewInt(0).SetString(floorPrice, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse big int: %s", floorPrice)
 	}
 
 	switch c.Address {
@@ -135,10 +299,49 @@ func (p *postgres) GetCollection(ctx context.Context,
 func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollectionAddress *common.Address, limit int) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address,creator,owner,name,token_id,meta_uri,description,image,block_number
-		FROM collections
-		WHERE address > $1
-		ORDER BY address
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		total_orders AS (
+			SELECT t.collection_address, COUNT(*) AS total
+			FROM orders AS o
+				  JOIN transfers t ON o.transfer_id = t.id
+				  JOIN latest_transfer_statuses lts ON lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND
+				 lts.status IN ('Created', 'Drafted') AND
+				 o.visibility = 'Visible' AND
+				 o.exchange_address != '0x' AND
+			 	 NOT (t.collection_address=$3 AND t.number=1) AND
+				 (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		total_owners AS (
+			SELECT t.collection_address, COUNT(DISTINCT(t.owner)) AS total
+			FROM tokens t
+			WHERE (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		total_tokens AS (
+			SELECT t.collection_address, COUNT(*) as total
+			FROM tokens t
+			WHERE t.meta_uri != '' AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		)
+		SELECT c.address, c.creator, c.owner, c.name, c.token_id, c.meta_uri, c.description, c.image, c.block_number,
+			COALESCE(tor.total, 0) as orders_count,
+			COALESCE(tow.total, 0) as owners_count,
+			COALESCE(tot.total, 0) as tokens_count
+		FROM collections c
+				 LEFT JOIN total_orders AS tor ON tor.collection_address = c.address
+				 LEFT JOIN total_owners AS tow ON tow.collection_address = c.address
+				 LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
+		WHERE c.address > $1 AND
+			  tot.total > 0 AND
+			  c.address NOT IN (SELECT collection_address FROM rejected_collections)
+		ORDER BY c.address
 		LIMIT $2
 	`
 
@@ -150,6 +353,7 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 	rows, err := tx.Query(ctx, query,
 		lastCollectionAddressStr,
 		limit,
+		strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()),
 	)
 	if err != nil {
 		return nil, err
@@ -169,6 +373,9 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 			&c.Description,
 			&c.Image,
 			&c.BlockNumber,
+			&c.OrdersCount,
+			&c.OwnersCount,
+			&c.TokensCount,
 		); err != nil {
 			return nil, err
 		}
@@ -199,8 +406,19 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 func (p *postgres) GetCollectionsTotal(ctx context.Context, tx pgx.Tx) (uint64, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT COUNT(*)
-		FROM collections
+		WITH total_tokens AS (
+			SELECT t.collection_address, COUNT(*) as total
+			FROM tokens t
+			WHERE t.meta_uri != '' AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		)
+		SELECT COUNT(*) AS total
+		FROM collections c
+		    LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
+		WHERE c.address NOT IN (SELECT collection_address FROM rejected_collections) AND
+			  tot.total > 0
 	`
 
 	var total uint64
@@ -219,12 +437,83 @@ func (p *postgres) GetCollectionByTokenId(
 ) (*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-	SELECT address,creator,owner,name,meta_uri,description,image,block_number
-	FROM collections 
-	WHERE token_id=$1
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		filtered_orders AS (
+			SELECT *
+			FROM orders AS o
+			    JOIN transfers t ON o.transfer_id = t.id
+			    JOIN latest_transfer_statuses lts ON lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND
+					lts.status IN ('Created', 'Drafted') AND
+					o.visibility = 'Visible' AND
+					o.exchange_address != '0x' AND
+			 	 	NOT (t.collection_address=$2 AND t.number=1) AND
+				 	(t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+		),
+		total_orders AS (
+			SELECT fo.collection_address, COUNT(*) AS total
+			FROM filtered_orders fo
+			GROUP BY fo.collection_address
+		),
+		total_owners AS (
+			SELECT t.collection_address, COUNT(DISTINCT(t.owner)) AS total
+			FROM tokens t
+			WHERE (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		total_tokens AS (
+			SELECT t.collection_address, COUNT(*) as total
+			FROM tokens t
+			WHERE t.meta_uri != '' AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		),
+		sales_volumes AS (
+			SELECT t.collection_address, SUM(o.price::NUMERIC)::VARCHAR(255) AS volume
+			FROM orders o
+			    JOIN transfers t on o.transfer_id = t.id
+			    RIGHT JOIN order_statuses os on o.id = os.order_id
+			WHERE os.status='Finished' AND
+			      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+			      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+     	),
+		floor_prices AS (
+			SELECT fo.collection_address, fo.price
+			FROM filtered_orders fo
+			WHERE fo.price =(
+					SELECT price
+					FROM filtered_orders
+					WHERE collection_address = fo.collection_address
+					ORDER BY length(price),
+							 price
+					LIMIT 1
+				)
+			GROUP BY fo.collection_address,
+					 fo.price
+		)
+		SELECT c.address, c.creator, c.owner, c.name, c.token_id, c.meta_uri, c.description, c.image, c.block_number,
+			COALESCE(tor.total, 0) as orders_count,
+			COALESCE(tow.total, 0) as owners_count,
+			COALESCE(tot.total, 0) as tokens_count,
+       		COALESCE(sv.volume, '0') as sales_volume,
+       		COALESCE(fp.price, '0') as floor_price
+		FROM collections c
+		    LEFT JOIN total_orders AS tor ON tor.collection_address = c.address
+		    LEFT JOIN total_owners AS tow ON tow.collection_address = c.address
+		    LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
+		    LEFT JOIN sales_volumes AS sv ON sv.collection_address = c.address
+         	LEFT JOIN floor_prices AS fp ON fp.collection_address = c.address
+		WHERE c.token_id = $1 AND
+			  c.address NOT IN (SELECT collection_address FROM rejected_collections)
+
 	`
-	row := tx.QueryRow(ctx, query, tokenId.String())
-	var collectionAddress, creator, owner string
+	row := tx.QueryRow(ctx, query, tokenId.String(), strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()))
+	var collectionAddress, creator, owner, salesVolume, floorPrice string
 	c := &domain.Collection{
 		TokenId: tokenId,
 	}
@@ -238,6 +527,11 @@ func (p *postgres) GetCollectionByTokenId(
 		&c.Description,
 		&c.Image,
 		&c.BlockNumber,
+		&c.OrdersCount,
+		&c.OwnersCount,
+		&c.TokensCount,
+		&salesVolume,
+		&floorPrice,
 	); err != nil {
 		return nil, err
 	}
@@ -245,6 +539,16 @@ func (p *postgres) GetCollectionByTokenId(
 	c.Address = common.HexToAddress(collectionAddress)
 	c.Owner = common.HexToAddress(owner)
 	c.Creator = common.HexToAddress(creator)
+
+	var ok bool
+	c.SalesVolume, ok = big.NewInt(0).SetString(salesVolume, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse big int: %s", salesVolume)
+	}
+	c.FloorPrice, ok = big.NewInt(0).SetString(floorPrice, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse big int: %s", floorPrice)
+	}
 
 	switch c.Address {
 	case p.cfg.publicCollectionAddress:
@@ -323,7 +627,8 @@ func (p *postgres) GetFileBunniesStats(
 			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 THEN 1 ELSE 0 END) AS payed_minted_amount,
 			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 AND meta_uri != '' THEN 1 ELSE 0 END) AS payed_bought_amount
 		FROM public.tokens
-		WHERE collection_address=$1
+		WHERE collection_address=$1 AND
+		      (token_id, collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	stats := make([]int, 6)
 	if err := tx.QueryRow(ctx, query,
