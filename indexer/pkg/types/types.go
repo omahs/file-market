@@ -97,7 +97,7 @@ func (t *DefaultTransaction) ChainId() *big.Int {
 	return t.chainId
 }
 
-// Override
+// UnmarshalJSON overrides json.Unmarshaler
 func (t *DefaultTransaction) UnmarshalJSON(input []byte) error {
 	var dec struct {
 		Hash    common.Hash     `json:"hash"`

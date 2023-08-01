@@ -11,6 +11,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"io"
@@ -57,6 +58,8 @@ type Service interface {
 	Sequencer
 	Whitelist
 	Currency
+	Auth
+	Moderation
 	ListenBlockchain() error
 	Shutdown()
 
@@ -114,18 +117,33 @@ type Currency interface {
 	GetCurrencyConversionRate(ctx context.Context, from, to string) (*models.ConversionRateResponse, *models.ErrorResponse)
 }
 
+type Auth interface {
+	GetAuthMessage(ctx context.Context, req models.AuthMessageRequest) (*models.AuthMessageResponse, *models.ErrorResponse)
+	AuthBySignature(ctx context.Context, req models.AuthBySignatureRequest) (*models.AuthResponse, *models.ErrorResponse)
+	RefreshJwtTokens(ctx context.Context, address common.Address, number int64) (*models.AuthResponse, *models.ErrorResponse)
+	GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, token string) (*domain.User, *models.ErrorResponse)
+	Logout(ctx context.Context, address common.Address, number int64) *models.ErrorResponse
+	FullLogout(ctx context.Context, address common.Address) *models.ErrorResponse
+}
+
+type Moderation interface {
+	ReportCollection(ctx context.Context, userAddress common.Address, req *models.ReportCollectionRequest) *models.ErrorResponse
+	ReportToken(ctx context.Context, userAddress common.Address, req *models.ReportTokenRequest) *models.ErrorResponse
+}
+
 type service struct {
 	repository                  repository.Repository
-	healthNotifier              healthnotifier.HealthNotifyer
+	healthNotifier              healthnotifier.HealthNotifier
 	cfg                         *config.ServiceConfig
 	ethClient                   ethclient2.EthClient
 	realTimeNotificationService *realtime_notification.RealTimeNotificationService
+	jwtManager                  jwt.TokenManager
 	sequencer                   *sequencer.Sequencer
 	accessTokenAddress          common.Address
 	accessTokenInstance         *access_token.Mark3dAccessTokenV2
 	exchangeAddress             common.Address
 	exchangeInstance            *exchange.FilemarketExchangeV2
-	currencyConverter           currencyconversion.CurrencyConversionProvider
+	currencyConverter           currencyconversion.Provider
 	commonSigner                *ethsigner.EthSigner
 	uncommonSigner              *ethsigner.EthSigner
 	closeCh                     chan struct{}
@@ -136,8 +154,9 @@ func NewService(
 	ethClient ethclient2.EthClient,
 	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
 	sequencer *sequencer.Sequencer,
-	healthNotifier healthnotifier.HealthNotifyer,
-	currencyConverter currencyconversion.CurrencyConversionProvider,
+	jwtManager jwt.TokenManager,
+	healthNotifier healthnotifier.HealthNotifier,
+	currencyConverter currencyconversion.Provider,
 	commonSigner *ethsigner.EthSigner,
 	uncommonSigner *ethsigner.EthSigner,
 	cfg *config.ServiceConfig,
@@ -163,6 +182,7 @@ func NewService(
 		accessTokenInstance:         accessTokenInstance,
 		exchangeAddress:             cfg.ExchangeAddress,
 		exchangeInstance:            exchangeInstance,
+		jwtManager:                  jwtManager,
 		currencyConverter:           currencyConverter,
 		commonSigner:                commonSigner,
 		uncommonSigner:              uncommonSigner,
