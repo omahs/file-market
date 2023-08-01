@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-openapi/strfmt"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
@@ -20,12 +21,9 @@ const (
 )
 
 func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
-	if r.Body != nil {
-		defer r.Body.Close()
-	}
-
 	var req models.AuthMessageRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		fmt.Println(req)
 		logger.Error("failed to parse auth message request", err, nil)
 		sendResponse(w, http.StatusBadRequest, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
@@ -33,6 +31,7 @@ func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	defer r.Body.Close()
 
 	if err := req.Validate(strfmt.Default); err != nil {
 		logger.Error("failed to validate auth message request", err, nil)
@@ -57,10 +56,6 @@ func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) {
-	if r.Body != nil {
-		defer r.Body.Close()
-	}
-
 	var req models.AuthBySignatureRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Error("failed to parse authBySignature request", err, nil)
@@ -80,6 +75,7 @@ func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) 
 		})
 		return
 	}
+	defer r.Body.Close()
 
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()

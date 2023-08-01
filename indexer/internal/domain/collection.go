@@ -33,6 +33,15 @@ type CollectionTransfer struct {
 }
 
 func CollectionToModel(c *Collection) *models.Collection {
+	salesVolume := c.SalesVolume.String()
+	if c.SalesVolume == nil {
+		salesVolume = ""
+	}
+	floorPrice := c.FloorPrice.String()
+	if c.FloorPrice == nil {
+		floorPrice = ""
+	}
+
 	return &models.Collection{
 		Address: c.Address.String(),
 		Block: &models.CollectionBlock{
@@ -51,8 +60,8 @@ func CollectionToModel(c *Collection) *models.Collection {
 		OwnersCount: c.OwnersCount,
 		TokensCount: c.TokensCount,
 		Type:        c.Type,
-		SalesVolume: c.SalesVolume.String(),
-		FloorPrice:  c.FloorPrice.String(),
+		SalesVolume: salesVolume,
+		FloorPrice:  floorPrice,
 	}
 }
 

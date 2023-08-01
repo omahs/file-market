@@ -406,9 +406,19 @@ func (p *postgres) GetCollections(ctx context.Context, tx pgx.Tx, lastCollection
 func (p *postgres) GetCollectionsTotal(ctx context.Context, tx pgx.Tx) (uint64, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT COUNT(*)
-		FROM collections
-		WHERE address NOT IN (SELECT collection_address FROM rejected_collections)
+		WITH total_tokens AS (
+			SELECT t.collection_address, COUNT(*) as total
+			FROM tokens t
+			WHERE t.meta_uri != '' AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			GROUP BY t.collection_address
+		)
+		SELECT COUNT(*) AS total
+		FROM collections c
+		    LEFT JOIN total_tokens AS tot ON tot.collection_address = c.address
+		WHERE c.address NOT IN (SELECT collection_address FROM rejected_collections) AND
+			  tot.total > 0
 	`
 
 	var total uint64
