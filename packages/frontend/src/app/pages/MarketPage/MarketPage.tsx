@@ -27,12 +27,12 @@ const MarketPage = observer(() => {
         amount: orderData.total ?? 0,
         label: 'EFTs',
       },
-      // {
-      //   value: 'collections',
-      //   url: '/market/collections',
-      //   amount: collectionsData.total ?? 0,
-      //   label: 'Collections',
-      // },
+      {
+        value: 'collections',
+        url: '/market/collections',
+        amount: collectionsData.total ?? 0,
+        label: 'Collections',
+      },
     ]
   }, [orderData.total, collectionsData.total])
 
