@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
@@ -32,51 +31,17 @@ func (s *service) GetCollection(
 	}
 
 	c := domain.CollectionToModel(collection)
-	tokensCount, err := s.repository.GetCollectionTokensTotal(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get tokensCount", err, nil)
-		return nil, internalError
-	}
-	ordersCount, err := s.repository.GetAllActiveOrdersTotalByCollection(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get collection orders count", err, nil)
-		return nil, internalError
-	}
-	ownersCount, err := s.repository.GetOwnersCountByCollection(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get collection owners count", err, nil)
-		return nil, internalError
-	}
 	fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, address)
 	if err != nil {
 		logger.Errorf("failed to get collection content types", err, nil)
 		return nil, internalError
 	}
-	salesVolume, err := s.repository.GetSalesVolumeByCollection(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get collection sales volume", err, nil)
-		return nil, internalError
-	}
-	floorPrice, err := s.repository.GetFloorPriceByCollection(ctx, tx, address)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		logger.Errorf("failed to get collection floor price", err, nil)
-		return nil, internalError
-	}
-	if errors.Is(err, pgx.ErrNoRows) {
-		floorPrice = big.NewInt(0)
-	}
 
-	c.TokensCount = tokensCount
-	c.OrdersCount = ordersCount
-	c.OwnersCount = ownersCount
 	c.ContentTypes = &models.CollectionContentTypes{
 		Categories:     categories,
 		FileExtensions: fileTypes,
 		Subcategories:  subcategories,
 	}
-	c.ChainID = s.cfg.ChainID
-	c.SalesVolume = salesVolume.String()
-	c.FloorPrice = floorPrice.String()
 
 	if collection.Address == s.cfg.FileBunniesCollectionAddress {
 		stats, err := s.repository.GetFileBunniesStats(ctx, tx)
@@ -118,35 +83,16 @@ func (s *service) GetCollections(
 	modelsCollections := make([]*models.Collection, len(collections))
 	for i, collection := range collections {
 		c := domain.CollectionToModel(collection)
-		tokensCount, err := s.repository.GetCollectionTokensTotal(ctx, tx, collection.Address)
-		if err != nil {
-			logger.Error("failed to get tokensCount", err, nil)
-			return nil, internalError
-		}
-		ordersCount, err := s.repository.GetAllActiveOrdersTotalByCollection(ctx, tx, collection.Address)
-		if err != nil {
-			logger.Error("failed to get collection orders count", err, nil)
-			return nil, internalError
-		}
-		ownersCount, err := s.repository.GetOwnersCountByCollection(ctx, tx, collection.Address)
-		if err != nil {
-			logger.Error("failed to get collection owners count", err, nil)
-			return nil, internalError
-		}
 		fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, collection.Address)
 		if err != nil {
 			logger.Error("failed to get collection content types", err, nil)
 			return nil, internalError
 		}
-		c.TokensCount = tokensCount
-		c.OrdersCount = ordersCount
-		c.OwnersCount = ownersCount
 		c.ContentTypes = &models.CollectionContentTypes{
 			Categories:     categories,
 			FileExtensions: fileTypes,
 			Subcategories:  subcategories,
 		}
-		c.ChainID = s.cfg.ChainID
 
 		if collection.Address == s.cfg.FileBunniesCollectionAddress {
 			stats, err := s.repository.GetFileBunniesStats(ctx, tx)
@@ -200,52 +146,17 @@ func (s *service) GetCollectionWithTokens(
 	}
 
 	c := domain.CollectionToModel(collection)
-	tokensCount, err := s.repository.GetCollectionTokensTotal(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get tokensCount", err, nil)
-		return nil, internalError
-	}
-	ordersCount, err := s.repository.GetAllActiveOrdersTotalByCollection(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get collection orders count", err, nil)
-		return nil, internalError
-	}
-	ownersCount, err := s.repository.GetOwnersCountByCollection(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get collection owners count", err, nil)
-		return nil, internalError
-	}
 	fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, address)
 	if err != nil {
 		logger.Errorf("failed to get collection content types", err, nil)
 		return nil, internalError
 	}
 
-	salesVolume, err := s.repository.GetSalesVolumeByCollection(ctx, tx, address)
-	if err != nil {
-		logger.Errorf("failed to get collection sales volume", err, nil)
-		return nil, internalError
-	}
-	floorPrice, err := s.repository.GetFloorPriceByCollection(ctx, tx, address)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		logger.Errorf("failed to get collection floor price", err, nil)
-		return nil, internalError
-	}
-	if errors.Is(err, pgx.ErrNoRows) {
-		floorPrice = big.NewInt(0)
-	}
-
-	c.TokensCount = tokensCount
-	c.OrdersCount = ordersCount
-	c.OwnersCount = ownersCount
 	c.ContentTypes = &models.CollectionContentTypes{
 		Categories:     categories,
 		FileExtensions: fileTypes,
 		Subcategories:  subcategories,
 	}
-	c.ChainID = s.cfg.ChainID
-	c.SalesVolume = salesVolume.String()
-	c.FloorPrice = floorPrice.String()
 
 	if collection.Address == s.cfg.FileBunniesCollectionAddress {
 		stats, err := s.repository.GetFileBunniesStats(ctx, tx)

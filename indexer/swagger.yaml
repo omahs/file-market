@@ -9,7 +9,107 @@ schemes:
 host: filemarket.xyz
 basePath: /api
 paths:
-  /collections/:
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      description: Рефреш jwt-токенов. Это единственный случай, где с запросом передается **refresh** токен
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Результат успешной авторизации
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtRefreshTokenAuth: []
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      description: Закрытие текущей сессии пользователя (читать удаление одной пары jwt)
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success response
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /auth/full_logout:
+    post:
+      tags:
+        - auth
+      description: Закрытие всех действующих сессий пользователя (удаление всех jwt)
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success response
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /auth/message:
+    post:
+      tags:
+        - auth
+      description: Получение сообщения для авторизации по подписи
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: auth_message_request
+          schema:
+            $ref: '#/definitions/AuthMessageRequest'
+      responses:
+        '200':
+          description: Сообщение для подписи
+          schema:
+            $ref: '#/definitions/AuthMessageResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /auth/by_signature:
+    post:
+      tags:
+        - auth
+      description: Авторизация по подписи
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: auth_by_signature
+          schema:
+            $ref: '#/definitions/AuthBySignatureRequest'
+      responses:
+        '200':
+          description: Результат авторизации
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /collections:
     get:
       tags:
         - collections
@@ -771,6 +871,52 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /report/collection:
+    post:
+      tags:
+        - report
+      description: Репорт коллекции
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: report_collection_request
+          schema:
+            $ref: '#/definitions/ReportCollectionRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /report/token:
+    post:
+      tags:
+        - report
+      description: Репорт токена
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: report_token_request
+          schema:
+            $ref: '#/definitions/ReportTokenRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /ws/subscribe/block_number:
     get:
       summary: Subscribe to last block updates
@@ -787,6 +933,102 @@ paths:
         default:
           description: Ошибка
 definitions:
+  AuthMessageRequest:
+    type: object
+    description: Запрос получения сообщения для авторизации по подписи
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес кошелька, который хочет авторизоваться
+    required:
+      - address
+  AuthMessageResponse:
+    type: object
+    description: Ответ на запрос получения сообщения для авторизации по подписи
+    properties:
+      message:
+        type: string
+        description: Сообщение для подписи
+    required:
+      - message
+  AuthBySignatureRequest:
+    type: object
+    description: Запрос авторизации по подписи
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес кошелька
+      signature:
+        type: string
+        description: Подпись
+    required:
+      - address
+      - signature
+  AuthResponse:
+    type: object
+    description: Обобщенный ответ на разные запрос авторизации
+    properties:
+      access_token:
+        $ref: '#/definitions/JwtTokenInfo'
+      refresh_token:
+        $ref: '#/definitions/JwtTokenInfo'
+      profile:
+        $ref: '#/definitions/UserProfile'
+  JwtTokenInfo:
+    type: object
+    description: Данные jwt-токена
+    properties:
+      token:
+        description: Токен
+        type: string
+      expires_at:
+        description: Время истечения токена (timestamp в миллисекундах)
+        type: integer
+        format: int64
+        minimum: 1
+    required:
+      - token
+      - expires_at
+  UserProfile:
+    type: object
+    description: Профиль юзера
+    properties:
+      name:
+        type: string
+  ReportCollectionRequest:
+    type: object
+    description: Запрос на репорт коллекции
+    properties:
+      collectionAddress:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+    required:
+      - collectionAddress
+  ReportTokenRequest:
+    type: object
+    description: Запрос на репорт токена
+    properties:
+      collectionAddress:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+    required:
+      - collectionAddress
+      - tokenId
+  SuccessResponse:
+    type: object
+    required: [success]
+    description: Типовой запрос для ответа на Post запросы, которые не должны возвращать никаких данных
+    properties:
+      success:
+        type: boolean
   ErrorResponse:
     type: object
     description: Типовая ошибка

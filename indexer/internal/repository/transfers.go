@@ -35,7 +35,10 @@ func (p *postgres) GetIncomingTransfersByAddress(
 			t.block_number
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id
-        WHERE t.to_address=$1 AND t.id < $2
+        WHERE t.to_address=$1 AND 
+              t.id < $2 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		ORDER BY id DESC
 		LIMIT $3
 	`
@@ -117,7 +120,9 @@ func (p *postgres) GetIncomingTransfersByAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id
-        WHERE t.to_address=$1
+        WHERE t.to_address=$1 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	var total uint64
 	if err := tx.QueryRow(ctx, query,
@@ -152,7 +157,10 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 			t.block_number
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE t.from_address=$1 AND t.id < $2
+		WHERE t.from_address=$1 AND 
+		      t.id < $2 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		ORDER BY id DESC
 		LIMIT $3
 	`
@@ -236,7 +244,9 @@ func (p *postgres) GetOutgoingTransfersByAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE t.from_address=$1
+		WHERE t.from_address=$1 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	var total uint64
 	if err := tx.QueryRow(ctx, query,
@@ -271,24 +281,17 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 			t.block_number
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE 
-			t.to_address = $1 
-			AND NOT (
-				SELECT 
-					ts.status 
-				FROM 
-					transfer_statuses AS ts 
-				WHERE 
-					ts.transfer_id = t.id 
-				AND ts.timestamp =(
-					SELECT 
-						MAX(ts2.timestamp) 
-					FROM 
-						transfer_statuses AS ts2 
-					WHERE 
-						ts2.transfer_id = t.id
-				)
-			)= ANY('{Finished,Cancelled}') AND t.id < $2
+		WHERE t.to_address = $1 AND 
+		      NOT (SELECT ts.status 
+		           FROM transfer_statuses AS ts 
+		           WHERE ts.transfer_id = t.id AND 
+		                 ts.timestamp =(SELECT MAX(ts2.timestamp) 
+		                                FROM transfer_statuses AS ts2 
+		                                WHERE ts2.transfer_id = t.id)
+		           )= ANY('{Finished,Cancelled}') AND 
+		      t.id < $2 AND
+		  	  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		  	  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		ORDER BY t.id DESC
 		LIMIT $3
 	`
@@ -369,24 +372,16 @@ func (p *postgres) GetActiveIncomingTransfersByAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE 
-			t.to_address = $1 
-			AND NOT (
-				SELECT 
-					ts.status 
-				FROM 
-					transfer_statuses AS ts 
-				WHERE 
-					ts.transfer_id = t.id 
-				AND ts.timestamp =(
-					SELECT 
-						MAX(ts2.timestamp) 
-					FROM 
-						transfer_statuses AS ts2 
-					WHERE 
-						ts2.transfer_id = t.id
-				)
-			)= ANY('{Finished,Cancelled}')
+		WHERE t.to_address = $1 AND 
+		      NOT (SELECT ts.status 
+		           FROM transfer_statuses AS ts 
+		           WHERE ts.transfer_id = t.id AND 
+		                 ts.timestamp =(SELECT MAX(ts2.timestamp) 
+		                                FROM transfer_statuses AS ts2 
+		                                WHERE ts2.transfer_id = t.id)
+		           )= ANY('{Finished,Cancelled}') AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	var total uint64
 	if err := tx.QueryRow(ctx, query,
@@ -418,27 +413,19 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 			t.encrypted_password,
 			t.number,
 			t.block_number
-		FROM 
-			transfers AS t 
+		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE 
-			t.from_address = $1 
-			AND NOT (
-				SELECT 
-					ts.status 
-				FROM 
-					transfer_statuses AS ts 
-				WHERE 
-					ts.transfer_id = t.id 
-				AND ts.timestamp =(
-					SELECT 
-						MAX(ts2.timestamp) 
-					FROM 
-						transfer_statuses AS ts2 
-					WHERE 
-						ts2.transfer_id = t.id
-				)
-			)= ANY('{Finished,Cancelled}') AND t.id < $2
+		WHERE t.from_address = $1 AND 
+		      NOT (SELECT ts.status 
+		           FROM transfer_statuses AS ts 
+		           WHERE ts.transfer_id = t.id AND 
+		                 ts.timestamp =(SELECT MAX(ts2.timestamp) 
+		                                FROM transfer_statuses AS ts2 
+		                                WHERE ts2.transfer_id = t.id)
+		           )= ANY('{Finished,Cancelled}') AND 
+		      t.id < $2 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		ORDER BY t.id DESC
 		LIMIT $3
 	`
@@ -518,27 +505,18 @@ func (p *postgres) GetActiveOutgoingTransfersByAddressTotal(
 	// language=PostgreSQL
 	query := `
 		SELECT COUNT(*) AS total
-		FROM 
-			transfers AS t 
+		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE 
-			t.from_address = $1 
-			AND NOT (
-				SELECT 
-					ts.status 
-				FROM 
-					transfer_statuses AS ts 
-				WHERE 
-					ts.transfer_id = t.id 
-				AND ts.timestamp =(
-					SELECT 
-						MAX(ts2.timestamp) 
-					FROM 
-						transfer_statuses AS ts2 
-					WHERE 
-						ts2.transfer_id = t.id
-				)
-			)= ANY('{Finished,Cancelled}')
+		WHERE t.from_address = $1 AND 
+		      NOT (SELECT ts.status 
+		           FROM transfer_statuses AS ts 
+		           WHERE ts.transfer_id = t.id AND 
+		                 ts.timestamp =(SELECT MAX(ts2.timestamp) 
+		                                FROM transfer_statuses AS ts2 
+		                                WHERE ts2.transfer_id = t.id)
+		           )= ANY('{Finished,Cancelled}') AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	var total uint64
 	if err := tx.QueryRow(ctx, query,
@@ -612,7 +590,9 @@ func (p *postgres) GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domai
 			t.block_number
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE t.id = $1
+		WHERE t.id = $1 AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	row := tx.QueryRow(ctx, query, id)
 
@@ -673,18 +653,17 @@ func (p *postgres) GetActiveTransfer(
 			COALESCE(o.id, 0)
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE collection_address = $1 
-			AND token_id = $2 
-			AND NOT (
-				SELECT ts.status 
-				FROM transfer_statuses AS ts 
-				WHERE ts.transfer_id = t.id 
-					AND ts.timestamp =(
-						SELECT MAX(ts2.timestamp) 
-						FROM transfer_statuses AS ts2 
-						WHERE ts2.transfer_id = t.id
-					)
-			)= ANY('{Finished,Cancelled}')
+		WHERE collection_address = $1 AND 
+		      token_id = $2 AND 
+		      NOT (SELECT ts.status 
+		           FROM transfer_statuses AS ts 
+		           WHERE ts.transfer_id = t.id AND 
+		                 ts.timestamp =(SELECT MAX(ts2.timestamp) 
+		                                FROM transfer_statuses AS ts2 
+		                                WHERE ts2.transfer_id = t.id)
+		           )= ANY('{Finished,Cancelled}') AND
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 	row := tx.QueryRow(ctx, query, strings.ToLower(contractAddress.String()), tokenId.String())
 

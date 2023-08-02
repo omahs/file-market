@@ -4,11 +4,16 @@ import { CollectionCardTooltipContentStyled } from './CollectionCardTooltipConte
 import CategoriesSection from './section/CategoriesSection'
 import FilesSection from './section/FilesSection'
 
-const CollectionCardTooltipContent = () => {
+interface ICollectionCardTooltipContent {
+  categories?: string[]
+  files?: string[]
+}
+
+const CollectionCardTooltipContent = ({ categories, files }: ICollectionCardTooltipContent) => {
   return (
     <CollectionCardTooltipContentStyled>
-      <CategoriesSection categories={['Art', '3D Models', 'Category', 'Music', 'Art', '3D Models', 'Category', 'Music']} />
-      <FilesSection files={['Art', '3D Models', 'Category', 'Music', 'Art', '3D Models', 'Category', 'Music']} />
+      <CategoriesSection categories={categories} />
+      <FilesSection files={files} />
     </CollectionCardTooltipContentStyled>
   )
 }
