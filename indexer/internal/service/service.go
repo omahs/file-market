@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/service/subscription"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
@@ -132,27 +132,27 @@ type Moderation interface {
 }
 
 type service struct {
-	repository                  repository.Repository
-	healthNotifier              healthnotifier.HealthNotifier
-	cfg                         *config.ServiceConfig
-	ethClient                   ethclient2.EthClient
-	realTimeNotificationService *realtime_notification.RealTimeNotificationService
-	jwtManager                  jwt.TokenManager
-	sequencer                   *sequencer.Sequencer
-	accessTokenAddress          common.Address
-	accessTokenInstance         *access_token.Mark3dAccessTokenV2
-	exchangeAddress             common.Address
-	exchangeInstance            *exchange.FilemarketExchangeV2
-	currencyConverter           currencyconversion.Provider
-	commonSigner                *ethsigner.EthSigner
-	uncommonSigner              *ethsigner.EthSigner
-	closeCh                     chan struct{}
+	repository          repository.Repository
+	healthNotifier      healthnotifier.HealthNotifier
+	cfg                 *config.ServiceConfig
+	ethClient           ethclient2.EthClient
+	subscriptionService *subscription.Service
+	jwtManager          jwt.TokenManager
+	sequencer           *sequencer.Sequencer
+	accessTokenAddress  common.Address
+	accessTokenInstance *access_token.Mark3dAccessTokenV2
+	exchangeAddress     common.Address
+	exchangeInstance    *exchange.FilemarketExchangeV2
+	currencyConverter   currencyconversion.Provider
+	commonSigner        *ethsigner.EthSigner
+	uncommonSigner      *ethsigner.EthSigner
+	closeCh             chan struct{}
 }
 
 func NewService(
 	repo repository.Repository,
 	ethClient ethclient2.EthClient,
-	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
+	subscriptionService *subscription.Service,
 	sequencer *sequencer.Sequencer,
 	jwtManager jwt.TokenManager,
 	healthNotifier healthnotifier.HealthNotifier,
@@ -172,21 +172,21 @@ func NewService(
 	}
 
 	return &service{
-		ethClient:                   ethClient,
-		realTimeNotificationService: realTimeNotificationService,
-		repository:                  repo,
-		healthNotifier:              healthNotifier,
-		sequencer:                   sequencer,
-		cfg:                         cfg,
-		accessTokenAddress:          cfg.AccessTokenAddress,
-		accessTokenInstance:         accessTokenInstance,
-		exchangeAddress:             cfg.ExchangeAddress,
-		exchangeInstance:            exchangeInstance,
-		jwtManager:                  jwtManager,
-		currencyConverter:           currencyConverter,
-		commonSigner:                commonSigner,
-		uncommonSigner:              uncommonSigner,
-		closeCh:                     make(chan struct{}),
+		ethClient:           ethClient,
+		subscriptionService: subscriptionService,
+		repository:          repo,
+		healthNotifier:      healthNotifier,
+		sequencer:           sequencer,
+		cfg:                 cfg,
+		accessTokenAddress:  cfg.AccessTokenAddress,
+		accessTokenInstance: accessTokenInstance,
+		exchangeAddress:     cfg.ExchangeAddress,
+		exchangeInstance:    exchangeInstance,
+		jwtManager:          jwtManager,
+		currencyConverter:   currencyConverter,
+		commonSigner:        commonSigner,
+		uncommonSigner:      uncommonSigner,
+		closeCh:             make(chan struct{}),
 	}, nil
 }
 
@@ -1435,12 +1435,7 @@ func (s *service) ListenBlockchain() error {
 				}
 			}
 			if lastBlock.Cmp(current) != 0 {
-				// broadcast last block number to subscribers
-				lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": current.Int64() - 1}) // 1 conformation
-				if err != nil {
-					logger.Warnf("failed to marshal last block number for broadcast: %v", err)
-				}
-				s.realTimeNotificationService.BroadcastMessage(realtime_notification.LastBlockNumberTopic, lastBlockMessage)
+				s.SendBlockNumberSubscriptionUpdate(current)
 			}
 			lastBlock = current
 		case <-s.closeCh:
