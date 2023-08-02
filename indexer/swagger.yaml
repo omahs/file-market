@@ -974,6 +974,8 @@ definitions:
         $ref: '#/definitions/JwtTokenInfo'
       refresh_token:
         $ref: '#/definitions/JwtTokenInfo'
+      profile:
+        $ref: '#/definitions/UserProfile'
   JwtTokenInfo:
     type: object
     description: Данные jwt-токена
@@ -989,21 +991,27 @@ definitions:
     required:
       - token
       - expires_at
+  UserProfile:
+    type: object
+    description: Профиль юзера
+    properties:
+      name:
+        type: string
   ReportCollectionRequest:
     type: object
     description: Запрос на репорт коллекции
     properties:
-      collection_address:
+      collectionAddress:
         type: string
         pattern: '^0x[0-9a-fA-F]{40}$'
         description: Адрес коллекции
     required:
-      - collection_address
+      - collectionAddress
   ReportTokenRequest:
     type: object
     description: Запрос на репорт токена
     properties:
-      collection_address:
+      collectionAddress:
         type: string
         pattern: '^0x[0-9a-fA-F]{40}$'
         description: Адрес коллекции
@@ -1012,7 +1020,7 @@ definitions:
         description: Id токена
         pattern: "^[0-9]+$"
     required:
-      - collection_address
+      - collectionAddress
       - tokenId
   SuccessResponse:
     type: object

@@ -100,17 +100,15 @@ func (p *postgres) GetJwtTokenNumber(ctx context.Context, tx pgx.Tx, address com
 }
 
 func (p *postgres) InsertJwtToken(ctx context.Context, tx pgx.Tx, tokenData jwt.TokenData) error {
-	if _, err := tx.Exec(ctx, `INSERT INTO auth_tokens VALUES($1, $2, $3, $4, $5)`,
+	_, err := tx.Exec(ctx, `INSERT INTO auth_tokens VALUES($1, $2, $3, $4, $5)`,
 		tokenData.Address,
 		tokenData.Number,
 		tokenData.Purpose,
 		tokenData.Secret,
 		tokenData.ExpiresAt.UnixMilli(),
-	); err != nil {
-		return err
-	}
+	)
 
-	return nil
+	return err
 }
 
 func (p *postgres) DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address, number int) error {
