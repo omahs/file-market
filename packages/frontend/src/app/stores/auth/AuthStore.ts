@@ -1,5 +1,9 @@
+import assert from 'assert'
+import Cookies from 'js-cookie'
 import { makeAutoObservable } from 'mobx'
 
+import { Api, AuthBySignatureRequest, AuthResponse, ErrorResponse, HttpResponse } from '../../../swagger/Api'
+import { DateStore } from '../Date/DateStore'
 import { DialogStore } from '../Dialog/DialogStore'
 import { ProfileStore } from '../Profile/ProfileStore'
 
@@ -10,31 +14,31 @@ export class AuthStore {
   dateStore: DateStore
   isFirstConnect: boolean
   profileStore: ProfileStore
-  constructor(rootStore: { dialogStore: DialogStore }) {
+  authService: Api<{}>
+  constructor(rootStore: { dialogStore: DialogStore, profileStore: ProfileStore, dateStore: DateStore }) {
     this.isLoading = false
     this.isFirstConnect = true
+    this.authService = new Api<{}>({ baseUrl: '/api' })
     makeAutoObservable(this)
-    this.authService = new Auth<unknown>({ baseUrl: '/api' })
     this.dialogStore = rootStore.dialogStore
-    this.dateStore = new DateStore()
-    this.playerStore = rootStore.playerStore
+    this.dateStore = rootStore.dateStore
+    this.profileStore = rootStore.profileStore
   }
 
   setData(response: HttpResponse<AuthResponse, ErrorResponse>) {
-    assert(response.data.player, 'player is undefined')
     localStorage.setItem('Access_token', response.data.access_token?.token ?? '')
-    cookie.remove('access-token')
-    cookie.set('access-token', response.data.access_token?.token ?? '', {
+    Cookies.remove('access-token')
+    Cookies.set('access-token', response.data.access_token?.token ?? '', {
       path: '/',
     })
     localStorage.setItem('Refresh_token', response.data.refresh_token?.token ?? '')
     localStorage.setItem('Refresh_tokenExpired', response.data.refresh_token?.expires_at.toString() ?? '0')
     localStorage.setItem('Access_tokenExpired', response.data.access_token?.expires_at.toString() ?? '0')
-    this.setUser(response.data.player)
+    this.setUser(response.data.profile)
   }
 
-  setUser(user: Player) {
-    this.playerStore.setPlayer(user)
+  setUser(user: Profile) {
+    this.profileStore.setPlayer(user)
   }
 
   setAddress(address: `0x${string}`) {
@@ -46,14 +50,13 @@ export class AuthStore {
   }
 
   async getMessageForAuth (address: `0x${string}`) {
-    return await this.authService.messageCreate({ address })
+    return this.authService.auth.messageCreate({ address })
   }
 
   async loginBySignature({ address, signature }: AuthBySignatureRequest) {
     try {
-      const response = await this.authService.bySignatureCreate({ address, signature })
+      const response = await this.authService.auth.bySignatureCreate({ address, signature })
       this.setData(response)
-      rootStore.socketStore.createConnection(makeWsUrl('/ws'))
       this.isFirstConnect = false
     } catch (e: any) {
       this.dialogStore.showError(errorToUserText(e))
@@ -62,15 +65,14 @@ export class AuthStore {
 
   async logout() {
     try {
-      await this.authService.logoutCreate({
+      await this.authService.auth.logoutCreate({
         headers: { authorization: createRefreshToken() },
       })
       localStorage.removeItem('Access_token')
       localStorage.removeItem('Refresh_token')
       localStorage.removeItem('Refresh_tokenExpired')
       localStorage.removeItem('Access_tokenExpired')
-      rootStore.socketStore.disconnect()
-      this.playerStore.logout()
+      this.profileStore.logout()
     } catch (e: any) {
       this.dialogStore.showError(errorToUserText(e.error.message))
     }
@@ -79,12 +81,11 @@ export class AuthStore {
   async checkAuth() {
     this.setLoading(true)
     try {
-      const response = await this.authService.byTokenCreate({
+      const response = await this.authService.auth.byTokenCreate({
         headers: { authorization: this.AccessToken },
       })
       assert(response.data.player, 'player is undefined')
       this.setUser(response.data.player)
-      rootStore.socketStore.createConnection(makeWsUrl('/ws'))
       this.isFirstConnect = false
     } catch (e: any) {
       console.log(e)
@@ -98,12 +99,11 @@ export class AuthStore {
     if (this.isLoading) return
     this.setLoading(true)
     try {
-      const response = await this.authService.refreshCreate({
+      const response = await this.authService.auth.refreshCreate({
         headers: { authorization: `Bearer ${localStorage.getItem('Refresh_token') ?? ''}` },
       })
       this.setData(response)
       if (this.isFirstConnect) {
-        rootStore.socketStore.createConnection(makeWsUrl('/ws'))
         this.isFirstConnect = false
       }
     } catch (e: any) {
@@ -118,7 +118,7 @@ export class AuthStore {
   }
 
   get isAuth() {
-    return !!this.playerStore?.player
+    return !!this.profileStore?.player
   }
 
   get isActualRefreshToken() {

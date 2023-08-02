@@ -7368,6 +7368,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-cookie@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@types/js-cookie@npm:3.0.3"
+  checksum: 927254ec37ce4fbe4d9d54f53a446b4351259799d9933db5808ddb7c430396aa2496bdd0a4e47e1b56048ffbec98645cbd4daa9e3ed9a6fff55e25eb640fcb15
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -13572,6 +13579,7 @@ __metadata:
     "@tanstack/react-query": ^4.29.15
     "@types/aes-js": ^3.1.1
     "@types/file-saver": ^2.0.5
+    "@types/js-cookie": ^3.0.3
     "@types/node-rsa": ^1.1.1
     "@types/react": ^18.0.17
     "@types/react-dom": ^18.0.6
@@ -13596,6 +13604,7 @@ __metadata:
     ethers: ^5
     file-saver: ^2.0.5
     jdenticon: ^3.2.0
+    js-cookie: ^3.0.5
     mobx: ^6.7.0
     mobx-react-lite: ^3.4.0
     nft.storage: ^7.0.0
@@ -16228,6 +16237,13 @@ __metadata:
     merge-stream: ^2.0.0
     supports-color: ^8.0.0
   checksum: 98cd68b696781caed61c983a3ee30bf880b5bd021c01d98f47b143d4362b85d0737f8523761e2713d45e18b4f9a2b98af1eaee77afade4111bb65c77d6f7c980
+  languageName: node
+  linkType: hard
+
+"js-cookie@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "js-cookie@npm:3.0.5"
+  checksum: 2dbd2809c6180fbcf060c6957cb82dbb47edae0ead6bd71cbeedf448aa6b6923115003b995f7d3e3077bfe2cb76295ea6b584eb7196cca8ba0a09f389f64967a
   languageName: node
   linkType: hard
 
