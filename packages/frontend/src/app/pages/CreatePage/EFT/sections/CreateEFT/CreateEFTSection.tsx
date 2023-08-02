@@ -17,6 +17,7 @@ import { useCollectionAndTokenListStore, useStores } from '../../../../../hooks'
 import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../../../../hooks/useMediaMui'
+import { useModalProperties } from '../../../../../hooks/useModalProperties'
 import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
 import {
   Button,
@@ -43,7 +44,6 @@ import {
   TitleGroup,
 } from '../../../helper/style/style'
 import { useCreateNft } from '../../../hooks/useCreateNft'
-import { useModalProperties } from '../../../hooks/useModalProperties'
 import PlusIcon from '../../../img/plus-icon.svg'
 import {
   AddCollectionButton,

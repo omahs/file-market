@@ -68,6 +68,14 @@ export const inputStyles = {
         outline: 'none',
       },
     },
+    settings: {
+      true: {
+        border: '2px solid #C9CBCF',
+        padding: '8px 16px',
+        borderRadius: '12px',
+        color: '#6B6F76',
+      },
+    },
   },
 }
 

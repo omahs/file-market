@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessNavBody } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
+import { useModalProperties } from '../../../../../hooks/useModalProperties'
 import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
 import {
   ButtonContainer,
@@ -16,7 +17,6 @@ import {
   TitleGroup,
 } from '../../../helper/style/style'
 import { useCreateCollection } from '../../../hooks/useCreateCollection'
-import { useModalProperties } from '../../../hooks/useModalProperties'
 
 export interface CreateCollectionForm {
   image: FileList

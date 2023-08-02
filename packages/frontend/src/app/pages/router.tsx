@@ -14,6 +14,7 @@ import { marketRoutes } from './MarketPage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
+import ProfileSettings from './ProfileSettings/ProfileSettings'
 import SuccessSubscribePage from './SuccessSubscribePage/SuccessSubscribePage'
 
 const routes: RouteObject[] = [
@@ -59,6 +60,10 @@ const routes: RouteObject[] = [
   {
     path: 'checkCrypto',
     element: <CheckCryptoPage />,
+  },
+  {
+    path: 'settings',
+    element: <ProfileSettings />,
   },
   {
     path: '*',
