@@ -3,8 +3,8 @@ import React from 'react'
 
 import { styled } from '../../../../../styles'
 import { useMediaMui } from '../../../../hooks/useMediaMui'
+import BoxShadowed from '../../../../pages/MainPage/components/BoxShadowed/BoxShadowed'
 import { Txt } from '../../../../UIkit'
-import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
 
 const SelectBlockchainBlockStyle = styled('div', {
   width: '344px',
@@ -38,7 +38,7 @@ const SelectBlockchainBlock = observer(({ name, img, onClick }: ISelectBlockchai
   const { mdValue } = useMediaMui()
 
   return (
-    <BoxShadowed widthInherit={!mdValue} hoverBlue large>
+    <BoxShadowed widthInherit={!mdValue} hoverBlue>
       <SelectBlockchainBlockStyle onClick={ () => { onClick() } }>
         <img src={img} />
         <Txt primary1>{name}</Txt>

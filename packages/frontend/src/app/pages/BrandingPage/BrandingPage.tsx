@@ -73,7 +73,7 @@ export default function BrandindPage() {
         <Hero />
         <StyleGuidelines >
           <StyleGuidelinesText>Style Guidelines</StyleGuidelinesText>
-          <DownloadButton downloadHref="styleguide-new.zip" bigIcon bigBtn>Download</DownloadButton>
+          <DownloadButton downloadHref="styleguide.zip" bigIcon bigBtn>Download</DownloadButton>
         </StyleGuidelines>
         <SectionWrapper>
           <Title>Colors</Title>
