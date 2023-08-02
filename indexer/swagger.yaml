@@ -932,7 +932,44 @@ paths:
           description: ws upgrade
         default:
           description: Ошибка
+  /ws/subscribe/eft/{address}/{id}:
+    get:
+      summary: Subscribe to eft updates
+      description: |
+        This is **WebSocket** handler, once connection is established you will receive:
+        $ref: '#/definitions/EFTSubscriptionMessage'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес коллекции
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          description: Token id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+      responses:
+        '101':
+          description: ws upgrade
+        default:
+          description: Ошибка
 definitions:
+  EFTSubscriptionMessage:
+    type: object
+    description: Сообщение об обновлении EFT
+    properties:
+      event:
+        type: string
+        description: Имя event'а
+      token:
+        $ref: '#/definitions/Token'
+      transfer:
+        $ref: '#/definitions/Transfer'
+      order:
+        $ref: '#/definitions/Order'
   AuthMessageRequest:
     type: object
     description: Запрос получения сообщения для авторизации по подписи
