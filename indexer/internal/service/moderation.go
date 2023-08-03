@@ -36,6 +36,10 @@ func (s *service) ReportCollection(ctx context.Context, userAddress common.Addre
 		return internalError
 	}
 
+	if err := tx.Commit(ctx); err != nil {
+		return internalError
+	}
+
 	return nil
 }
 
@@ -67,6 +71,10 @@ func (s *service) ReportToken(ctx context.Context, userAddress common.Address, r
 
 	if err := s.repository.ReportToken(ctx, tx, collectionAddress, tokenId, userAddress); err != nil {
 		logger.Error("failed to report token", err, nil)
+		return internalError
+	}
+
+	if err := tx.Commit(ctx); err != nil {
 		return internalError
 	}
 

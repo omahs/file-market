@@ -22,11 +22,11 @@
       "keyPrefix": "sequencer",
       "tokenIdTTL": "15m",
       "checkInterval": "5m",
-      "switchTokenTimeout": "3m",
-      "authMessageTTL": "5m",
-      "accessTokenTTL": "60h",
-      "refreshTokenTTL": "900d"
+      "switchTokenTimeout": "3m"
     },
+    "authMessageTTL": "5m",
+    "accessTokenTTL": "60h",
+    "refreshTokenTTL": "900d",
     "currencyConversionCacheTTL": "1h",
     "mode": "dev",
     "chainId": "314159"

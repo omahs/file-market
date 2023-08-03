@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom'
 
 import FileLogo from '../../../../assets/FilemarketFileLogo.png'
 import { Collection } from '../../../../swagger/Api'
-import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
+import { IMultiChainConfig } from '../../../config/multiChainConfigType'
 import { useMediaMui } from '../../../hooks/useMediaMui'
-import { gradientPlaceholderImg } from '../../../UIkit'
+import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
+import { gradientPlaceholderImg, Txt } from '../../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../../utils/nfts'
 import { cutNumber } from '../../../utils/number'
 import {
@@ -21,16 +22,14 @@ import {
   theme,
 } from './CollectionCard.styles'
 import CollectionCardTooltipContent from './CollectionCardTooltipContent/CollectionCardTooltipContent'
-import { getImg } from './helper/Chain/chain'
 
-export default function CollectionCard({ name, address, image, type }: Collection) {
-  const chainId = '314'
+export default function CollectionCard({ name, address, image, type, chainId, ordersCount, ownersCount, tokensCount, contentTypes }: Collection) {
   const [isShowNumber, setIsShowNumber] = useState<boolean>(false)
   const navigate = useNavigate()
-  const currentBlockChain = useCurrentBlockChain()
+  const multiChainStore = useMultiChainStore()
   const { smValue, mdValue } = useMediaMui()
-  const chainIcon: string = useMemo(() => {
-    return getImg(chainId)
+  const chain: IMultiChainConfig | undefined = useMemo(() => {
+    return multiChainStore.getChainById(+(chainId ?? 0))
   }, [chainId])
 
   const tooltipOffset: number = useMemo(() => {
@@ -53,22 +52,22 @@ export default function CollectionCard({ name, address, image, type }: Collectio
       onMouseLeave={() => { setIsShowNumber(false) }}
       onMouseDown={() => { setIsShowNumber(true) }}
       onMouseUp={() => { setIsShowNumber(false) }}
-      onClick={() => { navigate(`/${currentBlockChain.chain?.name}/collection/${address}`) }}
+      onClick={() => { navigate(`/collection/${chain?.chain.name}/${address}`) }}
     >
       <StyledCollectionGrid>
         <InsideContainer>
           <Icon src={collectionImgUrl} />
           <CollectionCardText>{name}</CollectionCardText>
         </InsideContainer>
-        <CollectionCardText>{isShowNumber ? 12345 : cutNumber(12345)}</CollectionCardText>
-        <CollectionCardText>{isShowNumber ? 12345 : cutNumber(12345)}</CollectionCardText>
-        <CollectionCardText>{isShowNumber ? 12345 : cutNumber(12345)}</CollectionCardText>
+        <CollectionCardText>{isShowNumber ? tokensCount : cutNumber(tokensCount)}</CollectionCardText>
+        <CollectionCardText>{isShowNumber ? ordersCount : cutNumber(ordersCount)}</CollectionCardText>
+        <CollectionCardText>{isShowNumber ? ownersCount : cutNumber(ownersCount)}</CollectionCardText>
         <InsideContainer>
-          <CollectionCardTypesText>Audio, Video, 3D Model, Categ...</CollectionCardTypesText>
+          <CollectionCardTypesText>{contentTypes?.categories?.join(', ')}</CollectionCardTypesText>
           <ThemeProvider theme={theme}>
             <Tooltip
               placement={'left'}
-              title={<CollectionCardTooltipContent />}
+              title={<CollectionCardTooltipContent categories={contentTypes?.categories} files={contentTypes?.fileExtensions} />}
               TransitionComponent={Slide}
               TransitionProps={{
                 // @ts-expect-error
@@ -95,7 +94,7 @@ export default function CollectionCard({ name, address, image, type }: Collectio
           </ThemeProvider>
         </InsideContainer>
       </StyledCollectionGrid>
-      <img src={chainIcon} style={{ height: '24px' }} />
+      <Tooltip placement={'top'} title={<Txt primary2>{chain?.chain.name}</Txt>}><img src={chain?.img} style={{ height: '24px' }} /></Tooltip>
     </StyledCollectionCard>
   )
 }
