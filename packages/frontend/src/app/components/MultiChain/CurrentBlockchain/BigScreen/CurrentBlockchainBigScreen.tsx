@@ -39,7 +39,7 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
           )
         })}
       </>
-      <LinearText>
+      <LinearText css={{ fontSize: '14px' }}>
         Ethereum will be available coming soon!
       </LinearText>
     </CurrentBlockchainStyle>

@@ -2,6 +2,7 @@ import { Dropdown } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 
+import { styled } from '../../../../../styles'
 import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
@@ -11,7 +12,22 @@ import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
-const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
+const DropDownWrapper = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: '13px',
+  '[aria-expanded="true"]': {
+    opacity: '1 !important',
+    transform: 'none !important',
+  },
+  '[aria-haspopup="true"]': {
+    '&:active': {
+      transform: 'scale(0.98) !important',
+    },
+  },
+})
+
+const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork, isLoading, error } = useChangeNetwork({
@@ -30,7 +46,8 @@ const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
   }, [currentChainStore.chainId])
 
   return (
-    <>
+    <DropDownWrapper>
+      <Txt css={{ fontWeight: 600 }}>Current blockchain:</Txt>
       {multiChainStore.data && (
         <Dropdown
           isDisabled={isLoading && !error}
@@ -41,7 +58,7 @@ const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
           // @ts-expect-error
             <Dropdown.Trigger style={{ width: 'max-content' }}>
               <CurrentBlockchainStyle isLight={isLight} style={{ width: 'max-content ' }}>
-                <Txt>Current blockchain:</Txt>
+
                 <CurrentBlockchainBlock
                   name={multiChainStore.getChainById(+selectedValue(selected))?.chain.name ?? ''}
                   img={multiChainStore.getChainById(+selectedValue(selected))?.img ?? ''}
@@ -52,7 +69,7 @@ const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
               </CurrentBlockchainStyle>
             </Dropdown.Trigger>
           }
-          {
+          {isVisible && (
             <BoxShadowed>
               <Dropdown.Menu
                 aria-label='Single selection actions'
@@ -69,8 +86,8 @@ const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
                   borderRadius: '16px',
                   background: 'rgba(249, 249, 249, 0.95)',
                   boxShadow: '10px 10px 0px 0px rgba(114, 114, 114, 0.50)',
-                  width: '338px',
-                  maxWidth: '338px',
+                  width: '350px',
+                  maxWidth: '350px',
                 }}
               >
                 {multiChainStore.data.map(item => {
@@ -107,10 +124,11 @@ const CurrentBlockchainMobile = observer(({ isLight }: ICurrentBlockchain) => {
                 })}
               </Dropdown.Menu>
             </BoxShadowed>
+          )
           }
         </Dropdown>
       )}
-    </>
+    </DropDownWrapper>
   )
 })
 

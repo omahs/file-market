@@ -196,7 +196,7 @@ export const CreateEFTSection: React.FC = observer(() => {
           setModalOpen(false)
         }}
       />
-      <PageLayout>
+      <PageLayout isHasSelectBlockChain>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup>
             <h3><Txt h3 style={{ fontWeight: '600' }}>Create New EFT</Txt></h3>

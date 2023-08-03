@@ -16,6 +16,7 @@ const CurrentBlockchainBlockStyle = styled('div', {
   alignItems: 'center',
   gap: '8px',
   cursor: 'pointer',
+  backgroundColor: 'white',
   ...textVariant('primary2').true,
   '& .img': {
     width: '30px',
@@ -25,6 +26,7 @@ const CurrentBlockchainBlockStyle = styled('div', {
     isLight: {
       true: {
         color: 'white',
+        backgroundColor: 'transparent',
       },
     },
     isActive: {
