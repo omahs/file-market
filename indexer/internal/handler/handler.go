@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/service/subscription"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"net/http"
@@ -21,20 +21,20 @@ type Handler interface {
 }
 
 type handler struct {
-	cfg                         *config.HandlerConfig
-	service                     service.Service
-	realTimeNotificationService *realtime_notification.RealTimeNotificationService
+	cfg                 *config.HandlerConfig
+	service             service.Service
+	subscriptionService *subscription.Service
 }
 
 func NewHandler(
 	cfg *config.HandlerConfig,
 	service service.Service,
-	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
+	subscriptionService *subscription.Service,
 ) Handler {
 	return &handler{
-		cfg:                         cfg,
-		service:                     service,
-		realTimeNotificationService: realTimeNotificationService,
+		cfg:                 cfg,
+		service:             service,
+		subscriptionService: subscriptionService,
 	}
 }
 
@@ -80,6 +80,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
 	router.HandleFunc("/ws/subscribe/block_number", h.subscribeToBlockNumber)
+	router.HandleFunc("/ws/subscribe/eft/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.subscribeToEFT)
 
 	router.Use(h.corsMiddleware)
 

@@ -88,9 +88,14 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 		return nil, internalError
 	}
 
+	if err := tx.Commit(ctx); err != nil {
+		return nil, internalError
+	}
+
 	return &models.AuthResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		Profile:      &models.UserProfile{Name: "temp"},
 	}, nil
 }
 
@@ -176,8 +181,8 @@ func (s *service) generateTokens(ctx context.Context, tx pgx.Tx, address common.
 	return s.generateTokensWithNumber(ctx, tx, address, number)
 }
 
-func (s *service) generateTokensWithNumber(ctx context.Context, transaction pgx.Tx, address common.Address, number int) (*models.JwtTokenInfo, *models.JwtTokenInfo, error) {
-	accessExpiresAt := now.Now().Add(s.cfg.AccessTokenTTL * time.Millisecond)
+func (s *service) generateTokensWithNumber(ctx context.Context, tx pgx.Tx, address common.Address, number int) (*models.JwtTokenInfo, *models.JwtTokenInfo, error) {
+	accessExpiresAt := now.Now().Add(s.cfg.AccessTokenTTL)
 	accessTokenData := &jwt.TokenData{
 		Purpose:   jwt.PurposeAccess,
 		Address:   strings.ToLower(address.String()),
@@ -203,10 +208,10 @@ func (s *service) generateTokensWithNumber(ctx context.Context, transaction pgx.
 		return nil, nil, fmt.Errorf("failed to generate refresh token: %w", err)
 	}
 
-	if err = s.repository.InsertJwtToken(ctx, transaction, *accessTokenData); err != nil {
+	if err := s.repository.InsertJwtToken(ctx, tx, *accessTokenData); err != nil {
 		return nil, nil, fmt.Errorf("generateTokensWithNumber/InsertJwtTokenAccess: %w", err)
 	}
-	if err = s.repository.InsertJwtToken(ctx, transaction, *refreshTokenData); err != nil {
+	if err := s.repository.InsertJwtToken(ctx, tx, *refreshTokenData); err != nil {
 		return nil, nil, fmt.Errorf("generateTokensWithNumber/InsertJwtTokenRefresh: %w", err)
 	}
 	accessMilli := accessExpiresAt.UnixMilli()
@@ -230,6 +235,7 @@ func (s *service) GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, to
 
 	tokenData, err := s.jwtManager.ParseJwtToken(token)
 	if err != nil {
+		logger.Error("failed to parse jwt token", err, nil)
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "failed to parse token",
