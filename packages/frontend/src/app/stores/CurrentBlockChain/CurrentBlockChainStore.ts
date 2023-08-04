@@ -87,8 +87,6 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   }
 
   get configByChainName(): IMultiChainConfig | undefined {
-    console.log(this.multiChainStore.data?.find(item => item.chain.name === this.chainNameByPage))
-
     return this.multiChainStore.data?.find(item => item.chain.name === this.chainNameByPage)
   }
 }

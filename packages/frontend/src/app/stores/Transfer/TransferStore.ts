@@ -157,6 +157,12 @@ export class TransferStore implements IStoreRequester,
     this.blockStore.setReceiptBlock(BigNumber.from(blockNumber))
   }
 
+  setData = (transfer?: Transfer) => {
+    this.data = transfer
+    this.setIsWaitingForEvent(false)
+    this.setBlockTransfer(transfer?.block?.number)
+  }
+
   // We listen to only events related to transfer change, not transfer initialization
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 

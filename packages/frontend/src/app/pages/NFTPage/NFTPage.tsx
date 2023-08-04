@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
+import { useSubscribeToEft } from '../../hooks/useSubscribeToEft'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
@@ -111,6 +112,7 @@ const ControlStickyBlock = styled('div', {
 })
 
 const NFTPage: React.FC = observer(() => {
+  useSubscribeToEft()
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId, chainName)
   const currentBlockChainStore = useCurrentBlockChain()

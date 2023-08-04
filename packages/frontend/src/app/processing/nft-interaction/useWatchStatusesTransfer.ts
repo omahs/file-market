@@ -45,7 +45,6 @@ export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: us
   }, 3000)
   const { flush: flushReloadOrder, run: runReloadOrder } = useIntervalAsync(() => {
     return new Promise(() => {
-      console.log(orderStore.data)
       orderStore.reload()
     })
   }, 3000)

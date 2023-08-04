@@ -82,8 +82,6 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   const { chainName } = useParams<Params>()
   const multiChainStore = useMultiChainStore()
   const isNetworkIncorrect = useMemo(() => {
-    console.log(currentBlockChain.chain?.name)
-
     return currentBlockChain.chain?.name !== chainName
   }, [currentBlockChain.chain?.name, chainName])
   const { isOwner, isApprovedExchange, isLoading, error, transfer, isBuyer, runIsApprovedRefetch } = useWatchStatusesTransfer({ tokenFullId, isNetworkIncorrect })

@@ -99,7 +99,6 @@ export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () 
         whiteWithBlue
         modalButtonFontSize
         onPress={() => {
-          console.log(onClose)
           onClose?.()
         }}
       >
