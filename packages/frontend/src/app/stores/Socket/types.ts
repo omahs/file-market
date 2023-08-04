@@ -12,3 +12,9 @@ export interface ISocketConnect {
   type?: ConnectionType
   isConnected?: boolean
 }
+
+export interface sendQueueType {
+  message: string
+  onMessage: (event: MessageEvent) => void
+  onConnect?: () => void
+}

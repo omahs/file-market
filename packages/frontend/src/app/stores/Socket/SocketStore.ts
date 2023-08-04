@@ -50,8 +50,7 @@ export class SocketStore {
   private readonly subscribe = <T, M>({ params, type, url, onSubscribeMessage }: ISubscribe<T, M>) => {
     const socket = this.createConnection(url)
     socket.onopen = function(this) {
-      this.send(JSON.stringify(params).close())
-      this
+      this.send(JSON.stringify(params))
     }
     socket.onmessage = onSubscribeMessage
     this.disconnect(type)
@@ -60,9 +59,6 @@ export class SocketStore {
       this.socketConnects[this.findIndexSocket(type)] = this.createISocketConnect({ socket, type })
     } else {
       this.socketConnects = [...this.socketConnects, (this.createISocketConnect({ socket, type }))]
-      const index = this.socketConnects.findIndex(item => item.type === type)
-      console.log('Disconnect')
-      console.log(index)
     }
   }
 
@@ -83,14 +79,12 @@ export class SocketStore {
   }
 
   disconnect(type: ConnectionType) {
-    const index = this.findIndexSocket(type)
+    const socketConnect = this.socketConnects[this.findIndexSocket(type)]
     console.log('Disconnect')
-    console.log(this.socketConnects[index])
-    console.log(index)
-    if (this.socketConnects[index]?.socket && this.socketConnects[index]?.socket?.readyState === WebSocket.OPEN) {
-      this.socketConnects[index].socket.onclose = () => {}
-      this.socketConnects[index].socket?.close()
-      this.socketConnects[index].isConnected = false
+    if (socketConnect?.socket) {
+      socketConnect.socket.onclose = () => {}
+      socketConnect.socket?.close()
+      socketConnect.isConnected = false
     }
   }
 

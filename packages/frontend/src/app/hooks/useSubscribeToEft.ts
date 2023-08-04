@@ -7,6 +7,7 @@ import { useStores } from './useStores'
 export const useSubscribeToEft = () => {
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const { socketStore } = useStores()
+
   useEffect(() => {
     socketStore.subscribeToEft({ address: collectionAddress as `0x${string}`, id: tokenId }, chainName)
 
