@@ -12,7 +12,7 @@ export const glow = keyframes({
   },
 })
 
-export const inputStyles = {
+export const textAreaStyles = {
   backgroundColor: '$white',
   borderRadius: '$3',
   height: 48,
@@ -53,7 +53,8 @@ export const inputStyles = {
   variants: {
     isError: {
       true: {
-        outlineColor: '$red',
+        outline: ' 1px solid $red !important',
+        animation: 'none !important',
       },
     },
     isDisabledFocusStyle: {
@@ -101,11 +102,11 @@ export const inputStyles = {
   },
 }
 
-export const StyledInput = styled('input', {
-  ...inputStyles,
+export const StyledTextArea = styled('textarea', {
+  ...textAreaStyles,
 })
 
-export const StyledInputContainer = styled('div', {
+export const StyledTextAreaContainer = styled('div', {
   position: 'relative',
   width: '100%',
   height: '100%',

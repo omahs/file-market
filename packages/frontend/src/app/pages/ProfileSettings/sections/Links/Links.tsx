@@ -1,8 +1,14 @@
 import React from 'react'
 import { FieldValues } from 'react-hook-form'
 
-import { ControlledInputProps, FormControl, Input } from '../../../../UIkit'
-import { StyledSectionContent, StyledTitleInput, StyledTitleSection } from '../../ProfileSettings.styles'
+import { TextStartInput } from '../../../../components/Form/TextStartInput/TextStartInput'
+import { ControlledInputProps, Input } from '../../../../UIkit'
+import {
+  FormControlSettings,
+  StyledSectionContent,
+  StyledTitleInput,
+  StyledTitleSection,
+} from '../../ProfileSettings.styles'
 
 interface ILinksSection<T extends FieldValues> {
   website: ControlledInputProps<T>
@@ -15,38 +21,42 @@ const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitt
   return (
     <StyledSectionContent>
       <StyledTitleSection>Links</StyledTitleSection>
-      <FormControl>
+      <FormControlSettings>
         <StyledTitleInput>Website</StyledTitleInput>
         <Input<T>
           settings
           placeholder='Website URL'
           controlledInputProps={website}
         />
-      </FormControl>
-      <FormControl>
+      </FormControlSettings>
+      <FormControlSettings>
         <StyledTitleInput>X (ex-twitter)</StyledTitleInput>
-        <Input<T>
-          settings
-          placeholder='X username'
+        <TextStartInput<T>
+          inputProps={{
+            placeholder: 'X username',
+          }}
           controlledInputProps={twitter}
+          textStart={'@'}
         />
-      </FormControl>
-      <FormControl>
+      </FormControlSettings>
+      <FormControlSettings>
         <StyledTitleInput>Telegram</StyledTitleInput>
-        <Input<T>
-          settings
-          placeholder='Telegram username'
+        <TextStartInput<T>
+          inputProps={{
+            placeholder: 'Telegram username',
+          }}
           controlledInputProps={telegram}
+          textStart={'@'}
         />
-      </FormControl>
-      <FormControl>
+      </FormControlSettings>
+      <FormControlSettings>
         <StyledTitleInput>Discord</StyledTitleInput>
         <Input<T>
           settings
-          placeholder='Discrod username'
+          placeholder='Discord username'
           controlledInputProps={discord}
         />
-      </FormControl>
+      </FormControlSettings>
     </StyledSectionContent>
   )
 }

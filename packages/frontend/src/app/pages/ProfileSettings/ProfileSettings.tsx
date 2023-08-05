@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { useAccount } from 'wagmi'
 
 import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../../components/Modal/Modal'
 import { useModalProperties } from '../../hooks/useModalProperties'
-import { Button, PageLayout } from '../../UIkit'
+import { Button, PageLayout, Txt } from '../../UIkit'
+import ReturnButton from './components/ReturnButton/ReturnButton'
 import { useUpdateProfile } from './helper/hooks/useUpdateProfile'
 import { IProfileSettings } from './helper/types/formType'
-import { ButtonContainer, Form } from './ProfileSettings.styles'
+import { Form, GrayBgText, StyledTitle } from './ProfileSettings.styles'
 import AppearanceSection from './sections/Appereance/Appereance'
 import Links from './sections/Links/Links'
 import Notifications from './sections/Notifications/Notifications'
@@ -14,7 +16,7 @@ import Notifications from './sections/Notifications/Notifications'
 export default function ProfileSettings() {
   const {
     handleSubmit,
-    formState: { isValid },
+    formState: { isValid, errors },
     control,
   } = useForm<IProfileSettings>()
 
@@ -24,7 +26,7 @@ export default function ProfileSettings() {
     result,
     updateProfile,
   } = useUpdateProfile()
-
+  const { address } = useAccount()
   const onSubmit: SubmitHandler<IProfileSettings> = (data) => {
     updateProfile(data)
   }
@@ -64,6 +66,10 @@ export default function ProfileSettings() {
     )
   }, [error])
 
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
+
   return (
     <>
       {/* <BaseModal */}
@@ -74,9 +80,16 @@ export default function ProfileSettings() {
       {/*    setModalOpen(false) */}
       {/*  }} */}
       {/* /> */}
-      <PageLayout css={{ minHeight: '100vh' }} isHasSelectBlockChain>
+      <PageLayout css={{ minHeight: '100vh' }}>
+        <ReturnButton />
         <Form onSubmit={handleSubmit(onSubmit)}>
-
+          <StyledTitle>Profile settings</StyledTitle>
+          <GrayBgText YourWalletStyled>
+            <Txt primary1>
+              Your wallet:
+            </Txt>
+            <Txt body4>{address ?? 'Please connect the wallet'}</Txt>
+          </GrayBgText>
           <AppearanceSection<IProfileSettings>
             name={{
               control,
@@ -95,6 +108,14 @@ export default function ProfileSettings() {
             email={{
               control,
               name: 'email',
+            }}
+            emailNotification={{
+              control,
+              name: 'isEnableEmailNotification',
+            }}
+            pushNotification={{
+              control,
+              name: 'isEnablePushNotification',
             }}
           />
           <Links<IProfileSettings>
@@ -115,19 +136,17 @@ export default function ProfileSettings() {
               name: 'discord',
             }}
           />
-          <ButtonContainer>
-            <Button
-              primary
-              type='submit'
-              isDisabled={!isValid}
-              title={isValid ? undefined : 'Required fields must be filled'}
-              css={{
-                width: '320px',
-              }}
-            >
-              Update profile
-            </Button>
-          </ButtonContainer>
+          <Button
+            primary
+            type='submit'
+            isDisabled={!isValid}
+            title={isValid ? undefined : 'Required fields must be filled'}
+            css={{
+              width: '240px',
+            }}
+          >
+            Update profile
+          </Button>
         </Form>
       </PageLayout>
     </>

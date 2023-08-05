@@ -1,8 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FieldValues } from 'react-hook-form'
 
-import { ControlledInputProps, FormControl, Input } from '../../../../UIkit'
-import { StyledSectionContent, StyledTitleInput, StyledTitleSection } from '../../ProfileSettings.styles'
+import { TextStartInput } from '../../../../components/Form/TextStartInput/TextStartInput'
+import { ControlledInputProps, Input } from '../../../../UIkit'
+import { TextArea } from '../../../../UIkit/Form/TextArea/TextArea'
+import {
+  FormControlSettings,
+  LabelWithCounter,
+  LetterCounter,
+  StyledSectionContent,
+  StyledTitleInput,
+  StyledTitleSection,
+} from '../../ProfileSettings.styles'
 
 interface IAppearanceSection<T extends FieldValues> {
   name: ControlledInputProps<T>
@@ -11,33 +20,63 @@ interface IAppearanceSection<T extends FieldValues> {
 }
 
 const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanceSection<T>) => {
+  const [bioLength, setBioLength] = useState<number>(0)
+
+  useEffect(() => {
+    console.log(bio.control._formState.errors)
+  }, [bio.control._formState.errors])
+
   return (
     <StyledSectionContent>
       <StyledTitleSection>Appearance</StyledTitleSection>
-      <FormControl>
+      <FormControlSettings>
         <StyledTitleInput>Display name</StyledTitleInput>
         <Input<T>
           settings
           placeholder='Profile name'
           controlledInputProps={name}
         />
-      </FormControl>
-      <FormControl>
+      </FormControlSettings>
+      <FormControlSettings>
         <StyledTitleInput>URL</StyledTitleInput>
-        <Input<T>
-          settings
-          placeholder='Short URL'
+        <TextStartInput<T>
+          inputProps={{
+            placeholder: 'URL',
+          }}
           controlledInputProps={url}
+          textStart={'filemarket.xyz/profile/'}
         />
-      </FormControl>
-      <FormControl>
-        <StyledTitleInput>Bio</StyledTitleInput>
-        <Input<T>
+      </FormControlSettings>
+      <FormControlSettings>
+        <LabelWithCounter>
+          <StyledTitleInput>
+            Bio
+          </StyledTitleInput>
+          <LetterCounter isError={bioLength > 1000}>
+            {bioLength}
+            /1000
+          </LetterCounter>
+        </LabelWithCounter>
+        <TextArea<T>
           settings
           placeholder='Types something about you. For example, do you like Capybaras?, do you like Wednesday song?'
-          controlledInputProps={bio}
+          controlledInputProps={{
+            ...bio,
+          }}
+          style={{
+            height: '96px',
+          }}
+          {
+            ...bio.control.register(bio.name, {
+              onChange(event) {
+                setBioLength(event?.target?.value?.length ?? 0)
+              },
+              maxLength: 1000,
+            })
+          }
+          isError={bioLength > 1000}
         />
-      </FormControl>
+      </FormControlSettings>
     </StyledSectionContent>
   )
 }
