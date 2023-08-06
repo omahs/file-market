@@ -5,17 +5,7 @@ import { styled } from '../../../../../styles'
 import { Button, Txt } from '../../../../UIkit'
 
 const ReturnButtonStyle = styled(Button, {
-  borderRadius: '8px',
-  border: '1px solid #C9CBCF',
-  background: '#FFF',
-  boxShadow: '2px 2px 0px 0px rgba(35, 37, 40, 0.25)',
-  color: '#6B6F76',
-  display: 'flex',
-  gap: '8px',
-  padding: '8px 16px',
   position: 'fixed',
-  minWidth: '0',
-  height: 'inherit',
   '@md': {
     display: 'none',
   },
@@ -25,9 +15,11 @@ const ReturnButton = () => {
   const navigate = useNavigate()
 
   return (
-    <ReturnButtonStyle onPress={() => {
-      navigate('/profile')
-    }}
+    <ReturnButtonStyle
+      settings
+      onPress={() => {
+        navigate('/profile')
+      }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
