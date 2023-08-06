@@ -26,6 +26,7 @@ func EFTSubMessageToModel(m *EFTSubMessage) *models.EFTSubscriptionMessage {
 	if m.Token != nil {
 		token = TokenToModel(m.Token)
 	}
+
 	return &models.EFTSubscriptionMessage{
 		Event:      m.Event,
 		IsApproved: m.IsApproved,
