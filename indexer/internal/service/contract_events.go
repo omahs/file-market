@@ -646,10 +646,11 @@ func (s *service) onPasswordSetEvent(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:    "TransferPasswordSet",
-		Token:    token,
-		Transfer: transfer,
-		Order:    nil,
+		Event:      "TransferPasswordSet",
+		IsApproved: true,
+		Token:      token,
+		Transfer:   transfer,
+		Order:      nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -715,10 +716,11 @@ func (s *service) onTransferFinishEvent(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:    "TransferFinished",
-		Token:    token,
-		Transfer: transfer,
-		Order:    nil,
+		Event:      "TransferFinished",
+		IsApproved: true,
+		Token:      token,
+		Transfer:   transfer,
+		Order:      nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -762,10 +764,11 @@ func (s *service) onTransferFraudReportedEvent(
 	transfer.Statuses = append(transfer.Statuses, &transferStatus)
 
 	msg := domain.EFTSubMessage{
-		Event:    "TransferFraudReported",
-		Token:    token,
-		Transfer: transfer,
-		Order:    nil,
+		Event:      "TransferFraudReported",
+		IsApproved: true,
+		Token:      token,
+		Transfer:   transfer,
+		Order:      nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -843,10 +846,11 @@ func (s *service) onTransferFraudDecidedEvent(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:    "TransferFraudDecided",
-		Token:    token,
-		Transfer: transfer,
-		Order:    nil,
+		Event:      "TransferFraudDecided",
+		IsApproved: true,
+		Token:      token,
+		Transfer:   transfer,
+		Order:      nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -899,10 +903,11 @@ func (s *service) onTransferCancel(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:    "TransferCancellation",
-		Token:    token,
-		Transfer: transfer,
-		Order:    nil,
+		Event:      "TransferCancellation",
+		IsApproved: true,
+		Token:      token,
+		Transfer:   transfer,
+		Order:      nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 

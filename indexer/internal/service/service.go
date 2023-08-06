@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/service/subscription"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
 	"io"
 	"log"
 	"math/big"
@@ -60,6 +60,7 @@ type Service interface {
 	Currency
 	Auth
 	Moderation
+	Sub
 	ListenBlockchain() error
 	Shutdown()
 
@@ -131,12 +132,17 @@ type Moderation interface {
 	ReportToken(ctx context.Context, userAddress common.Address, req *models.ReportTokenRequest) *models.ErrorResponse
 }
 
+type Sub interface {
+	AddEFTSubscription(ctx context.Context, w http.ResponseWriter, r *http.Request, req *models.EFTSubscriptionRequest)
+	AddBlockNumberSubscription(w http.ResponseWriter, r *http.Request)
+}
+
 type service struct {
 	repository          repository.Repository
+	wsPool              ws.Pool
 	healthNotifier      healthnotifier.HealthNotifier
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
-	subscriptionService *subscription.Service
 	jwtManager          jwt.TokenManager
 	sequencer           *sequencer.Sequencer
 	accessTokenAddress  common.Address
@@ -151,8 +157,8 @@ type service struct {
 
 func NewService(
 	repo repository.Repository,
+	wsPool ws.Pool,
 	ethClient ethclient2.EthClient,
-	subscriptionService *subscription.Service,
 	sequencer *sequencer.Sequencer,
 	jwtManager jwt.TokenManager,
 	healthNotifier healthnotifier.HealthNotifier,
@@ -173,7 +179,7 @@ func NewService(
 
 	return &service{
 		ethClient:           ethClient,
-		subscriptionService: subscriptionService,
+		wsPool:              wsPool,
 		repository:          repo,
 		healthNotifier:      healthNotifier,
 		sequencer:           sequencer,
