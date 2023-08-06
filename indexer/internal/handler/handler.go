@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/service/subscription"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"net/http"
@@ -21,20 +20,17 @@ type Handler interface {
 }
 
 type handler struct {
-	cfg                 *config.HandlerConfig
-	service             service.Service
-	subscriptionService *subscription.Service
+	cfg     *config.HandlerConfig
+	service service.Service
 }
 
 func NewHandler(
 	cfg *config.HandlerConfig,
 	service service.Service,
-	subscriptionService *subscription.Service,
 ) Handler {
 	return &handler{
-		cfg:                 cfg,
-		service:             service,
-		subscriptionService: subscriptionService,
+		cfg:     cfg,
+		service: service,
 	}
 }
 

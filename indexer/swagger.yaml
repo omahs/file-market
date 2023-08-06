@@ -957,6 +957,17 @@ paths:
         default:
           description: Ошибка
 definitions:
+  EFTSubscriptionRequest:
+    type: object
+    description: Запрос на подписку на EFT
+    properties:
+      collectionAddress:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
   EFTSubscriptionMessage:
     type: object
     description: Сообщение об обновлении EFT
