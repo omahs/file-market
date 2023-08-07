@@ -152,9 +152,7 @@ export const CreateEFTSection: React.FC = observer(() => {
         />,
       )
     } else if (nftResult) {
-      setTimeout(() => {
-        subscribe({ collectionAddress: nftResult.receipt.to, tokenId: nftResult.tokenId }, currentBlockChainStore.chain?.name)
-      }, 2000)
+      subscribe({ collectionAddress: nftResult.receipt.to, tokenId: nftResult.tokenId }, currentBlockChainStore.chain?.name)
       // setModalOpen(true)
       // setModalBody(
       //   <SuccessNavBody

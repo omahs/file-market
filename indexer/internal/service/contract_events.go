@@ -589,12 +589,19 @@ func (s *service) onPublicKeySetEvent(
 		return err
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
 		Event:    "TransferPublicKeySet",
 		Token:    token,
 		Transfer: transfer,
-		Order:    nil,
+		Order:    order,
 	}
+
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	return nil
@@ -646,11 +653,10 @@ func (s *service) onPasswordSetEvent(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:      "TransferPasswordSet",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferPasswordSet",
+		Token:    token,
+		Transfer: transfer,
+		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -716,11 +722,10 @@ func (s *service) onTransferFinishEvent(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:      "TransferFinished",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferFinished",
+		Token:    token,
+		Transfer: transfer,
+		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -764,11 +769,10 @@ func (s *service) onTransferFraudReportedEvent(
 	transfer.Statuses = append(transfer.Statuses, &transferStatus)
 
 	msg := domain.EFTSubMessage{
-		Event:      "TransferFraudReported",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferFraudReported",
+		Token:    token,
+		Transfer: transfer,
+		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -846,11 +850,10 @@ func (s *service) onTransferFraudDecidedEvent(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:      "TransferFraudDecided",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferFraudDecided",
+		Token:    token,
+		Transfer: transfer,
+		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -903,11 +906,10 @@ func (s *service) onTransferCancel(
 	}
 
 	msg := domain.EFTSubMessage{
-		Event:      "TransferCancellation",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferCancellation",
+		Token:    token,
+		Transfer: transfer,
+		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 

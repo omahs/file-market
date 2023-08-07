@@ -4,14 +4,12 @@ import React, { Fragment, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
-import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useSubscribeToEft } from '../../hooks/useSubscribeToEft'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
 import { useIsBuyer, useIsOwner } from '../../processing'
-import { makeTokenFullId } from '../../processing/utils/id'
 import { PageLayout } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { Params } from '../../utils/router'
@@ -115,21 +113,10 @@ const NFTPage: React.FC = observer(() => {
   useSubscribeToEft()
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId, chainName)
-  const currentBlockChainStore = useCurrentBlockChain()
   const tokenStore = useTokenStore(collectionAddress, tokenId, chainName)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
-  const isNetworkIncorrect = useMemo(() => {
-    return currentBlockChainStore.chain?.name !== chainName
-  }, [currentBlockChainStore.chain, chainName])
-  const tokenFullId = useMemo(
-    () => makeTokenFullId(collectionAddress, tokenId),
-    [collectionAddress, tokenId],
-  )
-  const { isOwner } = useIsOwner({
-    ...tokenFullId,
-    isDisable: isNetworkIncorrect,
-  })
+  const { isOwner } = useIsOwner(tokenStore.data)
   const isBuyer = useIsBuyer(transferStore.data)
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data,

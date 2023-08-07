@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
@@ -46,16 +47,16 @@ func (c *conn) listen() {
 }
 
 func (c *conn) handleTextMessage(data []byte) {
-	var s models.EFTSubscriptionRequest
-	if err := json.Unmarshal(data, &s); err != nil {
+	var req models.EFTSubscriptionRequest
+	if err := json.Unmarshal(data, &req); err != nil {
 		return
 	}
-	if err := s.Validate(strfmt.Default); err != nil {
+	if err := req.Validate(strfmt.Default); err != nil {
 		log.Println("failed to validate ws req")
 		return
 	}
-	address := common.HexToAddress(s.CollectionAddress)
-	tokenId, ok := big.NewInt(0).SetString(s.TokenID, 10)
+	address := common.HexToAddress(req.CollectionAddress)
+	tokenId, ok := big.NewInt(0).SetString(req.TokenID, 10)
 	if !ok {
 		log.Println("failed to validate ws req")
 		return
@@ -64,7 +65,9 @@ func (c *conn) handleTextMessage(data []byte) {
 	c.topic = fmt.Sprintf("%s:%s", strings.ToLower(address.String()), tokenId.String())
 	c.subLock.Unlock()
 
-	c.sendJson(data)
+	resp := c.pool.OnConnectResponse(context.Background(), req)
+
+	c.sendJson(resp)
 }
 
 func (c *conn) subbedOnTopic(topic string) bool {

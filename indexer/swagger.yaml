@@ -975,9 +975,6 @@ definitions:
       event:
         type: string
         description: Имя event'а
-      isApproved:
-        type: boolean
-        x-omitempty: false
       token:
         $ref: '#/definitions/Token'
       transfer:

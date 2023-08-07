@@ -3,11 +3,10 @@ package domain
 import "github.com/mark3d-xyz/mark3d/indexer/models"
 
 type EFTSubMessage struct {
-	Event      string
-	IsApproved bool
-	Token      *Token
-	Transfer   *Transfer
-	Order      *Order
+	Event    string
+	Token    *Token
+	Transfer *Transfer
+	Order    *Order
 }
 
 func EFTSubMessageToModel(m *EFTSubMessage) *models.EFTSubscriptionMessage {
@@ -28,10 +27,9 @@ func EFTSubMessageToModel(m *EFTSubMessage) *models.EFTSubscriptionMessage {
 	}
 
 	return &models.EFTSubscriptionMessage{
-		Event:      m.Event,
-		IsApproved: m.IsApproved,
-		Order:      order,
-		Token:      token,
-		Transfer:   transfer,
+		Event:    m.Event,
+		Order:    order,
+		Token:    token,
+		Transfer: transfer,
 	}
 }
