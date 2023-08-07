@@ -152,11 +152,13 @@ export const CreateEFTSection: React.FC = observer(() => {
         />,
       )
     }
-    subscribe({ collectionAddress: nftResult.receipt.to, tokenId: nftResult.tokenId }, currentBlockChainStore.chain?.name)
+    if (nftResult) {
+      subscribe({ collectionAddress: nftResult?.receipt.to, tokenId: nftResult?.tokenId }, currentBlockChainStore.chain?.name)
+    }
   }, [nftError, isNftLoading])
 
   useEffect(() => {
-    if (transferStore.isCanRedirectMint) {
+    if (transferStore.isCanRedirectMint && nftResult) {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
@@ -169,7 +171,7 @@ export const CreateEFTSection: React.FC = observer(() => {
       )
       transferStore.setIsCanRedirectMint(false)
     }
-  }, [transferStore.isCanRedirectMint])
+  }, [transferStore.isCanRedirectMint, nftResult])
 
   const subcategoryOptions: ComboBoxOption[] = useMemo(() => {
     return subcategory[chosenCategory?.title as category]
