@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useAccount } from 'wagmi'
 
 import { Transfer } from '../../../swagger/Api'
 import { useStores } from '../../hooks'
@@ -21,44 +22,27 @@ export interface IUseWatchStatusesTransfer {
   isApprovedExchange?: boolean
   isBuyer?: boolean
   runIsApprovedRefetch: () => void
-  runIsOwnerRefetch: () => void
 }
 
 export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
-  const { transferStore, orderStore } = useStores()
-  const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner({
-    ...tokenFullId,
-    isDisable: isNetworkIncorrect,
-  })
+  const { transferStore, orderStore, tokenStore } = useStores()
+  const { isConnected } = useAccount()
+  const { isOwner } = useIsOwner(tokenStore.data)
   const isBuyer = useIsBuyer(transferStore.data)
-
   const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange({
     ...tokenFullId,
-    isDisable: isNetworkIncorrect,
+    isDisable: isNetworkIncorrect || isConnected,
   })
 
-  const { flush: flushIsOwnerRefetch, run: runIsOwnerRefetch } = useIntervalAsync(() => {
-    return refetchIsOwner()
-  }, 3000)
   const { flush: flushIsApprovedRefetch, run: runIsApprovedRefetch } = useIntervalAsync(() => {
     return refetchIsApproved()
-  }, 3000)
-  const { flush: flushReloadOrder, run: runReloadOrder } = useIntervalAsync(() => {
-    return new Promise(() => {
-      console.log(orderStore.data)
-      orderStore.reload()
-    })
   }, 3000)
   useEffect(() => {
     transferStore.setOnTransferFinished(() => {
       runIsApprovedRefetch()
-      runIsOwnerRefetch()
     })
     transferStore.setOnTransferPublicKeySet(() => {
       refetchIsApproved()
-    })
-    transferStore.setOnTransferDrafted(() => {
-      runReloadOrder()
     })
     transferStore.setOnTransferCancel(() => {
       orderStore.setData(undefined)
@@ -66,13 +50,8 @@ export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: us
   }, [])
 
   useEffect(() => {
-    flushIsOwnerRefetch()
-  }, [isOwner])
-
-  useEffect(() => {
     console.log('STOP')
     console.log(orderStore.data)
-    flushReloadOrder()
   }, [orderStore.data])
 
   useEffect(() => {
@@ -85,13 +64,12 @@ export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: us
   }, [transferStore.isWaitingForEvent, transferStore.isWaitingForReciept])
 
   const error = useMemo(() => {
-    return errorIsOwner ?? (isApprovedExchangeError)
-  }, [errorIsOwner, isApprovedExchangeError])
+    return isApprovedExchangeError
+  }, [isApprovedExchangeError])
 
   return {
     isLoading,
     runIsApprovedRefetch,
-    runIsOwnerRefetch,
     isOwner,
     isBuyer,
     error,

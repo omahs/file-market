@@ -1,16 +1,17 @@
 import { utils } from 'ethers'
 import { useAccount } from 'wagmi'
 
-import { TokenFullId } from '../types'
-import { useOwnerOfNFT } from './useOwnerOfNFT'
+import { Token } from '../../../swagger/Api'
 
-export function useIsOwner(tokenFullId: Partial<TokenFullId> & { isDisable?: boolean }) {
-  const { data: ownerAddress, ...statuses } = useOwnerOfNFT(tokenFullId)
+export function useIsOwner(tokenData: Token | undefined) {
   const { address } = useAccount()
-  const isOwner = ownerAddress && address && utils.getAddress(ownerAddress) === utils.getAddress(address)
+  if (address && tokenData?.owner) {
+    return {
+      isOwner: utils.getAddress(tokenData?.owner) === utils.getAddress(address),
+    }
+  }
 
   return {
-    ...statuses,
-    isOwner,
+    isOwner: false,
   }
 }
