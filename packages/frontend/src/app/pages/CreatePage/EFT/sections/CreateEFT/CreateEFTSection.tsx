@@ -151,8 +151,7 @@ export const CreateEFTSection: React.FC = observer(() => {
           }}
         />,
       )
-    }
-    if (nftResult) {
+    } else if (nftResult) {
       subscribe({ collectionAddress: nftResult?.receipt.to, tokenId: nftResult?.tokenId }, currentBlockChainStore.chain?.name)
     }
   }, [nftError, isNftLoading])
