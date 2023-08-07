@@ -51,7 +51,7 @@ func (s *service) SendEFTSubscriptionUpdate(collectionAddress common.Address, to
 	}
 
 	topic := fmt.Sprintf("%s:%s", strings.ToLower(collectionAddress.String()), tokenId.String())
-	s.wsPool.SendTopicSub(topic, msg)
+	s.wsPool.SendTopicSub(topic, domain.EFTSubMessageToModel(msg))
 }
 
 func (s *service) SendBlockNumberSubscriptionUpdate(number *big.Int) {

@@ -28,10 +28,9 @@ func EFTSubMessageToModel(m *EFTSubMessage) *models.EFTSubscriptionMessage {
 	}
 
 	return &models.EFTSubscriptionMessage{
-		Event:      m.Event,
-		IsApproved: m.IsApproved,
-		Order:      order,
-		Token:      token,
-		Transfer:   transfer,
+		Event:    m.Event,
+		Order:    order,
+		Token:    token,
+		Transfer: transfer,
 	}
 }
