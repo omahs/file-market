@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"log"
 	"math/big"
 
@@ -192,4 +193,34 @@ func (s *service) GetFileBunniesTokensForAutosell(ctx context.Context) ([]Autose
 	}
 
 	return tokensInfo, nil
+}
+
+func (s *service) getTokenCurrentState(ctx context.Context, address common.Address, tokenId *big.Int) (*domain.Token, *domain.Transfer, *domain.Order, error) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		logger.Error("failed to begin db tx", err, nil)
+		return nil, nil, nil, err
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	token, err := s.repository.GetToken(ctx, tx, address, tokenId)
+	if err != nil {
+		logger.Error("failed to get token", err, nil)
+		return nil, nil, nil, err
+	}
+	order, err := s.repository.GetActiveOrder(ctx, tx, address, tokenId)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		logger.Error("failed to get active order", err, nil)
+	}
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, address, tokenId)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		logger.Error("failed to get active transfer", err, nil)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit db tx", err, nil)
+		return nil, nil, nil, err
+	}
+
+	return token, transfer, order, nil
 }
