@@ -589,12 +589,19 @@ func (s *service) onPublicKeySetEvent(
 		return err
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
 		Event:    "TransferPublicKeySet",
 		Token:    token,
 		Transfer: transfer,
-		Order:    nil,
+		Order:    order,
 	}
+
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	return nil

@@ -64,7 +64,7 @@ func (c *conn) handleTextMessage(data []byte) {
 	c.topic = fmt.Sprintf("%s:%s", strings.ToLower(address.String()), tokenId.String())
 	c.subLock.Unlock()
 
-	c.sendJson(data)
+	c.sendJson(s)
 }
 
 func (c *conn) subbedOnTopic(topic string) bool {
