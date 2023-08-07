@@ -724,7 +724,7 @@ func (s *service) onTransferFinishEvent(
 	msg := domain.EFTSubMessage{
 		Event:    "TransferFinished",
 		Token:    token,
-		Transfer: transfer,
+		Transfer: nil,
 		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
@@ -908,7 +908,7 @@ func (s *service) onTransferCancel(
 	msg := domain.EFTSubMessage{
 		Event:    "TransferCancellation",
 		Token:    token,
-		Transfer: transfer,
+		Transfer: nil,
 		Order:    nil,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
