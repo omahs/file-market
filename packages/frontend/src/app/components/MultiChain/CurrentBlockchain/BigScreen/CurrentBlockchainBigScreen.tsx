@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 
-import { useAutorunEffect } from '../../../../hooks/useAutoRunEffect'
 import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
@@ -14,10 +13,6 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork, isLoading, error } = useChangeNetwork()
-
-  useAutorunEffect(() => {
-    console.log(currentChainStore.chainId)
-  }, [currentChainStore.chainId])
 
   return (
     <CurrentBlockchainStyle isLight={isLight}>
