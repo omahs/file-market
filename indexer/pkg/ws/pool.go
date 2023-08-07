@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gorilla/websocket"
@@ -19,9 +20,13 @@ type Pool interface {
 	SendTopicSub(topic string, data any)
 	SendUserSub(id int64, data any)
 	Shutdown()
+	SetOnConnectResponse(fn func(context.Context, any) any)
+	GetOnConnectResponse() func(context.Context, any) any
 }
 
 type wsPool struct {
+	OnConnectResponse func(context.Context, any) any
+
 	upgrader *websocket.Upgrader
 	pool     sameRolePool
 }
@@ -43,8 +48,20 @@ func NewWsPool() Pool {
 			lock:  &sync.RWMutex{},
 		},
 		upgrader: u,
+		OnConnectResponse: func(ctx context.Context, a any) any {
+			logger.Error("OnConnectResponse was not set", nil, nil)
+			return errors.New("internal error")
+		},
 	}
 	return res
+}
+
+func (p *wsPool) SetOnConnectResponse(fn func(context.Context, any) any) {
+	p.OnConnectResponse = fn
+}
+
+func (p *wsPool) GetOnConnectResponse() func(context.Context, any) any {
+	return p.OnConnectResponse
 }
 
 func (p *wsPool) AddConnection(w http.ResponseWriter, r *http.Request, topic string, initMsg any) error {

@@ -177,7 +177,7 @@ func NewService(
 		return nil, err
 	}
 
-	return &service{
+	s := &service{
 		ethClient:           ethClient,
 		wsPool:              wsPool,
 		repository:          repo,
@@ -193,7 +193,11 @@ func NewService(
 		commonSigner:        commonSigner,
 		uncommonSigner:      uncommonSigner,
 		closeCh:             make(chan struct{}),
-	}, nil
+	}
+
+	s.wsPool.SetOnConnectResponse(s.EFTSubOnConnectionResponse)
+
+	return s, nil
 }
 
 func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse, *models.ErrorResponse) {
