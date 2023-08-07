@@ -9,7 +9,6 @@ import BaseModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
-  SuccessNavBody,
 } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../../../../components/Uploaders/NftLoader/NftLoader'
@@ -18,6 +17,7 @@ import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../../../../hooks/useMediaMui'
 import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
+import { useSubscribeToEft } from '../../../../../hooks/useSubscribeToEft'
 import {
   Button,
   ComboBoxOption,
@@ -90,7 +90,7 @@ export const CreateEFTSection: React.FC = observer(() => {
   const currentBlockChainStore = useCurrentBlockChain()
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
-
+  const { subscribe } = useSubscribeToEft({ isDisableListener: true })
   const {
     createNft,
     error: nftError,
@@ -152,16 +152,19 @@ export const CreateEFTSection: React.FC = observer(() => {
         />,
       )
     } else if (nftResult) {
-      setModalOpen(true)
-      setModalBody(
-        <SuccessNavBody
-          buttonText='View EFT'
-          link={`/collection/${currentBlockChainStore.chain?.name}/${nftResult.receipt.to}/${nftResult.tokenId}`}
-          onPress={() => {
-            setModalOpen(false)
-          }}
-        />,
-      )
+      setTimeout(() => {
+        subscribe({ collectionAddress: nftResult.receipt.to, tokenId: nftResult.tokenId }, currentBlockChainStore.chain?.name)
+      }, 2000)
+      // setModalOpen(true)
+      // setModalBody(
+      //   <SuccessNavBody
+      //     buttonText='View EFT'
+      //     link={`/collection/${currentBlockChainStore.chain?.name}/${nftResult.receipt.to}/${nftResult.tokenId}`}
+      //     onPress={() => {
+      //       setModalOpen(false)
+      //     }}
+      //   />,
+      // )
     }
   }, [nftError, isNftLoading, nftResult])
 

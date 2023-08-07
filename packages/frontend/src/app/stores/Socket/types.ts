@@ -11,6 +11,7 @@ export interface ISocketConnect {
   socket?: WebSocket
   type?: ConnectionType
   isConnected?: boolean
+  chainName?: string
 }
 
 export interface sendQueueType {
