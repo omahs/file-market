@@ -75,5 +75,6 @@ export class OrderStore implements IStoreRequester,
 
   setData(data: Order | undefined) {
     this.data = data
+    console.log(data)
   }
 }

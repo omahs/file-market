@@ -57,7 +57,10 @@ export class SocketStore {
   private readonly subscribe = <T, M>({ params, type, url, onSubscribeMessage, chainName }: ISubscribe<T, M>) => {
     let socket: WebSocket
     const socketConnect = this.socketConnects[this.findIndexSocket({ type, chainName })]
-    if (!socketConnect) {
+    if (socketConnect && socketConnect.socket?.readyState === WebSocket.OPEN) {
+      socketConnect.socket?.send(JSON.stringify(params))
+      this.socketConnects[this.findIndexSocket({ type })].isConnected = true
+    } else {
       socket = this.createConnection(url)
       socket.onopen = function(this) {
         this.send(JSON.stringify(params))
@@ -66,9 +69,6 @@ export class SocketStore {
         onSubscribeMessage(event, chainName)
       }
       this.socketConnects = [...this.socketConnects, (this.createISocketConnect({ socket, type, chainName }))]
-    } else {
-      socketConnect.socket?.send(JSON.stringify(params))
-      this.socketConnects[this.findIndexSocket({ type })].isConnected = true
     }
   }
 
@@ -82,15 +82,17 @@ export class SocketStore {
     })
   }
 
-  private readonly onMessageSubscribeToEft = (event: MessageEvent<EFTSubscriptionMessage>, chainName?: string) => {
-    const transfer = event.data.transfer
-    const order = event.data.order
+  private readonly onMessageSubscribeToEft = (event: MessageEvent<string>, chainName?: string) => {
+    const data = JSON.parse(event.data) as EFTSubscriptionMessage
+    const transfer = data.transfer
+    const order = data.order
     const socketConnect = this.socketConnects[this.findIndexSocket({ type: ConnectionType.Eft, chainName })]
-    if (transfer && socketConnect?.isConnected) {
+    console.log(socketConnect)
+    console.log(order)
+    if (socketConnect.isConnected) {
       this.transferStore.setData(transfer)
-    }
-    if (order && socketConnect?.isConnected) {
       this.orderStore.setData(order)
+      if (data.event === 'Transfer') this.transferStore.setIsCanRedirectMint(true)
     }
   }
 
@@ -109,7 +111,7 @@ export class SocketStore {
     this.socketConnects.forEach(item => {
       if (item.chainName !== chainName && item.type === ConnectionType.Eft) this.disconnect({ type: item.type, chainName: item.chainName })
     })
-    this.subscribe<EFTSubscriptionRequest, EFTSubscriptionMessage>({
+    this.subscribe<EFTSubscriptionRequest, string>({
       params,
       url: `${wsUrl}${url[ConnectionType.Eft]}/${params.collectionAddress}/${params.tokenId}`,
       type: ConnectionType.Eft,

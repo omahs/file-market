@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi'
 import BaseModal, {
   ErrorBody,
   extractMessageFromError,
-  InProgressBody,
+  InProgressBody, SuccessNavBody,
 } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../../../../components/Uploaders/NftLoader/NftLoader'
@@ -85,7 +85,7 @@ export const CreateEFTSection: React.FC = observer(() => {
     isLoading: isCollectionLoading,
   } = useCollectionAndTokenListStore(address)
   const publicCollectionStore = usePublicCollectionStore()
-
+  const { transferStore } = useStores()
   const { collectionAndTokenList } = useStores()
   const currentBlockChainStore = useCurrentBlockChain()
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
@@ -151,20 +151,25 @@ export const CreateEFTSection: React.FC = observer(() => {
           }}
         />,
       )
-    } else if (nftResult) {
-      subscribe({ collectionAddress: nftResult.receipt.to, tokenId: nftResult.tokenId }, currentBlockChainStore.chain?.name)
-      // setModalOpen(true)
-      // setModalBody(
-      //   <SuccessNavBody
-      //     buttonText='View EFT'
-      //     link={`/collection/${currentBlockChainStore.chain?.name}/${nftResult.receipt.to}/${nftResult.tokenId}`}
-      //     onPress={() => {
-      //       setModalOpen(false)
-      //     }}
-      //   />,
-      // )
     }
-  }, [nftError, isNftLoading, nftResult])
+    subscribe({ collectionAddress: nftResult.receipt.to, tokenId: nftResult.tokenId }, currentBlockChainStore.chain?.name)
+  }, [nftError, isNftLoading])
+
+  useEffect(() => {
+    if (transferStore.isCanRedirectMint) {
+      setModalOpen(true)
+      setModalBody(
+        <SuccessNavBody
+          buttonText='View EFT'
+          link={`/collection/${currentBlockChainStore.chain?.name}/${nftResult.receipt.to}/${nftResult.tokenId}`}
+          onPress={() => {
+            setModalOpen(false)
+          }}
+        />,
+      )
+      transferStore.setIsCanRedirectMint(false)
+    }
+  }, [transferStore.isCanRedirectMint])
 
   const subcategoryOptions: ComboBoxOption[] = useMemo(() => {
     return subcategory[chosenCategory?.title as category]

@@ -9,7 +9,7 @@ interface IUseSubscribeToEft {
   isDisableListener?: boolean
 }
 
-export const useSubscribeToEft = ({ isDisableListener }: IUseSubscribeToEft) => {
+export const useSubscribeToEft = (props?: IUseSubscribeToEft) => {
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const { socketStore } = useStores()
 
@@ -18,8 +18,8 @@ export const useSubscribeToEft = ({ isDisableListener }: IUseSubscribeToEft) => 
   }
 
   useEffect(() => {
-    if (!isDisableListener) socketStore.subscribeToEft({ collectionAddress, tokenId }, chainName)
-  }, [isDisableListener])
+    if (!props?.isDisableListener) socketStore.subscribeToEft({ collectionAddress, tokenId }, chainName)
+  }, [props?.isDisableListener])
 
   return {
     subscribe,

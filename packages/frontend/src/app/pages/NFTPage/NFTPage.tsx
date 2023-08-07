@@ -8,7 +8,7 @@ import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useSubscribeToEft } from '../../hooks/useSubscribeToEft'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
-import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
+import { useTransferStore } from '../../hooks/useTransferStore'
 import { useIsBuyer, useIsOwner } from '../../processing'
 import { PageLayout } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -112,7 +112,7 @@ const ControlStickyBlock = styled('div', {
 const NFTPage: React.FC = observer(() => {
   useSubscribeToEft()
   const { collectionAddress, tokenId, chainName } = useParams<Params>()
-  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId, chainName)
+  const transferStore = useTransferStore(collectionAddress, tokenId, chainName)
   const tokenStore = useTokenStore(collectionAddress, tokenId, chainName)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)

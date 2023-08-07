@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import { Transfer } from '../../../swagger/Api'
 import { useStores } from '../../hooks'
@@ -25,13 +24,12 @@ export interface IUseWatchStatusesTransfer {
 }
 
 export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
-  const { transferStore, orderStore, tokenStore } = useStores()
-  const { isConnected } = useAccount()
+  const { transferStore, tokenStore } = useStores()
   const { isOwner } = useIsOwner(tokenStore.data)
   const isBuyer = useIsBuyer(transferStore.data)
   const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange({
     ...tokenFullId,
-    isDisable: isNetworkIncorrect || isConnected,
+    isDisable: isNetworkIncorrect,
   })
 
   const { flush: flushIsApprovedRefetch, run: runIsApprovedRefetch } = useIntervalAsync(() => {
@@ -45,15 +43,7 @@ export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: us
     transferStore.setOnTransferPublicKeySet(() => {
       refetchIsApproved()
     })
-    transferStore.setOnTransferCancel(() => {
-      orderStore.setData(undefined)
-    })
   }, [])
-
-  useEffect(() => {
-    console.log('STOP')
-    console.log(orderStore.data)
-  }, [orderStore.data])
 
   useEffect(() => {
     flushIsApprovedRefetch()

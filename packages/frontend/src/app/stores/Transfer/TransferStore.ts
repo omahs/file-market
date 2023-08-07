@@ -38,6 +38,8 @@ export class TransferStore implements IStoreRequester,
 
   isCustomApi: boolean = true
 
+  isCanRedirectMint: boolean = false
+
   onTransferFinishedCall?: () => void
   onTransferPublicKeySetCall?: () => void
   onTransferDraftCall?: () => void
@@ -153,8 +155,12 @@ export class TransferStore implements IStoreRequester,
   setBlockTransfer = (blockNumber?: number) => {
     if (this.data?.block) {
       this.data.block.number = blockNumber
+      this.blockStore.setReceiptBlock(BigNumber.from(blockNumber))
     }
-    this.blockStore.setReceiptBlock(BigNumber.from(blockNumber))
+  }
+
+  setIsCanRedirectMint = (isCanRedirectMint: boolean) => {
+    this.isCanRedirectMint = isCanRedirectMint
   }
 
   setData = (transfer?: Transfer) => {
