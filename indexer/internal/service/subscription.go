@@ -48,16 +48,16 @@ func (s *service) EFTSubOnConnectionResponse(ctx context.Context, req any) any {
 		logger.Error("failed to get token current state", err, nil)
 	}
 
-	var msg *domain.EFTSubMessage
+	var msg *models.EFTSubscriptionMessage
 	if token != nil {
-		msg = &domain.EFTSubMessage{
+		m := &domain.EFTSubMessage{
 			Event:    "",
 			Token:    token,
 			Transfer: transfer,
 			Order:    order,
 		}
 
-		if msg.Order != nil {
+		if m.Order != nil {
 			currency := "FIL"
 			if strings.Contains(s.cfg.Mode, "era") {
 				currency = "ETH"
@@ -68,11 +68,13 @@ func (s *service) EFTSubOnConnectionResponse(ctx context.Context, req any) any {
 				rate = 0
 			}
 
-			msg.Order.PriceUsd = currencyconversion.Convert(rate, msg.Order.Price)
+			m.Order.PriceUsd = currencyconversion.Convert(rate, m.Order.Price)
 		}
+
+		msg = domain.EFTSubMessageToModel(m)
 	}
 
-	return domain.EFTSubMessageToModel(msg)
+	return msg
 }
 
 func (s *service) SendEFTSubscriptionUpdate(collectionAddress common.Address, tokenId *big.Int, msg *domain.EFTSubMessage) {
