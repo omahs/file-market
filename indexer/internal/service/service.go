@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
 	"io"
 	"log"
 	"math/big"
@@ -60,6 +60,7 @@ type Service interface {
 	Currency
 	Auth
 	Moderation
+	Sub
 	ListenBlockchain() error
 	Shutdown()
 
@@ -131,28 +132,33 @@ type Moderation interface {
 	ReportToken(ctx context.Context, userAddress common.Address, req *models.ReportTokenRequest) *models.ErrorResponse
 }
 
+type Sub interface {
+	AddEFTSubscription(ctx context.Context, w http.ResponseWriter, r *http.Request, req *models.EFTSubscriptionRequest)
+	AddBlockNumberSubscription(w http.ResponseWriter, r *http.Request)
+}
+
 type service struct {
-	repository                  repository.Repository
-	healthNotifier              healthnotifier.HealthNotifier
-	cfg                         *config.ServiceConfig
-	ethClient                   ethclient2.EthClient
-	realTimeNotificationService *realtime_notification.RealTimeNotificationService
-	jwtManager                  jwt.TokenManager
-	sequencer                   *sequencer.Sequencer
-	accessTokenAddress          common.Address
-	accessTokenInstance         *access_token.Mark3dAccessTokenV2
-	exchangeAddress             common.Address
-	exchangeInstance            *exchange.FilemarketExchangeV2
-	currencyConverter           currencyconversion.Provider
-	commonSigner                *ethsigner.EthSigner
-	uncommonSigner              *ethsigner.EthSigner
-	closeCh                     chan struct{}
+	repository          repository.Repository
+	wsPool              ws.Pool
+	healthNotifier      healthnotifier.HealthNotifier
+	cfg                 *config.ServiceConfig
+	ethClient           ethclient2.EthClient
+	jwtManager          jwt.TokenManager
+	sequencer           *sequencer.Sequencer
+	accessTokenAddress  common.Address
+	accessTokenInstance *access_token.Mark3dAccessTokenV2
+	exchangeAddress     common.Address
+	exchangeInstance    *exchange.FilemarketExchangeV2
+	currencyConverter   currencyconversion.Provider
+	commonSigner        *ethsigner.EthSigner
+	uncommonSigner      *ethsigner.EthSigner
+	closeCh             chan struct{}
 }
 
 func NewService(
 	repo repository.Repository,
+	wsPool ws.Pool,
 	ethClient ethclient2.EthClient,
-	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
 	sequencer *sequencer.Sequencer,
 	jwtManager jwt.TokenManager,
 	healthNotifier healthnotifier.HealthNotifier,
@@ -171,23 +177,27 @@ func NewService(
 		return nil, err
 	}
 
-	return &service{
-		ethClient:                   ethClient,
-		realTimeNotificationService: realTimeNotificationService,
-		repository:                  repo,
-		healthNotifier:              healthNotifier,
-		sequencer:                   sequencer,
-		cfg:                         cfg,
-		accessTokenAddress:          cfg.AccessTokenAddress,
-		accessTokenInstance:         accessTokenInstance,
-		exchangeAddress:             cfg.ExchangeAddress,
-		exchangeInstance:            exchangeInstance,
-		jwtManager:                  jwtManager,
-		currencyConverter:           currencyConverter,
-		commonSigner:                commonSigner,
-		uncommonSigner:              uncommonSigner,
-		closeCh:                     make(chan struct{}),
-	}, nil
+	s := &service{
+		ethClient:           ethClient,
+		wsPool:              wsPool,
+		repository:          repo,
+		healthNotifier:      healthNotifier,
+		sequencer:           sequencer,
+		cfg:                 cfg,
+		accessTokenAddress:  cfg.AccessTokenAddress,
+		accessTokenInstance: accessTokenInstance,
+		exchangeAddress:     cfg.ExchangeAddress,
+		exchangeInstance:    exchangeInstance,
+		jwtManager:          jwtManager,
+		currencyConverter:   currencyConverter,
+		commonSigner:        commonSigner,
+		uncommonSigner:      uncommonSigner,
+		closeCh:             make(chan struct{}),
+	}
+
+	s.wsPool.SetOnConnectResponse(s.EFTSubOnConnectionResponse)
+
+	return s, nil
 }
 
 func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse, *models.ErrorResponse) {
@@ -1435,12 +1445,7 @@ func (s *service) ListenBlockchain() error {
 				}
 			}
 			if lastBlock.Cmp(current) != 0 {
-				// broadcast last block number to subscribers
-				lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": current.Int64() - 1}) // 1 conformation
-				if err != nil {
-					logger.Warnf("failed to marshal last block number for broadcast: %v", err)
-				}
-				s.realTimeNotificationService.BroadcastMessage(realtime_notification.LastBlockNumberTopic, lastBlockMessage)
+				s.SendBlockNumberSubscriptionUpdate(current)
 			}
 			lastBlock = current
 		case <-s.closeCh:

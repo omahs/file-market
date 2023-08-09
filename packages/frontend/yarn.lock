@@ -13603,7 +13603,6 @@ __metadata:
     eslint-plugin-unused-imports: ^2.0.0
     ethers: ^5
     file-saver: ^2.0.5
-    gsap: ^3.12.2
     jdenticon: ^3.2.0
     js-cookie: ^3.0.5
     mobx: ^6.7.0
@@ -14440,13 +14439,6 @@ __metadata:
   version: 1.0.4
   resolution: "grapheme-splitter@npm:1.0.4"
   checksum: 0c22ec54dee1b05cd480f78cf14f732cb5b108edc073572c4ec205df4cd63f30f8db8025afc5debc8835a8ddeacf648a1c7992fe3dcd6ad38f9a476d84906620
-  languageName: node
-  linkType: hard
-
-"gsap@npm:^3.12.2":
-  version: 3.12.2
-  resolution: "gsap@npm:3.12.2"
-  checksum: e3e9709f9ca60cee0ef7fd91f45a232a48b550f95b6df090dfffe2511fccc651408476de575b69c1c2ce80b6089b6ad0d4854beb58ea427f14e51a30b0640a70
   languageName: node
   linkType: hard
 
