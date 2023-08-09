@@ -25,7 +25,7 @@
       "switchTokenTimeout": "3m"
     },
     "authMessageTTL": "5m",
-    "accessTokenTTL": "60h",
+    "accessTokenTTL": "5m",
     "refreshTokenTTL": "900d",
     "currencyConversionCacheTTL": "1h",
     "mode": "dev",
