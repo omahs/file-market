@@ -10,8 +10,8 @@ export enum ConnectionType {
 export interface ISocketConnect {
   socket?: WebSocket
   type?: ConnectionType
-  isConnected?: boolean
   chainName?: string
+  lastMessage?: string
 }
 
 export interface sendQueueType {

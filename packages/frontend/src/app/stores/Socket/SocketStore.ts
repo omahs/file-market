@@ -8,19 +8,13 @@ import { TransferStore } from '../Transfer/TransferStore'
 import { url } from './data'
 import { ConnectionType, ISocketConnect } from './types'
 
-interface sendQueueType {
-  message: string
-  onMessage: (event: MessageEvent) => void
-  onConnect?: () => void
-  type: ConnectionType
-}
-
 interface ISubscribe<T, M> {
   params: T
   url: string
   type: ConnectionType
   onSubscribeMessage: (event: MessageEvent<M>, chainName?: string) => void
   chainName?: string
+  onClose: () => void
 }
 
 interface IFindSocket {
@@ -30,14 +24,12 @@ interface IFindSocket {
 
 export class SocketStore {
   socketConnects: ISocketConnect[]
-  sendQueue: sendQueueType[]
   multiChainStore: MultiChainStore
 
   transferStore: TransferStore
   orderStore: OrderStore
 
   constructor(rootStore: RootStore) {
-    this.sendQueue = []
     this.socketConnects = []
     makeAutoObservable(this)
     this.transferStore = rootStore.transferStore
@@ -45,22 +37,32 @@ export class SocketStore {
     this.multiChainStore = rootStore.multiChainStore
   }
 
-  private readonly createISocketConnect = ({ socket, type, chainName }: { socket: WebSocket, type: ConnectionType, chainName?: string }): ISocketConnect => {
+  private readonly createISocketConnect = ({ socket, type, chainName, lastMessage }: ISocketConnect): ISocketConnect => {
     return ({
       socket,
       type,
       chainName,
-      isConnected: true,
+      lastMessage,
     })
   }
 
-  private readonly subscribe = <T, M>({ params, type, url, onSubscribeMessage, chainName }: ISubscribe<T, M>) => {
+  private readonly subscribe = <T, M>(props: ISubscribe<T, M>) => {
+    const { params, type, url, onSubscribeMessage, chainName, onClose } = props
     let socket: WebSocket
     const socketConnect = this.socketConnects[this.findIndexSocket({ type, chainName })]
-    if (socketConnect && socketConnect.socket?.readyState === WebSocket.OPEN) {
+    console.log(this.socketConnects)
+    console.log(props)
+    console.log(socketConnect)
+    if (socketConnect) {
+      console.log('Old socket')
       socketConnect.socket?.send(JSON.stringify(params))
-      this.socketConnects[this.findIndexSocket({ type })].isConnected = true
+      socketConnect.lastMessage = JSON.stringify(params)
+      if (this.socketConnects[this.findIndexSocket({ type, chainName })]?.socket) {
+        // @ts-expect-error
+        this.socketConnects[this.findIndexSocket({ type, chainName })].socket.onclose = onClose
+      }
     } else {
+      console.log('New socket')
       socket = this.createConnection(url)
       socket.onopen = function(this) {
         this.send(JSON.stringify(params))
@@ -68,17 +70,19 @@ export class SocketStore {
       socket.onmessage = function(event: MessageEvent<M>) {
         onSubscribeMessage(event, chainName)
       }
-      this.socketConnects = [...this.socketConnects, (this.createISocketConnect({ socket, type, chainName }))]
+      socket.onclose = onClose
+      const lastMessage = JSON.stringify(params)
+      this.socketConnects = [...this.socketConnects, (this.createISocketConnect({ socket, type, chainName, lastMessage }))]
     }
   }
 
   private readonly findIndexSocket = ({ type, chainName }: IFindSocket) => {
     return this.socketConnects.findIndex(item => {
       if (chainName) {
-        return item.type === type && item.chainName === chainName
+        return item.type === type && item.chainName === chainName && item.socket?.readyState === WebSocket.OPEN
       }
 
-      return item.type === type
+      return item.type === type && item.socket?.readyState === WebSocket.OPEN
     })
   }
 
@@ -86,14 +90,9 @@ export class SocketStore {
     const data = JSON.parse(event.data) as EFTSubscriptionMessage
     const transfer = data.transfer
     const order = data.order
-    const socketConnect = this.socketConnects[this.findIndexSocket({ type: ConnectionType.Eft, chainName })]
-    console.log(socketConnect)
-    console.log(order)
-    if (socketConnect.isConnected) {
-      this.transferStore.setData(transfer)
-      this.orderStore.setData(order)
-      if (data.event === 'Transfer') this.transferStore.setIsCanRedirectMint(true)
-    }
+    this.transferStore.setData(transfer)
+    this.orderStore.setData(order)
+    if (data.event === 'Transfer') this.transferStore.setIsCanRedirectMint(true)
   }
 
   disconnect({ type, chainName }: IFindSocket) {
@@ -102,7 +101,6 @@ export class SocketStore {
     if (socketConnect?.socket) {
       socketConnect.socket.onclose = () => {}
       socketConnect.socket?.close()
-      this.socketConnects.splice(this.findIndexSocket({ type, chainName }), 1)
     }
   }
 
@@ -116,6 +114,9 @@ export class SocketStore {
       url: `${wsUrl}${url[ConnectionType.Eft]}/${params.collectionAddress}/${params.tokenId}`,
       type: ConnectionType.Eft,
       onSubscribeMessage: this.onMessageSubscribeToEft,
+      onClose: () => {
+        setTimeout(() => this.subscribeToEft(params, chainName), 2000)
+      },
       chainName,
     })
   }
