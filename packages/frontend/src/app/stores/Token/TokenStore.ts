@@ -49,6 +49,10 @@ export class TokenStore implements IStoreRequester,
       })
   }
 
+  setData(token: Token | undefined) {
+    this.data = token
+  }
+
   activate(collectionAddress: string, tokenId: string, chainName: string): void {
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
