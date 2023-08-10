@@ -724,11 +724,16 @@ func (s *service) onTransferFinishEvent(
 		return err
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
 	msg := domain.EFTSubMessage{
 		Event:    "TransferFinished",
 		Token:    token,
 		Transfer: nil,
-		Order:    nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -771,11 +776,17 @@ func (s *service) onTransferFraudReportedEvent(
 	}
 	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
 		Event:    "TransferFraudReported",
 		Token:    token,
 		Transfer: transfer,
-		Order:    nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -852,11 +863,17 @@ func (s *service) onTransferFraudDecidedEvent(
 		}
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
 		Event:    "TransferFraudDecided",
 		Token:    token,
 		Transfer: transfer,
-		Order:    nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -908,11 +925,17 @@ func (s *service) onTransferCancel(
 		}
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
 		Event:    "TransferCancellation",
 		Token:    token,
 		Transfer: nil,
-		Order:    nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
