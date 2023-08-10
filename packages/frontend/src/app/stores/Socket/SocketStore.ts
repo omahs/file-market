@@ -4,6 +4,7 @@ import { EFTSubscriptionMessage, EFTSubscriptionRequest } from '../../../swagger
 import { MultiChainStore } from '../MultiChain/MultiChainStore'
 import { OrderStore } from '../Order/OrderStore'
 import { RootStore } from '../RootStore'
+import { TokenStore } from '../Token/TokenStore'
 import { TransferStore } from '../Transfer/TransferStore'
 import { url } from './data'
 import { ConnectionType, ISocketConnect } from './types'
@@ -28,6 +29,7 @@ export class SocketStore {
 
   transferStore: TransferStore
   orderStore: OrderStore
+  tokenStore: TokenStore
 
   constructor(rootStore: RootStore) {
     this.socketConnects = []
@@ -35,6 +37,7 @@ export class SocketStore {
     this.transferStore = rootStore.transferStore
     this.orderStore = rootStore.orderStore
     this.multiChainStore = rootStore.multiChainStore
+    this.tokenStore = rootStore.tokenStore
   }
 
   private readonly createISocketConnect = ({ socket, type, chainName, lastMessage }: ISocketConnect): ISocketConnect => {
@@ -90,8 +93,14 @@ export class SocketStore {
     const data = JSON.parse(event.data) as EFTSubscriptionMessage
     const transfer = data.transfer
     const order = data.order
+    const token = data.token
     this.transferStore.setData(transfer)
     this.orderStore.setData(order)
+    this.tokenStore.setData(token)
+
+    console.log(transfer)
+    console.log(order)
+    console.log(token)
     if (data.event === 'Transfer') this.transferStore.setIsCanRedirectMint(true)
   }
 
