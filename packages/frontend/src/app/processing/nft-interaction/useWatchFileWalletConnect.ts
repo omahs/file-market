@@ -10,7 +10,7 @@ import { useCanUnlock } from '../SeedProvider/useCanUnlock'
 export default function useWatchFileWalletConnect(): void {
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
-  const { dialogStore } = useStores()
+  const { dialogStore, authStore } = useStores()
   const { seedProvider } = useSeedProvider(address)
   const canUnlock = useCanUnlock(address)
 
@@ -39,10 +39,10 @@ export default function useWatchFileWalletConnect(): void {
 
   // opens connect dialog if account has connected, but there is no seed
   useEffect(() => {
-    if (address && seedProvider && seedProvider.isForAccount(address)) {
+    if (address && seedProvider && seedProvider.isForAccount(address) && authStore.isAuth) {
       openConnectFileWalletDialog()
     }
-  }, [address, seedProvider, openConnectFileWalletDialog, canUnlock])
+  }, [address, seedProvider, openConnectFileWalletDialog, canUnlock, authStore.isAuth])
 
   // locks seed if account disconnects
   useEffect(() => {

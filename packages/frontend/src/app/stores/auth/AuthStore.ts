@@ -1,21 +1,30 @@
-import assert from 'assert'
 import Cookies from 'js-cookie'
 import { makeAutoObservable } from 'mobx'
 
-import { Api, AuthBySignatureRequest, AuthResponse, ErrorResponse, HttpResponse } from '../../../swagger/Api'
+import {
+  Api,
+  AuthBySignatureRequest,
+  AuthResponse,
+  ErrorResponse,
+  HttpResponse,
+  UserProfile,
+} from '../../../swagger/Api'
+import { stringifyError } from '../../utils/error'
 import { DateStore } from '../Date/DateStore'
 import { DialogStore } from '../Dialog/DialogStore'
+import { ErrorStore } from '../Error/ErrorStore'
 import { ProfileStore } from '../Profile/ProfileStore'
 
 export class AuthStore {
   isLoading: boolean
   address?: `0x${string}`
   dialogStore: DialogStore
+  errorStore: ErrorStore
   dateStore: DateStore
   isFirstConnect: boolean
   profileStore: ProfileStore
   authService: Api<{}>
-  constructor(rootStore: { dialogStore: DialogStore, profileStore: ProfileStore, dateStore: DateStore }) {
+  constructor(rootStore: { dialogStore: DialogStore, profileStore: ProfileStore, dateStore: DateStore, errorStore: ErrorStore }) {
     this.isLoading = false
     this.isFirstConnect = true
     this.authService = new Api<{}>({ baseUrl: '/api' })
@@ -23,6 +32,7 @@ export class AuthStore {
     this.dialogStore = rootStore.dialogStore
     this.dateStore = rootStore.dateStore
     this.profileStore = rootStore.profileStore
+    this.errorStore = rootStore.errorStore
   }
 
   setData(response: HttpResponse<AuthResponse, ErrorResponse>) {
@@ -34,10 +44,12 @@ export class AuthStore {
     localStorage.setItem('Refresh_token', response.data.refresh_token?.token ?? '')
     localStorage.setItem('Refresh_tokenExpired', response.data.refresh_token?.expires_at.toString() ?? '0')
     localStorage.setItem('Access_tokenExpired', response.data.access_token?.expires_at.toString() ?? '0')
-    this.setUser(response.data.profile)
+    this.setUser({
+      name: 'Aleshka',
+    })
   }
 
-  setUser(user: Profile) {
+  setUser(user?: UserProfile) {
     this.profileStore.setPlayer(user)
   }
 
@@ -59,37 +71,45 @@ export class AuthStore {
       this.setData(response)
       this.isFirstConnect = false
     } catch (e: any) {
-      this.dialogStore.showError(errorToUserText(e))
+      this.errorStore.showError(stringifyError(e))
     }
   }
 
   async logout() {
     try {
       await this.authService.auth.logoutCreate({
-        headers: { authorization: createRefreshToken() },
+        headers: { authorization: this.RefreshToken },
       })
       localStorage.removeItem('Access_token')
       localStorage.removeItem('Refresh_token')
       localStorage.removeItem('Refresh_tokenExpired')
       localStorage.removeItem('Access_tokenExpired')
-      this.profileStore.logout()
+      // this.profileStore.logout()
     } catch (e: any) {
-      this.dialogStore.showError(errorToUserText(e.error.message))
+      this.errorStore.showError(stringifyError(e.error.message))
+      localStorage.removeItem('Access_token')
+      localStorage.removeItem('Refresh_token')
+      localStorage.removeItem('Refresh_tokenExpired')
+      localStorage.removeItem('Access_tokenExpired')
     }
   }
 
   async checkAuth() {
     this.setLoading(true)
     try {
-      const response = await this.authService.auth.byTokenCreate({
-        headers: { authorization: this.AccessToken },
-      })
-      assert(response.data.player, 'player is undefined')
-      this.setUser(response.data.player)
+      // const response = await this.authService.auth.byTokenCreate({
+      //   headers: { authorization: this.AccessToken },
+      // })
+      // assert(response.data.player, 'player is undefined')
+      // this.setUser(response.data.player)
+      console.log('Connect by jwt')
       this.isFirstConnect = false
+      this.setUser({
+        name: 'Aleshka',
+      })
     } catch (e: any) {
       console.log(e)
-      this.dialogStore.showError(errorToUserText(e.error))
+      this.errorStore.showError(stringifyError(e.error))
     } finally {
       this.setLoading(false)
     }
@@ -100,14 +120,14 @@ export class AuthStore {
     this.setLoading(true)
     try {
       const response = await this.authService.auth.refreshCreate({
-        headers: { authorization: `Bearer ${localStorage.getItem('Refresh_token') ?? ''}` },
+        headers: { authorization: this.RefreshToken },
       })
       this.setData(response)
       if (this.isFirstConnect) {
         this.isFirstConnect = false
       }
     } catch (e: any) {
-      this.dialogStore.showError(errorToUserText(e.error.message))
+      this.errorStore.showError(stringifyError(e.error.message))
     } finally {
       this.setLoading(false)
     }
@@ -118,7 +138,7 @@ export class AuthStore {
   }
 
   get isAuth() {
-    return !!this.profileStore?.player
+    return !!this.profileStore?.user
   }
 
   get isActualRefreshToken() {
@@ -130,11 +150,13 @@ export class AuthStore {
   }
 
   get expiredAccess(): number {
-    return parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime / 1000
+    console.log(parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime)
+
+    return parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime
   }
 
   get expiredRefresh(): number {
-    return parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime / 1000
+    return parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime
   }
 
   get AccessToken() {

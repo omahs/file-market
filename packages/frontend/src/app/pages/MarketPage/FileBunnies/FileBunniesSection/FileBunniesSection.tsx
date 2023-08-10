@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import React, { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
+import { useIsConnected } from '../../../../hooks/useIsConnected'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
@@ -34,7 +34,7 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { isConnected } = useAccount()
+  const isConnected = useIsConnected()
   const { payedMint, isLoading, freeMint, whiteList, modalProps, isPayedMintSoldOut, isFreeMintSoldOut } = useFileBunniesMint()
   const rarityModalOpen = () => {
     dialogStore.openDialog({

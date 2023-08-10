@@ -3,32 +3,28 @@ import assert from 'assert'
 import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useDisconnect, useSignMessage } from 'wagmi'
 
-import { rootStore } from '../stores/RootStore'
-import useErrorWindow from './useErrorWindow'
 import { useStores } from './useStores'
 
 export default function useAppAuthAndConnect() {
   const { disconnect } = useDisconnect()
-  const { isConnected, address } = useAccount()
+  const { isConnected, address, connector } = useAccount()
   const [isACanAuthEffect, setIsACanAuthEffect] = useState<boolean>(false)
   const [addressState, setAddressState] = useState<string | undefined>()
   const { authStore } = useStores()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { open, setDefaultChain } = useWeb3Modal()
-  const errorFunc = useErrorWindow()
   const { signMessage } = useSignMessage({
     async onSuccess(data) {
       try {
         if ((addressState ?? address) !== undefined) {
           // @ts-expect-error
-          await rootStore.authStore.loginBySignature({ address: addressState ?? address, signature: data.substring(2, data.length) })
+          await authStore.loginBySignature({ address: addressState ?? address, signature: data.substring(2, data.length) })
         }
       } catch (e: any) {
         disconnect()
       }
     },
     onError(data) {
-      errorFunc(data)
       disconnect()
     },
   })
@@ -36,13 +32,13 @@ export default function useAppAuthAndConnect() {
   useEffect(() => {
     if (isConnected && isACanAuthEffect) {
       assert(address, 'address is undefined')
-      rootStore.authStore.setAddress(address)
+      authStore.setAddress(address)
       setAddressState(address)
       setIsLoading(true)
-      rootStore.authStore.getMessageForAuth(address).then((res) => {
+      console.log('SIGN')
+      authStore.getMessageForAuth(address).then((res) => {
         signMessage({ message: res.data.message })
       }).catch((e: any) => {
-        errorFunc(e)
         disconnect()
       }).finally(() => {
         setIsLoading(false)
@@ -55,11 +51,12 @@ export default function useAppAuthAndConnect() {
 
   const connect = useCallback(async () => {
     if (isConnected && address) {
+      console.log(connector)
+      console.log('Connector')
       setAddressState(address)
-      await rootStore.authStore.getMessageForAuth(address).then((res) => {
+      await authStore.getMessageForAuth(address).then((res) => {
         signMessage({ message: res.data.message })
       }).catch((e: any) => {
-        errorFunc(e)
         disconnect()
       })
     } else {
@@ -67,7 +64,6 @@ export default function useAppAuthAndConnect() {
         setIsACanAuthEffect(true)
       })
         .catch((e) => {
-          errorFunc(e)
         })
     }
   }, [isConnected, address])

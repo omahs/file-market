@@ -14,6 +14,7 @@ import { HiddenFileMetaData } from '../../../../swagger/Api'
 import { typeFiles } from '../../../components/MarketCard/helper/data'
 import { fileToExtension, fileToType } from '../../../components/MarketCard/helper/fileToType'
 import { useStores } from '../../../hooks'
+import { useIsConnected } from '../../../hooks/useIsConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeed } from '../../../processing/SeedProvider/useSeed'
 import { DecryptResult } from '../../../processing/types'
@@ -94,7 +95,8 @@ export const PreviewNFTFlow = ({
   }>()
   const { adaptive } = useMediaMui()
   const [isObjectFit, setIsObjectFit] = useState<boolean>(false)
-  const { address, isConnected } = useAccount()
+  const { address } = useAccount()
+  const isConnected = useIsConnected()
   const { tokenMetaStore, tokenStore } = useStores()
   const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
