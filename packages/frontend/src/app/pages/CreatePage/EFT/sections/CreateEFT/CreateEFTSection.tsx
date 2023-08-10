@@ -8,8 +8,7 @@ import { useAccount } from 'wagmi'
 import BaseModal, {
   ErrorBody,
   extractMessageFromError,
-  InProgressBody,
-  SuccessNavBody,
+  InProgressBody, SuccessNavBody,
 } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../../../../components/Uploaders/NftLoader/NftLoader'
@@ -18,6 +17,7 @@ import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../../../../hooks/useMediaMui'
 import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
+import { useSubscribeToEft } from '../../../../../hooks/useSubscribeToEft'
 import {
   Button,
   ComboBoxOption,
@@ -85,12 +85,12 @@ export const CreateEFTSection: React.FC = observer(() => {
     isLoading: isCollectionLoading,
   } = useCollectionAndTokenListStore(address)
   const publicCollectionStore = usePublicCollectionStore()
-
+  const { transferStore } = useStores()
   const { collectionAndTokenList } = useStores()
   const currentBlockChainStore = useCurrentBlockChain()
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
-
+  const { subscribe } = useSubscribeToEft({ isDisableListener: true })
   const {
     createNft,
     error: nftError,
@@ -152,6 +152,12 @@ export const CreateEFTSection: React.FC = observer(() => {
         />,
       )
     } else if (nftResult) {
+      subscribe({ collectionAddress: nftResult?.receipt.to, tokenId: nftResult?.tokenId }, currentBlockChainStore.chain?.name)
+    }
+  }, [nftError, isNftLoading])
+
+  useEffect(() => {
+    if (transferStore.isCanRedirectMint && nftResult) {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
@@ -162,8 +168,9 @@ export const CreateEFTSection: React.FC = observer(() => {
           }}
         />,
       )
+      transferStore.setIsCanRedirectMint(false)
     }
-  }, [nftError, isNftLoading, nftResult])
+  }, [transferStore.isCanRedirectMint, nftResult])
 
   const subcategoryOptions: ComboBoxOption[] = useMemo(() => {
     return subcategory[chosenCategory?.title as category]
