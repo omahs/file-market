@@ -1,7 +1,5 @@
 build-contracts:
-	(cd ../sol-contracts && yarn && yarn hardhat compile)
-
-build-zk-contracts:
+	(cd ../sol-contracts && yarn && yarn hardhat compile) && \
 	(cd ../sol-contracts && yarn && HARDHAT_NETWORK=zksync yarn hardhat compile)
 
 redis.start:
