@@ -30,7 +30,7 @@ jobs:
         run: cp ~/.era_oracle_dev_env backend/.env
       - name: Build contracts
         if: ${{ needs.check-changes.outputs.backend_changes == 'true' }}
-        run: make build-contracts
+        run: make build-zk-contracts
         working-directory: backend/
       - name: Build oracle container
         if: ${{ needs.check-changes.outputs.backend_changes == 'true' }}
