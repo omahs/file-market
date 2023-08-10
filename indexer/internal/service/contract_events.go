@@ -650,11 +650,16 @@ func (s *service) onPasswordSetEvent(
 		return err
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
 	msg := domain.EFTSubMessage{
 		Event:    "TransferPasswordSet",
 		Token:    token,
 		Transfer: transfer,
-		Order:    nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
