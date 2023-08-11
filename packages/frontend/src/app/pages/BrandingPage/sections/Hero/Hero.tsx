@@ -27,7 +27,19 @@ const HeroTextWrapper = styled('div', {
   rowGap: '16px',
   color: '$gray700',
   zIndex: '2',
+  '@media (max-width: 1600px)': {
+    maxWidth: 800,
+  },
+  '@xl': {
+    maxWidth: 700,
+  },
+  '@lg': {
+    maxWidth: 500,
+    paddingRight: 70,
+  },
   '@md': {
+    maxWidth: '100%',
+    paddingRight: 0,
     br: {
       display: 'none',
     },
