@@ -18,5 +18,5 @@ export const paths: NavBarItemData[] = [
 ]
 
 export const pathsWithCurrentBlockchain: string[] = [
-  'market', 'profile', 'create',
+  'market', 'profile', 'create', 'main',
 ]

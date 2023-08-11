@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { SuccessNavBody, SuccessOkBody } from '../../components/Modal/Modal'
@@ -9,6 +9,7 @@ import { useApi } from '../../hooks/useApi'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
+import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { wrapRequest } from '../../utils/error/wrapRequest'
 import { useFulfillOrder } from '../nft-interaction'
@@ -27,6 +28,11 @@ export const useFileBunniesMint = () => {
   const api = useApi()
   const [isFreeMintSoldOut, setIsFreeMintSoldOut] = useState<boolean>(false)
   const [isPayedMintSoldOut, setIsPayedMintSoldOut] = useState<boolean>(false)
+  const currentChainStore = useCurrentBlockChain()
+
+  const isCorrectNetwork = useMemo(() => {
+    return currentChainStore.chain?.name === 'Filecoin'
+  }, [currentChainStore.chain])
 
   const { connect } = useAuth()
   const [isLoadingReq, setIsLoadingReq] = useState<boolean>(false)
@@ -160,7 +166,7 @@ export const useFileBunniesMint = () => {
 
   return {
     isFreeMintSoldOut: ((+(whiteListStore.data?.ordersLeft?.free ?? 0) <= 0) || isFreeMintSoldOut) && isConnected,
-    isPayedMintSoldOut: ((+(whiteListStore.data?.ordersLeft?.payed ?? 0) <= 0) || isPayedMintSoldOut) && isConnected,
+    isPayedMintSoldOut: ((+(whiteListStore.data?.ordersLeft?.payed ?? 0) <= 0) || isPayedMintSoldOut) && isConnected && isCorrectNetwork,
     isLoading,
     modalProps,
     payedMint,
