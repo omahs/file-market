@@ -115,7 +115,7 @@ type Whitelist interface {
 }
 
 type Currency interface {
-	GetCurrencyConversionRate(ctx context.Context, from, to string) (*models.ConversionRateResponse, *models.ErrorResponse)
+	GetCurrencyConversionRate(ctx context.Context, to string) (*models.ConversionRateResponse, *models.ErrorResponse)
 }
 
 type Auth interface {
@@ -233,6 +233,7 @@ func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse
 	}
 
 	return &models.HealthStatusResponse{
+		Mode:         s.cfg.Mode,
 		Status:       status,
 		BlockBacklog: backlog,
 	}, nil
@@ -1492,7 +1493,7 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 	}
 	ctx = context.WithValue(context.Background(), "mode", s.cfg.Mode)
 	if err := s.repository.SetLastBlock(ctx, pending); err != nil {
-		log.Println("set last block failed")
+		log.Println("set last block failed: ", err)
 	}
 	return pending, err
 }
