@@ -52,7 +52,10 @@ export default function CollectionCard({ name, address, image, type, chainId, or
       onMouseLeave={() => { setIsShowNumber(false) }}
       onMouseDown={() => { setIsShowNumber(true) }}
       onMouseUp={() => { setIsShowNumber(false) }}
-      onClick={() => { navigate(`/collection/${chain?.chain.name}/${address}`) }}
+      onClick={(e) => {
+        e.preventDefault()
+        navigate(`/collection/${chain?.chain.name}/${address}`)
+      }}
     >
       <StyledCollectionGrid>
         <InsideContainer>
@@ -85,7 +88,10 @@ export default function CollectionCard({ name, address, image, type, chainId, or
               }}
 
             >
-              <MoreButton>
+              <MoreButton onClick={(e) => {
+                e.stopPropagation()
+              }}
+              >
                 <MoreButtonDot />
                 <MoreButtonDot />
                 <MoreButtonDot />

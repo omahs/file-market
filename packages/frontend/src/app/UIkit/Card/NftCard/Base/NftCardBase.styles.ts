@@ -9,8 +9,8 @@ export const StyledChain = styled('div', {
   top: 4,
   zIndex: 1,
   '& img': {
-    width: '20px',
-    height: '20px',
+    width: '21px',
+    height: '21px',
   },
 })
 
