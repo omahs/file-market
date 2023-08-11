@@ -1,13 +1,13 @@
+import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useStores } from '../../../hooks'
-import { useAutorunEffect } from '../../../hooks/useAutoRunEffect'
 import useLogoutAndDisconnect from '../../../hooks/useLogoutAndDisconnect'
+import { useRefreshToken } from '../../../hooks/useRefreshToken'
 import useWatchFileWalletConnect from '../../../processing/nft-interaction/useWatchFileWalletConnect'
-import { checkIsActualToken } from '../../../utils/auth/checkIsActualToken'
 
-export const FileWalletConnectWatcher: FC = () => {
+export const FileWalletConnectWatcher: FC = observer(() => {
   const { disconnect } = useLogoutAndDisconnect()
   const { authStore } = useStores()
 
@@ -16,12 +16,9 @@ export const FileWalletConnectWatcher: FC = () => {
       disconnect()
     },
   })
-  useWatchFileWalletConnect()
 
-  useAutorunEffect(() => {
-    console.log('Check')
-    void checkIsActualToken({ disconnect })
-  }, [authStore.isActualAccessToken, authStore.isActualRefreshToken, disconnect])
+  useWatchFileWalletConnect()
+  useRefreshToken()
 
   useEffect(() => {
     if (authStore.isActualAccessToken) {
@@ -30,4 +27,4 @@ export const FileWalletConnectWatcher: FC = () => {
   }, [])
 
   return null
-}
+})

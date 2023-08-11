@@ -150,12 +150,16 @@ export class AuthStore {
   }
 
   get expiredAccess(): number {
+    console.log('Access')
     console.log(parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime)
 
     return parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime
   }
 
   get expiredRefresh(): number {
+    console.log('Refresh')
+    console.log(parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime)
+
     return parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime
   }
 
