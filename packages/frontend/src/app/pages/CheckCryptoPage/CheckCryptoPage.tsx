@@ -49,7 +49,6 @@ const CheckCryptoPage = observer(() => {
     const collectionAddress = collectionAddressProps ?? address
     setSeed(seed)
     setCollectionAddress(collectionAddress)
-    console.log(collectionAddress)
     for (let i = 0; i < countIter; i++) {
       playTempFile.push({
         play: false,

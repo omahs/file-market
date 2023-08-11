@@ -1,15 +1,18 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { IStoreRequester } from '../utils/store'
 import { useAuth } from './useAuth'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
+import { useMultiChainStore } from './useMultiChainStore'
 import { useStores } from './useStores'
 
 export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => void, onError?: () => void }) => {
   const currentChainStore = useCurrentBlockChain()
+  const multiChainStore = useMultiChainStore()
+  const [isCanConnectAfterChange, setIsCanConnectAfterChange] = useState<boolean>(false)
   const { isConnected } = useAccount()
-  const { connect } = useAuth()
+  const { connect, setDefaultChain } = useAuth()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const rootStore = useStores()
   const { switchNetwork, error } = useSwitchNetwork({
@@ -55,8 +58,24 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
   }
   const { chain } = useNetwork()
 
+  useEffect(() => {
+    if (isCanConnectAfterChange) {
+      connect()
+      setIsCanConnectAfterChange(false)
+    }
+  }, [isCanConnectAfterChange])
+
   const changeNetwork = useCallback((chainId: number | undefined, isWarningNetwork?: boolean) => {
-    if (!isConnected) connect()
+    if (!isConnected) {
+      if (!!multiChainStore.getChainById(chainId)?.chain) {
+        setDefaultChain(multiChainStore.getChainById(chainId)?.chain)
+        setIsCanConnectAfterChange(true)
+      } else {
+        connect()
+      }
+
+      return
+    }
     // Меняем сеть, если сеть в сторе !== сети кошелька или если сеть кошелька просто не равна переданной сети
     if ((currentChainStore.chainId !== chainId || isWarningNetwork) || chain?.id !== chainId) {
       setIsLoading(true)
@@ -64,7 +83,6 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     }
     // Меняем значение в сторе, если текущая сеть кошелька !== переданной сети
     if (chain?.id === chainId) {
-      console.log('Change')
       currentChainStore.setCurrentBlockChain(chainId ?? 0)
       reloadStores()
     }

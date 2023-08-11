@@ -29,7 +29,6 @@ export class BlockStore {
   }
 
   setReceiptBlock = (recieptBlock: BigNumber | number) => {
-    console.log(recieptBlock)
     this.receiptBlockNumber = BigNumber.from(recieptBlock)
     this.lastCurrentBlockNumber = this.currentBlockNumber
   }

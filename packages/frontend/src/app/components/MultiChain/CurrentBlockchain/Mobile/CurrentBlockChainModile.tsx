@@ -91,8 +91,6 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                 }}
               >
                 {multiChainStore.data.map(item => {
-                  console.log(item.chain.id.toString())
-
                   return (
                     <Dropdown.Item
                       key={item.chain.id.toString()}

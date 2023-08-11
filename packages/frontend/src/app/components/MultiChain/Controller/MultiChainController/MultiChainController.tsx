@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 
 import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { selectBlockchainType } from '../../helper/data/SelectBlockchainData'
@@ -16,6 +16,15 @@ const MultiChainController = ({ renderElem, type }: IMultiChainController) => {
       setIsChoosen(true)
     },
   })
+
+  useEffect(() => {
+    if (isChoosen) {
+      setIsChoosen((prev) => !prev)
+      setTimeout(() => {
+        setIsChoosen((prev) => !prev)
+      }, 0)
+    }
+  }, [chain])
 
   return (
     <>

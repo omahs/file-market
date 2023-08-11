@@ -22,11 +22,11 @@ export const useAuth = () => {
   }
 
   const connect = useCallback(() => {
-    setDefaultChain(currentBlockChainStore.chain)
     openDialog()
   }, [currentBlockChainStore.chainId])
 
   return {
     connect,
+    setDefaultChain,
   }
 }
