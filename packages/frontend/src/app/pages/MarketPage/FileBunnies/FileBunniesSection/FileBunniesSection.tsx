@@ -72,7 +72,6 @@ const FileBunniesSection = observer(() => {
   }, [whiteList, isFreeMintSoldOut, isConnected])
 
   const payedButtonVariant = useMemo(() => {
-    console.log(isPayedMintSoldOut)
     if (isPayedMintSoldOut) return 'soldOut'
 
     return 'mint'

@@ -107,7 +107,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({
                       <>
                         <Txt>{formatFileSize(size ?? 0)}</Txt>
                         <Line />
-                        <Txt>{isConnected ? ((!isNetworkIncorrect) ? 'Please, switch the network' : 'Available only to the owner') : 'Please, connect the wallet'}</Txt>
+                        <Txt>{isConnected ? ((isNetworkIncorrect) ? 'Please, switch the network' : 'Available only to the owner') : 'Please, connect the wallet'}</Txt>
                       </>
                     )}
                   />

@@ -275,8 +275,7 @@ func (s *service) onCollectionTransferInitEvent(
 	if err := s.repository.InsertTransferStatus(ctx, tx, id, &status); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &status)
-
+	transfer.Statuses = append([]*domain.TransferStatus{&status}, transfer.Statuses...)
 	msg := domain.EFTSubMessage{
 		Event:    "TransferInit",
 		Token:    token,
@@ -408,8 +407,7 @@ func (s *service) onTransferDraftEvent(
 	if err := s.repository.InsertTransferStatus(ctx, tx, id, &transferStatus); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
-
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 	o := &domain.Order{
 		TransferId:      id,
 		Price:           order.Price,
@@ -431,7 +429,7 @@ func (s *service) onTransferDraftEvent(
 	if err := s.repository.InsertOrderStatus(ctx, tx, orderId, &orderStatus); err != nil {
 		return err
 	}
-	o.Statuses = append(o.Statuses, &orderStatus)
+	o.Statuses = append([]*domain.OrderStatus{&orderStatus}, o.Statuses...)
 
 	msg := domain.EFTSubMessage{
 		Event:    "TransferDraft",
@@ -507,7 +505,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &transferStatus); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 
 	orderStatus := domain.OrderStatus{
 		Timestamp: timestamp,
@@ -517,7 +515,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	if err := s.repository.InsertOrderStatus(ctx, tx, order.Id, &orderStatus); err != nil {
 		return err
 	}
-	order.Statuses = append(order.Statuses, &orderStatus)
+	order.Statuses = append([]*domain.OrderStatus{&orderStatus}, order.Statuses...)
 
 	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
 		var suffix string
@@ -583,18 +581,25 @@ func (s *service) onPublicKeySetEvent(
 	}
 	transfer.PublicKey = publicKey
 	transfer.BlockNumber = blockNumber.Int64()
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 
 	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
+	}
+
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
 	}
 
 	msg := domain.EFTSubMessage{
 		Event:    "TransferPublicKeySet",
 		Token:    token,
 		Transfer: transfer,
-		Order:    nil,
+		Order:    order,
 	}
+
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	return nil
@@ -640,17 +645,21 @@ func (s *service) onPasswordSetEvent(
 	}
 	transfer.EncryptedPassword = encryptedPassword
 	transfer.BlockNumber = blockNumber.Int64()
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
 	msg := domain.EFTSubMessage{
-		Event:      "TransferPasswordSet",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferPasswordSet",
+		Token:    token,
+		Transfer: transfer,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -693,7 +702,7 @@ func (s *service) onTransferFinishEvent(
 	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &transferStatus); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 
 	if transfer.OrderId != 0 {
 		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
@@ -715,12 +724,16 @@ func (s *service) onTransferFinishEvent(
 		return err
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
 	msg := domain.EFTSubMessage{
-		Event:      "TransferFinished",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferFinished",
+		Token:    token,
+		Transfer: nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -761,14 +774,19 @@ func (s *service) onTransferFraudReportedEvent(
 	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &transferStatus); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
+
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
 
 	msg := domain.EFTSubMessage{
-		Event:      "TransferFraudReported",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferFraudReported",
+		Token:    token,
+		Transfer: transfer,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -811,7 +829,7 @@ func (s *service) onTransferFraudDecidedEvent(
 	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &transferStatus); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 	if transfer.OrderId != 0 {
 		var orderStatus string
 		if approved {
@@ -845,12 +863,17 @@ func (s *service) onTransferFraudDecidedEvent(
 		}
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
-		Event:      "TransferFraudDecided",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferFraudDecided",
+		Token:    token,
+		Transfer: transfer,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
@@ -891,7 +914,7 @@ func (s *service) onTransferCancel(
 	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &transferStatus); err != nil {
 		return err
 	}
-	transfer.Statuses = append(transfer.Statuses, &transferStatus)
+	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 	if transfer.OrderId != 0 {
 		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
 			Timestamp: timestamp,
@@ -902,12 +925,17 @@ func (s *service) onTransferCancel(
 		}
 	}
 
+	// only for ws
+	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
+	if err != nil {
+		return fmt.Errorf("failed to get active order: %w", err)
+	}
+
 	msg := domain.EFTSubMessage{
-		Event:      "TransferCancellation",
-		IsApproved: true,
-		Token:      token,
-		Transfer:   transfer,
-		Order:      nil,
+		Event:    "TransferCancellation",
+		Token:    token,
+		Transfer: nil,
+		Order:    order,
 	}
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 

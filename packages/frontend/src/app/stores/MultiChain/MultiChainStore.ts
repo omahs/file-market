@@ -40,9 +40,6 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   private request() {
     const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
-    console.log(multiChains)
-    console.log(`Request multiChainStore ${multiChains}`)
-    console.log(`Meta env ${import.meta.env.VITE_IS_MAINNET}`)
     this.data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
   }
 
@@ -85,7 +82,6 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   getApiByName(chainName: string | undefined): Api<{}> | undefined {
     if (chainName === undefined) return
-    console.log(chainName)
 
     return new Api({ baseUrl: this.getChainByName(chainName)?.baseUrl })
   }
