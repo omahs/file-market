@@ -33,6 +33,8 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
+    const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
+    this.data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
     makeAutoObservable(this, {
       errorStore: false,
     })
@@ -76,6 +78,9 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   getChainByName(chainName: string | undefined): IMultiChainConfig | undefined {
     if (chainName === undefined) return
+
+    console.log(chainName)
+    console.log(this.data)
 
     return this.data?.find(item => item.chain?.name === chainName)
   }

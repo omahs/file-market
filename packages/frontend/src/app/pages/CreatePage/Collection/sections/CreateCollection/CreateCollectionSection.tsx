@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessNavBody } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
+import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
 import {
   ButtonContainer,
@@ -51,41 +52,34 @@ export default function CreateCollectionSection() {
 
   const currentBlockChainStore = useCurrentBlockChain()
 
-  useEffect(() => {
-    if (!isLoading) return
-
-    void setModalBody(<InProgressBody text='Collection is being minted' />)
-    void setModalOpen(true)
-  }, [isLoading])
-
-  useEffect(() => {
-    if (!result) return
-
-    void setModalBody(
-      <SuccessNavBody
-        buttonText='View collection'
-        link={`/collection/${currentBlockChainStore.chain?.name}/${result.collectionAddress}`}
-        onPress={() => {
-          setModalOpen(false)
-        }}
-      />,
-    )
-    void setModalOpen(true)
-  }, [result])
-
-  useEffect(() => {
-    if (!error) return
-
-    void setModalBody(
-      <ErrorBody
-        message={extractMessageFromError(error)}
-        onClose={() => {
-          void setModalOpen(false)
-        }
-        }
-      />,
-    )
-  }, [error])
+  useAfterDidMountEffect(() => {
+    if (isLoading) {
+      setModalOpen(true)
+      void setModalBody(<InProgressBody text='Collection is being minted' />)
+    } else if (error) {
+      setModalOpen(true)
+      void setModalBody(
+        <ErrorBody
+          message={extractMessageFromError(error)}
+          onClose={() => {
+            void setModalOpen(false)
+          }
+          }
+        />,
+      )
+    } else if (result) {
+      void setModalOpen(true)
+      void setModalBody(
+        <SuccessNavBody
+          buttonText='View collection'
+          link={`/collection/${currentBlockChainStore.chain?.name}/${result.collectionAddress}`}
+          onPress={() => {
+            setModalOpen(false)
+          }}
+        />,
+      )
+    }
+  }, [error, isLoading, result])
 
   const [textareaLength, setTextareaLength] = useState(
     getValues('description')?.length ?? 0,

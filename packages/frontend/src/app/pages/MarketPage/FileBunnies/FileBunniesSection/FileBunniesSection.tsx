@@ -70,7 +70,6 @@ const FileBunniesSection = observer(() => {
   }
 
   const payedButtonVariant = useMemo(() => {
-    if (currentChainStore.chain?.name !== 'Filecoin') return 'incorrectNetwork'
     if (isPayedMintSoldOut) return 'soldOut'
 
     return 'mint'

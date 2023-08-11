@@ -36,7 +36,12 @@ const CollectionSection = observer(() => {
             header={'There\'s not one thing'}
             mainText={'Be the first and create your first collection'}
             buttonsBlock={(
-              <Button primary onClick={() => navigate('/create/collection')}>
+              <Button
+                primary
+                onClick={(e) => {
+                  navigate('/create/collection')
+                }}
+              >
                 <Txt primary1>Create</Txt>
               </Button>
             )}

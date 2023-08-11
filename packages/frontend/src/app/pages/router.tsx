@@ -30,7 +30,7 @@ const routes: RouteObject[] = [
     element: <SuccessSubscribePage />,
   },
   {
-    path: 'main',
+    path: '/',
     element: <MainPage />,
   },
   {
@@ -62,7 +62,7 @@ const routes: RouteObject[] = [
   },
   {
     path: '*',
-    element: <Navigate replace to={'main'} />,
+    element: <Navigate replace to={''} />,
   },
 ]
 
