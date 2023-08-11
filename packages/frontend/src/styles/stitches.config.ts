@@ -175,6 +175,7 @@ export const {
     layout: {
       navBarHeight: '80px',
       bannerHeight: '36px',
+      blockchainToggleHeight: '58px',
     },
   },
 

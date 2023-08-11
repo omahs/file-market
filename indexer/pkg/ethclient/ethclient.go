@@ -3,6 +3,7 @@ package ethclient
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -131,6 +132,10 @@ func (e *ethClient) GetLatestBlockNumber(ctx context.Context) (*big.Int, error) 
 			var raw json.RawMessage
 			err = c.CallContext(ctx, &raw, "eth_blockNumber")
 			if err != nil {
+				// era returns HTML on 502 response
+				if strings.HasPrefix(err.Error(), "502 Bad Gateway:") {
+					err = errors.New("502 Bad Gateway")
+				}
 				return nil, fmt.Errorf("get block error %s %w", e.urls[i], err)
 			} else if len(raw) != 0 {
 				res, err := hexutil.DecodeBig(strings.Trim(string(raw), "\""))

@@ -9,4 +9,5 @@ export interface IMultiChainConfig {
   isDefault?: boolean
   baseUrl: string
   explorer: string
+  wsUrl: string
 }

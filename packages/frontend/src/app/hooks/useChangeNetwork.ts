@@ -83,7 +83,6 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     }
     // Меняем значение в сторе, если текущая сеть кошелька !== переданной сети
     if (chain?.id === chainId) {
-      console.log('Change')
       currentChainStore.setCurrentBlockChain(chainId ?? 0)
       reloadStores()
     }

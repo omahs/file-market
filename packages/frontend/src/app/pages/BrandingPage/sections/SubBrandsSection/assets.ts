@@ -25,7 +25,7 @@ import file_bunnies_logomark_light_svg from '/sub-brands/file-bunnies_logomark_l
 // eslint-disable-next-line
 import file_bunnies_logotype_color_png from '/sub-brands/file-bunnies_logotype_color.png'
 // eslint-disable-next-line
-import file_bunnies_logotype_color_svg from '/sub-brands/file-bunnies_logotype_color_new.svg'
+import file_bunnies_logotype_color_svg from '/sub-brands/file-bunnies_logotype_color.svg'
 // eslint-disable-next-line
 import file_bunnies_logotype_dark_png from '/sub-brands/file-bunnies_logotype_dark.png'
 // eslint-disable-next-line

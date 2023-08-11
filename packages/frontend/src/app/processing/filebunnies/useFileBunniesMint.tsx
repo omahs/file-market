@@ -78,7 +78,6 @@ export const useFileBunniesMint = () => {
     setIsLoadingReq(true)
     const collectionAddress = await collectionAddressReq() as `0x${string}`
     const tokenId = await sequencerReq({ suffix: 'payed', collectionAddress })
-    console.log(tokenId)
     if (!tokenId) {
       setIsPayedMintSoldOut(true)
       setIsLoadingReq(false)
