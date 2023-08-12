@@ -12,7 +12,7 @@ import {
 } from '../../components/Web3/ConnectFileWalletDialog/utils/validate'
 import { useAuth } from '../../hooks/useAuth'
 import { Button, Input, PageLayout } from '../../UIkit'
-import { Form } from '../CreatePage/CreateCollectionPage'
+import { Form } from '../CreatePage/helper/style/style'
 import { TestContainer } from './CheckCryptoPage.styled'
 import { ITestProps } from './helper/types/types'
 import CycleSection from './section/CycleSection/CycleSection'
@@ -49,7 +49,6 @@ const CheckCryptoPage = observer(() => {
     const collectionAddress = collectionAddressProps ?? address
     setSeed(seed)
     setCollectionAddress(collectionAddress)
-    console.log(collectionAddress)
     for (let i = 0; i < countIter; i++) {
       playTempFile.push({
         play: false,

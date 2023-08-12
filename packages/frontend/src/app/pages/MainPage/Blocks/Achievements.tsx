@@ -1,5 +1,5 @@
 import { styled } from '../../../../styles'
-import BoxShadowed from '../components/BoxShadowed/BoxShadowed'
+import BoxShadowed from '../../../UIkit/BoxShadowed/BoxShadowed'
 import Title from '../components/SectionTitle/SectionTitle'
 import { AchievementsData } from '../helper/Achievements/data'
 

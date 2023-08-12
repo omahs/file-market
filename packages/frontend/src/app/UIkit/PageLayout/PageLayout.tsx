@@ -20,5 +20,10 @@ export const PageLayout = styled(Container, {
         },
       },
     },
+    isHasSelectBlockChain: {
+      true: {
+        paddingTop: 'calc($layout$navBarHeight + $space$4 + 58px)',
+      },
+    },
   },
 })

@@ -85,6 +85,7 @@ export const FileBunniesLayout = styled(PageLayout, {
   maxWidth: '1350px',
   paddingLeft: '0',
   paddingRight: '0',
+  paddingTop: 'calc($layout$navBarHeight + $space$5 + $layout$blockchainToggleHeight)',
   '@xl': {
     paddingLR: 'calc((100% - $breakpoints$lg) * 0.554 + $space$4)',
     maxWidth: 'inherit',
@@ -101,7 +102,7 @@ export const FileBunniesLayout = styled(PageLayout, {
   },
   '@sm': {
     paddingLR: '$3',
-    paddingTop: '94px',
+    paddingTop: '160px',
     paddingBottom: '27px',
   },
 })

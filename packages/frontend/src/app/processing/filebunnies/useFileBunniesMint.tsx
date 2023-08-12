@@ -1,14 +1,15 @@
 import { BigNumber } from 'ethers'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { SuccessNavBody, SuccessOkBody } from '../../components/Modal/Modal'
-import { api } from '../../config/api'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useApi } from '../../hooks/useApi'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
+import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { wrapRequest } from '../../utils/error/wrapRequest'
 import { useFulfillOrder } from '../nft-interaction'
@@ -24,9 +25,14 @@ interface IGetSignWhiteList {
 export const useFileBunniesMint = () => {
   const { address, isConnected } = useAccount()
   const whiteListStore = useCheckWhiteListStore(address)
-
+  const api = useApi()
   const [isFreeMintSoldOut, setIsFreeMintSoldOut] = useState<boolean>(false)
   const [isPayedMintSoldOut, setIsPayedMintSoldOut] = useState<boolean>(false)
+  const currentChainStore = useCurrentBlockChain()
+
+  const isCorrectNetwork = useMemo(() => {
+    return currentChainStore.chain?.name === 'Filecoin'
+  }, [currentChainStore.chain])
 
   const { connect } = useAuth()
   const [isLoadingReq, setIsLoadingReq] = useState<boolean>(false)
@@ -72,7 +78,6 @@ export const useFileBunniesMint = () => {
     setIsLoadingReq(true)
     const collectionAddress = await collectionAddressReq() as `0x${string}`
     const tokenId = await sequencerReq({ suffix: 'payed', collectionAddress })
-    console.log(tokenId)
     if (!tokenId) {
       setIsPayedMintSoldOut(true)
       setIsLoadingReq(false)
@@ -160,7 +165,7 @@ export const useFileBunniesMint = () => {
 
   return {
     isFreeMintSoldOut: ((+(whiteListStore.data?.ordersLeft?.free ?? 0) <= 0) || isFreeMintSoldOut) && isConnected,
-    isPayedMintSoldOut: ((+(whiteListStore.data?.ordersLeft?.payed ?? 0) <= 0) || isPayedMintSoldOut) && isConnected,
+    isPayedMintSoldOut: ((+(whiteListStore.data?.ordersLeft?.payed ?? 0) <= 0) || isPayedMintSoldOut) && isConnected && isCorrectNetwork,
     isLoading,
     modalProps,
     payedMint,

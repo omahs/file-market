@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import FileMarketIcon from '../../../../../../assets/FileMarketLogoFooter.svg'
@@ -15,6 +15,7 @@ import TwitterImg from '../../../../../../assets/img/TwitterImg.svg'
 import YoutubeBlackImg from '../../../../../../assets/img/YoutubeBlack.svg'
 import YoutubeImg from '../../../../../../assets/img/YoutubeImg.svg'
 import { styled } from '../../../../../../styles'
+import { useMediaMui } from '../../../../../hooks/useMediaMui'
 import { textVariant } from '../../../../../UIkit'
 
 const TopSectionStyle = styled('div', {
@@ -158,6 +159,7 @@ interface ILink {
   text: string
   url: string
   isMock?: boolean
+  onClick?: () => void
 }
 
 export const Cards: Array<{ img: string, blackImg: string, text: string, url: string }> = [
@@ -200,6 +202,16 @@ export const Cards: Array<{ img: string, blackImg: string, text: string, url: st
 ]
 
 const TopSection = () => {
+  const { smValue, mdValue, xlValue, lgValue } = useMediaMui()
+  const collectionPosition = useMemo(() => {
+    console.log(scrollY)
+    if (smValue) return 1900
+    if (mdValue) return 1400
+    if (lgValue) return 1400
+    if (xlValue) return 847
+
+    return 808
+  }, [scrollY])
   const MarketPlaceItems: ILink[] = [
     {
       text: 'Explore EFTs',
@@ -211,7 +223,12 @@ const TopSection = () => {
     },
     {
       text: 'Collections',
-      url: '',
+      url: '/market/collections',
+      isMock: true,
+      onClick: () => {
+        console.log('Opa')
+        window.scrollTo(0, collectionPosition)
+      },
     },
     {
       text: 'How to get FIL',
@@ -271,15 +288,24 @@ const TopSection = () => {
     <TopSectionStyle>
       <div className="section first">
         <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
-        <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as EFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for EFTs - Encrypted FileToken (EFT)</Text>
+        <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain marketplace specializing in the tokenization and monetization of pivotal public data through perpetual decentralized storage with a privacy layer, opening the data economy to the mass market.</Text>
       </div>
       <div className="section second">
         <HeaderText>Platform</HeaderText>
         <SecondContent>
           {MarketPlaceItems.map((item, index) => {
             return (
-              item.isMock ? <TextLinkMock key={index} to={item.url}>{item.text}</TextLinkMock>
-                : <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>
+              item.isMock ? <TextLinkMock key={index} to={item.url} onClick={() => { item.onClick?.() }}>{item.text}</TextLinkMock>
+                : (
+                  <TextLink
+                    key={index}
+                    href={item.url}
+                    target={'_blank'}
+                    onClick={() => { item.onClick?.() }}
+                  >
+                    {item.text}
+                  </TextLink>
+                )
             )
           },
           )}
@@ -290,8 +316,17 @@ const TopSection = () => {
         <SecondContent>
           {Links.map((item, index) => {
             return (
-              item.isMock ? <TextLinkMock key={index} to={item.url}>{item.text}</TextLinkMock>
-                : <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>
+              item.isMock ? <TextLinkMock key={index} to={item.url} onClick={() => { item.onClick?.() }}>{item.text}</TextLinkMock>
+                : (
+                  <TextLink
+                    key={index}
+                    href={item.url}
+                    target={'_blank'}
+                    onClick={() => { item.onClick?.() }}
+                  >
+                    {item.text}
+                  </TextLink>
+                )
             )
           })}
         </SecondContent>
@@ -301,8 +336,17 @@ const TopSection = () => {
         <SecondContent>
           {Company.map((item, index) => {
             return (
-              item.isMock ? <TextLinkMock key={index} to={item.url}>{item.text}</TextLinkMock>
-                : <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>
+              item.isMock ? <TextLinkMock key={index} to={item.url} onClick={() => { item.onClick?.() }}>{item.text}</TextLinkMock>
+                : (
+                  <TextLink
+                    key={index}
+                    href={item.url}
+                    target={'_blank'}
+                    onClick={() => { item.onClick?.() }}
+                  >
+                    {item.text}
+                  </TextLink>
+                )
             )
           })}
         </SecondContent>

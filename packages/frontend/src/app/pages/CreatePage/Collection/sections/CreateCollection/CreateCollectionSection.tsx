@@ -1,92 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
-import { styled } from '../../../styles'
-import BaseModal, {
-  ErrorBody,
-  extractMessageFromError,
-  InProgressBody,
-  SuccessNavBody,
-} from '../../components/Modal/Modal'
-import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
-import { Button, PageLayout, textVariant } from '../../UIkit'
-import { FormControl } from '../../UIkit/Form/FormControl'
-import { Input } from '../../UIkit/Form/Input'
-import { TextArea } from '../../UIkit/Form/Textarea'
-import { Description } from './CreateNFTPage'
-import { useCreateCollection } from './hooks/useCreateCollection'
-import { useModalProperties } from './hooks/useModalProperties'
-
-export const Title = styled('h1', {
-  ...textVariant('h3').true,
-  marginBottom: '$4',
-})
-
-export const Label = styled('label', {
-  ...textVariant('primary1').true,
-  lineHeight: '16px',
-  marginBottom: '$2',
-  color: '$gray800',
-  display: 'block',
-  variants: {
-    paddingL: {
-      true: {
-        paddingLeft: '$3',
-        '@sm': {
-          paddingLeft: 0,
-        },
-      },
-    },
-  },
-})
-
-export const TitleGroup = styled(FormControl, {
-  marginBottom: '$4',
-})
-
-export const TextBold = styled('span', {
-  ...textVariant('primary1').true,
-  fontSize: '12px',
-  fontWeight: 600,
-})
-
-export const TextGray = styled('span', {
-  color: '$gray400',
-})
-
-export const LabelWithCounter = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-})
-
-export const LetterCounter = styled('span', {
-  display: 'block',
-  ...textVariant('secondary3').true,
-  color: '$gray400',
-})
-
-export const Form = styled('form', {
-  maxWidth: 'calc($breakpoints$sm + 32px)',
-  marginLeft: 'auto',
-  marginRight: 'auto',
-})
-
-export const ButtonContainer = styled('div', {
-  paddingTop: '$3',
-  paddingLeft: '$3',
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'flex-start',
-  paddingBottom: '90px',
-  '@md': {
-    paddingBottom: '70px',
-  },
-  '@sm': {
-    paddingLeft: 0,
-    justifyContent: 'center',
-  },
-})
+import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessNavBody } from '../../../../../components/Modal/Modal'
+import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
+import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
+import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
+import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
+import {
+  ButtonContainer,
+  Description,
+  Form,
+  Label,
+  LabelWithCounter, LetterCounter,
+  TextBold, TextGray,
+  Title,
+  TitleGroup,
+} from '../../../helper/style/style'
+import { useCreateCollection } from '../../../hooks/useCreateCollection'
+import { useModalProperties } from '../../../hooks/useModalProperties'
 
 export interface CreateCollectionForm {
   image: FileList
@@ -95,7 +26,7 @@ export interface CreateCollectionForm {
   description: string
 }
 
-export default function CreateCollectionPage() {
+export default function CreateCollectionSection() {
   const {
     register,
     handleSubmit,
@@ -119,41 +50,36 @@ export default function CreateCollectionPage() {
   const { modalBody, setModalBody, modalOpen, setModalOpen } =
     useModalProperties()
 
-  useEffect(() => {
-    if (!isLoading) return
+  const currentBlockChainStore = useCurrentBlockChain()
 
-    void setModalBody(<InProgressBody text='Collection is being minted' />)
-    void setModalOpen(true)
-  }, [isLoading])
-
-  useEffect(() => {
-    if (!result) return
-
-    void setModalBody(
-      <SuccessNavBody
-        buttonText='View collection'
-        link={`/collection/${result.collectionAddress}`}
-        onPress={() => {
-          setModalOpen(false)
-        }}
-      />,
-    )
-    void setModalOpen(true)
-  }, [result])
-
-  useEffect(() => {
-    if (!error) return
-
-    void setModalBody(
-      <ErrorBody
-        message={extractMessageFromError(error)}
-        onClose={() => {
-          void setModalOpen(false)
-        }
-        }
-      />,
-    )
-  }, [error])
+  useAfterDidMountEffect(() => {
+    if (isLoading) {
+      setModalOpen(true)
+      void setModalBody(<InProgressBody text='Collection is being minted' />)
+    } else if (error) {
+      setModalOpen(true)
+      void setModalBody(
+        <ErrorBody
+          message={extractMessageFromError(error)}
+          onClose={() => {
+            void setModalOpen(false)
+          }
+          }
+        />,
+      )
+    } else if (result) {
+      void setModalOpen(true)
+      void setModalBody(
+        <SuccessNavBody
+          buttonText='View collection'
+          link={`/collection/${currentBlockChainStore.chain?.name}/${result.collectionAddress}`}
+          onPress={() => {
+            setModalOpen(false)
+          }}
+        />,
+      )
+    }
+  }, [error, isLoading, result])
 
   const [textareaLength, setTextareaLength] = useState(
     getValues('description')?.length ?? 0,
@@ -169,7 +95,7 @@ export default function CreateCollectionPage() {
           setModalOpen(false)
         }}
       />
-      <PageLayout css={{ minHeight: '100vh' }}>
+      <PageLayout css={{ minHeight: '100vh' }} isHasSelectBlockChain>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup><Title>Create New Collection</Title></TitleGroup>
 

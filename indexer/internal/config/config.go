@@ -11,12 +11,13 @@ import (
 
 type (
 	Config struct {
-		Postgres  *PostgresConfig
-		Server    *ServerConfig
-		Handler   *HandlerConfig
-		Service   *ServiceConfig
-		Redis     *RedisConfig
-		Sequencer *SequencerConfig
+		Postgres     *PostgresConfig
+		Server       *ServerConfig
+		Handler      *HandlerConfig
+		Service      *ServiceConfig
+		Redis        *RedisConfig
+		Sequencer    *SequencerConfig
+		TokenManager *TokenManagerConfig
 	}
 
 	SequencerConfig struct {
@@ -63,6 +64,14 @@ type (
 		CommonSignerKey              string
 		UncommonSignerKey            string
 		Mode                         string
+		ChainID                      string
+		AuthMessageTTL               time.Duration
+		AccessTokenTTL               time.Duration
+		RefreshTokenTTL              time.Duration
+	}
+
+	TokenManagerConfig struct {
+		SigningKey string
 	}
 
 	RedisConfig struct {
@@ -122,6 +131,10 @@ func Init(configPath string) (*Config, error) {
 			CommonSignerKey:              envCfg.GetString("COMMON_SIGNER_KEY"),
 			UncommonSignerKey:            envCfg.GetString("UNCOMMON_SIGNER_KEY"),
 			Mode:                         jsonCfg.GetString("service.mode"),
+			ChainID:                      jsonCfg.GetString("service.chainId"),
+			AccessTokenTTL:               jsonCfg.GetDuration("service.accessTokenTTL"),
+			RefreshTokenTTL:              jsonCfg.GetDuration("service.refreshTokenTTL"),
+			AuthMessageTTL:               jsonCfg.GetDuration("service.authMessageTTL"),
 		},
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),
@@ -132,6 +145,9 @@ func Init(configPath string) (*Config, error) {
 			TokenIdTTL:         jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
 			CheckInterval:      jsonCfg.GetDuration("service.sequencer.checkInterval"),
 			SwitchTokenTimeout: jsonCfg.GetDuration("service.sequencer.switchTokenTimeout"),
+		},
+		TokenManager: &TokenManagerConfig{
+			SigningKey: envCfg.GetString("JWT_SIGNING_KEY"),
 		},
 	}, nil
 }

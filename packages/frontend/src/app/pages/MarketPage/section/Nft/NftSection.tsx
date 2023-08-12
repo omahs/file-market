@@ -18,7 +18,9 @@ const NftSection: React.FC = observer(() => {
         isLoading={openOrderListStore.isLoading}
         currentItemCount={openOrderListStore.nftCards.length}
         fetchMore={() => openOrderListStore.requestMore()}
-        render={({ index }) => <NFTCard {...openOrderListStore.nftCards[index]} key={index} />}
+        render={({ index }) => {
+          return <NFTCard {...openOrderListStore.nftCards[index]} key={index} />
+        }}
         listCss={nftCardListCss}
       />
       {!openOrderListStore.nftCards.length && !openOrderListStore.isLoading && (

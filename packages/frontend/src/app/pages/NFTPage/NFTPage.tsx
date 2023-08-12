@@ -5,11 +5,11 @@ import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
+import { useSubscribeToEft } from '../../hooks/useSubscribeToEft'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
-import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
+import { useTransferStore } from '../../hooks/useTransferStore'
 import { useIsBuyer, useIsOwner } from '../../processing'
-import { makeTokenFullId } from '../../processing/utils/id'
 import { PageLayout } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { Params } from '../../utils/router'
@@ -110,16 +110,13 @@ const ControlStickyBlock = styled('div', {
 })
 
 const NFTPage: React.FC = observer(() => {
-  const { collectionAddress, tokenId } = useParams<Params>()
-  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
-  const tokenStore = useTokenStore(collectionAddress, tokenId)
+  useSubscribeToEft()
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
+  const transferStore = useTransferStore(collectionAddress, tokenId, chainName)
+  const tokenStore = useTokenStore(collectionAddress, tokenId, chainName)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
-  const tokenFullId = useMemo(
-    () => makeTokenFullId(collectionAddress, tokenId),
-    [collectionAddress, tokenId],
-  )
-  const { isOwner } = useIsOwner(tokenFullId)
+  const { isOwner } = useIsOwner(tokenStore.data)
   const isBuyer = useIsBuyer(transferStore.data)
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data,

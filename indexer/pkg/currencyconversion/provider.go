@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-type CurrencyConversionProvider interface {
+type Provider interface {
 	GetExchangeRate(ctx context.Context, from, to string) (float64, error)
 }
 

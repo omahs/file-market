@@ -3,7 +3,7 @@ import { FC, useCallback, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { styled } from '../../../../styles'
-import { mark3dConfig } from '../../../config/mark3d'
+import { chains } from '../../../config/web3Modal'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
 import { AddressIcon, DisconnectButton, SwitchNetworkButton } from '../../Web3'
 import { ViewMnemonicButton } from '../../Web3/ViewMnemonicButton/ViewMnemonicButton'
@@ -29,7 +29,7 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
   const [isOpen, setIsOpen] = useState(false)
   const close = useCallback(() => setIsOpen(false), [setIsOpen])
   const { chain } = useNetwork()
-  const needToSwitchNetwork = chain && chain?.id !== mark3dConfig.chain.id
+  const needToSwitchNetwork = chain && !(chains.find(item => item.id === chain.id))
 
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>

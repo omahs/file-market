@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"log"
 	"math/big"
 
@@ -123,14 +124,13 @@ func (s *service) GetTokensByAddress(
 		log.Println("get tokens by address failed: ", err)
 		return nil, internalError
 	}
-
-	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
 	tokensTotal, err := s.repository.GetTokensByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get tokens by address total failed: ", err)
 		return nil, internalError
 	}
 
+	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
 	for i, t := range tokens {
 		transfer, err := s.repository.GetActiveTransfer(ctx, tx, t.CollectionAddress, t.TokenId)
 		if err != nil {
@@ -146,6 +146,19 @@ func (s *service) GetTokensByAddress(
 	collectionsRes := make([]*models.Collection, len(collections))
 	for i, c := range collections {
 		res := domain.CollectionToModel(c)
+		fileTypes, categories, subcategories, err := s.repository.GetTokensContentTypeByCollection(ctx, tx, c.Address)
+		if err != nil {
+			logger.Errorf("failed to get collection content types", err, nil)
+			return nil, internalError
+		}
+
+		res.ContentTypes = &models.CollectionContentTypes{
+			Categories:     categories,
+			FileExtensions: fileTypes,
+			Subcategories:  subcategories,
+		}
+		res.ChainID = s.cfg.ChainID
+
 		if c.Address == s.cfg.FileBunniesCollectionAddress {
 			stats, err := s.repository.GetFileBunniesStats(ctx, tx)
 			if err != nil {
@@ -180,4 +193,34 @@ func (s *service) GetFileBunniesTokensForAutosell(ctx context.Context) ([]Autose
 	}
 
 	return tokensInfo, nil
+}
+
+func (s *service) getTokenCurrentState(ctx context.Context, address common.Address, tokenId *big.Int) (*domain.Token, *domain.Transfer, *domain.Order, error) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		logger.Error("failed to begin db tx", err, nil)
+		return nil, nil, nil, err
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	token, err := s.repository.GetToken(ctx, tx, address, tokenId)
+	if err != nil {
+		logger.Error("failed to get token", err, nil)
+		return nil, nil, nil, err
+	}
+	order, err := s.repository.GetActiveOrder(ctx, tx, address, tokenId)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		logger.Error("failed to get active order", err, nil)
+	}
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, address, tokenId)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		logger.Error("failed to get active transfer", err, nil)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit db tx", err, nil)
+		return nil, nil, nil, err
+	}
+
+	return token, transfer, order, nil
 }

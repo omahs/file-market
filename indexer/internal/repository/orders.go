@@ -26,30 +26,22 @@ func (p *postgres) GetAllActiveOrders(
 		WITH latest_transfer_statuses AS (
 			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
 			FROM transfer_statuses
-		),
-		latest_order_statuses AS (
-			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
-			FROM order_statuses
-		),
-		filtered_orders AS (
-			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address,o.block_number
-			FROM orders AS o
-			JOIN transfers t on o.transfer_id = t.id
-			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
-			WHERE lts.rank = 1 AND 
-			      lts.status NOT IN ('Finished', 'Cancelled') AND 
-			      o.visibility = 'Visible' AND
-			      o.exchange_address != '0x' AND
-			      NOT (t.collection_address=$3 AND t.number=1) AND 
-			      o.id < $1
 		)
-		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, fo.block_number,
-		       los.timestamp, los.status, los.tx_id
-		FROM filtered_orders fo
-		JOIN latest_order_statuses los ON fo.id = los.order_id
-		WHERE los.rank = 1 
-		  AND los.status = 'Created'
-		ORDER BY fo.id DESC
+		SELECT o.id, o.transfer_id, o.price, o.currency, o.exchange_address, o.block_number,
+			   os.timestamp, os.status, os.tx_id
+		FROM orders AS o
+		    JOIN transfers t ON o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts ON lts.transfer_id = t.id
+			JOIN order_statuses os ON o.id = os.order_id
+		WHERE lts.rank = 1 AND
+		      lts.status IN ('Created', 'Drafted') AND
+		      o.visibility = 'Visible' AND                                        -- TODO: delete all occurrences
+		      o.exchange_address != '0x' AND                                      -- was used to temporarily hide orders
+			  NOT (t.collection_address=$3 AND t.number=1) AND                    -- exclude file bunnies first orders
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens) AND
+		      o.id < $1
+		ORDER BY o.id DESC
 		LIMIT $2
 	`
 
@@ -113,27 +105,18 @@ func (p *postgres) GetAllActiveOrdersTotal(
 		WITH latest_transfer_statuses AS (
 			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
 			FROM transfer_statuses
-		),
-		latest_order_statuses AS (
-			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
-			FROM order_statuses
-		),
-		filtered_orders AS (
-			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
-			FROM orders AS o
-			JOIN transfers t on o.transfer_id = t.id
-			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
-			WHERE lts.rank = 1 AND 
-			      lts.status NOT IN ('Finished', 'Cancelled') AND 
-			      o.visibility = 'Visible' AND
-			      o.exchange_address != '0x' AND
-			      NOT (t.collection_address=$1 AND t.number=1)
-			
 		)
-		SELECT COUNT(*) as total
-		FROM filtered_orders fo
-		JOIN latest_order_statuses los ON fo.id = los.order_id
-		WHERE los.rank = 1 AND los.status = 'Created'
+		SELECT COUNT(*) AS total
+		FROM orders AS o
+		    JOIN transfers t ON o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts ON lts.transfer_id = t.id
+		WHERE lts.rank = 1 AND
+		      lts.status IN ('Created', 'Drafted') AND
+		      o.visibility = 'Visible' AND                                        -- TODO: delete all occurrences
+		      o.exchange_address != '0x' AND                                      -- was used to temporarily hide orders
+			  NOT (t.collection_address=$1 AND t.number=1) AND                    -- exclude file bunnies first orders
+		      t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+		      (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 	`
 
 	var total uint64
@@ -148,13 +131,14 @@ func (p *postgres) GetIncomingOrdersByAddress(
 	tx pgx.Tx,
 	address common.Address,
 ) ([]*domain.Order, error) {
-
 	// language=PostgreSQL
 	query := `
 		SELECT o.id, o.transfer_id, o.price, o.currency, o.exchange_address, o.block_number
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
-		WHERE t.to_address=$1
+		WHERE t.to_address=$1 AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
 		ORDER BY o.id DESC
 	`
 	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
@@ -196,8 +180,14 @@ func (p *postgres) GetIncomingOrdersByAddress(
 
 func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 ORDER BY o.id DESC `,
+	rows, err := tx.Query(ctx, `
+			SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number 
+			FROM orders AS o 
+			JOIN transfers t on o.transfer_id = t.id 
+			WHERE t.from_address=$1 AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			ORDER BY o.id DESC `,
 		strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
@@ -237,11 +227,20 @@ func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, ad
 func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 AND 
-    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
-                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
-                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `, strings.ToLower(address.String()))
+	rows, err := tx.Query(ctx, `
+			SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number 
+			FROM orders AS o 
+			JOIN transfers t on o.transfer_id = t.id 
+			WHERE t.to_address=$1 AND 
+				  NOT (SELECT ts.status 
+				       FROM transfer_statuses AS ts 
+				       WHERE ts.transfer_id=t.id AND 
+				             ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id)
+				  )=ANY('{Finished,Cancelled}') AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			ORDER BY o.id DESC`,
+		strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
@@ -279,11 +278,22 @@ func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.
 
 func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 AND
-    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
-                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
-                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `, strings.ToLower(address.String()))
+	rows, err := tx.Query(ctx, `
+			SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number 
+			FROM orders AS o 
+			JOIN transfers t on o.transfer_id = t.id 
+			WHERE t.from_address=$1 AND
+						NOT (SELECT ts.status 
+							 FROM transfer_statuses AS ts 
+							 WHERE ts.transfer_id=t.id AND 
+								   ts.timestamp=(SELECT MAX(ts2.timestamp) 
+												 FROM transfer_statuses AS ts2 
+												 WHERE ts2.transfer_id=t.id)
+							 )=ANY('{Finished,Cancelled}') AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)
+			ORDER BY o.id DESC`,
+		strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
@@ -322,8 +332,12 @@ func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.
 func (p *postgres) getOrderStatuses(ctx context.Context, tx pgx.Tx,
 	ids []int64) (map[int64][]*domain.OrderStatus, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT order_id,timestamp,status,tx_id FROM order_statuses 
-                                          WHERE order_id=ANY($1) ORDER BY order_id,timestamp DESC`, ids)
+	rows, err := tx.Query(ctx, `
+			SELECT order_id,timestamp,status,tx_id 
+			FROM order_statuses 
+			WHERE order_id=ANY($1)
+			ORDER BY order_id,timestamp DESC`,
+		ids)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +360,14 @@ func (p *postgres) getOrderStatuses(ctx context.Context, tx pgx.Tx,
 
 func (p *postgres) GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.Order, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT id,transfer_id,price,currency,exchange_address,block_number FROM orders WHERE id=$1`, id)
+	row := tx.QueryRow(ctx, `
+			SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number 
+			FROM orders o 
+			JOIN transfers t on t.id = o.transfer_id
+			WHERE o.id=$1 AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)`,
+		id)
 
 	var price, currency, exchangeAddress string
 	o := &domain.Order{}
@@ -372,12 +393,23 @@ func (p *postgres) GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.O
 
 func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Order, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number FROM orders AS o 
-    	JOIN transfers t on t.id = o.transfer_id
-    	WHERE collection_address=$1 AND token_id=$2 AND
-              NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
-                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
-                    ANY('{Finished,Cancelled}')`, strings.ToLower(contractAddress.String()), tokenId.String())
+	row := tx.QueryRow(ctx, `
+			SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address,o.block_number 
+			FROM orders AS o 
+			JOIN transfers t on t.id = o.transfer_id
+			WHERE collection_address=$1 AND 
+				  token_id=$2 AND
+				  NOT (SELECT ts.status 
+					   FROM transfer_statuses AS ts 
+					   WHERE ts.transfer_id=t.id AND 
+							 ts.timestamp=(SELECT MAX(ts2.timestamp) 
+										   FROM transfer_statuses AS ts2 
+										   WHERE ts2.transfer_id=t.id)
+					   )=ANY('{Finished,Cancelled}') AND
+				  t.collection_address NOT IN (SELECT collection_address FROM rejected_collections) AND
+				  (t.token_id, t.collection_address) NOT IN (SELECT token_id, collection_address FROM rejected_tokens)`,
+		strings.ToLower(contractAddress.String()),
+		tokenId.String())
 
 	var price, currency, exchangeAddress string
 	o := &domain.Order{}

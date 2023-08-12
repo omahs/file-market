@@ -2,8 +2,8 @@ import assert from 'assert'
 import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { callContract, nullAddress } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
@@ -20,9 +20,10 @@ interface IInitTransfer {
 export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IInitTransfer>()
+  const config = useConfig()
 
   const initTransfer = useCallback(wrapPromise(async ({ tokenId, to }: IInitTransfer) => {
-    assertContract(contract, mark3dConfig.collectionToken.name)
+    assertContract(contract, config?.collectionToken.name ?? '')
     assertSigner(signer)
     assert(to, 'receiver address ("to") is undefined')
     console.log('init transfer', { tokenId, to, callbackReceiver: nullAddress })
@@ -32,7 +33,7 @@ export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
       to,
       '0x00',
       nullAddress,
-      { gasPrice: mark3dConfig.gasPrice },
+      { gasPrice: config?.gasPrice },
     )
   }), [contract, signer, wrapPromise])
 

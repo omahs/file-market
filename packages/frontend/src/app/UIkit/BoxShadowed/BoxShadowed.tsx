@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode } from 'react'
 
-import { styled } from '../../../../../styles'
+import { styled } from '../../../styles'
 
 interface BoxShadowedProps {
   children: ReactNode
@@ -8,6 +8,7 @@ interface BoxShadowedProps {
 
 const Box = styled('div', {
   position: 'relative',
+  boxSizing: 'border-box',
   width: '100%',
   height: 'auto',
   '&::before': {
@@ -36,9 +37,25 @@ const Box = styled('div', {
         borderRadius: '8px',
       },
     },
+    large: {
+      true: {
+        '&::before': {
+          top: '12px',
+          left: '12px',
+          '@md': {
+            top: '10px',
+            left: '7px',
+          },
+          '@sm': {
+            top: '8px',
+            left: '8px',
+          },
+        },
+      },
+    },
     widthInherit: {
       true: {
-        width: 'inherit',
+        width: 'fit-content',
       },
     },
     fullHeight: {
@@ -85,6 +102,7 @@ const BoxShadowed = (props: BoxShadowedProps & ComponentProps<typeof BoxContent>
     <Box
       widthInherit={props.widthInherit}
       fullHeight={props.fullHeight}
+      large={props.large}
       mediumBorderRadius={props.mediumBorderRadius}
     >
       <BoxContent hoverBlue={props.hoverBlue} fullHeight={props.fullHeight} >{props.children}</BoxContent>

@@ -1,18 +1,19 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Order } from '../../../swagger/Api'
-import { api } from '../../config/api'
+import { Api, Order } from '../../../swagger/Api'
 import { TokenFullId } from '../../processing/types'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
+import { MultiChainStore } from '../MultiChain/MultiChainStore'
 
 /**
  * Stores only ACTIVE order state.
  * Does not listen for updates, need to reload manually.
  */
 export class OrderStore implements IStoreRequester,
-  IActivateDeactivate<[string, string]> {
+  IActivateDeactivate<[string, string, string]> {
   errorStore: ErrorStore
+  multiChainStore: MultiChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -20,30 +21,41 @@ export class OrderStore implements IStoreRequester,
   isLoading = false
   isActivated = false
 
+  api?: Api<{}>
+
   data?: Order = undefined
   tokenFullId?: TokenFullId = undefined
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  isCustomApi: boolean = true
+
+  constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
+    this.multiChainStore = multiChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      multiChainStore: false,
     })
   }
 
-  private request(tokenFullId: TokenFullId) {
+  private request(tokenFullId: TokenFullId, api?: Api<{}>) {
+    console.log(api)
+    if (!api) return
+
     storeRequest<Order | null>(
       this,
       api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
-        console.log(resp)
-        resp && (this.data = resp)
+        if (resp === null) this.data = undefined
+        else this.data = resp
       })
   }
 
-  activate(collectionAddress: string, tokenId: string): void {
+  activate(collectionAddress: string, tokenId: string, chainName: string): void {
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
-    this.request(this.tokenFullId)
+    console.log(this.multiChainStore.getApiByName(chainName))
+    this.api = this.multiChainStore.getApiByName(chainName)
+    this.request(this.tokenFullId, this.api)
   }
 
   deactivate(): void {
@@ -57,19 +69,12 @@ export class OrderStore implements IStoreRequester,
 
   reload(): void {
     if (this.tokenFullId) {
-      this.request(this.tokenFullId)
+      this.request(this.tokenFullId, this.api)
     }
   }
 
-  setDataPrice = (price: string, priceUsd: string) => {
-    if (this.data) {
-      this.data.price = price
-      this.data.priceUsd = priceUsd
-    } else {
-      this.data = {
-        price,
-        priceUsd,
-      }
-    }
+  setData(data: Order | undefined) {
+    this.data = data
+    console.log(data)
   }
 }

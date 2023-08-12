@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { callContract } from '../utils'
@@ -28,9 +29,10 @@ export function useMintCollection() {
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult, CreateCollectionForm>()
   const upload = useUploadLighthouse()
+  const config = useConfig()
   const mintCollection = useCallback(wrapPromise(async (form: CreateCollectionForm) => {
     const { name, symbol, image, description } = form
-    assertContract(contract, mark3dConfig.accessToken.name)
+    assertContract(contract, config?.accessToken.name ?? '')
     assertSigner(signer)
     assertAccount(address)
     assert(name && symbol && image, 'CreateCollection form is not filled')
