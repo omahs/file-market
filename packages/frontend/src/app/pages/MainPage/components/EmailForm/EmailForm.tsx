@@ -177,7 +177,7 @@ const EmailForm = () => {
         <Title>Keep in touch</Title>
         <ConvertKitStyle
           formId={5117091}
-          submitText={'Get News'}
+          submitText={'Get news'}
           emailPlaceholder={'Enter Email'}
         />
       </EmailContainerInner>
