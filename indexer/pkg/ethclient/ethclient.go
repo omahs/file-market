@@ -45,7 +45,7 @@ func NewEthClient(urls []string) (EthClient, error) {
 		breakThreshold: big.NewInt(1),
 	}
 
-	if slices.Contains(urls, "https://testnet.era.zksync.dev") || slices.Contains(urls, "https://mainnet.era.zksync.dev") {
+	if slices.Contains(urls, "https://testnet.era.zksync.dev") || slices.Contains(urls, "https://mainnet.era.zksync.io") {
 		res.isZk = true
 	}
 
