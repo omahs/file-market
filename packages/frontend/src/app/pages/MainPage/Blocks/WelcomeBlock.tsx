@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit'
+import { Button, Container, LinkButton, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
@@ -258,18 +258,6 @@ export default function WelcomeBlock() {
           </Title>
           <Description>
             Your access point to decentralized storage for impactful content, where data hunters, keepers, and providers connect.
-            {' '}
-            {' '}
-            <EFTLinkWrapper>
-              <Link
-                target={'_blank'}
-                href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}
-              >
-                Encrypted FileToken (EFT)
-
-              </Link>
-            </EFTLinkWrapper>
-            .
           </Description>
           <NavigateBlock>
             <NavigateTitle>
