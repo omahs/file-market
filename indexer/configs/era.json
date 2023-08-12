@@ -1,6 +1,6 @@
 {
   "server": {
-    "port": 9202,
+    "port": 9302,
     "readTimeout": "5s",
     "writeTimeout": "5s",
     "maxHeaderBytes": 1024
@@ -10,12 +10,12 @@
     "swaggerHost": "https://indexer-swagger.mark3d.xyz"
   },
   "service": {
-    "accessTokenAddress": "0xdcbF452fEA133e28759F050C9BDD827C805B3030",
-    "fraudDeciderWeb2Address": "0x0C5C679dD1B4975547ccd2E16b02728a9ED0f463",
-    "exchangeAddress": "0x2f255f048c1510485bd3F7D65520EDFB9EbC9362",
-    "publicCollectionAddress": "0x2482b31b7E07E12E6Ca6ea351b2d5D546C4A44E9",
-    "fileBunniesCollectionAddress": "0xBc3a4453Dd52D3820EaB1498c4673C694c5c6F09",
-    "fileBunniesCreatorAddress": "0xe98935705cF1e32006C479Fb2B28B5996cD9b6c7",
+    "accessTokenAddress": "0x729e9A1e49E16b1499bA0539F3deFf394bef09fb",
+    "fraudDeciderWeb2Address": "0xbA445596cfe6D33f8E82a736a01459086Eb5529B",
+    "exchangeAddress": "0x8e78b2Bb812Cb2ED8EF2C85203897BEc3c9e20a3",
+    "publicCollectionAddress": "0xEc8b32B53Af5075b6c05eB270637a84F1E94E066",
+    "fileBunniesCollectionAddress": "0x0000000000000000000000000000000000000123",
+    "fileBunniesCreatorAddress": "0x0000000000000000000000000000000000000123",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
     "sequencer": {
@@ -28,7 +28,7 @@
     "accessTokenTTL": "60h",
     "refreshTokenTTL": "2160h",
     "currencyConversionCacheTTL": "1h",
-    "mode": "main",
-    "chainId": "314"
+    "mode": "era",
+    "chainId": "324"
   }
 }

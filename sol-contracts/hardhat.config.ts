@@ -8,6 +8,7 @@ import fs from "fs";
 
 const mumbaiAccounts: string[] = [];
 const zkSyncTestnetAccounts: string[] = [];
+const zkSyncMainnetAccounts: string[] = [];
 const calibrationAccounts: string[] = [];
 const filecoinAccounts: string[] = [];
 
@@ -19,6 +20,9 @@ if (fs.existsSync(".calibration-secret")) {
 }
 if (fs.existsSync(".test-zksync-secret")) {
   zkSyncTestnetAccounts.push(fs.readFileSync(".test-zksync-secret").toString().trim());
+}
+if (fs.existsSync(".main-zksync-secret")) {
+  zkSyncMainnetAccounts.push(fs.readFileSync(".main-zksync-secret").toString().trim());
 }
 if (fs.existsSync(".mainnet-secret")) {
   filecoinAccounts.push(fs.readFileSync(".mainnet-secret").toString().trim());
@@ -36,11 +40,11 @@ const calibrationConfig: HttpNetworkUserConfig = {
   timeout: 1000000000
 };
 const zksyncConfig = {
-  url: "",
-  accounts: [],
-  // ethNetwork: "goerli",
+  url: "https://mainnet.era.zksync.io",
+  accounts: zkSyncMainnetAccounts,
   zksync: true,
-  // verifyURL: "https://zksync2-testnet-explorer.zksync.dev/contract_verification",
+  ethNetwork: "mainnet",
+  verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
   timeout: 1000000000,
 };
 const testnetZksyncConfig = {
