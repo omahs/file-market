@@ -209,11 +209,12 @@ export const CreateEFTSection: React.FC = observer(() => {
             <h3><Txt h3 style={{ fontWeight: '600' }}>Create New EFT</Txt></h3>
             <SubTitle>
               <Txt primary1>
+                Using
                 <Tooltip
                   placement={'bottomStart'}
                   content={(
                     <Txt secondary1 css={{ fontSize: '14px' }}>
-                      {'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT'}
+                      {'Allows users to mint NFTs with attached encrypted files stored on decentralized storage, which can only be accessed exclusively by the owner of the NFT'}
                     </Txt>
                   )}
                   css={{
@@ -228,7 +229,7 @@ export const CreateEFTSection: React.FC = observer(() => {
                   <Txt css={{ color: '$blue500', cursor: 'pointer' }}>Encrypted FileToken&#169;</Txt>
                   {' '}
                 </Tooltip>
-                on Filecoin network
+                Protocol
               </Txt>
             </SubTitle>
           </TitleGroup>

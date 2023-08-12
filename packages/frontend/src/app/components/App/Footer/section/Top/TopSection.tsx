@@ -288,7 +288,7 @@ const TopSection = () => {
     <TopSectionStyle>
       <div className="section first">
         <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
-        <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as EFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for EFTs - Encrypted FileToken (EFT)</Text>
+        <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain marketplace specializing in the tokenization and monetization of pivotal public data through perpetual decentralized storage with a privacy layer, opening the data economy to the mass market.</Text>
       </div>
       <div className="section second">
         <HeaderText>Platform</HeaderText>
