@@ -2,8 +2,8 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract } from '../utils'
@@ -20,11 +20,12 @@ export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IReportFraud>()
+  const config = useConfig()
 
   const factory = useHiddenFileProcessorFactory()
 
   const reportFraud = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, mark3dConfig.collectionToken.name)
+    assertContract(contract, config?.collectionToken.name ?? '')
     assertSigner(signer)
     assertAccount(address)
     assertCollection(collectionAddress)
@@ -37,7 +38,7 @@ export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
     return callContract({ contract, method: 'reportFraud' },
       BigNumber.from(tokenId),
       bufferToEtherHex(privateKey),
-      { gasPrice: mark3dConfig.gasPrice },
+      { gasPrice: config?.gasPrice },
     )
   }), [contract, signer, address, wrapPromise])
 

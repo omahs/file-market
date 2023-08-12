@@ -1,9 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import React, { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
+import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
+import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
+import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
@@ -34,8 +36,11 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { isConnected } = useAccount()
-  const { payedMint, isLoading, freeMint, whiteList, modalProps, isPayedMintSoldOut, isFreeMintSoldOut } = useFileBunniesMint()
+  const { payedMint, isLoading, freeMint, modalProps, isPayedMintSoldOut } = useFileBunniesMint()
+  const { changeNetwork } = useChangeNetwork()
+  const multiChainStore = useMultiChainStore()
+  const currentChainStore = useCurrentBlockChain()
+
   const rarityModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -64,19 +69,18 @@ const FileBunniesSection = observer(() => {
     })
   }
 
-  const freeButtonVariant = useMemo(() => {
-    if (!whiteList && isConnected) return 'notWl'
-    if (isFreeMintSoldOut) return 'mintedOut'
-
-    return 'free'
-  }, [whiteList, isFreeMintSoldOut, isConnected])
-
   const payedButtonVariant = useMemo(() => {
-    console.log(isPayedMintSoldOut)
     if (isPayedMintSoldOut) return 'soldOut'
 
     return 'mint'
-  }, [isPayedMintSoldOut])
+  }, [isPayedMintSoldOut, currentChainStore.chain])
+
+  const payedButtonOnClick = useMemo(() => {
+    if (currentChainStore.chain?.name !== 'Filecoin') return () => { changeNetwork(multiChainStore.getChainByName('Filecoin')?.chain.id) }
+    if (isPayedMintSoldOut) return () => {}
+
+    return () => { payedMint() }
+  }, [isPayedMintSoldOut, currentChainStore.chain])
 
   return (
     <>
@@ -133,9 +137,9 @@ const FileBunniesSection = observer(() => {
                   onClick: () => { rarityModalOpen() },
                 }}
                 buttonProps={{
-                  isDisabled: isLoading || whiteList === '' || isFreeMintSoldOut,
+                  isDisabled: true,
                   onClick: () => { freeMint() },
-                  variant: freeButtonVariant,
+                  variant: 'mintedOut',
                 }}
               />
               <WhitelistCard
@@ -144,7 +148,7 @@ const FileBunniesSection = observer(() => {
                   onClick: () => { rarityModalOpen() },
                 }}
                 buttonProps={{
-                  onClick: () => { payedMint() },
+                  onClick: payedButtonOnClick,
                   variant: payedButtonVariant,
                   isDisabled: isPayedMintSoldOut || isLoading,
                 }}

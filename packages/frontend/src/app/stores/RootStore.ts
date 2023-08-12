@@ -4,11 +4,14 @@ import { CollectionAndTokenListStore } from './CollectionAndTokenList/Collection
 import { CollectionListStore } from './CollectionsList/CollectionListStore'
 import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
 import { ConversionRateStore } from './Currency/ConversionRateStore'
+import { CurrentBlockChainStore } from './CurrentBlockChain/CurrentBlockChainStore'
 import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
+import { MultiChainStore } from './MultiChain/MultiChainStore'
 import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { PublicCollectionStore } from './PublicCollectionStore/PublicCollectionStore'
+import { SocketStore } from './Socket/SocketStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { TokenStore } from './Token/TokenStore'
 import { TransferListStore } from './Transfer/TransferListStore'
@@ -36,11 +39,16 @@ export class RootStore {
   conversionRateStore: ConversionRateStore
   whitelistStore: WhiteListStore
   collectionsListStore: CollectionListStore
+  multiChainStore: MultiChainStore
+  currentBlockChainStore: CurrentBlockChainStore
+  socketStore: SocketStore
 
   constructor() {
     this.dialogStore = new DialogStore()
     this.blockStore = new BlockStore()
     this.errorStore = new ErrorStore(this)
+    this.multiChainStore = new MultiChainStore(this)
+    this.currentBlockChainStore = new CurrentBlockChainStore(this)
     this.collectionAndTokenList = new CollectionAndTokenListStore(this)
     this.transferListStore = new TransferListStore(this)
     this.collectionTokenList = new CollectionTokenListStore(this)
@@ -56,6 +64,7 @@ export class RootStore {
     this.conversionRateStore = new ConversionRateStore(this)
     this.whitelistStore = new WhiteListStore(this)
     this.collectionsListStore = new CollectionListStore(this)
+    this.socketStore = new SocketStore(this)
   }
 }
 

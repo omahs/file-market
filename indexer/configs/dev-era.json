@@ -7,7 +7,7 @@
   },
   "handler": {
     "requestTimeout": "5s",
-    "swaggerHost": "https://dev-indexer-swagger.mark3d.xyz"
+    "swaggerHost": "*"
   },
   "service": {
     "accessTokenAddress": "0x53B7A53465fE0d7951Aec67200eCa1B9B306DcF4",
@@ -24,7 +24,11 @@
       "checkInterval": "5m",
       "switchTokenTimeout": "3m"
     },
+    "authMessageTTL": "5m",
+    "accessTokenTTL": "60h",
+    "refreshTokenTTL": "21600h",
     "currencyConversionCacheTTL": "1h",
-    "mode": "era-dev"
+    "mode": "era-dev",
+    "chainId": "280"
   }
 }

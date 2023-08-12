@@ -33,3 +33,9 @@ export function assertSeed(seed?: ArrayBuffer): asserts seed {
     throw new Error('FileWallet seed phrase not found. Try to reconnect.')
   }
 }
+
+export function assertConfig(config?: any): asserts config {
+  if (!config) {
+    throw new Error('config is not provided')
+  }
+}

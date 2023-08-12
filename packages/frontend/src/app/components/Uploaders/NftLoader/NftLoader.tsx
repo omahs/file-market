@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
+import { CreateNFTForm } from '../../../pages/CreatePage/EFT/sections/CreateEFT/CreateEFTSection'
 import { Button, textVariant } from '../../../UIkit'
 import CrossImage from './img/cross.svg'
 import BoxImage from './img/LoadFile.svg'

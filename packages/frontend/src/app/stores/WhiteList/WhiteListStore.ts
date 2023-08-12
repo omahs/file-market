@@ -1,8 +1,8 @@
 import { makeAutoObservable } from 'mobx'
 
 import { WhitelistResponse } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 /**
@@ -13,6 +13,7 @@ import { ErrorStore } from '../Error/ErrorStore'
 export class WhiteListStore implements IStoreRequester,
   IActivateDeactivate<[`0x${string}`]> {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -23,17 +24,20 @@ export class WhiteListStore implements IStoreRequester,
   data?: WhitelistResponse = undefined
   address?: `0x${string}` = undefined
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
+
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
   private request(address: `0x${string}`) {
     storeRequest<WhitelistResponse>(
       this,
-      api.collections.fileBunniesWhitelistDetail(address),
+      this.currentBlockChainStore.api.collections.fileBunniesWhitelistDetail(address),
       resp => {
         this.data = resp
       })

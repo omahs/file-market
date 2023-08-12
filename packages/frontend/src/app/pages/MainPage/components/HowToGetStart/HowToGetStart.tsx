@@ -21,7 +21,7 @@ import Wallet from '../../../../../assets/img/HowToGetStart/Wallet.svg'
 import WatchSquareMinimalistic from '../../../../../assets/img/HowToGetStart/WatchSquareMinimalistic.svg'
 import { styled } from '../../../../../styles'
 import { Link, textVariant, Txt } from '../../../../UIkit'
-import BoxShadowed from '../BoxShadowed/BoxShadowed'
+import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
 import HowToGetStartCard from '../HowToGetStartCard/HowToGetStartCard'
 
 const Section = styled('section', {
@@ -207,7 +207,7 @@ const HowToGetStart = () => {
 
   return (
     <Section>
-      <BoxShadowed>
+      <BoxShadowed large>
         <Collapse
           title={<Title className="how-to-get-started-title">How to use FileMarket?</Title>}
           css={{
@@ -216,6 +216,12 @@ const HowToGetStart = () => {
             padding: '12px 32px',
             '& .nextui-collapse-title-content': {
               width: '80%',
+            },
+            '@media (max-width: 600px)': {
+              padding: '12px 24px',
+            },
+            '@media (max-width: 400px)': {
+              padding: '12px 16px',
             },
           }}
           arrowIcon={(

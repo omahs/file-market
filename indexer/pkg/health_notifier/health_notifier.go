@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-type HealthNotifyer interface {
+type HealthNotifier interface {
 	Notify(context.Context, string) error
 }
 
@@ -24,7 +24,7 @@ func (hn *TelegramHealthNotifier) Notify(ctx context.Context, text string) error
 	reqBody := bytes.NewBufferString(text)
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, reqBody)
 	if err != nil {
-		return fmt.Errorf("Failed to create request: %w", err)
+		return fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "text/plain")
@@ -34,7 +34,7 @@ func (hn *TelegramHealthNotifier) Notify(ctx context.Context, text string) error
 		defer resp.Body.Close()
 	}
 	if err != nil {
-		return fmt.Errorf("Failed to send req: %w", err)
+		return fmt.Errorf("failed to send req: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {

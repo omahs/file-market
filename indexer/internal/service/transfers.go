@@ -9,6 +9,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"log"
 	"math/big"
+	"strings"
 )
 
 func (s *service) GetTransfers(
@@ -150,10 +151,14 @@ func (s *service) GetTransfersV2(
 		return nil, internalError
 	}
 
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 
 	incoming, outgoing := make([]*models.TransferWithData, len(incomingTransfers)), make([]*models.TransferWithData, len(outgoingTransfers))
@@ -256,10 +261,14 @@ func (s *service) GetTransfersHistoryV2(
 		return nil, internalError
 	}
 
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 
 	incoming, outgoing := make([]*models.TransferWithData, len(incomingTransfers)), make([]*models.TransferWithData, len(outgoingTransfers))
@@ -321,7 +330,11 @@ func (s *service) GetTransfersHistoryV2(
 	}, nil
 }
 
-func (s *service) GetTransferV2(ctx context.Context, address common.Address, tokenId *big.Int) (*models.TransferWithData, *models.ErrorResponse) {
+func (s *service) GetTransferV2(
+	ctx context.Context,
+	address common.Address,
+	tokenId *big.Int,
+) (*models.TransferWithData, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -340,10 +353,15 @@ func (s *service) GetTransferV2(ctx context.Context, address common.Address, tok
 	if err != nil {
 		return nil, internalError
 	}
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 	var order *domain.Order
 	if res.OrderId != 0 {

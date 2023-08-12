@@ -3,7 +3,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
+import { CreateNFTForm } from '../../../pages/CreatePage/EFT/sections/CreateEFT/CreateEFTSection'
 import { textVariant } from '../../../UIkit'
 import CrossImage from '../NftLoader/img/cross.svg'
 import { CloseButton, CrossIcon, File } from '../NftLoader/NftLoader'

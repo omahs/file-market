@@ -10,6 +10,7 @@ import { useIsOwner } from './useIsOwner'
 
 export interface useWatchStatusesTransferProps {
   tokenFullId: TokenFullId
+  isNetworkIncorrect?: boolean
 }
 
 export interface IUseWatchStatusesTransfer {
@@ -20,19 +21,17 @@ export interface IUseWatchStatusesTransfer {
   isApprovedExchange?: boolean
   isBuyer?: boolean
   runIsApprovedRefetch: () => void
-  runIsOwnerRefetch: () => void
 }
 
-export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
-  const { transferStore } = useStores()
-  const { isOwner, error: errorIsOwner, refetch: refetchIsOwner } = useIsOwner(tokenFullId)
+export const useWatchStatusesTransfer = ({ tokenFullId, isNetworkIncorrect }: useWatchStatusesTransferProps): IUseWatchStatusesTransfer => {
+  const { transferStore, tokenStore } = useStores()
+  const { isOwner } = useIsOwner(tokenStore.data)
   const isBuyer = useIsBuyer(transferStore.data)
+  const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange({
+    ...tokenFullId,
+    isDisable: isNetworkIncorrect,
+  })
 
-  const { isApprovedExchange, error: isApprovedExchangeError, refetch: refetchIsApproved } = useIsApprovedExchange(tokenFullId)
-
-  const { flush: flushIsOwnerRefetch, run: runIsOwnerRefetch } = useIntervalAsync(() => {
-    return refetchIsOwner()
-  }, 3000)
   const { flush: flushIsApprovedRefetch, run: runIsApprovedRefetch } = useIntervalAsync(() => {
     return refetchIsApproved()
   }, 3000)
@@ -40,16 +39,11 @@ export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransf
   useEffect(() => {
     transferStore.setOnTransferFinished(() => {
       runIsApprovedRefetch()
-      runIsOwnerRefetch()
     })
     transferStore.setOnTransferPublicKeySet(() => {
       refetchIsApproved()
     })
   }, [])
-
-  useEffect(() => {
-    flushIsOwnerRefetch()
-  }, [isOwner])
 
   useEffect(() => {
     flushIsApprovedRefetch()
@@ -61,13 +55,12 @@ export const useWatchStatusesTransfer = ({ tokenFullId }: useWatchStatusesTransf
   }, [transferStore.isWaitingForEvent, transferStore.isWaitingForReciept])
 
   const error = useMemo(() => {
-    return errorIsOwner ?? (isApprovedExchangeError)
-  }, [errorIsOwner, isApprovedExchangeError])
+    return isApprovedExchangeError
+  }, [isApprovedExchangeError])
 
   return {
     isLoading,
     runIsApprovedRefetch,
-    runIsOwnerRefetch,
     isOwner,
     isBuyer,
     error,

@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { Collection } from '../../../../../swagger/Api'
 import CollectionCard from '../../../../components/MarketCard/CollectionCard/CollectionCard'
 import Plug from '../../../../components/Plug/Plug'
 import { useCollectionsListStore } from '../../../../hooks/useCollectionsListStore'
@@ -27,7 +28,7 @@ const CollectionSection = observer(() => {
           isLoading={collectionListStore.isLoading}
           currentItemCount={collectionListStore.data.collections?.length ?? 0}
           fetchMore={() => collectionListStore.requestMore()}
-          render={({ index }) => <CollectionCard {...collectionListStore.data.collections?.[index]} key={index} />}
+          render={({ index }) => <CollectionCard {...collectionListStore.data.collections?.[index] as Collection} key={index} />}
           listCss={collectionListCss}
         />
         {!collectionListStore.data.collections?.length && !collectionListStore.isLoading && (
@@ -35,7 +36,12 @@ const CollectionSection = observer(() => {
             header={'There\'s not one thing'}
             mainText={'Be the first and create your first collection'}
             buttonsBlock={(
-              <Button primary onClick={() => navigate('/create/collection')}>
+              <Button
+                primary
+                onClick={(e) => {
+                  navigate('/create/collection')
+                }}
+              >
                 <Txt primary1>Create</Txt>
               </Button>
             )}

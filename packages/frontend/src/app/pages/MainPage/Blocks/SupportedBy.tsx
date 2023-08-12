@@ -1,46 +1,111 @@
 import React from 'react'
 
 import { styled } from '../../../../styles'
-import { Txt } from '../../../UIkit'
 import { supportedByData } from '../helper/SupportedBy/data'
 
 const SupportedByStyle = styled('div', {
-  width: '777px',
   marginTop: '64px',
+  marginBottom: '150px',
+  '@lg': {
+    marginBottom: '120px',
+  },
   '@md': {
     width: '100%',
+    marginTop: '52px',
+    marginBottom: '100px',
+  },
+  '@sm': {
+    marginBottom: '90px',
+  },
+  '@xs': {
+    marginTop: '48px',
+    marginBottom: '80px',
   },
 })
 
 const SupportedContainerBlocks = styled('div', {
-  width: '100%',
-  marginTop: '24px',
-  marginBottom: '200px',
-  display: 'flex',
-  gap: '66px',
+  display: 'inline-flex',
+  columnGap: '48px',
+  '@xl': {
+    columnGap: '42px',
+  },
+  '@lg': {
+    columnGap: '36px',
+  },
+  '@md': {
+    columnGap: '28px',
+  },
   '@sm': {
-    marginBottom: '100px',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    gapColumn: '32px',
+    columnGap: '22px',
+  },
+  '@xs': {
+    columnGap: '16px',
+  },
+})
+
+const SupportedByLink = styled('a', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '80px',
+  height: '80px',
+  '@lg': {
+    width: '65px',
+    height: '65px',
+  },
+  '@md': {
+    width: '58px',
+    height: '58px',
+  },
+  '@sm': {
+    width: '52px',
+    height: '52px',
+  },
+  '@xs': {
+    width: '48px',
+    height: '48px',
+  },
+})
+
+const SupportedByImg = styled('img', {
+  height: '100%',
+  width: 'auto',
+})
+
+const SupportedByTitle = styled('h4', {
+  fontFamily: '$body',
+  display: 'block',
+  lineHeight: 1,
+  marginBottom: '24px',
+  fontSize: '24px',
+  fontWeight: 700,
+  '@md': {
+    marginBottom: '20px',
+  },
+  '@sm': {
+    fontSize: '20px',
+    marginBottom: '20px',
+  },
+  '@xs': {
+    marginBottom: '16px',
   },
 })
 
 const SupportedBy = () => {
   return (
     <SupportedByStyle>
-      <Txt h4 style={{ paddingLeft: '16px', marginBottom: '24px', fontSize: '24px' }}>Supported By</Txt>
+      <SupportedByTitle>Supported By</SupportedByTitle>
       <SupportedContainerBlocks>
         {supportedByData.map((item, index) => {
           return (
-            <a
+            <SupportedByLink
               key={index}
               href={item.url}
               target={'_blank'}
               rel="noreferrer"
             >
-              <img src={item.src} />
-            </a>
+              <SupportedByImg src={item.src} />
+            </SupportedByLink>
           )
         })}
       </SupportedContainerBlocks>

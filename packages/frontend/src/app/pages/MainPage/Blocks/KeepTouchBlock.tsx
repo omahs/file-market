@@ -3,7 +3,16 @@ import EmailForm from '../components/EmailForm/EmailForm'
 
 const KeepTouchBlockStyled = styled('div', {
   width: '100%',
-  marginTop: '196px',
+  marginTop: '160px',
+  '@lg': {
+    marginTop: '140px',
+  },
+  '@md': {
+    marginTop: '130px',
+  },
+  '@sm': {
+    marginTop: '140px',
+  },
 })
 
 const KeepTouchBlock = () => {

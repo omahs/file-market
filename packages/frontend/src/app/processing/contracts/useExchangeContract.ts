@@ -1,12 +1,13 @@
 import { useContract, useSigner } from 'wagmi'
 
-import { mark3dConfig } from '../../config/mark3d'
+import { useConfig } from '../../hooks/useConfig'
 
 export function useExchangeContract() {
+  const config = useConfig()
   const { data: signer } = useSigner()
   const contract = useContract({
-    address: mark3dConfig.exchangeToken.address,
-    abi: mark3dConfig.exchangeToken.abi,
+    address: config?.exchangeToken.address,
+    abi: config?.exchangeToken.abi,
     signerOrProvider: signer,
   })
 

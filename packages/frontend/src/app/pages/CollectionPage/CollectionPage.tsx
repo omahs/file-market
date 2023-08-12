@@ -4,8 +4,9 @@ import { Outlet, useLocation, useParams } from 'react-router'
 
 import FileLogo from '../../../assets/FilemarketFileLogo.png'
 import { styled } from '../../../styles'
-import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
+import { useConfig } from '../../hooks/useConfig'
+import { useMultiChainStore } from '../../hooks/useMultiChainStore'
 import { Badge, Container, gradientPlaceholderImg, Link, NavLink, Tabs, textVariant } from '../../UIkit'
 import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -105,9 +106,10 @@ const StyledContainer = styled(Container, {
 })
 
 const CollectionPage = observer(() => {
-  const { collectionAddress } = useParams<Params>()
-  const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress)
-
+  const { collectionAddress, chainName } = useParams<Params>()
+  useMultiChainStore()
+  const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress, chainName)
+  const config = useConfig()
   const { pathname: currentPath } = useLocation()
 
   const collectionImgUrl = useMemo(() => {
@@ -162,7 +164,7 @@ const CollectionPage = observer(() => {
                 <Link
                   target='_blank'
                   rel='noopener noreferrer'
-                  href={`${mark3dConfig.chain.blockExplorers?.default.url}` +
+                  href={`${config?.chain.blockExplorers?.default.url}` +
                       `/address/${collectionAndNfts.collection?.address}`}
                 >
                   <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />

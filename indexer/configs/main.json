@@ -24,7 +24,11 @@
       "checkInterval": "5m",
       "switchTokenTimeout": "3m"
     },
+    "authMessageTTL": "5m",
+    "accessTokenTTL": "1h",
+    "refreshTokenTTL": "2160h",
     "currencyConversionCacheTTL": "1h",
-    "mode": "main"
+    "mode": "main",
+    "chainId": "314"
   }
 }

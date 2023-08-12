@@ -1,11 +1,14 @@
 import { useWeb3Modal } from '@web3modal/react'
+import { useCallback } from 'react'
 
 import { ConnectFileWalletDialog } from '../components/Web3/ConnectFileWalletDialog'
+import { useCurrentBlockChain } from './useCurrentBlockChain'
 import { useStores } from './useStores'
 
 export const useAuth = () => {
   const { dialogStore } = useStores()
-  const { open: openWeb3Modal } = useWeb3Modal()
+  const currentBlockChainStore = useCurrentBlockChain()
+  const { open: openWeb3Modal, setDefaultChain } = useWeb3Modal()
 
   const openDialog = () => {
     dialogStore.openDialog({
@@ -18,7 +21,12 @@ export const useAuth = () => {
     })
   }
 
+  const connect = useCallback(() => {
+    openDialog()
+  }, [currentBlockChainStore.chainId])
+
   return {
-    connect: openDialog,
+    connect,
+    setDefaultChain,
   }
 }
