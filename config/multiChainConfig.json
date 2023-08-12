@@ -113,7 +113,7 @@
     "imgGray": "https://svgshare.com/i/vwN.svg",
     "accessTokenAddress": "0x729e9A1e49E16b1499bA0539F3deFf394bef09fb",
     "exchangeTokenAddress": "0x8e78b2Bb812Cb2ED8EF2C85203897BEc3c9e20a3",
-    "baseUrl": "https://era.filemarket.xyz",
+    "baseUrl": "https://era.filemarket.xyz/api",
     "explorer": "https://explorer.zksync.io/tx/",
     "wsUrl": "wss://era.filemarket.xyz"
   },
