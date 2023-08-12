@@ -50,6 +50,7 @@ export const ContainerBunnies = styled(Container, {
   height: '100%',
   display: 'flex',
   alignItems: 'flex-end',
+  marginTop: '58px',
   '& .star': {
     bottom: '-3px',
     right: '-3.7%',

@@ -192,6 +192,10 @@ export const PreviewNFTFlow = ({
   }
 
   useEffect(() => {
+    console.log(isCanView)
+  }, [isCanView])
+
+  useEffect(() => {
     if (!isConnected) {
       setIsViewFile(false)
     }
@@ -219,38 +223,36 @@ export const PreviewNFTFlow = ({
         }}
       >
         <SwiperSlide>
-          {isViewFile ? (
-            isCanView && (
-              <>
-                {previewState?.state === PreviewState.LOADED ? (
-                  is3D ? (
-                    <model-viewer
-                      camera-controls
+          {(isViewFile && isCanView) ? (
+            <>
+              {previewState?.state === PreviewState.LOADED ? (
+                is3D ? (
+                  <model-viewer
+                    camera-controls
+                    src={previewState.data}
+                    shadow-intensity='1'
+                    touch-action='pan-y'
+                    style={{ width: '100%', height: '85%' }}
+                  />
+                )
+                  : (
+                    <ImageStyle
                       src={previewState.data}
-                      shadow-intensity='1'
-                      touch-action='pan-y'
-                      style={{ width: '100%', height: '85%' }}
+                      style={{ objectFit: `${isFullScreen ? (isObjectFit ? 'contain' : 'none') : (isObjectFit ? 'initial' : 'none')}` }}
+                      onError={({ currentTarget }) => {
+                        currentTarget.onerror = null
+                        currentTarget.src = gradientPlaceholderImg
+                      }}
                     />
                   )
-                    : (
-                      <ImageStyle
-                        src={previewState.data}
-                        style={{ objectFit: `${isFullScreen ? (isObjectFit ? 'contain' : 'none') : (isObjectFit ? 'initial' : 'none')}` }}
-                        onError={({ currentTarget }) => {
-                          currentTarget.onerror = null
-                          currentTarget.src = gradientPlaceholderImg
-                        }}
-                      />
-                    )
-                ) : previewState?.state === PreviewState.LOADING ? (
-                  <Loading size='xl' color={'white'} />
-                ) : previewState?.state === PreviewState.LOADING_ERROR ? (
-                  <ErrorMessage>{previewState?.data}</ErrorMessage>
-                ) : previewState?.state === PreviewState.EXTENSION_ERROR && (
-                  <ErrorMessage>{previewState?.data}</ErrorMessage>
-                )}
-              </>
-            )
+              ) : previewState?.state === PreviewState.LOADING ? (
+                <Loading size='xl' color={'white'} />
+              ) : previewState?.state === PreviewState.LOADING_ERROR ? (
+                <ErrorMessage>{previewState?.data}</ErrorMessage>
+              ) : previewState?.state === PreviewState.EXTENSION_ERROR && (
+                <ErrorMessage>{previewState?.data}</ErrorMessage>
+              )}
+            </>
           )
             : (
               <>
