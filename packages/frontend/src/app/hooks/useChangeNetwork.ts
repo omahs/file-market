@@ -19,6 +19,7 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
   const { switchNetwork, error } = useSwitchNetwork({
     onSuccess: (data) => {
       console.log('Success')
+      rootStore.errorStore.showError('Success')
       currentChainStore.setCurrentBlockChain(data.id)
       setIsLoading(false)
       props?.onSuccess?.(data.id)
@@ -53,7 +54,10 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
 
   const reloadStores = () => {
     const activeStores = getActiveStores()
+    let iter = 0
     const interval = setInterval(() => {
+      iter++
+      rootStore.errorStore.showError(iter)
       if (!activeStores.find((item) => item.isLoading)) {
         activeStores.forEach((item) => { item.reload() })
         clearInterval(interval)
