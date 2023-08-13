@@ -95,6 +95,10 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     }
     // Меняем сеть, если сеть в сторе !== сети кошелька или если сеть кошелька просто не равна переданной сети
     if ((currentChainStore.chainId !== chainId || isWarningNetwork) || chain?.id !== chainId) {
+      if (!switchNetwork) {
+        rootStore.errorStore.showError('Wallet not supported change network')
+        console.log('Wallet not supported change network')
+      }
       switchNetwork?.(chainId)
       rootStore.errorStore.showError('Change network')
       console.log('Change network')
