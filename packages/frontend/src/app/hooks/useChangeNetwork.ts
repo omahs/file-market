@@ -110,7 +110,7 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
       console.log('Change store')
       reloadStores()
     }
-  }, [currentChainStore.chainId, isConnected, chain])
+  }, [currentChainStore.chainId, isConnected, chain, switchNetwork])
 
   return {
     changeNetwork,

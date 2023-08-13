@@ -9,7 +9,7 @@ import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle, LinearText } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
-const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
+const CurrentBlockchainBigScreen = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork, isLoading, error } = useChangeNetwork()
@@ -42,4 +42,4 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
   )
 })
 
-export default CurrentBlockchain
+export default CurrentBlockchainBigScreen
