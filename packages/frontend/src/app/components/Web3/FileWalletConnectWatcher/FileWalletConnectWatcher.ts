@@ -4,8 +4,8 @@ import { useAccount } from 'wagmi'
 
 import { useStores } from '../../../hooks'
 import useLogoutAndDisconnect from '../../../hooks/useLogoutAndDisconnect'
-import { useRefreshToken } from '../../../hooks/useRefreshToken'
 import useWatchFileWalletConnect from '../../../processing/nft-interaction/useWatchFileWalletConnect'
+import { checkIsActualToken } from '../../../utils/auth/checkIsActualToken'
 
 export const FileWalletConnectWatcher: FC = observer(() => {
   const { disconnect } = useLogoutAndDisconnect()
@@ -18,7 +18,10 @@ export const FileWalletConnectWatcher: FC = observer(() => {
   })
 
   useWatchFileWalletConnect()
-  useRefreshToken()
+
+  useEffect(() => {
+    void checkIsActualToken({ disconnect })
+  }, [authStore.isActualAccessToken, authStore.isActualRefreshToken, disconnect])
 
   useEffect(() => {
     if (authStore.isActualAccessToken) {
