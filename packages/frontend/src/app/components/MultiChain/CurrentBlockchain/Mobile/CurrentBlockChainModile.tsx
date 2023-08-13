@@ -80,6 +80,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                 onSelectionChange={(keys) => {
                 // @ts-expect-error
                   setSelected(keys)
+                  console.log('Click')
                   changeNetwork(+selectedValue(keys))
                 }}
                 css={{
