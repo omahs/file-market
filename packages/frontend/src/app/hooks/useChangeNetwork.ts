@@ -14,20 +14,17 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
   const [isCanConnectAfterChange, setIsCanConnectAfterChange] = useState<boolean>(false)
   const { isConnected } = useAccount()
   const { connect, setDefaultChain } = useAuth()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const rootStore = useStores()
-  const { switchNetwork, error } = useSwitchNetwork({
+  const { switchNetwork, error, isLoading } = useSwitchNetwork({
     onSuccess: (data) => {
       console.log('Success')
       rootStore.errorStore.showError('Success')
       currentChainStore.setCurrentBlockChain(data.id)
-      setIsLoading(false)
       props?.onSuccess?.(data.id)
       reloadStores()
     },
     onError: () => {
       console.log('Error')
-      setIsLoading(false)
       props?.onError?.()
     },
   })
@@ -57,8 +54,8 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     let iter = 0
     const interval = setInterval(() => {
       iter++
-      rootStore.errorStore.showError(iter)
-      if (!activeStores.find((item) => item.isLoading)) {
+      console.log(iter)
+      if (!activeStores.find((item) => item.isLoading) || iter > 10) {
         activeStores.forEach((item) => { item.reload() })
         clearInterval(interval)
       }
@@ -92,7 +89,6 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     }
     // Меняем сеть, если сеть в сторе !== сети кошелька или если сеть кошелька просто не равна переданной сети
     if ((currentChainStore.chainId !== chainId || isWarningNetwork) || chain?.id !== chainId) {
-      setIsLoading(true)
       switchNetwork?.(chainId)
     }
     // Меняем значение в сторе, если текущая сеть кошелька !== переданной сети
