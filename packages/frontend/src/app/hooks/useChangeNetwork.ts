@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
+import { stringifyError } from '../utils/error'
 import { IStoreRequester } from '../utils/store'
 import { useAuth } from './useAuth'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
@@ -17,12 +18,15 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
   const rootStore = useStores()
   const { switchNetwork, error } = useSwitchNetwork({
     onSuccess: (data) => {
+      console.log('Success')
       currentChainStore.setCurrentBlockChain(data.id)
       setIsLoading(false)
       props?.onSuccess?.(data.id)
       reloadStores()
     },
     onError: () => {
+      console.log('Error')
+      setIsLoading(false)
       props?.onError?.()
     },
   })
@@ -64,6 +68,12 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
       setIsCanConnectAfterChange(false)
     }
   }, [isCanConnectAfterChange])
+
+  useEffect(() => {
+    if (error) {
+      rootStore.errorStore.showError(stringifyError(error !== null ? error : undefined))
+    }
+  }, [error])
 
   const changeNetwork = useCallback((chainId: number | undefined, isWarningNetwork?: boolean) => {
     if (!isConnected) {
