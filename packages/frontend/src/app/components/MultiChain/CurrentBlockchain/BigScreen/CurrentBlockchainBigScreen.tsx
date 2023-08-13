@@ -28,6 +28,7 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
               img={item.img}
               isDisable={isLoading && !error}
               onClick={() => {
+                console.log('Click')
                 changeNetwork(item.chain.id)
               }}
             />
