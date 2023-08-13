@@ -93,7 +93,8 @@ export const PreviewNFTFlow = ({
     data?: string
   }>()
   const { adaptive } = useMediaMui()
-  const [isObjectFit, setIsObjectFit] = useState<boolean>(false)
+  const [isObjectFitPreview, setIsObjectFitPreview] = useState<boolean>(false)
+  const [isObjectFitFile, setIsObjectFitFile] = useState<boolean>(false)
   const { address, isConnected } = useAccount()
   const { tokenMetaStore, tokenStore } = useStores()
   const seed = useSeed(address)
@@ -105,7 +106,7 @@ export const PreviewNFTFlow = ({
   useEffect(() => {
     const img = new Image()
     img.onload = function() {
-      setIsObjectFit(img.height > parseInt(adaptive({
+      setIsObjectFitPreview(img.height > parseInt(adaptive({
         sm: '358',
         defaultValue: '500',
       })),
@@ -113,6 +114,18 @@ export const PreviewNFTFlow = ({
     }
     img.src = imageURL
   }, [imageURL])
+
+  useEffect(() => {
+    const img = new Image()
+    img.onload = function() {
+      setIsObjectFitFile(img.height > parseInt(adaptive({
+        sm: '358',
+        defaultValue: '500',
+      })),
+      )
+    }
+    img.src = previewState?.data ?? ''
+  }, [previewState?.data])
 
   const typeFile: typeFiles | undefined = useMemo(() => {
     return hiddenFile ? fileToType(hiddenFile) : undefined
@@ -238,7 +251,7 @@ export const PreviewNFTFlow = ({
                   : (
                     <ImageStyle
                       src={previewState.data}
-                      style={{ objectFit: `${isFullScreen ? (isObjectFit ? 'contain' : 'none') : (isObjectFit ? 'initial' : 'none')}` }}
+                      style={{ objectFit: `${isFullScreen ? (isObjectFitFile ? 'contain' : 'none') : (isObjectFitFile ? 'initial' : 'none')}` }}
                       onError={({ currentTarget }) => {
                         currentTarget.onerror = null
                         currentTarget.src = gradientPlaceholderImg
@@ -259,7 +272,7 @@ export const PreviewNFTFlow = ({
                 {isLoading ? <Loading size='xl' color={'white'} /> : (
                   <ImageStyle
                     src={imageURL}
-                    style={{ cursor: 'pointer', objectFit: `${isFullScreen ? (isObjectFit ? 'contain' : 'none') : (isObjectFit ? 'initial' : 'none')}` }}
+                    style={{ cursor: 'pointer', objectFit: `${isFullScreen ? (isObjectFitPreview ? 'contain' : 'none') : (isObjectFitPreview ? 'initial' : 'none')}` }}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null
                       currentTarget.src = gradientPlaceholderImg

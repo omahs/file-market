@@ -36,7 +36,7 @@ const CurrentBlockchainBigScreen = observer(({ isVisible, isLight }: ICurrentBlo
         })}
       </>
       <LinearText css={{ fontSize: '14px' }}>
-        Ethereum and Polygon is coming soon!
+        Ethereum and Polygon are coming soon!
       </LinearText>
     </CurrentBlockchainStyle>
   )
