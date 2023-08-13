@@ -55,7 +55,7 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     const interval = setInterval(() => {
       iter++
       console.log(iter)
-      if (!activeStores.find((item) => item.isLoading) || iter > 10) {
+      if (!activeStores.find((item) => item.isLoading) || iter > 5) {
         activeStores.forEach((item) => { item.reload() })
         clearInterval(interval)
       }
