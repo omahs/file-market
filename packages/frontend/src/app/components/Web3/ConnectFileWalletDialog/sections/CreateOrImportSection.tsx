@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import GreenCheckBoxIcon from '../../../../../assets/img/CheckBoxGreenIcon.svg'
@@ -141,6 +141,10 @@ export const CreateOrImportSection: FC<{ onSuccess?: () => void, connectFunc?: (
       },
     })
   }
+
+  useEffect(() => {
+
+  }, [])
 
   return (
     <ConnectWalletWindowContentStyle>

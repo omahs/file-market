@@ -8,8 +8,8 @@ export function useCanUnlock(account: string | undefined): boolean {
   const { authStore } = useStores()
   const { seedProvider } = useSeedProvider(account)
   const updateCanUnlock = useCallback(() => {
-    setCanUnlock(seedProvider?.canUnlock() || false)
-  }, [setCanUnlock, seedProvider])
+    setCanUnlock((seedProvider?.canUnlock() && authStore.isAuth) || false)
+  }, [setCanUnlock, seedProvider, authStore.isAuth])
   useEffect(() => {
     updateCanUnlock()
     seedProvider?.addOnInitListener(updateCanUnlock)
