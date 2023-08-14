@@ -26,7 +26,7 @@
     },
     "authMessageTTL": "5m",
     "accessTokenTTL": "60h",
-    "refreshTokenTTL": "900d",
+    "refreshTokenTTL": "21600h",
     "currencyConversionCacheTTL": "1h",
     "mode": "era-dev",
     "chainId": "280"

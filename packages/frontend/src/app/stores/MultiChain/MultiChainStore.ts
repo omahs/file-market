@@ -33,6 +33,8 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
+    const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
+    this.data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
     makeAutoObservable(this, {
       errorStore: false,
     })
@@ -40,9 +42,6 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   private request() {
     const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
-    console.log(multiChains)
-    console.log(`Request multiChainStore ${multiChains}`)
-    console.log(`Meta env ${import.meta.env.VITE_IS_MAINNET}`)
     this.data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
   }
 
@@ -80,12 +79,14 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
   getChainByName(chainName: string | undefined): IMultiChainConfig | undefined {
     if (chainName === undefined) return
 
+    console.log(chainName)
+    console.log(this.data)
+
     return this.data?.find(item => item.chain?.name === chainName)
   }
 
   getApiByName(chainName: string | undefined): Api<{}> | undefined {
     if (chainName === undefined) return
-    console.log(chainName)
 
     return new Api({ baseUrl: this.getChainByName(chainName)?.baseUrl })
   }

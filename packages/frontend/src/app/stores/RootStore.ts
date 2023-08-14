@@ -14,6 +14,7 @@ import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { ProfileStore } from './Profile/ProfileStore'
 import { PublicCollectionStore } from './PublicCollectionStore/PublicCollectionStore'
+import { SocketStore } from './Socket/SocketStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { TokenStore } from './Token/TokenStore'
 import { TransferListStore } from './Transfer/TransferListStore'
@@ -46,6 +47,7 @@ export class RootStore {
   collectionsListStore: CollectionListStore
   multiChainStore: MultiChainStore
   currentBlockChainStore: CurrentBlockChainStore
+  socketStore: SocketStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -71,6 +73,7 @@ export class RootStore {
     this.conversionRateStore = new ConversionRateStore(this)
     this.whitelistStore = new WhiteListStore(this)
     this.collectionsListStore = new CollectionListStore(this)
+    this.socketStore = new SocketStore(this)
   }
 }
 

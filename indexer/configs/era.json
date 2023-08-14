@@ -1,0 +1,34 @@
+{
+  "server": {
+    "port": 9302,
+    "readTimeout": "5s",
+    "writeTimeout": "5s",
+    "maxHeaderBytes": 1024
+  },
+  "handler": {
+    "requestTimeout": "5s",
+    "swaggerHost": "*"
+  },
+  "service": {
+    "accessTokenAddress": "0x729e9A1e49E16b1499bA0539F3deFf394bef09fb",
+    "fraudDeciderWeb2Address": "0xbA445596cfe6D33f8E82a736a01459086Eb5529B",
+    "exchangeAddress": "0x8e78b2Bb812Cb2ED8EF2C85203897BEc3c9e20a3",
+    "publicCollectionAddress": "0xEc8b32B53Af5075b6c05eB270637a84F1E94E066",
+    "fileBunniesCollectionAddress": "0x0000000000000000000000000000000000000123",
+    "fileBunniesCreatorAddress": "0x0000000000000000000000000000000000000123",
+    "allowedBlockNumberDifference": 20,
+    "healthCheckInterval": 60,
+    "sequencer": {
+      "keyPrefix": "sequencer",
+      "tokenIdTTL": "15m",
+      "checkInterval": "5m",
+      "switchTokenTimeout": "3m"
+    },
+    "authMessageTTL": "5m",
+    "accessTokenTTL": "60h",
+    "refreshTokenTTL": "2160h",
+    "currencyConversionCacheTTL": "1h",
+    "mode": "era",
+    "chainId": "324"
+  }
+}

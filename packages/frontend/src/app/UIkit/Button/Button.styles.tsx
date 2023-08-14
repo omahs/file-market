@@ -70,7 +70,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         true: {
           color: '$white',
           fill: '$white',
-          background: 'linear-gradient(to top, #028FFF 50%, transparent 50%)',
+          background: 'linear-gradient(to top, #028FFF 50%, $white 50%)',
           backgroundSize: '100% 200%',
           backgroundPosition: '0 100%',
           transition: 'background-position 0.3s ease-out, color 0.3s ease-out',

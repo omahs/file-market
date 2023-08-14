@@ -1669,6 +1669,8 @@ definitions:
     type: object
     description: Респонс на healthcheck
     properties:
+      mode:
+        type: string
       status:
         $ref: "#/definitions/HealthStatus"
       blockBacklog:

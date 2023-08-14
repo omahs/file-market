@@ -25,8 +25,8 @@
       "switchTokenTimeout": "3m"
     },
     "authMessageTTL": "5m",
-    "accessTokenTTL": "60m",
-    "refreshTokenTTL": "90d",
+    "accessTokenTTL": "60h",
+    "refreshTokenTTL": "2160h",
     "currencyConversionCacheTTL": "1h",
     "mode": "main",
     "chainId": "314"

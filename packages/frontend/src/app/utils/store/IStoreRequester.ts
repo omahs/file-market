@@ -78,10 +78,8 @@ export const storeRequest = <Data>(
     response => {
       if (response.ok) {
         target.isLoaded = true
-        console.log(response)
         callback(response.data)
       } else {
-        console.log('req error', response.error)
         target.errorStore.showError(errorResponseToMessage(response.error))
       }
     },

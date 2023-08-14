@@ -2,7 +2,7 @@ import { NavBarItemData } from '../../../UIkit'
 
 export const paths: NavBarItemData[] = [
   {
-    to: '/market',
+    to: '/market/efts',
     label: 'Explore',
   },
   {
@@ -15,8 +15,12 @@ export const paths: NavBarItemData[] = [
     label: 'How to get FIL',
     isLink: true,
   },
+  {
+    to: '/market/collections',
+    label: 'Collections',
+  },
 ]
 
-export const pathsWithCurrentBlockchain: string[] = [
-  'market', 'profile', 'create',
+export const pathsWithoutCurrentBlockchain: string[] = [
+  'branding', 'successGetAccess', 'collection', 'checkCrypto',
 ]

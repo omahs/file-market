@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit'
+import { Button, Container, LinkButton, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
@@ -254,27 +254,14 @@ export default function WelcomeBlock() {
         <WelcomeInfo>
           <StorageImg src={bgStorage} />
           <Title>
-            No code NFT shop builder with privacy layer & perpetual decentralized storage
+            Marketplace for tokenizing and monetizing your data
           </Title>
           <Description>
-            {'Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs -'}
-            {' '}
-            <EFTLinkWrapper>
-              <Link
-                target={'_blank'}
-                href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}
-              >
-                Encrypted FileToken (EFT)
-
-              </Link>
-            </EFTLinkWrapper>
-            .
+            Your access point to decentralized storage for impactful content, where data hunters, keepers, and providers connect.
           </Description>
           <NavigateBlock>
             <NavigateTitle>
-              Start tokenizing your&nbsp;
-              <br />
-              content/data today:
+              Upload and protect your data in a perpetual decentralized storage and start earning by selling access to it!
             </NavigateTitle>
             <div className='buttonContainer'>
               <Button
@@ -286,7 +273,7 @@ export default function WelcomeBlock() {
                   navigate('/create/eft')
                 }}
               >
-                Mint EFT right here
+                Upload file right here
               </Button>
               <LinkButton
                 mediumMxWidth

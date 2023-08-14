@@ -15,6 +15,7 @@ const SelectBlockchainContainer = styled('div', {
   width: 'max-content',
   display: 'flex',
   gap: '16px',
+  rowGap: '28px',
   color: '#2F3134',
   '@md': {
     flexWrap: 'wrap',
@@ -26,6 +27,7 @@ const SelectBlockchainStyle = styled(PageLayout, {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  paddingTop: 'calc($layout$navBarHeight + $space$4 + 58px)',
 })
 
 const SelectBlockchainContent = styled('div', {
@@ -46,13 +48,21 @@ const TextBlock = styled('div', {
 })
 
 const TitleStyled = styled(Txt, {
-  width: '514px',
   ...textVariant('fourfold1').true,
   '@md': {
-    width: '100%',
+    fontSize: '32px',
   },
   '@sm': {
+    fontSize: '28px',
+  },
+  '@media (max-width: 500px)': {
+    fontSize: '25px',
+  },
+  '@media (max-width: 450px)': {
     fontSize: '32px',
+  },
+  '@xs': {
+    fontSize: '30px',
   },
 })
 
@@ -74,6 +84,7 @@ interface ISelectBlockchain {
   onChange?: (chainId: number) => void
 }
 
+// eslint-disable-next-line max-len
 const SelectBlockchain = observer(({ type, title: titleProps, description: descriptionProps, onChange }: ISelectBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const title = useMemo(() => {

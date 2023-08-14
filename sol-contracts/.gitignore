@@ -28,4 +28,5 @@ test.sh
 .calibration-secret
 .mainnet-secret
 .test-zksync-secret
+.main-zksync-secret
 .yarn

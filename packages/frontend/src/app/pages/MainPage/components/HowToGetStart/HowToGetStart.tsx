@@ -21,7 +21,7 @@ import WatchSquareMinimalistic from '../../../../../assets/img/HowToGetStart/Wat
 import { styled } from '../../../../../styles'
 import { useIsConnected } from '../../../../hooks/useIsConnected'
 import { Link, textVariant, Txt } from '../../../../UIkit'
-import BoxShadowed from '../BoxShadowed/BoxShadowed'
+import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
 import HowToGetStartCard from '../HowToGetStartCard/HowToGetStartCard'
 
 const Section = styled('section', {
@@ -207,7 +207,7 @@ const HowToGetStart = () => {
 
   return (
     <Section>
-      <BoxShadowed>
+      <BoxShadowed large>
         <Collapse
           title={<Title className="how-to-get-started-title">How to use FileMarket?</Title>}
           css={{

@@ -107,7 +107,7 @@ func (h *handler) handleHealthCheck(w http.ResponseWriter, r *http.Request) {
 func (h *handler) handleGetCurrencyConversionRate(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	response, err := h.service.GetCurrencyConversionRate(ctx, "FIL", "USD")
+	response, err := h.service.GetCurrencyConversionRate(ctx, "USD")
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return

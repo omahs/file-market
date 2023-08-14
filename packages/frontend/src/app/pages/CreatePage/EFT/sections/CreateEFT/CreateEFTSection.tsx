@@ -8,8 +8,7 @@ import { useAccount } from 'wagmi'
 import BaseModal, {
   ErrorBody,
   extractMessageFromError,
-  InProgressBody,
-  SuccessNavBody,
+  InProgressBody, SuccessNavBody,
 } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../../../../components/Uploaders/NftLoader/NftLoader'
@@ -19,6 +18,7 @@ import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../../../../hooks/useMediaMui'
 import { useModalProperties } from '../../../../../hooks/useModalProperties'
 import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
+import { useSubscribeToEft } from '../../../../../hooks/useSubscribeToEft'
 import {
   Button,
   ComboBoxOption,
@@ -85,12 +85,12 @@ export const CreateEFTSection: React.FC = observer(() => {
     isLoading: isCollectionLoading,
   } = useCollectionAndTokenListStore(address)
   const publicCollectionStore = usePublicCollectionStore()
-
+  const { transferStore } = useStores()
   const { collectionAndTokenList } = useStores()
   const currentBlockChainStore = useCurrentBlockChain()
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
-
+  const { subscribe } = useSubscribeToEft({ isDisableListener: true })
   const {
     createNft,
     error: nftError,
@@ -152,6 +152,12 @@ export const CreateEFTSection: React.FC = observer(() => {
         />,
       )
     } else if (nftResult) {
+      subscribe({ collectionAddress: nftResult?.receipt.to, tokenId: nftResult?.tokenId }, currentBlockChainStore.chain?.name)
+    }
+  }, [nftError, isNftLoading])
+
+  useEffect(() => {
+    if (transferStore.isCanRedirectMint && nftResult) {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
@@ -162,8 +168,9 @@ export const CreateEFTSection: React.FC = observer(() => {
           }}
         />,
       )
+      transferStore.setIsCanRedirectMint(false)
     }
-  }, [nftError, isNftLoading, nftResult])
+  }, [transferStore.isCanRedirectMint, nftResult])
 
   const subcategoryOptions: ComboBoxOption[] = useMemo(() => {
     return subcategory[chosenCategory?.title as category]
@@ -196,17 +203,18 @@ export const CreateEFTSection: React.FC = observer(() => {
           setModalOpen(false)
         }}
       />
-      <PageLayout>
+      <PageLayout isHasSelectBlockChain>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup>
             <h3><Txt h3 style={{ fontWeight: '600' }}>Create New EFT</Txt></h3>
             <SubTitle>
               <Txt primary1>
+                Using
                 <Tooltip
                   placement={'bottomStart'}
                   content={(
                     <Txt secondary1 css={{ fontSize: '14px' }}>
-                      {'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT'}
+                      {'Allows users to mint NFTs with attached encrypted files stored on decentralized storage, which can only be accessed exclusively by the owner of the NFT'}
                     </Txt>
                   )}
                   css={{
@@ -221,7 +229,7 @@ export const CreateEFTSection: React.FC = observer(() => {
                   <Txt css={{ color: '$blue500', cursor: 'pointer' }}>Encrypted FileToken&#169;</Txt>
                   {' '}
                 </Tooltip>
-                on Filecoin network
+                Protocol
               </Txt>
             </SubTitle>
           </TitleGroup>

@@ -46,7 +46,6 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
           onSuccess?.()
         })
         .catch((err) => {
-          console.log(err)
           setError('Incorrect password')
         })
     }

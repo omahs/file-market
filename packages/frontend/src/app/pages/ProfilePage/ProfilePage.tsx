@@ -33,7 +33,7 @@ const ProfilePage: React.FC = observer(() => {
     const tabs: TabItem[] = [
       {
         value: 'Owned',
-        label: 'owned',
+        label: 'Owned',
         url: 'owned',
         amount: collectionAndTokenListStore.data.tokensTotal ?? 0,
       },
