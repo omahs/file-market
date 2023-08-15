@@ -2,7 +2,7 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { FC } from 'react'
 import { configureChains, createClient } from 'wagmi'
-
+import { Buffer } from 'buffer'
 import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
 import { IMultiChainConfig } from './multiChainConfigType'
@@ -15,6 +15,18 @@ export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiCha
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 
+if (typeof window !== 'undefined') {
+    if (!window.Buffer) {
+        window.Buffer = Buffer
+    }
+    if (!window.global) {
+        window.global = window
+    }
+    if (!window.process) {
+        // @ts-expect-error minimal process
+        window.process = { env: {} }
+    }
+}
 if (!projectId) {
   throw new Error('You need to provide VITE_WEB3_MODAL_PROJECT_ID env variable')
 }
