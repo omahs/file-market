@@ -50,7 +50,7 @@ export class AuthStore {
   }
 
   setUser(user?: UserProfile) {
-    this.profileStore.setPlayer(user)
+    this.profileStore.setUser(user)
   }
 
   setAddress(address: `0x${string}`) {
@@ -84,7 +84,7 @@ export class AuthStore {
       localStorage.removeItem('Refresh_token')
       localStorage.removeItem('Refresh_tokenExpired')
       localStorage.removeItem('Access_tokenExpired')
-      // this.profileStore.logout()
+      this.profileStore.logout()
     } catch (e: any) {
       this.errorStore.showError(stringifyError(e.error.message))
       localStorage.removeItem('Access_token')
@@ -100,13 +100,9 @@ export class AuthStore {
       // const response = await this.authService.auth.byTokenCreate({
       //   headers: { authorization: this.AccessToken },
       // })
-      // assert(response.data.player, 'player is undefined')
       // this.setUser(response.data.player)
       console.log('Connect by jwt')
       this.isFirstConnect = false
-      this.setUser({
-        name: 'Aleshka',
-      })
     } catch (e: any) {
       console.log(e)
       this.errorStore.showError(stringifyError(e.error))
@@ -128,6 +124,7 @@ export class AuthStore {
       }
     } catch (e: any) {
       this.errorStore.showError(stringifyError(e.error.message))
+      this.logout()
     } finally {
       this.setLoading(false)
     }

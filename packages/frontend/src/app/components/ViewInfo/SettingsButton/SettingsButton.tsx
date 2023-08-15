@@ -1,10 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '../../../UIkit'
 
 const SettingsButton = () => {
+  const navigate = useNavigate()
+
   return (
-    <Button settings style={{ height: 'max-content', padding: '8px', marginTop: '12px' }}>
+    <Button settings style={{ height: 'max-content', padding: '8px', marginTop: '12px' }} onClick={() => { navigate('/settings') }}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"

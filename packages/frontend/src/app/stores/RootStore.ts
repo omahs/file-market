@@ -54,7 +54,7 @@ export class RootStore {
     this.blockStore = new BlockStore()
     this.dateStore = new DateStore()
     this.errorStore = new ErrorStore(this)
-    this.profileStore = new ProfileStore()
+    this.profileStore = new ProfileStore(this)
     this.authStore = new AuthStore(this)
     this.multiChainStore = new MultiChainStore(this)
     this.currentBlockChainStore = new CurrentBlockChainStore(this)

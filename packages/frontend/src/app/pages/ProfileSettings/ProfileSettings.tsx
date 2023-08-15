@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
+import { BaseModal } from '../../components'
 import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../../components/Modal/Modal'
 import { useModalProperties } from '../../hooks/useModalProperties'
 import { Button, PageLayout, Txt } from '../../UIkit'
@@ -72,14 +73,14 @@ export default function ProfileSettings() {
 
   return (
     <>
-      {/* <BaseModal */}
-      {/*  body={modalBody} */}
-      {/*  open={modalOpen} */}
-      {/*  isError={!!error} */}
-      {/*  handleClose={() => { */}
-      {/*    setModalOpen(false) */}
-      {/*  }} */}
-      {/* /> */}
+      <BaseModal
+        body={modalBody}
+        open={modalOpen}
+        isError={!!error}
+        handleClose={() => {
+          setModalOpen(false)
+        }}
+      />
       <PageLayout css={{ minHeight: '100vh' }}>
         <ReturnButton />
         <Form onSubmit={handleSubmit(onSubmit)}>

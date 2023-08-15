@@ -18,7 +18,7 @@ const ReturnButton = () => {
     <ReturnButtonStyle
       settings
       onPress={() => {
-        navigate('/profile')
+        navigate(-1)
       }}
     >
       <svg
