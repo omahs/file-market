@@ -1,0 +1,18 @@
+{
+  "server": {
+    "httpPort": 9210,
+    "grpcPort": 9211,
+    "readTimeout": "5s",
+    "writeTimeout": "5s",
+    "maxHeaderBytes": 1024
+  },
+  "handler": {
+    "requestTimeout": "5s"
+  },
+  "service": {
+    "authMessageTTL": "5m",
+    "accessTokenTTL": "1h",
+    "refreshTokenTTL": "2160h",
+    "emailVerificationTokenTTL": "30m"
+  }
+}
