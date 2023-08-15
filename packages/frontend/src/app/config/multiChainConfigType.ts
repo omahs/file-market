@@ -1,4 +1,4 @@
-import { Chain } from '@web3modal/ethereum'
+import { Chain } from "wagmi"
 
 export interface IMultiChainConfig {
   chain: Chain

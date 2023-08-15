@@ -1,4 +1,4 @@
-import { Chain } from '@web3modal/ethereum'
+import { Chain } from "wagmi"
 import { BigNumberish, utils } from 'ethers'
 
 export const formatCurrency = (value: BigNumberish, chain: Chain | undefined) => {
