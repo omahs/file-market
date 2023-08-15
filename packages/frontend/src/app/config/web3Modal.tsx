@@ -1,6 +1,5 @@
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
-import { Buffer } from 'buffer'
 import { FC } from 'react'
 import { configureChains, createClient } from 'wagmi'
 
@@ -13,19 +12,6 @@ export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiCha
   .filter(item => {
     return (item.testnet === true) === !import.meta.env.VITE_IS_MAINNET
   })
-
-if (typeof window !== 'undefined') {
-  if (!window.Buffer) {
-    window.Buffer = Buffer
-  }
-  if (!window.global) {
-    window.global = window
-  }
-  if (!window.process) {
-    // @ts-expect-error minimal process
-    window.process = { env: {} }
-  }
-}
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 
