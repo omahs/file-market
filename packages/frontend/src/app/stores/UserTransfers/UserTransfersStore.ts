@@ -1,4 +1,4 @@
-import { Chain } from "wagmi"
+import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
 
 import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
