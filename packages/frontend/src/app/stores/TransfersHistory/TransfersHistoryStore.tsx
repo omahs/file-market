@@ -1,4 +1,4 @@
-import { Chain } from '@web3modal/ethereum'
+import { Chain } from "wagmi"
 import dayjs from 'dayjs'
 import { makeAutoObservable } from 'mobx'
 
