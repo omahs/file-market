@@ -8519,35 +8519,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/core@npm:2.7.1":
-  version: 2.7.1
-  resolution: "@web3modal/core@npm:2.7.1"
+"@web3modal/core@npm:2.6.2":
+  version: 2.6.2
+  resolution: "@web3modal/core@npm:2.6.2"
   dependencies:
-    valtio: 1.11.0
-  checksum: 5f41bf44047e48a717b04167b482dc12d48ac5c4af5acc183c1dbfb400d945eb6139e894ecfd9875541c587d3323e219026328d260d01d50c3116f9ff373ec85
+    buffer: 6.0.3
+    valtio: 1.10.6
+  checksum: 33d9460b73427f9fa4c6ac4be97e8f2596c3327b81ea8b3266aef3d58ed228b75d33bfa40c510fbfb86c80785ba2ff45c432a5a7daf9d08064f9f86a60eff5d9
   languageName: node
   linkType: hard
 
-"@web3modal/ethereum@npm:^2.7.1":
-  version: 2.7.1
-  resolution: "@web3modal/ethereum@npm:2.7.1"
+"@web3modal/ethereum@npm:2.6.2":
+  version: 2.6.2
+  resolution: "@web3modal/ethereum@npm:2.6.2"
   peerDependencies:
     "@wagmi/core": ">=1"
     viem: ">=1"
-  checksum: 272aca6b3d4647183b3bcd2ab126101b7b42bc70d13ebb744d8386ddb00105bdc6f31ca0feb2e339179fc66b95865836d24f31c3d3f5c0e0c0a636c66329f6d8
+  checksum: c5c75c1a8e35bbc649a36195f1ca318b87189058c889e45c1fbca06bddba804983e82694501d65147fda79a14393cba0960c45b26e292b125e2ae5cf6c9f32b9
   languageName: node
   linkType: hard
 
-"@web3modal/react@npm:^2.7.1":
-  version: 2.7.1
-  resolution: "@web3modal/react@npm:2.7.1"
+"@web3modal/react@npm:2.6.2":
+  version: 2.6.2
+  resolution: "@web3modal/react@npm:2.6.2"
   dependencies:
-    "@web3modal/core": 2.7.1
-    "@web3modal/ui": 2.7.1
+    "@web3modal/core": 2.6.2
+    "@web3modal/ui": 2.6.2
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 14793cf61ccea770b0b07a999d4f667f712fd24748eed0a664c5a43df493b87b6fc7f3001daa580cecd1c00ef85102257548209bffdf270ffba1fc8c21ce064f
+  checksum: 203055f76e3001a056642c093a096cba42d4009958c225689673e12afe8700ff325ba3688753088a7eaf0d23d3d91d015cf0c6cfd1894d0f353f474deae9f06b
   languageName: node
   linkType: hard
 
@@ -8573,15 +8574,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/ui@npm:2.7.1":
-  version: 2.7.1
-  resolution: "@web3modal/ui@npm:2.7.1"
+"@web3modal/ui@npm:2.6.2":
+  version: 2.6.2
+  resolution: "@web3modal/ui@npm:2.6.2"
   dependencies:
-    "@web3modal/core": 2.7.1
-    lit: 2.7.6
+    "@web3modal/core": 2.6.2
+    lit: 2.7.5
     motion: 10.16.2
     qrcode: 1.5.3
-  checksum: 1bb8fa415f7b22a4e9da75d55bab80e7a36429ed2f686f4c4ee55379cd41205a17913dc30a82e374d74238111cd37ed5e737d00b6b62f6aff5fffefc2336a9fc
+  checksum: ce26c3b24b8149f8f6f9958ee924385f8dd64763b01e82ac7fb4453cea2dbd1ab5457fc55c6137187e2850f4a23db12206ab55d19d9fc1df61e16f107c663533
   languageName: node
   linkType: hard
 
@@ -13781,8 +13782,8 @@ __metadata:
     "@types/react-dom": ^18.0.6
     "@typescript-eslint/eslint-plugin": ^5.0.0
     "@vitejs/plugin-react": ^2.1.0
-    "@web3modal/ethereum": ^2.7.1
-    "@web3modal/react": ^2.7.1
+    "@web3modal/ethereum": 2.6.2
+    "@web3modal/react": 2.6.2
     babel-loader: ^8.2.5
     bip39: ^3.1.0
     buffer: ^6.0.3
@@ -17167,14 +17168,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lit@npm:2.7.6":
-  version: 2.7.6
-  resolution: "lit@npm:2.7.6"
+"lit@npm:2.7.5":
+  version: 2.7.5
+  resolution: "lit@npm:2.7.5"
   dependencies:
     "@lit/reactive-element": ^1.6.0
     lit-element: ^3.3.0
     lit-html: ^2.7.0
-  checksum: 984a7fb9c0fa387f20177a07de22ea1c9cdc01a7dc7cb1c400d1df5b43a8956908460482a3259ea173555c6f0f13457d2ddc5c84d4c365007afd86e7ca58b384
+  checksum: 61a3f87c57136618f47a30b36cdfb592fcba42dcfbdb104d2b5ca291148c2d9a32fcb713bb91090bd08d6897a00e73f8425da6e3626aa080eaf410a32397ae69
   languageName: node
   linkType: hard
 
@@ -23957,9 +23958,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"valtio@npm:1.11.0":
-  version: 1.11.0
-  resolution: "valtio@npm:1.11.0"
+"valtio@npm:1.10.6":
+  version: 1.10.6
+  resolution: "valtio@npm:1.10.6"
   dependencies:
     proxy-compare: 2.5.1
     use-sync-external-store: 1.2.0
@@ -23968,7 +23969,7 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 77e42f5841054ba3e41b456fbb96b679eaeb6d9dbb46b7ce9aee6acf1352de73969858dea837a706c969ca908155d6cb97966e33be10b69b097744dd99b5174a
+  checksum: 0e738aa204c479c8f8c89c0a7478d6784c28ddd712be529fdc5c421d3ec28157fec2fb022a75cd4f45b8c4b470fbc64a27032adba6ed9936bdad989256222adf
   languageName: node
   linkType: hard
 
