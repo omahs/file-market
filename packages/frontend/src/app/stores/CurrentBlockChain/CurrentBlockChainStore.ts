@@ -1,5 +1,5 @@
+import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
-import { Chain } from 'wagmi'
 
 import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import { Api } from '../../../swagger/Api'

@@ -1,5 +1,5 @@
+import { Chain } from '@web3modal/ethereum'
 import { makeAutoObservable } from 'mobx'
-import { Chain } from 'wagmi'
 
 import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
 import { TransferCardProps } from '../../components/MarketCard/TransferCard'
