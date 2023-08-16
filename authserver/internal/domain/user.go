@@ -2,7 +2,7 @@ package domain
 
 import "github.com/ethereum/go-ethereum/common"
 
-type UserRole uint8
+type UserRole uint32
 
 const (
 	UserRoleUser UserRole = iota + 1

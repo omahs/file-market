@@ -295,12 +295,19 @@ func (s *service) GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, to
 		}
 	}
 
+	role, err := s.repository.GetUserRole(ctx, tx, address)
+	if err != nil {
+		log.Printf("failed to get user role: %v", err)
+		return nil, domain.InternalError
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		return nil, domain.InternalError
 	}
 
 	return &domain.Principal{
 		Address: address,
+		Role:    role,
 		Number:  tokenData.Number,
 	}, nil
 }

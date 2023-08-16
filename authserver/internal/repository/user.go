@@ -9,24 +9,22 @@ import (
 	"time"
 )
 
-func (p *postgres) IsAdmin(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
+func (p *postgres) GetUserRole(ctx context.Context, tx pgx.Tx, address common.Address) (domain.UserRole, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT COUNT(*) > 0 AS exists
+		SELECT role
 		FROM users
-		WHERE address=$1 AND 
-		      role=$2
+		WHERE address=$1
 	`
 
-	var exists bool
+	var role int
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(address.String()),
-		domain.UserRoleAdmin,
-	).Scan(&exists); err != nil {
-		return false, err
+	).Scan(&role); err != nil {
+		return 0, err
 	}
 
-	return exists, nil
+	return domain.UserRole(role), nil
 }
 
 func (p *postgres) InsertUser(ctx context.Context, tx pgx.Tx, user *domain.User) error {

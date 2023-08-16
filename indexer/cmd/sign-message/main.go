@@ -19,7 +19,6 @@ func main() {
 	flag.StringVar(&message, "message", "", "")
 	flag.Parse()
 
-	fmt.Println(key)
 	ecdsaKey, err := crypto.HexToECDSA(key)
 	if err != nil {
 		log.Panicln(err)

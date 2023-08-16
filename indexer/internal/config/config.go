@@ -11,13 +11,14 @@ import (
 
 type (
 	Config struct {
-		Postgres     *PostgresConfig
-		Server       *ServerConfig
-		Handler      *HandlerConfig
-		Service      *ServiceConfig
-		Redis        *RedisConfig
-		Sequencer    *SequencerConfig
-		TokenManager *TokenManagerConfig
+		Postgres       *PostgresConfig
+		Server         *ServerConfig
+		Handler        *HandlerConfig
+		Service        *ServiceConfig
+		Redis          *RedisConfig
+		Sequencer      *SequencerConfig
+		TokenManager   *TokenManagerConfig
+		Infrastructure *InfrastructureConfig
 	}
 
 	SequencerConfig struct {
@@ -77,6 +78,10 @@ type (
 	RedisConfig struct {
 		Addr     string
 		Password string
+	}
+
+	InfrastructureConfig struct {
+		AuthServerEndpoint string
 	}
 )
 
@@ -148,6 +153,9 @@ func Init(configPath string) (*Config, error) {
 		},
 		TokenManager: &TokenManagerConfig{
 			SigningKey: envCfg.GetString("JWT_SIGNING_KEY"),
+		},
+		Infrastructure: &InfrastructureConfig{
+			AuthServerEndpoint: envCfg.GetString("AUTHSERVER_ENDPOINT"),
 		},
 	}, nil
 }

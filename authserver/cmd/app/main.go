@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+	log.SetFlags(log.Ldate | log.Ltime | log.Llongfile)
 	var cfgPath string
 	flag.StringVar(&cfgPath, "cfg", "configs/local", "config path")
 	flag.Parse()

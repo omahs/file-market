@@ -34,7 +34,7 @@ func (h *handler) Init() http.Handler {
 	router.Handle("/auth/refresh", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleRefresh)))
 	router.Handle("/auth/logout", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleLogout)))
 	router.Handle("/auth/full_logout", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleFullLogout)))
-	router.Handle("/auth/checkAuth", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleGetUserProfile)))
+	router.Handle("/auth/check_auth", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleGetUserProfile)))
 
 	router.Handle("/profile/update", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleUpdateUserProfile)))
 	router.Handle("/profile/set_email", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleSetEmail)))

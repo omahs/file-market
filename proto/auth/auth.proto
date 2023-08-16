@@ -5,10 +5,12 @@ package pb;
 option go_package = "github.com/mark3d-xyz/mark3d/authserver-pb";
 
 import "profile.proto";
+import "user.proto";
 import "google/protobuf/empty.proto";
 
 service Auth {
   rpc GetAuthMessage(AuthMessageRequest) returns (AuthMessageResponse);
+  rpc GetUserByJwtToken(GetUserByJwtTokenRequest) returns (User);
   rpc AuthBySignature(AuthBySignatureRequest) returns (AuthResponse);
   rpc RefreshTokens(google.protobuf.Empty) returns (AuthResponse);
   rpc Logout(google.protobuf.Empty) returns (SuccessResponse);

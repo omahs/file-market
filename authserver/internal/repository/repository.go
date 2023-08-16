@@ -46,7 +46,7 @@ type UserProfile interface {
 }
 
 type User interface {
-	IsAdmin(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error)
+	GetUserRole(ctx context.Context, tx pgx.Tx, address common.Address) (domain.UserRole, error)
 	InsertUser(ctx context.Context, tx pgx.Tx, user *domain.User) error
 	UserExists(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error)
 }

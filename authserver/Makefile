@@ -22,7 +22,7 @@ proto:
 	@if [ `basename \`pwd\`` != "authserver" ]; then \
 		echo "cd to authserver dir first. `pwd`"; \
 	else \
-		rm -r proto && \
+		rm -r proto 2> /dev/null || true && \
 		mkdir -p proto && \
 		cd ../proto/auth && \
 		protoc --go_out=`pwd`/../../authserver/proto \

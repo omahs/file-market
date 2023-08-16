@@ -9,6 +9,7 @@ import (
 
 type Principal struct {
 	Address common.Address
+	Role    UserRole
 	Number  int
 }
 

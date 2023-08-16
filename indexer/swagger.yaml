@@ -109,6 +109,25 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /auth/check_auth:
+    get:
+      tags:
+        - auth
+        - profile
+      description: Получить профиль
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
   /collections:
     get:
       tags:
@@ -894,6 +913,8 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
   /report/token:
     post:
       tags:
@@ -913,6 +934,80 @@ paths:
           description: Ответ
           schema:
             $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/update:
+    post:
+      tags:
+        - profile
+      description: Обновление профиля пользователя
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: profile
+          schema:
+            $ref: '#/definitions/UserProfile'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/set_email:
+    post:
+      tags:
+        - profile
+      description: Запросить обновление имейла, на почту будет отправлена ссылка для подтверждения
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: set_email_request
+          schema:
+            $ref: '#/definitions/SetEmailRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/{identification}:
+    get:
+      tags:
+        - profile
+      description: Запрос на получение профиля пользователя без приватных полей
+      produces:
+        - application/json
+      parameters:
+        - name: identification
+          in: path
+          description: Адрес аккаунта или username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/UserProfile'
         default:
           description: Ошибка
           schema:
@@ -1044,6 +1139,32 @@ definitions:
     description: Профиль юзера
     properties:
       name:
+        type: string
+        description: Display name юзера
+      username:
+        type: string
+        description: Уникальный никнейм, который будет юзаться в URL
+      bio:
+        type: string
+        description: Био человека
+      websiteUrl:
+        type: string
+        pattern: '[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)'
+        description: Ссылка на личный сайт
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      email:
+        type: string
+        description: Вернется если **Авторизирован**
+      avatarUrl:
+        type: string
+      bannerUrl:
+        type: string
+  SetEmailRequest:
+    type: object
+    properties:
+      email:
         type: string
   ReportCollectionRequest:
     type: object

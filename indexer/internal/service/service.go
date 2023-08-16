@@ -8,12 +8,15 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/infrastructure/clients"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 	"log"
 	"math/big"
@@ -59,6 +62,7 @@ type Service interface {
 	Whitelist
 	Currency
 	Auth
+	Profiles
 	Moderation
 	Sub
 	ListenBlockchain() error
@@ -121,15 +125,23 @@ type Currency interface {
 type Auth interface {
 	GetAuthMessage(ctx context.Context, req models.AuthMessageRequest) (*models.AuthMessageResponse, *models.ErrorResponse)
 	AuthBySignature(ctx context.Context, req models.AuthBySignatureRequest) (*models.AuthResponse, *models.ErrorResponse)
-	RefreshJwtTokens(ctx context.Context, address common.Address, number int64) (*models.AuthResponse, *models.ErrorResponse)
+	RefreshJwtTokens(ctx context.Context) (*models.AuthResponse, *models.ErrorResponse)
 	GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, token string) (*domain.User, *models.ErrorResponse)
-	Logout(ctx context.Context, address common.Address, number int64) *models.ErrorResponse
-	FullLogout(ctx context.Context, address common.Address) *models.ErrorResponse
+	Logout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse)
+	FullLogout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse)
+	CheckAuth(ctx context.Context) (*models.UserProfile, *models.ErrorResponse)
+}
+
+type Profiles interface {
+	GetUserProfile(ctx context.Context, identification string) (*models.UserProfile, *models.ErrorResponse)
+	UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse)
+	SetEmail(ctx context.Context, email string) (*models.SuccessResponse, *models.ErrorResponse)
+	VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse)
 }
 
 type Moderation interface {
-	ReportCollection(ctx context.Context, userAddress common.Address, req *models.ReportCollectionRequest) *models.ErrorResponse
-	ReportToken(ctx context.Context, userAddress common.Address, req *models.ReportTokenRequest) *models.ErrorResponse
+	ReportCollection(ctx context.Context, user *domain.User, req *models.ReportCollectionRequest) *models.ErrorResponse
+	ReportToken(ctx context.Context, user *domain.User, req *models.ReportTokenRequest) *models.ErrorResponse
 }
 
 type Sub interface {
@@ -143,7 +155,6 @@ type service struct {
 	healthNotifier      healthnotifier.HealthNotifier
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
-	jwtManager          jwt.TokenManager
 	sequencer           *sequencer.Sequencer
 	accessTokenAddress  common.Address
 	accessTokenInstance *access_token.Mark3dAccessTokenV2
@@ -152,6 +163,7 @@ type service struct {
 	currencyConverter   currencyconversion.Provider
 	commonSigner        *ethsigner.EthSigner
 	uncommonSigner      *ethsigner.EthSigner
+	authClient          *clients.AuthClient
 	closeCh             chan struct{}
 }
 
@@ -160,11 +172,11 @@ func NewService(
 	wsPool ws.Pool,
 	ethClient ethclient2.EthClient,
 	sequencer *sequencer.Sequencer,
-	jwtManager jwt.TokenManager,
 	healthNotifier healthnotifier.HealthNotifier,
 	currencyConverter currencyconversion.Provider,
 	commonSigner *ethsigner.EthSigner,
 	uncommonSigner *ethsigner.EthSigner,
+	authClient *clients.AuthClient,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(cfg.AccessTokenAddress, nil)
@@ -188,10 +200,10 @@ func NewService(
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
-		jwtManager:          jwtManager,
 		currencyConverter:   currencyConverter,
 		commonSigner:        commonSigner,
 		uncommonSigner:      uncommonSigner,
+		authClient:          authClient,
 		closeCh:             make(chan struct{}),
 	}
 
@@ -1500,4 +1512,23 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 func (s *service) Shutdown() {
 	s.closeCh <- struct{}{}
 	close(s.closeCh)
+}
+
+func GRPCErrToHTTP(err error) *models.ErrorResponse {
+	s := status.Convert(err)
+	hs := http.StatusInternalServerError
+
+	switch s.Code() {
+	case codes.InvalidArgument:
+		hs = http.StatusBadRequest
+	case codes.Unauthenticated:
+		hs = http.StatusUnauthorized
+	case codes.NotFound:
+		hs = http.StatusNotFound
+	}
+
+	return &models.ErrorResponse{
+		Code:    int64(hs),
+		Message: s.Message(),
+	}
 }
