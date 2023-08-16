@@ -9,7 +9,7 @@ import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle, LinearText } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
-const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
+const CurrentBlockchainBigScreen = observer(({ isVisible, isLight }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
   const { changeNetwork, isLoading, error } = useChangeNetwork()
@@ -28,6 +28,7 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
               img={item.img}
               isDisable={isLoading && !error}
               onClick={() => {
+                console.log('Click')
                 changeNetwork(item.chain.id)
               }}
             />
@@ -35,10 +36,10 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
         })}
       </>
       <LinearText css={{ fontSize: '14px' }}>
-        Ethereum and Polygon is coming soon!
+        Ethereum and Polygon are coming soon!
       </LinearText>
     </CurrentBlockchainStyle>
   )
 })
 
-export default CurrentBlockchain
+export default CurrentBlockchainBigScreen

@@ -51,7 +51,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
       {multiChainStore.data && (
         <Dropdown
           isDisabled={isLoading && !error}
-          placement={'bottom'}
+          placement={'bottom-left'}
           borderWeight={'black'}
         >
           {
@@ -80,6 +80,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                 onSelectionChange={(keys) => {
                 // @ts-expect-error
                   setSelected(keys)
+                  console.log('Click')
                   changeNetwork(+selectedValue(keys))
                 }}
                 css={{
