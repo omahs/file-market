@@ -796,11 +796,13 @@ func (p *postgres) GetTokensContentTypeByCollection(
 		defer rows.Close()
 
 		for rows.Next() {
-			var record string
+			var record *string
 			if err := rows.Scan(&record); err != nil {
 				return err
 			}
-			*res = append(*res, record)
+			if record != nil && *record != "" {
+				*res = append(*res, *record)
+			}
 		}
 		return nil
 	}
