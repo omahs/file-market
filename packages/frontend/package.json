@@ -24,7 +24,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@google/model-viewer": "^2.1.1",
-    "@lighthouse-web3/sdk": "^0.1.9",
+    "@lighthouse-web3/sdk": "^0.2.6",
     "@metamask/browser-passworder": "^4.1.0",
     "@metamask/rpc-errors": "^5.1.1",
     "@mui/icons-material": "^5.11.0",
