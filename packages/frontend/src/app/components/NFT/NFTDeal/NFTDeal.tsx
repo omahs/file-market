@@ -2,13 +2,13 @@ import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC, PropsWithChildren, useMemo } from 'react'
 import { useParams } from 'react-router'
+import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../styles'
 import { Order } from '../../../../swagger/Api'
 import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
 import { useCurrency } from '../../../hooks/useCurrency'
 import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
-import { useIsConnected } from '../../../hooks/useIsConnected'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useWatchStatusesTransfer } from '../../../processing/nft-interaction/useWatchStatusesTransfer'
@@ -76,7 +76,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   reFetchOrder,
   children,
 }) => {
-  const isConnected = useIsConnected()
+  const { isConnected } = useAccount()
   const { changeNetwork } = useChangeNetwork()
   const currentBlockChain = useCurrentBlockChain()
   const { chainName } = useParams<Params>()

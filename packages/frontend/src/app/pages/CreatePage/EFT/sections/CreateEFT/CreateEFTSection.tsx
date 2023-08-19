@@ -27,9 +27,9 @@ import {
   Input,
   Link,
   PageLayout,
-  TextArea,
   Txt,
 } from '../../../../../UIkit'
+import { TextArea } from '../../../../../UIkit/Form/TextArea/TextArea'
 import TagsSection from '../../../../NFTPage/section/Tags/TagsSection'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
 import {

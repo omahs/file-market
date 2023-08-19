@@ -5,28 +5,35 @@ import {
   Api,
   AuthBySignatureRequest,
   AuthResponse,
-  ErrorResponse,
-  HttpResponse,
   UserProfile,
 } from '../../../swagger/Api'
-import { stringifyError } from '../../utils/error'
+import { getAccessToken, getRefreshToken } from '../../utils/jwt/get'
+import { removeAccessToken, removeRefreshToken } from '../../utils/jwt/remove'
+import { saveAccessToken, saveRefreshToken } from '../../utils/jwt/save'
+import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store'
 import { DateStore } from '../Date/DateStore'
 import { DialogStore } from '../Dialog/DialogStore'
 import { ErrorStore } from '../Error/ErrorStore'
 import { ProfileStore } from '../Profile/ProfileStore'
 
-export class AuthStore {
-  isLoading: boolean
-  address?: `0x${string}`
-  dialogStore: DialogStore
+const TIME_BEFORE_EXPIRED_ACCESS = 20000
+const TIME_BEFORE_EXPIRED_REFRESH = 40000
+
+export class AuthStore implements IStoreRequester {
   errorStore: ErrorStore
+  isLoaded = false
+  isLoading = false
+  currentRequest?: RequestContext
+  requestCount = 0
+  dialogStore: DialogStore
   dateStore: DateStore
-  isFirstConnect: boolean
   profileStore: ProfileStore
   authService: Api<{}>
+
+  isAuth?: boolean
+  isTryAuth?: boolean
+
   constructor(rootStore: { dialogStore: DialogStore, profileStore: ProfileStore, dateStore: DateStore, errorStore: ErrorStore }) {
-    this.isLoading = false
-    this.isFirstConnect = true
     this.authService = new Api<{}>({ baseUrl: '/api' })
     makeAutoObservable(this)
     this.dialogStore = rootStore.dialogStore
@@ -35,26 +42,21 @@ export class AuthStore {
     this.errorStore = rootStore.errorStore
   }
 
-  setData(response: HttpResponse<AuthResponse, ErrorResponse>) {
-    localStorage.setItem('Access_token', response.data.access_token?.token ?? '')
+  setData(response: AuthResponse) {
+    saveAccessToken(response.access_token)
+    saveRefreshToken(response.refresh_token)
     Cookies.remove('access-token')
-    Cookies.set('access-token', response.data.access_token?.token ?? '', {
+    Cookies.set('access-token', response.access_token?.token ?? '', {
       path: '/',
     })
-    localStorage.setItem('Refresh_token', response.data.refresh_token?.token ?? '')
-    localStorage.setItem('Refresh_tokenExpired', response.data.refresh_token?.expires_at.toString() ?? '0')
-    localStorage.setItem('Access_tokenExpired', response.data.access_token?.expires_at.toString() ?? '0')
     this.setUser({
       name: 'Aleshka',
     })
+    this.isAuth = true
   }
 
   setUser(user?: UserProfile) {
     this.profileStore.setUser(user)
-  }
-
-  setAddress(address: `0x${string}`) {
-    this.address = address
   }
 
   setLoading(bool: boolean) {
@@ -66,105 +68,92 @@ export class AuthStore {
   }
 
   async loginBySignature({ address, signature }: AuthBySignatureRequest) {
-    try {
-      const response = await this.authService.auth.bySignatureCreate({ address, signature })
-      this.setData(response)
-      this.isFirstConnect = false
-    } catch (e: any) {
-      this.errorStore.showError(stringifyError(e))
-    }
+    storeRequest(
+      this,
+      this.authService.auth.bySignatureCreate({ address, signature }),
+      (response) => {
+        this.setData(response)
+      },
+    )
   }
 
   async logout() {
-    try {
-      await this.authService.auth.logoutCreate({
+    console.log('LOGOUT1')
+    storeRequest(
+      this,
+      this.authService.auth.logoutCreate({
         headers: { authorization: this.RefreshToken },
-      })
-      localStorage.removeItem('Access_token')
-      localStorage.removeItem('Refresh_token')
-      localStorage.removeItem('Refresh_tokenExpired')
-      localStorage.removeItem('Access_tokenExpired')
-      this.profileStore.logout()
-    } catch (e: any) {
-      this.errorStore.showError(stringifyError(e.error.message))
-      localStorage.removeItem('Access_token')
-      localStorage.removeItem('Refresh_token')
-      localStorage.removeItem('Refresh_tokenExpired')
-      localStorage.removeItem('Access_tokenExpired')
-    }
+      }),
+      () => {},
+    )
+    removeAccessToken()
+    removeRefreshToken()
+    this.profileStore.logout()
+    this.isAuth = false
   }
 
   async checkAuth() {
-    this.setLoading(true)
-    try {
-      // const response = await this.authService.auth.byTokenCreate({
-      //   headers: { authorization: this.AccessToken },
-      // })
-      // this.setUser(response.data.player)
-      console.log('Connect by jwt')
-      this.isFirstConnect = false
-    } catch (e: any) {
-      console.log(e)
-      this.errorStore.showError(stringifyError(e.error))
-    } finally {
-      this.setLoading(false)
-    }
+    storeRequest(
+      this,
+      this.authService.auth.refreshCreate({
+        headers: { authorization: this.RefreshToken },
+      }),
+      (response) => {
+        this.setData(response)
+      },
+      () => {
+        this.logout()
+        this.isAuth = false
+      },
+    )
   }
 
   async refreshToken() {
-    if (this.isLoading) return
-    this.setLoading(true)
-    try {
-      const response = await this.authService.auth.refreshCreate({
+    storeRequest(
+      this,
+      this.authService.auth.refreshCreate({
         headers: { authorization: this.RefreshToken },
-      })
-      this.setData(response)
-      if (this.isFirstConnect) {
-        this.isFirstConnect = false
-      }
-    } catch (e: any) {
-      this.errorStore.showError(stringifyError(e.error.message))
-      this.logout()
-    } finally {
-      this.setLoading(false)
-    }
+      }),
+      (response) => {
+        this.setData(response)
+      },
+      () => {
+        this.logout()
+      },
+    )
   }
 
   get isHaveToken() {
-    return !!localStorage.getItem('Access_token')
-  }
-
-  get isAuth() {
-    return !!this.profileStore?.user
+    return !!getAccessToken()
   }
 
   get isActualRefreshToken() {
-    return this.expiredRefresh - 40 > 0
+    return this.expiredRefresh - TIME_BEFORE_EXPIRED_REFRESH > 0
   }
 
   get isActualAccessToken() {
-    return this.expiredAccess - 20 > 0
+    return this.expiredAccess - TIME_BEFORE_EXPIRED_ACCESS > 0
   }
 
-  get expiredAccess(): number {
-    console.log('Access')
-    console.log(parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime)
+  private get expiredAccess(): number {
+    // console.log('Access')
+    // console.log(parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime)
 
-    return parseInt(localStorage.getItem('Access_tokenExpired') ?? '0') - this.dateStore.nowTime
+    return parseInt(getAccessToken()?.expires_at.toString() ?? '0') - this.dateStore.nowTime
   }
 
-  get expiredRefresh(): number {
-    console.log('Refresh')
-    console.log(parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime)
+  private get expiredRefresh(): number {
+    // console.log('Refresh')
+    // console.log(parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime)
 
-    return parseInt(localStorage.getItem('Refresh_tokenExpired') ?? '0') - this.dateStore.nowTime
+    return parseInt(getRefreshToken()?.expires_at.toString() ?? '0') - this.dateStore.nowTime
   }
 
   get AccessToken() {
-    return `Bearer ${localStorage.getItem('Access_token') ?? ''}`
+    return `Bearer ${getAccessToken()?.token ?? ''}`
   }
 
   get RefreshToken() {
-    return `Bearer ${localStorage.getItem('Refresh_token') ?? ''}`
+    return `Bearer ${getRefreshToken()?.token ?? ''}`
   }
 }

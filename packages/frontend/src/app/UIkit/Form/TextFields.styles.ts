@@ -1,5 +1,5 @@
-import { keyframes, styled } from '../../../../styles'
-import { textVariant } from '../../Txt'
+import { keyframes, styled } from '../../../styles'
+import { textVariant } from '../Txt'
 
 export const glow = keyframes({
   '0%': {
@@ -12,7 +12,7 @@ export const glow = keyframes({
   },
 })
 
-export const textAreaStyles = {
+export const textFieldsStyles = {
   backgroundColor: '$white',
   borderRadius: '$3',
   height: 48,
@@ -102,11 +102,7 @@ export const textAreaStyles = {
   },
 }
 
-export const StyledTextArea = styled('textarea', {
-  ...textAreaStyles,
-})
-
-export const StyledTextAreaContainer = styled('div', {
+export const StyledTextFieldsContainer = styled('div', {
   position: 'relative',
   width: '100%',
   height: '100%',

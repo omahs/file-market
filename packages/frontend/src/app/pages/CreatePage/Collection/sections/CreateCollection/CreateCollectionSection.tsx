@@ -6,7 +6,8 @@ import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLo
 import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useModalProperties } from '../../../../../hooks/useModalProperties'
-import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
+import { Button, FormControl, Input, PageLayout } from '../../../../../UIkit'
+import { TextArea } from '../../../../../UIkit/Form/TextArea/TextArea'
 import {
   ButtonContainer,
   Description,

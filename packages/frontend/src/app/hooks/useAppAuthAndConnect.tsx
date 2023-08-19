@@ -1,15 +1,18 @@
 import { useWeb3Modal } from '@web3modal/react'
 import assert from 'assert'
 import { useCallback, useEffect, useState } from 'react'
-import { useAccount, useDisconnect, useSignMessage } from 'wagmi'
+import { useAccount, useSignMessage } from 'wagmi'
 
-import { InProcessBodyProps, LoadingModal } from '../components/Modal/Modal'
-import { DialogProps } from '../utils/dialog'
-import { useAfterDidMountEffect } from './useDidMountEffect'
+import { LoadingModal } from '../components/Modal/LoadingModal'
+import { InProcessBodyProps } from '../components/Modal/Modal'
 import { useStores } from './useStores'
 
-export default function useAppAuthAndConnect() {
-  const { disconnect } = useDisconnect()
+export interface IUseAppAuthAndConnect {
+  isWithSign?: boolean
+  onSuccess?: () => void
+}
+
+export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
   const { isConnected, address, connector } = useAccount()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isACanAuthEffect, setIsACanAuthEffect] = useState<boolean>(false)
@@ -20,25 +23,22 @@ export default function useAppAuthAndConnect() {
     async onSuccess(data) {
       try {
         if ((addressState ?? address) !== undefined) {
-          // @ts-expect-error
-          await authStore.loginBySignature({ address: addressState ?? address, signature: data.substring(2, data.length) })
+          await authStore.loginBySignature({ address: (addressState ?? address) ?? '', signature: data.substring(2, data.length) })
+          props?.onSuccess?.()
           setIsLoading(false)
         }
       } catch (e: any) {
-        disconnect()
         setIsLoading(false)
       }
     },
     onError(data) {
-      disconnect()
       setIsLoading(false)
     },
   })
 
   useEffect(() => {
-    if (isConnected && isACanAuthEffect) {
+    if (isConnected && isACanAuthEffect && props?.isWithSign) {
       assert(address, 'address is undefined')
-      authStore.setAddress(address)
       setAddressState(address)
       console.log('SIGN')
       setIsLoading(true)
@@ -46,7 +46,6 @@ export default function useAppAuthAndConnect() {
         signMessage({ message: res.data.message })
       }).catch((e: any) => {
         setIsLoading(false)
-        disconnect()
       })
     }
   }, [isConnected, isACanAuthEffect])
@@ -55,38 +54,45 @@ export default function useAppAuthAndConnect() {
   // useErrorWindow(errorSign?.message)
 
   const connect = useCallback(async () => {
-    if (isConnected && address) {
+    console.log(props?.isWithSign)
+    if (isConnected && address && props?.isWithSign) {
       console.log(connector)
       console.log('Connector')
       setAddressState(address)
+      setIsLoading(true)
       await authStore.getMessageForAuth(address).then((res) => {
         signMessage({ message: res.data.message })
       }).catch((e: any) => {
         setIsLoading(false)
-        disconnect()
       })
     } else {
       void open().then(() => {
+        if (!props?.isWithSign) props?.onSuccess?.()
         setIsACanAuthEffect(true)
       })
         .catch((e) => {
           setIsLoading(false)
         })
     }
-  }, [isConnected, address, connector])
+  }, [isConnected, address, connector, props?.isWithSign, setIsLoading])
 
-  useAfterDidMountEffect(() => {
+  useEffect(() => {
+    console.log(isLoading)
     if (isLoading) {
+      console.log('Open')
       if (dialogStore.isDialogOpenByName('LoadingSign')) return
-      dialogStore.openDialog<InProcessBodyProps & DialogProps>({
+      dialogStore.openDialog<InProcessBodyProps>({
         component: LoadingModal,
         props: {
-          // @ts-expect-error
           name: 'LoadingSign',
           text: 'Please sign the message',
         },
       })
     } else {
+      dialogStore.closeDialogByName('LoadingSign')
+    }
+
+    return () => {
       dialogStore.closeDialogByName('LoadingSign')
     }
   }, [isLoading])

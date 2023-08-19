@@ -7,7 +7,8 @@ import {
 import { RegisterOptions } from 'react-hook-form/dist/types/validator'
 
 import { Txt } from '../../Txt'
-import { StyledErrorMessage, StyledTextArea, StyledTextAreaContainer } from './TextArea.styles.'
+import { StyledErrorMessage, StyledTextFieldsContainer } from '../TextFields.styles'
+import { StyledTextArea } from './TextArea.styles'
 
 export interface ControlledTextAreaProps<T extends FieldValues> {
   control: Control<T, any>
@@ -16,7 +17,7 @@ export interface ControlledTextAreaProps<T extends FieldValues> {
   rules?: RegisterOptions
 }
 
-export type TextAreaProps = ComponentProps<typeof StyledTextAreaContainer> & ComponentProps<typeof StyledTextArea> & {
+export type TextAreaProps = ComponentProps<typeof StyledTextFieldsContainer> & ComponentProps<typeof StyledTextArea> & {
   errorMessage?: string
 }
 
@@ -38,22 +39,22 @@ export const TextArea = <T extends FieldValues>({
       name={controlledInputProps?.name}
       rules={controlledInputProps?.rules}
       render={({ field }) => (
-        <StyledTextAreaContainer>
+        <StyledTextFieldsContainer>
           <StyledTextArea
             {...textAreaProps}
             {...field}
           />
           {after && (
-            <StyledTextAreaContainer>
+            <StyledTextFieldsContainer>
               {after}
-            </StyledTextAreaContainer>
+            </StyledTextFieldsContainer>
           )}
           {(errorMessage && textAreaProps.isError) && (
             <StyledErrorMessage>
               <Txt primary1>{errorMessage}</Txt>
             </StyledErrorMessage>
           )}
-        </StyledTextAreaContainer>
+        </StyledTextFieldsContainer>
       )}
     />
   )

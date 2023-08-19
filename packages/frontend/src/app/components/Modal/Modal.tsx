@@ -8,7 +8,7 @@ import { Modal, ModalBody, ModalButtonContainer, ModalP, ModalTitle } from '../.
 import { DialogProps } from '../../utils/dialog'
 import { stringifyError } from '../../utils/error'
 
-export interface InProcessBodyProps {
+export interface InProcessBodyProps extends DialogProps {
   text: ReactNode
   waitForSign?: boolean
 }
@@ -146,27 +146,6 @@ export default function BaseModal({
     >
       {body && <ModalBody style={{ padding: 0 }}>{body}</ModalBody>}
       {footer}
-    </Modal>
-  )
-}
-
-export const LoadingModal = ({
-  onClose,
-  open,
-  text,
-}: InProcessBodyProps & DialogProps) => {
-  return (
-    <Modal
-      aria-labelledby='modal-title'
-      open={open}
-      width={'max-content'}
-      style={{
-        maxWidth: '690px',
-      }}
-      preventClose
-      onClose={onClose}
-    >
-      <InProgressBody text={text} />
     </Modal>
   )
 }

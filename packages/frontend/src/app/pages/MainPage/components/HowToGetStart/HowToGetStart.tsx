@@ -2,6 +2,7 @@ import { Collapse } from '@nextui-org/react'
 import { useWeb3Modal } from '@web3modal/react'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 import ArrowCollapseImg from '../../../../../assets/img/ArrowCollapse.svg'
 import Money from '../../../../../assets/img/HowToGetStart/Banknote2.svg'
@@ -19,7 +20,6 @@ import VerifiedCheck from '../../../../../assets/img/HowToGetStart/VerifiedCheck
 import Wallet from '../../../../../assets/img/HowToGetStart/Wallet.svg'
 import WatchSquareMinimalistic from '../../../../../assets/img/HowToGetStart/WatchSquareMinimalistic.svg'
 import { styled } from '../../../../../styles'
-import { useIsConnected } from '../../../../hooks/useIsConnected'
 import { Link, textVariant, Txt } from '../../../../UIkit'
 import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
 import HowToGetStartCard from '../HowToGetStartCard/HowToGetStartCard'
@@ -201,7 +201,7 @@ const Video = styled('iframe', {
 
 const HowToGetStart = () => {
   const { open } = useWeb3Modal()
-  const isConnected = useIsConnected()
+  const { isConnected } = useAccount()
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState<boolean | undefined>(false)
 

@@ -1,13 +1,28 @@
+import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useAuth } from '../../../hooks/useAuth'
+import { useIsConnected } from '../../../hooks/useIsConnected'
 import { Button } from '../../../UIkit'
 
-const SettingsButton = () => {
+const SettingsButton = observer(() => {
   const navigate = useNavigate()
+  const isConnected = useIsConnected()
+  const { connect } = useAuth({ isWithSign: true, onSuccess: () => { navigate('/settings') } })
 
   return (
-    <Button settings style={{ height: 'max-content', padding: '8px', marginTop: '12px' }} onClick={() => { navigate('/settings') }}>
+    <Button
+      settings
+      style={{ height: 'max-content', padding: '8px', marginTop: '12px' }}
+      onClick={() => {
+        if (!isConnected) {
+          connect()
+        } else {
+          navigate('/settings')
+        }
+      }}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -24,6 +39,6 @@ const SettingsButton = () => {
       </svg>
     </Button>
   )
-}
+})
 
 export default SettingsButton

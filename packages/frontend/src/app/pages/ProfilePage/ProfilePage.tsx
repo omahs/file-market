@@ -27,7 +27,7 @@ const ProfilePage: React.FC = observer(() => {
 
   const isOwner = useMemo(() => {
     return currentAddress === profileAddress
-  }, [profileAddress])
+  }, [profileAddress, currentAddress])
 
   const tabs = useMemo(() => {
     const tabs: TabItem[] = [

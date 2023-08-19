@@ -10,7 +10,6 @@ import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
 import { useCurrentBlockChain } from '../../hooks/useCurrentBlockChain'
-import { useIsConnected } from '../../hooks/useIsConnected'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { wrapRequest } from '../../utils/error/wrapRequest'
 import { useFulfillOrder } from '../nft-interaction'
@@ -24,8 +23,7 @@ interface IGetSignWhiteList {
   whiteList?: string
 }
 export const useFileBunniesMint = () => {
-  const { address } = useAccount()
-  const isConnected = useIsConnected()
+  const { address, isConnected } = useAccount()
   const whiteListStore = useCheckWhiteListStore(address)
   const api = useApi()
   const [isFreeMintSoldOut, setIsFreeMintSoldOut] = useState<boolean>(false)

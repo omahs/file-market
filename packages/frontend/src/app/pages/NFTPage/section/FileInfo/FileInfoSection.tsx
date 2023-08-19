@@ -1,5 +1,6 @@
 import { PressEvent } from '@react-types/shared/src/events'
 import React, { FC } from 'react'
+import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
@@ -7,7 +8,6 @@ import { BaseModal, FileButton, ProtectedStamp } from '../../../../components'
 import { filenameToExtension } from '../../../../components/MarketCard/helper/fileToType'
 import { useStatusState } from '../../../../hooks'
 import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
-import { useIsConnected } from '../../../../hooks/useIsConnected'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { Txt } from '../../../../UIkit'
 import { formatFileSize } from '../../../../utils/nfts'
@@ -62,7 +62,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({
   isNetworkIncorrect,
 }) => {
   const { statuses, wrapPromise } = useStatusState<boolean | void, PressEvent>()
-  const isConnected = useIsConnected()
+  const { isConnected } = useAccount()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'File decrypted and download started',
