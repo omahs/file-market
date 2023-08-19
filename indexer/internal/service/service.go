@@ -12,6 +12,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/mail"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
@@ -135,7 +136,7 @@ type Auth interface {
 type Profiles interface {
 	GetUserProfile(ctx context.Context, identification string) (*models.UserProfile, *models.ErrorResponse)
 	UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse)
-	SetEmail(ctx context.Context, email string) (*models.SuccessResponse, *models.ErrorResponse)
+	SetEmail(ctx context.Context, email string) *models.ErrorResponse
 	VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse)
 }
 
@@ -152,6 +153,7 @@ type Sub interface {
 type service struct {
 	repository          repository.Repository
 	wsPool              ws.Pool
+	emailSender         mail.EmailSender
 	healthNotifier      healthnotifier.HealthNotifier
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
@@ -170,6 +172,7 @@ type service struct {
 func NewService(
 	repo repository.Repository,
 	wsPool ws.Pool,
+	emailSender mail.EmailSender,
 	ethClient ethclient2.EthClient,
 	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifier,
@@ -192,6 +195,7 @@ func NewService(
 	s := &service{
 		ethClient:           ethClient,
 		wsPool:              wsPool,
+		emailSender:         emailSender,
 		repository:          repo,
 		healthNotifier:      healthNotifier,
 		sequencer:           sequencer,

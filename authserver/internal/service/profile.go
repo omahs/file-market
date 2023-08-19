@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/authserver/internal/domain"
@@ -98,7 +97,8 @@ func (s *service) GetProfileByIdentification(ctx context.Context, identification
 
 	switch identificationType {
 	case "address":
-		profile, err := s.GetUserProfileByAddress(ctx, common.HexToAddress(identification), false)
+		// NOTE: exposes private fields
+		profile, err := s.GetUserProfileByAddress(ctx, common.HexToAddress(identification), true)
 		if err != nil {
 			return nil, err
 		}
@@ -168,11 +168,11 @@ func (s *service) SetEmail(
 	ctx context.Context,
 	address common.Address,
 	email string,
-) *domain.APIError {
+) (*domain.SetEmailResponse, *domain.APIError) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
-		return domain.InternalError
+		return nil, domain.InternalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
@@ -184,19 +184,17 @@ func (s *service) SetEmail(
 		CreatedAt: time.Now(),
 	}); err != nil {
 		log.Printf("failed to insert email verification token: %v", err)
-		return domain.InternalError
-	}
-
-	if err := s.SendEmailVerificationEmail(verificationToken, email); err != nil {
-		log.Printf("failed to send email: %v", err)
-		return domain.InternalError
+		return nil, domain.InternalError
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return domain.InternalError
+		return nil, domain.InternalError
 	}
 
-	return nil
+	return &domain.SetEmailResponse{
+		Token: verificationToken,
+		Email: email,
+	}, nil
 }
 
 func (s *service) VerifyEmail(
@@ -243,23 +241,6 @@ func (s *service) VerifyEmail(
 	}
 
 	return nil
-}
-
-func (s *service) SendEmailVerificationEmail(token string, email string) error {
-	subject := "Filemarket Email Verification" // TODO: move to cfg
-	host := s.cfg.Host
-	if host[len(host)-1] == '/' {
-		host = host[:len(host)-1]
-	}
-	link := fmt.Sprintf("%s/profile/verify_email?secret_token=%s", host, token)
-	// TODO: use HTML template file
-	contentTemplate := `
-		<h1>Filemarket Email Verification</h1>
-		Click to verify email on Filemarket.xyz<br/>
-		%s
-	`
-	content := fmt.Sprintf(contentTemplate, link)
-	return s.emailSender.SendEmail(subject, content, []string{email}, nil, nil, nil)
 }
 
 // updateUserProfileFields updates `new` profile fields except email and twitter

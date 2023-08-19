@@ -56,7 +56,7 @@ func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.U
 	return res.ToGRPC(), nil
 }
 
-func (s *GRPCServer) SetEmail(ctx context.Context, req *authserver_pb.SetEmailRequest) (*authserver_pb.SuccessResponse, error) {
+func (s *GRPCServer) SetEmail(ctx context.Context, req *authserver_pb.SetEmailRequest) (*authserver_pb.SetEmailResponse, error) {
 	ctx, err := s.authorizeUser(ctx, jwt.PurposeAccess)
 	if err != nil {
 		return nil, err
@@ -78,11 +78,15 @@ func (s *GRPCServer) SetEmail(ctx context.Context, req *authserver_pb.SetEmailRe
 	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
 	defer cancel()
 
-	if err := s.service.SetEmail(ctx, user.Address, r.Email); err != nil {
-		return nil, err.ToGRPC()
+	res, e := s.service.SetEmail(ctx, user.Address, r.Email)
+	if e != nil {
+		return nil, e.ToGRPC()
 	}
 
-	return &authserver_pb.SuccessResponse{Success: true}, nil
+	return &authserver_pb.SetEmailResponse{
+		Token: res.Token,
+		Email: res.Email,
+	}, nil
 }
 
 func (s *GRPCServer) VerifyEmail(ctx context.Context, req *authserver_pb.VerifyEmailRequest) (*authserver_pb.SuccessResponse, error) {

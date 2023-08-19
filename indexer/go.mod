@@ -14,6 +14,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/jackc/pgx/v4 v4.17.2
+	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/sony/gobreaker v0.5.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1

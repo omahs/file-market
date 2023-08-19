@@ -26,3 +26,7 @@ message SetEmailRequest {
 message VerifyEmailRequest {
   string secretToken = 1;
 }
+message SetEmailResponse {
+  string token = 1;
+  string email = 2;
+}

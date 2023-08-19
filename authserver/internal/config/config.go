@@ -14,7 +14,6 @@ type (
 		Handler      *HandlerConfig
 		Postgres     *PostgresConfig
 		TokenManager *TokenManagerConfig
-		EmailSender  *EmailSenderConfig
 	}
 
 	ServerConfig struct {
@@ -47,12 +46,6 @@ type (
 
 	TokenManagerConfig struct {
 		SigningKey string
-	}
-
-	EmailSenderConfig struct {
-		Name     string
-		Address  string
-		Password string
 	}
 )
 
@@ -97,11 +90,6 @@ func Init(path string) (*Config, error) {
 		},
 		TokenManager: &TokenManagerConfig{
 			SigningKey: envCfg.GetString("JWT_SIGNING_KEY"),
-		},
-		EmailSender: &EmailSenderConfig{
-			Name:     envCfg.GetString("EMAIL_SENDER_NAME"),
-			Address:  envCfg.GetString("EMAIL_SENDER_ADDRESS"),
-			Password: envCfg.GetString("EMAIL_SENDER_PASSWORD"),
 		},
 	}, nil
 }

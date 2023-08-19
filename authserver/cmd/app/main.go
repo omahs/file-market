@@ -12,7 +12,6 @@ import (
 	repository2 "github.com/mark3d-xyz/mark3d/authserver/internal/repository"
 	service2 "github.com/mark3d-xyz/mark3d/authserver/internal/service"
 	"github.com/mark3d-xyz/mark3d/authserver/pkg/jwt"
-	"github.com/mark3d-xyz/mark3d/authserver/pkg/mail"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
@@ -41,13 +40,11 @@ func main() {
 		log.Fatalf("failed to ping db: %v", err)
 	}
 
-	mailSender := mail.NewGmailSender(cfg.EmailSender)
 	repository := repository2.New(pool)
 	service := service2.New(
 		cfg.Service,
 		repository,
 		jwt.NewTokenManager(cfg.TokenManager.SigningKey),
-		mailSender,
 	)
 	handler := handler2.New(cfg.Handler, service).Init()
 	server := server2.New(cfg.Server, handler)

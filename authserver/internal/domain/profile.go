@@ -146,3 +146,8 @@ func (r *SetEmailRequest) Validate() error {
 
 	return nil
 }
+
+type SetEmailResponse struct {
+	Token string `json:"token"`
+	Email string `json:"email"`
+}

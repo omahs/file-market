@@ -7,7 +7,6 @@ import (
 	"github.com/mark3d-xyz/mark3d/authserver/internal/domain"
 	"github.com/mark3d-xyz/mark3d/authserver/internal/repository"
 	"github.com/mark3d-xyz/mark3d/authserver/pkg/jwt"
-	"github.com/mark3d-xyz/mark3d/authserver/pkg/mail"
 )
 
 type Service interface {
@@ -29,27 +28,24 @@ type UserProfile interface {
 	GetUserProfileByUsername(ctx context.Context, username string) (*domain.UserProfile, *domain.APIError)
 	UpdateUserProfile(ctx context.Context, profile *domain.UserProfile) (*domain.UserProfile, *domain.APIError)
 	GetProfileByIdentification(ctx context.Context, identification string) (*domain.UserProfile, *domain.APIError)
-	SetEmail(ctx context.Context, address common.Address, email string) *domain.APIError
+	SetEmail(ctx context.Context, address common.Address, email string) (*domain.SetEmailResponse, *domain.APIError)
 	VerifyEmail(ctx context.Context, secretToken string) *domain.APIError
 }
 
 type service struct {
-	cfg         *config.ServiceConfig
-	repository  repository.Repository
-	jwtManager  jwt.TokenManager
-	emailSender mail.EmailSender
+	cfg        *config.ServiceConfig
+	repository repository.Repository
+	jwtManager jwt.TokenManager
 }
 
 func New(
 	cfg *config.ServiceConfig,
 	repo repository.Repository,
 	jwtManager jwt.TokenManager,
-	emailSender mail.EmailSender,
 ) Service {
 	return &service{
-		repository:  repo,
-		cfg:         cfg,
-		jwtManager:  jwtManager,
-		emailSender: emailSender,
+		repository: repo,
+		cfg:        cfg,
+		jwtManager: jwtManager,
 	}
 }

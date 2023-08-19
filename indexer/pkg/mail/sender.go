@@ -3,7 +3,7 @@ package mail
 import (
 	"fmt"
 	"github.com/jordan-wright/email"
-	"github.com/mark3d-xyz/mark3d/authserver/internal/config"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
 	"net/smtp"
 )
 
@@ -12,8 +12,7 @@ const (
 )
 
 type EmailSender interface {
-	SendEmail(subject, content string, to, cc, bcc, attachments []string) error
-	GetHost() string
+	SendEmail(subject, content, tag string, to, cc, bcc []string) error
 }
 
 type GmailSender struct {
@@ -32,7 +31,7 @@ func NewGmailSender(cfg *config.EmailSenderConfig) EmailSender {
 	}
 }
 
-func (s *GmailSender) SendEmail(subject, content string, to, cc, bcc, attachments []string) error {
+func (s *GmailSender) SendEmail(subject, content, tag string, to, cc, bcc []string) error {
 	e := email.NewEmail()
 	e.From = fmt.Sprintf("%s <%s>", s.name, s.fromAddress)
 	e.Subject = subject
@@ -41,16 +40,6 @@ func (s *GmailSender) SendEmail(subject, content string, to, cc, bcc, attachment
 	e.Cc = cc
 	e.Bcc = bcc
 
-	for _, f := range attachments {
-		if _, err := e.AttachFile(f); err != nil {
-			return fmt.Errorf("failed to attach file \"%s\" to email: %w", f, err)
-		}
-	}
-
 	auth := smtp.PlainAuth("", s.fromAddress, s.fromPassword, s.smtpHost)
 	return e.Send(gmailSmtpServer, auth)
-}
-
-func (s *GmailSender) GetHost() string {
-	return s.smtpHost
 }

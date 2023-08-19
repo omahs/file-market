@@ -19,7 +19,7 @@ service Auth {
 
   rpc GetUserProfile(GetUserProfileRequest) returns (UserProfile);
   rpc UpdateUserProfile(UserProfile) returns (UserProfile);
-  rpc SetEmail(SetEmailRequest) returns (SuccessResponse);
+  rpc SetEmail(SetEmailRequest) returns (SetEmailResponse);
   rpc VerifyEmail(VerifyEmailRequest) returns (SuccessResponse);
 }
 

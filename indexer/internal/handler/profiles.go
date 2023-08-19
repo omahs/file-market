@@ -76,13 +76,12 @@ func (h *handler) handleSetEmail(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	res, e := h.service.SetEmail(ctx, req.Email)
-	if e != nil {
+	if e := h.service.SetEmail(ctx, req.Email); e != nil {
 		sendResponse(w, e.Code, e)
 		return
 	}
 
-	sendResponse(w, 200, res)
+	sendSuccessResponse(w)
 }
 
 func (h *handler) handleVerifyEmail(w http.ResponseWriter, r *http.Request) {

@@ -93,7 +93,7 @@ func (h *handler) handleRefresh(w http.ResponseWriter, r *http.Request) {
 
 	res, e := h.service.RefreshJwtTokens(ctx)
 	if e != nil {
-		sendResponse(w, e.Code, e.Message)
+		sendResponse(w, e.Code, e)
 		return
 	}
 	sendResponse(w, 200, res)
@@ -104,7 +104,7 @@ func (h *handler) handleLogout(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	if _, e := h.service.Logout(ctx); e != nil {
-		sendResponse(w, e.Code, e.Message)
+		sendResponse(w, e.Code, e)
 		return
 	}
 
@@ -116,10 +116,23 @@ func (h *handler) handleFullLogout(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	if _, e := h.service.FullLogout(ctx); e != nil {
-		sendResponse(w, e.Code, e.Message)
+		sendResponse(w, e.Code, e)
 		return
 	}
 	sendSuccessResponse(w)
+}
+
+func (h *handler) handleCheckAuth(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	res, e := h.service.CheckAuth(ctx)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+
+	sendResponse(w, 200, res)
 }
 
 func (h *handler) headerAuthMiddleware(purpose jwt.Purpose) func(http.Handler) http.Handler {
@@ -137,7 +150,7 @@ func (h *handler) headerAuthMiddleware(purpose jwt.Purpose) func(http.Handler) h
 
 			user, e := h.service.GetUserByJwtToken(r.Context(), purpose, a[len(TokenStart):])
 			if e != nil {
-				sendResponse(w, e.Code, e.Message)
+				sendResponse(w, e.Code, e)
 				return
 			}
 

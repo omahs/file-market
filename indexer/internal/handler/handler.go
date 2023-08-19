@@ -42,7 +42,7 @@ func (h *handler) Init() http.Handler {
 	router.Handle("/auth/refresh", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleRefresh)))
 	router.Handle("/auth/logout", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleLogout)))
 	router.Handle("/auth/full_logout", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleFullLogout)))
-	router.Handle("/auth/check_auth", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleGetUserProfile)))
+	router.Handle("/auth/check_auth", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleCheckAuth)))
 
 	router.HandleFunc("/collections/file-bunnies/whitelist/{rarity}/sign/{address:0x[0-9a-f-A-F]{40}}", h.handleGetWhitelistSignature)
 	router.HandleFunc("/collections/file-bunnies/whitelist/{address:0x[0-9a-f-A-F]{40}}", h.handleGetAddressInWhitelist)
