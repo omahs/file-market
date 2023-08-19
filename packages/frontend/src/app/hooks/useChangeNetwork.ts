@@ -18,7 +18,6 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
   const { switchNetwork, error, isLoading } = useSwitchNetwork({
     onSuccess: (data) => {
       console.log('Success')
-      rootStore.errorStore.showError('Success')
       currentChainStore.setCurrentBlockChain(data.id)
       props?.onSuccess?.(data.id)
       reloadStores()
@@ -26,10 +25,6 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     onError: () => {
       console.log('Error')
       props?.onError?.()
-    },
-    onMutate: () => {
-      console.log('Mutate')
-      rootStore.errorStore.showError('Mutate')
     },
   })
 
@@ -81,7 +76,6 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
   }, [error])
 
   const changeNetwork = useCallback((chainId: number | undefined, isWarningNetwork?: boolean) => {
-    rootStore.errorStore.showError('Change start')
     console.log('Change start')
     if (!isConnected) {
       if (!!multiChainStore.getChainById(chainId)?.chain) {
@@ -95,19 +89,11 @@ export const useChangeNetwork = (props?: { onSuccess?: (chainId?: number) => voi
     }
     // Меняем сеть, если сеть в сторе !== сети кошелька или если сеть кошелька просто не равна переданной сети
     if ((currentChainStore.chainId !== chainId || isWarningNetwork) || chain?.id !== chainId) {
-      if (!switchNetwork) {
-        rootStore.errorStore.showError('Wallet not supported change network')
-        console.log('Wallet not supported change network')
-      }
       switchNetwork?.(chainId)
-      rootStore.errorStore.showError('Change network')
-      console.log('Change network')
     }
     // Меняем значение в сторе, если текущая сеть кошелька !== переданной сети
     if (chain?.id === chainId) {
       currentChainStore.setCurrentBlockChain(chainId ?? 0)
-      rootStore.errorStore.showError('Change store')
-      console.log('Change store')
       reloadStores()
     }
   }, [currentChainStore.chainId, isConnected, chain, switchNetwork])
