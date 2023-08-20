@@ -19,7 +19,7 @@ if (!projectId) {
   throw new Error('You need to provide VITE_WEB3_MODAL_PROJECT_ID env variable')
 }
 
-const { provider } = configureChains(chains, [
+const { provider, webSocketProvider } = configureChains(chains, [
   w3mProvider({ projectId }),
 ])
 
@@ -27,6 +27,7 @@ export const wagmiClient = createClient({
   autoConnect: true,
   connectors: w3mConnectors({ projectId, version: 1, chains }),
   provider,
+  webSocketProvider,
 })
 
 const ethereumClient = new EthereumClient(wagmiClient, chains)
