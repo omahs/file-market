@@ -1,3 +1,4 @@
+
 import { formatEther, parseEther } from 'ethers/lib.esm/utils'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -8,7 +9,7 @@ import { TokenFullId } from '../processing/types'
 import { useConversionRateStore } from './useConversionRateStore'
 import { useDebouncedValue } from './useDebouncedValue'
 
-export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenFullId, price: number, isCreator?: boolean) => {
+export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenFullId, price: number) => {
   const [amountWillReceived, setAmountWillReceived] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -17,7 +18,6 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
   const debouncedPrice = useDebouncedValue(price, 400)
 
   const amountWillReceivedUsd = useMemo(() => {
-    console.log(amountWillReceived)
     if (!amountWillReceived || !conversionRateStore.data?.rate) return 0
 
     return +amountWillReceived * conversionRateStore.data.rate
@@ -45,13 +45,13 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
     const saleAmountWithFee = await getSaleAmountWithoutFee()
     const royaltyAmount = await getRoyaltyAmount(saleAmountWithFee)
 
-    setAmountWillReceived(isCreator ? saleAmountWithFee : saleAmountWithFee - royaltyAmount)
+    setAmountWillReceived(saleAmountWithFee - royaltyAmount)
     setIsLoading(false)
   }
 
   useEffect(() => {
     calcSaleAmountWillReceived()
-  }, [debouncedPrice, isCreator])
+  }, [debouncedPrice])
 
   return useMemo(() => ({
     amountWillReceived,
