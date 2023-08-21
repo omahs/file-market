@@ -24,7 +24,7 @@ services:
   auth-indexer-postgres-migration:
     build:
       context: .
-      dockerfile: migrate.Dockerfile
+      dockerfile: migrate.auth.Dockerfile
     env_file: ~/.auth_indexer_pg_env
     depends_on:
       - auth-indexer-postgres
