@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/mark3d-xyz/mark3d/authserver-pb";
+
+message User {
+  string address = 1;
+  int32 role = 2;
+}
+
+message GetUserByJwtTokenRequest {
+  int32 purpose = 1;
+  string token = 2;
+}

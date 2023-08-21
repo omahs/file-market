@@ -39,9 +39,10 @@ func (h *handler) Init() http.Handler {
 
 	router.HandleFunc("/auth/message", h.handleGetAuthMessage)
 	router.HandleFunc("/auth/by_signature", h.handleAuthBySignature)
-	router.Handle("/auth/refresh", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleRefresh)))
-	router.Handle("/auth/logout", h.headerAuthMiddleware(jwt.PurposeRefresh)(http.HandlerFunc(h.handleLogout)))
-	router.Handle("/auth/full_logout", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleFullLogout)))
+	router.Handle("/auth/refresh", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleRefresh)))
+	router.Handle("/auth/logout", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleLogout)))
+	router.Handle("/auth/full_logout", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleFullLogout)))
+	router.Handle("/auth/check_auth", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleCheckAuth)))
 
 	router.HandleFunc("/collections/file-bunnies/whitelist/{rarity}/sign/{address:0x[0-9a-f-A-F]{40}}", h.handleGetWhitelistSignature)
 	router.HandleFunc("/collections/file-bunnies/whitelist/{address:0x[0-9a-f-A-F]{40}}", h.handleGetAddressInWhitelist)
@@ -71,6 +72,11 @@ func (h *handler) Init() http.Handler {
 
 	router.Handle("/report/collection", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleReportCollection)))
 	router.Handle("/report/token", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleReportToken)))
+
+	router.Handle("/profile/update", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleUpdateUserProfile)))
+	router.Handle("/profile/set_email", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleSetEmail)))
+	router.HandleFunc("/profile/verify_email", h.handleVerifyEmail)
+	router.HandleFunc("/profile/{identification}", h.handleGetUserProfile)
 
 	router.HandleFunc("/sequencer/acquire/{address:0x[0-9a-f-A-F]{40}}", h.handleSequencerAcquire)
 	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)

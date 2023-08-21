@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
-	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"github.com/mark3d-xyz/mark3d/authserver/internal/domain"
+	"github.com/mark3d-xyz/mark3d/authserver/pkg/jwt"
 	"strings"
 	"time"
 )
