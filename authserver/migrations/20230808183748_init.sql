@@ -8,7 +8,7 @@ CREATE TABLE public.auth_messages (
     created_at BIGINT       NOT NULL,
     CONSTRAINT auth_messages_pkey PRIMARY KEY (address)
 );
-ALTER TABLE public.auth_messages OWNER TO auth_user;
+ALTER TABLE public.auth_messages OWNER TO indexer;
 
 CREATE TABLE public.auth_tokens (
     address    CHAR(42) NOT NULL,
@@ -18,14 +18,14 @@ CREATE TABLE public.auth_tokens (
     expires_at BIGINT   NOT NULL,
     PRIMARY KEY (address, number, purpose)
 );
-ALTER TABLE public.auth_tokens OWNER TO auth_user;
+ALTER TABLE public.auth_tokens OWNER TO indexer;
 
 CREATE TABLE public.users (
     address    CHAR(42) NOT NULL PRIMARY KEY,
     role       INT      NOT NULL,
     created_at BIGINT   NOT NULL
 );
-ALTER TABLE public.users OWNER TO auth_user;
+ALTER TABLE public.users OWNER TO indexer;
 
 CREATE TABLE public.user_profiles (
     address     CHAR(42)      NOT NULL PRIMARY KEY,
@@ -42,7 +42,7 @@ CREATE TABLE public.user_profiles (
         REFERENCES public.users(address)
         ON DELETE CASCADE
 );
-ALTER TABLE public.user_profiles OWNER TO auth_user;
+ALTER TABLE public.user_profiles OWNER TO indexer;
 
 -- +goose Down
 -- +goose StatementBegin
