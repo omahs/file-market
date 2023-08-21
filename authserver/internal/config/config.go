@@ -85,7 +85,7 @@ func Init(path string) (*Config, error) {
 			Host:     envCfg.GetString("POSTGRES_HOST"),
 			User:     envCfg.GetString("POSTGRES_USER"),
 			Password: envCfg.GetString("POSTGRES_PASSWORD"),
-			DBName:   envCfg.GetString("POSTGRES_DBNAME"),
+			DBName:   envCfg.GetString("POSTGRES_DB"),
 			Port:     envCfg.GetInt("POSTGRES_PORT"),
 		},
 		TokenManager: &TokenManagerConfig{
