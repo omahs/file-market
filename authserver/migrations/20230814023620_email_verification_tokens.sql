@@ -13,7 +13,7 @@ CREATE TABLE public.email_verification_tokens (
         REFERENCES public.users(address)
         ON DELETE CASCADE
 );
-ALTER TABLE public.email_verification_tokens OWNER TO auth_user;
+ALTER TABLE public.email_verification_tokens OWNER TO indexer;
 
 -- +goose Down
 -- +goose StatementBegin
