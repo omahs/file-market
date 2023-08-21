@@ -14,7 +14,8 @@ type AuthClient struct {
 }
 
 func NewAuthClient(ctx context.Context, endpoint string) (*AuthClient, error) {
-	conn, err := grpc.DialContext(ctx,
+	conn, err := grpc.DialContext(
+		ctx,
 		endpoint,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
