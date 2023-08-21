@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  auth-indexer-service:
+    image: file-market-auth-service:latest
+    ports:
+      - "9210:9210"
+      - "9211:9211"
+    depends_on:
+      - auth-indexer-postgres
+    volumes:
+      - ~/logs:/logs
+    restart: unless-stopped
+  auth-indexer-postgres:
+    image: postgres:13
+    volumes:
+      - auth-indexer-postgres-data:/var/lib/postgresql/data
+    env_file: ~/.auth_indexer_pg_env
+    restart: unless-stopped
+    healthcheck:
+      test: pg_isready -d file_market_auth_indexer -U indexer
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  auth-indexer-postgres-migration:
+    build:
+      context: .
+      dockerfile: migrate.Dockerfile
+    env_file: ~/.auth_indexer_pg_env
+    depends_on:
+      - auth-indexer-postgres
+
+volumes:
+  auth-indexer-postgres-data:

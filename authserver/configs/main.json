@@ -2,8 +2,8 @@
   "server": {
     "httpPort": 9210,
     "grpcPort": 9211,
-    "readTimeout": "5s",
-    "writeTimeout": "5s",
+    "readTimeout": "30s",
+    "writeTimeout": "30s",
     "maxHeaderBytes": 1024
   },
   "handler": {

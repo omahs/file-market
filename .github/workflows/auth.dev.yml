@@ -1,0 +1,52 @@
+name: DEV CI
+on:
+  push:
+    branches:
+      - "dev"
+jobs:
+  check-changes:
+    runs-on: [ self-hosted, dev ]
+    outputs:
+      proto_changes: ${{ steps.check_changes.outputs.proto_changed }}
+      auth_changes: ${{ steps.check_changes.outputs.auth_changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: save changes
+        id: check_changes
+        run: |
+          echo "proto_changed=$(./is_changed.sh auth_fm_proto proto)" >> $GITHUB_OUTPUT
+          echo "auth_changed=$(./is_changed.sh auth_fm_server authserver)" >> $GITHUB_OUTPUT
+  build-auth-server:
+    runs-on: [ self-hosted, dev ]
+    needs: [ check-changes ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy .env from host
+        if: ${{ needs.check-changes.outputs.proto_changes == 'true' || needs.check-changes.outputs.auth_changes == 'true' }}
+        run: cp ~/.auth_indexer_dev_env authserver/.env
+      - name: Build proto
+        if: ${{ needs.check-changes.outputs.proto_changes == 'true' || needs.check-changes.outputs.auth_changes == 'true' }}
+        run: make proto
+        working-directory: authserver/
+      - name: Build auth container
+        if: ${{ needs.check-changes.outputs.proto_changes == 'true' || needs.check-changes.outputs.auth_changes == 'true' }}
+        run: docker build --build-arg env=dev -t file-market-auth-service:latest .
+        working-directory: authserver/
+  update:
+    runs-on: [ self-hosted, dev ]
+    needs: [ check-changes, build-auth-server ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Up migration
+        if: ${{ needs.check-changes.outputs.proto_changes == 'true' || needs.check-changes.outputs.auth_changes == 'true' }}
+        run: docker-compose -f docker-compose.auth.dev.yml up -d --build auth-indexer-postgres-migration
+      - name: Check migration status
+        if: ${{ needs.check-changes.outputs.proto_changes == 'true' || needs.check-changes.outputs.auth_changes == 'true' }}
+        run: ./check_auth_migration.sh
+      - name: Update compose
+        if: ${{ needs.check-changes.outputs.proto_changes == 'true' || needs.check-changes.outputs.auth_changes == 'true' }}
+        run: docker-compose -f docker-compose.auth.dev.yml up -d auth-indexer-service
+      - name: Set changes
+        run: |
+          redis-cli set auth_fm_proto_hash "$(find proto -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          redis-cli set auth_fm_server_hash "$(find authserver -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
