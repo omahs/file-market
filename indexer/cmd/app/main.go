@@ -99,6 +99,7 @@ func main() {
 		logger.Fatal("failed to create uncommonSigner", log2.Fields{"error": err})
 	}
 
+	logger.Info("connecting to auth service", log2.Fields{})
 	authClient, err := clients.NewAuthClient(ctx, cfg.Infrastructure.AuthServerEndpoint)
 	if err != nil {
 		logger.Fatal("failed to dial auth server", log2.Fields{"error": err.Error()})
