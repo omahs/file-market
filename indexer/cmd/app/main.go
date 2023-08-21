@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/infrastructure/clients"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	log2 "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
@@ -100,10 +99,10 @@ func main() {
 	}
 
 	logger.Info("connecting to auth service", log2.Fields{})
-	authClient, err := clients.NewAuthClient(ctx, cfg.Infrastructure.AuthServerEndpoint)
-	if err != nil {
-		logger.Fatal("failed to dial auth server", log2.Fields{"error": err.Error()})
-	}
+	//authClient, err := clients.NewAuthClient(ctx, cfg.Infrastructure.AuthServerEndpoint)
+	//if err != nil {
+	//	logger.Fatal("failed to dial auth server", log2.Fields{"error": err.Error()})
+	//}
 
 	mailSender := mail.NewPostmarkSender(cfg.EmailSender)
 	wsPool := ws.NewWsPool()
@@ -117,7 +116,7 @@ func main() {
 		currencyConverterCache,
 		commonSigner,
 		uncommonSigner,
-		authClient,
+		//authClient,
 		cfg.Service,
 	) // service who interact with main dependencies
 	if err != nil {
@@ -184,7 +183,7 @@ func main() {
 	}
 	indexService.Shutdown()
 	wsPool.Shutdown()
-	authClient.Close()
+	//authClient.Close()
 
 	logger.Info("server shutdown", nil)
 

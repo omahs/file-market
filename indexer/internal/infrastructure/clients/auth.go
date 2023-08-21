@@ -16,7 +16,7 @@ type AuthClient struct {
 func NewAuthClient(ctx context.Context, endpoint string) (*AuthClient, error) {
 	conn, err := grpc.DialContext(ctx,
 		endpoint,
-		grpc.WithBlock(),
+		//grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithConnectParams(grpc.ConnectParams{
 			Backoff: backoff.DefaultConfig,

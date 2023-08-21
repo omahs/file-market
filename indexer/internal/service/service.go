@@ -179,7 +179,7 @@ func NewService(
 	currencyConverter currencyconversion.Provider,
 	commonSigner *ethsigner.EthSigner,
 	uncommonSigner *ethsigner.EthSigner,
-	authClient *clients.AuthClient,
+	//authClient *clients.AuthClient,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(cfg.AccessTokenAddress, nil)
@@ -207,8 +207,8 @@ func NewService(
 		currencyConverter:   currencyConverter,
 		commonSigner:        commonSigner,
 		uncommonSigner:      uncommonSigner,
-		authClient:          authClient,
-		closeCh:             make(chan struct{}),
+		//authClient:          authClient,
+		closeCh: make(chan struct{}),
 	}
 
 	s.wsPool.SetOnConnectResponse(s.EFTSubOnConnectionResponse)
