@@ -20,9 +20,3 @@ bafkreic2d5w64m7aspwshkklq6rkq2nq3thm4rt7wzbpwdomcfywnrmp5m - метаданны
 
 
 
-
-
-
-
-
-
