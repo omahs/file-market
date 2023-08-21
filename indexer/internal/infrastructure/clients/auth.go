@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/credentials/insecure"
+	"time"
 )
 
 type AuthClient struct {
@@ -14,6 +15,9 @@ type AuthClient struct {
 }
 
 func NewAuthClient(ctx context.Context, endpoint string) (*AuthClient, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
 	conn, err := grpc.DialContext(ctx,
 		endpoint,
 		grpc.WithBlock(),
