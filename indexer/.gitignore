@@ -3,5 +3,6 @@
 
 models
 contracts
+proto
 cmd/multisend/addresses.json
 cmd/multisend/gas.csv
