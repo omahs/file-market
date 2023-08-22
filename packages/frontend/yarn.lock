@@ -3000,6 +3000,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@motionone/dom@npm:^10.16.2":
+  version: 10.16.2
+  resolution: "@motionone/dom@npm:10.16.2"
+  dependencies:
+    "@motionone/animation": ^10.15.1
+    "@motionone/generators": ^10.15.1
+    "@motionone/types": ^10.15.1
+    "@motionone/utils": ^10.15.1
+    hey-listen: ^1.0.8
+    tslib: ^2.3.1
+  checksum: c75a7de62cd8af575634644bbc2c5abe606ff9000550e7b8d5a62ea691a0784bf18f57035bd1fad4b0148dbdc6db033f2565b6c8f80b87b40fbb232db8fe93aa
+  languageName: node
+  linkType: hard
+
 "@motionone/easing@npm:^10.15.1":
   version: 10.15.1
   resolution: "@motionone/easing@npm:10.15.1"
@@ -3031,6 +3045,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@motionone/svelte@npm:^10.16.2":
+  version: 10.16.2
+  resolution: "@motionone/svelte@npm:10.16.2"
+  dependencies:
+    "@motionone/dom": ^10.16.2
+    tslib: ^2.3.1
+  checksum: 066570d991444f9b8e70189b488d563260cf7aadc2e4718e60b66e2871ad0d798e4a39282035c7f0d35a6b2118c36ee222446a8ae0919265860f0d808fcd2837
+  languageName: node
+  linkType: hard
+
 "@motionone/types@npm:^10.15.1":
   version: 10.15.1
   resolution: "@motionone/types@npm:10.15.1"
@@ -3056,6 +3080,16 @@ __metadata:
     "@motionone/dom": ^10.15.5
     tslib: ^2.3.1
   checksum: c87c019edfa1224aed7f2edf3f0f764829eeebbc6efefeca2235a5cabbd1553b7516376c744a39e1f7e6b13a7699bceac02c7cb59091d4d1019d5e9dd11c8cf2
+  languageName: node
+  linkType: hard
+
+"@motionone/vue@npm:^10.16.2":
+  version: 10.16.2
+  resolution: "@motionone/vue@npm:10.16.2"
+  dependencies:
+    "@motionone/dom": ^10.16.2
+    tslib: ^2.3.1
+  checksum: 37732f679bdf84debb36493e12fe2604ca3d1812ce8271e39dbe28bb4e59d71841d6821a5f5dd07ded918e260f8567842b835ea597572a38007e8a11106d1f0f
   languageName: node
   linkType: hard
 
@@ -8398,26 +8432,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/ethereum@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@web3modal/ethereum@npm:2.2.0"
-  peerDependencies:
-    "@wagmi/core": ">=0.10"
-    ethers: ">=5.7"
-  checksum: 8317b586045e2213166c024d7293e7562113709db9b135e566d94cb1c9c2d5efa1f26cb43bcfbfae88061104019c8d5eade0ec3dda9732a333af1d546e744974
+"@web3modal/core@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@web3modal/core@npm:2.6.0"
+  dependencies:
+    buffer: 6.0.3
+    valtio: 1.10.6
+  checksum: 5294f2b661a0d4afb16b43acaa102d50e43e9d88324ac2beba588b835199dfffefdbbf2c4cce1bec5eaf231c19f4d3f11fc7b7196d3bb0bb6050e37fa8df90d9
   languageName: node
   linkType: hard
 
-"@web3modal/react@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@web3modal/react@npm:2.2.0"
+"@web3modal/ethereum@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@web3modal/ethereum@npm:2.6.0"
+  peerDependencies:
+    "@wagmi/core": ">=1"
+    viem: ">=1"
+  checksum: 88076d89f1b43f857e67a331ab4515fb525e20593ffac8d91a2516497b6ac71399e9efdb0fceee79d2589f5e0ca6235254090e8cbf2c137fe622109275d2b82c
+  languageName: node
+  linkType: hard
+
+"@web3modal/react@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@web3modal/react@npm:2.6.0"
   dependencies:
-    "@web3modal/core": 2.2.0
-    "@web3modal/ui": 2.2.0
+    "@web3modal/core": 2.6.0
+    "@web3modal/ui": 2.6.0
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 0ad25e8bffe581cfc37e5c4410ecf33509602e96141237d7fadb5e06c73f343685ce7b563282f7effec27d6b3c81c168539fed535bd0915ef366791031c4a31c
+  checksum: cebdf0bb3c3c16414f55b9021ceac0215464ec5e4d17560f4fe00a13e9f4e1cd15bf9e5bac880cd26284e175ac5515374fa7609aa1a5e94e8a5e3cc8d9037ae4
   languageName: node
   linkType: hard
 
@@ -8440,6 +8484,18 @@ __metadata:
     motion: 10.15.5
     qrcode: 1.5.1
   checksum: e39f1c3ea81984703c995b6821b77eded94194fd72648fb71dbdb4f08a31c43f7f5cc6f91427d6e531027ce7c93844abf0cf2eeb2a6f2132f03ac51ef6b477f8
+  languageName: node
+  linkType: hard
+
+"@web3modal/ui@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@web3modal/ui@npm:2.6.0"
+  dependencies:
+    "@web3modal/core": 2.6.0
+    lit: 2.7.5
+    motion: 10.16.2
+    qrcode: 1.5.3
+  checksum: 39ddf0e64bc15ead96400b61695c468ecd7f66e8c5e36a513f1b9c50a43060844804139e655fd0d0dbe932245078eca7861d5bfc32a2d3fc246c15a33948d9a0
   languageName: node
   linkType: hard
 
@@ -13577,8 +13633,8 @@ __metadata:
     "@types/react-dom": ^18.0.6
     "@typescript-eslint/eslint-plugin": ^5.0.0
     "@vitejs/plugin-react": ^2.1.0
-    "@web3modal/ethereum": ^2.2.0
-    "@web3modal/react": ^2.2.0
+    "@web3modal/ethereum": 2.6.0
+    "@web3modal/react": 2.6.0
     babel-loader: ^8.2.5
     bip39: ^3.1.0
     buffer: ^6.0.3
@@ -16798,6 +16854,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lit@npm:2.7.5":
+  version: 2.7.5
+  resolution: "lit@npm:2.7.5"
+  dependencies:
+    "@lit/reactive-element": ^1.6.0
+    lit-element: ^3.3.0
+    lit-html: ^2.7.0
+  checksum: 61a3f87c57136618f47a30b36cdfb592fcba42dcfbdb104d2b5ca291148c2d9a32fcb713bb91090bd08d6897a00e73f8425da6e3626aa080eaf410a32397ae69
+  languageName: node
+  linkType: hard
+
 "lit@npm:^2.2.3":
   version: 2.7.4
   resolution: "lit@npm:2.7.4"
@@ -17753,6 +17820,20 @@ __metadata:
     "@motionone/utils": ^10.15.1
     "@motionone/vue": ^10.15.5
   checksum: 43e7883d95da6e4949b2e5ca01732bce28214f4978bf940511a3fbd8e00943ab7c00fcb28f3f1ce1ed099a404016f784243330be161c4805958deaf60d1b0571
+  languageName: node
+  linkType: hard
+
+"motion@npm:10.16.2":
+  version: 10.16.2
+  resolution: "motion@npm:10.16.2"
+  dependencies:
+    "@motionone/animation": ^10.15.1
+    "@motionone/dom": ^10.16.2
+    "@motionone/svelte": ^10.16.2
+    "@motionone/types": ^10.15.1
+    "@motionone/utils": ^10.15.1
+    "@motionone/vue": ^10.16.2
+  checksum: 0b91256808c2374d8b7f4ac5e7ed513f2ca8df2b7d1be4fbc00ec5baece5162ada648aedaa5bc1d60be9ad2e6c9bc1d3bb160333051c20ab79e241b8e02e3c92
   languageName: node
   linkType: hard
 
@@ -19768,6 +19849,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-compare@npm:2.5.1":
+  version: 2.5.1
+  resolution: "proxy-compare@npm:2.5.1"
+  checksum: c7cc151ac255150bcb24becde6495b3e399416c31991af377ce082255b51f07eaeb5d861bf8bf482703e92f88b90a5892ad57d3153ea29450d03ef921683d9fa
+  languageName: node
+  linkType: hard
+
 "prr@npm:~1.0.1":
   version: 1.0.1
   resolution: "prr@npm:1.0.1"
@@ -19877,6 +19965,20 @@ __metadata:
   bin:
     qrcode: bin/qrcode
   checksum: 842f899d95caaad2ac507408b5498be3197e1df16bc6b537b20069d2cb1330e4588b50f672ce4a9ccf01338f7c97b5732ff9b5caaa6eb2338187d3c25a973e79
+  languageName: node
+  linkType: hard
+
+"qrcode@npm:1.5.3":
+  version: 1.5.3
+  resolution: "qrcode@npm:1.5.3"
+  dependencies:
+    dijkstrajs: ^1.0.1
+    encode-utf8: ^1.0.3
+    pngjs: ^5.0.0
+    yargs: ^15.3.1
+  bin:
+    qrcode: bin/qrcode
+  checksum: 9a8a20a0a9cb1d15de8e7b3ffa214e8b6d2a8b07655f25bd1b1d77f4681488f84d7bae569870c0652872d829d5f8ac4922c27a6bd14c13f0e197bf07b28dead7
   languageName: node
   linkType: hard
 
@@ -23332,6 +23434,21 @@ __metadata:
   dependencies:
     builtins: ^5.0.0
   checksum: 5342a994986199b3c28e53a8452a14b2bb5085727691ea7aa0d284a6606b127c371e0925ae99b3f1ef7cc7d2c9de75f52eb61a3d1cc45e39bca1e3a9444cbb4e
+  languageName: node
+  linkType: hard
+
+"valtio@npm:1.10.6":
+  version: 1.10.6
+  resolution: "valtio@npm:1.10.6"
+  dependencies:
+    proxy-compare: 2.5.1
+    use-sync-external-store: 1.2.0
+  peerDependencies:
+    react: ">=16.8"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 0e738aa204c479c8f8c89c0a7478d6784c28ddd712be529fdc5c421d3ec28157fec2fb022a75cd4f45b8c4b470fbc64a27032adba6ed9936bdad989256222adf
   languageName: node
   linkType: hard
 
