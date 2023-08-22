@@ -1,8 +1,8 @@
-import { Chain } from '@web3modal/ethereum'
 import { BigNumber, BigNumberish, utils } from 'ethers'
 import { formatUnits } from 'ethers/lib.esm/utils'
 import { useCallback, useMemo } from 'react'
 import { useParams } from 'react-router'
+import { Chain } from 'wagmi'
 
 import { formatNumber } from '../utils/number'
 import { Params } from '../utils/router'
