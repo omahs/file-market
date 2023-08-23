@@ -3,21 +3,30 @@ import { NavButton } from '../../../Button'
 import { Txt } from '../../../Txt'
 import { StyledImgContainer } from '../../CardImg'
 
-export const StyledChain = styled('div', {
+export const StyledChainAndFileTypeWrapper = styled('div', {
+  display: 'flex',
+  width: 'calc(100% - 8px)',
+  alignItems: 'center',
+  justifyContent: 'space-between',
   position: 'absolute',
-  right: 4,
+  left: 4,
   top: 4,
   zIndex: 1,
+  outline: '1px solid red',
+})
+
+export const StyledChain = styled('div', {
   '& img': {
     width: '21px',
     height: '21px',
   },
+  '& > div': {
+    display: 'flex',
+    alignItems: 'center',
+  },
 })
 
 export const StyledFileTypeContainer = styled('div', {
-  position: 'absolute',
-  left: 4,
-  top: 4,
   zIndex: 1,
 })
 
@@ -71,6 +80,7 @@ export const StyledButton = styled(NavButton, {
   left: 0,
   top: 44,
   position: 'absolute',
+  borderRadius: '8px',
 })
 
 export const StyledCardInner = styled('div', {

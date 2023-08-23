@@ -5,23 +5,55 @@ import { SwitchButton, SwitchWrapper } from '../../components/Switch/Switch'
 export const SwitchWrapperTabs = styled(SwitchWrapper, {
   position: 'relative',
   zIndex: '1',
+  variants: {
+    small: {
+      true: {
+        padding: 4,
+      },
+    },
+    transparent: {
+      true: {
+        backgroundColor: 'transparent',
+      },
+    },
+  },
 })
 
 export const StyledAmount = styled(SwitchButton, {
+  display: 'flex',
+  alignItems: 'center',
+  position: 'relative',
   textAlign: 'right',
-  position: 'absolute',
+  left: '-68px',
+  paddingLeft: 84,
   borderColor: '#EAEAEC',
-  right: '-140px',
-  top: '0',
-  height: '100%',
-  width: '245px',
+  borderTopLeftRadius: 0,
+  borderBottomLeftRadius: 0,
+  borderLeft: 0,
   color: '#898E94',
   cursor: 'default',
+  variants: {
+    small: {
+      true: {
+        padding: 0,
+        left: '-58px',
+
+        paddingLeft: 70,
+        paddingRight: 24,
+        '@sm': {
+          left: '-56px',
+          paddingLeft: 68,
+          paddingRight: 20,
+        },
+      },
+    },
+    transparent: {
+      true: {
+        backgroundColor: 'transparent',
+      },
+    },
+  },
   '&:hover': {
     borderColor: '#EAEAEC',
-  },
-  '@sm': {
-    width: '200px',
-    right: '-110px',
   },
 })

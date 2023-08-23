@@ -26,6 +26,8 @@ const Pre = styled('pre', {
   fontWeight: 400,
   whiteSpace: 'pre-wrap',
   wordWrap: 'break-word',
+  lineHeight: 1.5,
+  maxWidth: 640,
 })
 
 const DescriptionSection = () => {

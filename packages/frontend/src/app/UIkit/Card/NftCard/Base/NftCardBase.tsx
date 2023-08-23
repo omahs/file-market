@@ -12,6 +12,7 @@ import {
   StyledCard,
   StyledCardBorder,
   StyledCardInner, StyledChain,
+  StyledChainAndFileTypeWrapper,
   StyledCollectionName,
   StyledFileTypeContainer,
   StyledInfoWrapper,
@@ -61,32 +62,34 @@ export const NftCardBase: React.FC<NftCardProps> = ({
       <StyledCardBorder>
         <StyledCardInner>
           <CardImg src={imgSrc}>
-            {fileType && (
-              <StyledFileTypeContainer>
-                <Tooltip
-                  rounded
-                  placement='top'
-                  trigger='hover'
-                  content='Internal hidden file type'
-                  color="primary"
-                >
-                  {fileType}
-                </Tooltip>
-              </StyledFileTypeContainer>
-            )}
-            {(chainImg && chainName && isShowChain) && (
-              <StyledChain>
-                <Tooltip
-                  rounded
-                  placement='top'
-                  trigger='hover'
-                  content={chainName}
-                  color="primary"
-                >
-                  <img src={chainImg} />
-                </Tooltip>
-              </StyledChain>
-            )}
+            <StyledChainAndFileTypeWrapper>
+              {fileType && (
+                <StyledFileTypeContainer>
+                  <Tooltip
+                    rounded
+                    placement='top'
+                    trigger='hover'
+                    content='Internal hidden file type'
+                    color="primary"
+                  >
+                    {fileType}
+                  </Tooltip>
+                </StyledFileTypeContainer>
+              )}
+              {(chainImg && chainName && isShowChain) && (
+                <StyledChain>
+                  <Tooltip
+                    rounded
+                    placement='top'
+                    trigger='hover'
+                    content={chainName}
+                    color="primary"
+                  >
+                    <img src={chainImg} />
+                  </Tooltip>
+                </StyledChain>
+              )}
+            </StyledChainAndFileTypeWrapper>
           </CardImg>
           <StyledInfoWrapper>
             <Flex flexDirection='column' gap="$2" alignItems='start'>
@@ -106,7 +109,6 @@ export const NftCardBase: React.FC<NftCardProps> = ({
                 primary
                 small
                 fullWidth
-                borderRadiusSecond
                 to={button.to}
                 onClick={button.onClick}
               >

@@ -47,7 +47,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
 
   return (
     <DropDownWrapper>
-      <Txt css={{ fontWeight: 600 }}>Current blockchain:</Txt>
+      <Txt css={{ fontWeight: 500 }}>Current blockchain:</Txt>
       {multiChainStore.data && (
         <Dropdown
           isDisabled={isLoading && !error}

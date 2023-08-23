@@ -80,6 +80,10 @@ const Publications = () => {
     className: 'publications-slider',
 
     breakpoints: {
+      100: {
+        slidesPerView: 1.05,
+        spaceBetween: 20,
+      },
       200: {
         slidesPerView: 1.1,
         spaceBetween: 20,

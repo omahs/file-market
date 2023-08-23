@@ -41,8 +41,8 @@ const ProfileImage = styled('img', {
   width: 160,
   height: 160,
   borderRadius: '50%',
-  border: '8px solid $white',
-  background: '$white',
+  border: '8px solid $gray100',
+  background: '$gray100',
   objectFit: 'fill',
 })
 
@@ -110,7 +110,6 @@ const ProfilePage: React.FC = observer(() => {
   return (
     <GrayOverlay>
       <Background />
-
       <Container>
         <Profile>
           <ProfileHeader>
@@ -128,7 +127,7 @@ const ProfilePage: React.FC = observer(() => {
 
       <Inventory>
         <TabsContainer>
-          <Tabs tabs={tabs} />
+          <Tabs tabs={tabs} isSmall isTransparent />
         </TabsContainer>
         <Outlet />
       </Inventory>
