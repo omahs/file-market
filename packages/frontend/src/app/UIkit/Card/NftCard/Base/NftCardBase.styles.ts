@@ -12,7 +12,6 @@ export const StyledChainAndFileTypeWrapper = styled('div', {
   left: 4,
   top: 4,
   zIndex: 1,
-  outline: '1px solid red',
 })
 
 export const StyledChain = styled('div', {
