@@ -16,6 +16,7 @@ export interface IStoreRequester {
   requestCount: number
   currentRequest?: RequestContext // current request. Helps to prevent concurrent request
   reset: () => void
+  reload?: () => void
 }
 
 export interface RequestContext {
@@ -79,7 +80,6 @@ export const storeRequest = <Data>(
         target.isLoaded = true
         callback(response.data)
       } else {
-        console.log('req error', response.error)
         target.errorStore.showError(errorResponseToMessage(response.error))
       }
     },

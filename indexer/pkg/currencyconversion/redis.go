@@ -9,13 +9,13 @@ import (
 )
 
 type RedisExchangeRateCache struct {
-	provider    CurrencyConversionProvider
+	provider    Provider
 	redisClient *redis.Client
 	cacheTTL    time.Duration
 }
 
 func NewRedisExchangeRateCache(
-	provider CurrencyConversionProvider,
+	provider Provider,
 	redisClient *redis.Client,
 	cacheTTL time.Duration,
 ) *RedisExchangeRateCache {

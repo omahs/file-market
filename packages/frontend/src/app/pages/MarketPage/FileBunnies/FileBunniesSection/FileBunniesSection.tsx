@@ -1,8 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
+import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
+import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
+import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
@@ -33,7 +36,11 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { payedMint, isLoading, freeMint, whiteList, modalProps } = useFileBunniesMint()
+  const { payedMint, isLoading, freeMint, modalProps, isPayedMintSoldOut } = useFileBunniesMint()
+  const { changeNetwork } = useChangeNetwork()
+  const multiChainStore = useMultiChainStore()
+  const currentChainStore = useCurrentBlockChain()
+
   const rarityModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -61,6 +68,19 @@ const FileBunniesSection = observer(() => {
       },
     })
   }
+
+  const payedButtonVariant = useMemo(() => {
+    if (isPayedMintSoldOut) return 'soldOut'
+
+    return 'mint'
+  }, [isPayedMintSoldOut, currentChainStore.chain])
+
+  const payedButtonOnClick = useMemo(() => {
+    if (currentChainStore.chain?.name !== 'Filecoin') return () => { changeNetwork(multiChainStore.getChainByName('Filecoin')?.chain.id) }
+    if (isPayedMintSoldOut) return () => {}
+
+    return () => { payedMint() }
+  }, [isPayedMintSoldOut, currentChainStore.chain])
 
   return (
     <>
@@ -101,13 +121,13 @@ const FileBunniesSection = observer(() => {
                 </LeftBlockText>
               </LeftTextBlock>
               <ToolTipBlock first onClick={() => { rarityModalOpen() }}>
-                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>FileBunnies Rarities</Txt>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '16px' }}>FileBunnies Rarities</Txt>
               </ToolTipBlock>
               <ToolTipBlock second onClick={() => { howToWorkModalOpen() }}>
-                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>How EFT (Encrypted FileToken) works?</Txt>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '16px' }}>How EFT (Encrypted FileToken) works?</Txt>
               </ToolTipBlock>
               <ToolTipBlock last onClick={() => { howToMintModalOpen() }}>
-                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>How to MINT FileBunnies?</Txt>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '16px' }}>How to MINT FileBunnies?</Txt>
               </ToolTipBlock>
             </LeftBlock>
             <CardsBlock>
@@ -117,9 +137,9 @@ const FileBunniesSection = observer(() => {
                   onClick: () => { rarityModalOpen() },
                 }}
                 buttonProps={{
-                  isDisabled: isLoading || whiteList === '',
+                  isDisabled: true,
                   onClick: () => { freeMint() },
-                  variant: whiteList === '' ? 'notWl' : 'free',
+                  variant: 'mintedOut',
                 }}
               />
               <WhitelistCard
@@ -128,9 +148,9 @@ const FileBunniesSection = observer(() => {
                   onClick: () => { rarityModalOpen() },
                 }}
                 buttonProps={{
-                  onClick: () => { payedMint() },
-                  variant: 'mint',
-                  isDisabled: isLoading,
+                  onClick: payedButtonOnClick,
+                  variant: payedButtonVariant,
+                  isDisabled: isPayedMintSoldOut || isLoading,
                 }}
               />
             </CardsBlock>

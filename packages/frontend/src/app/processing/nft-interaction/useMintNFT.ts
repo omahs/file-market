@@ -3,9 +3,10 @@ import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { api } from '../../config/api'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useApi } from '../../hooks/useApi'
+import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
@@ -45,9 +46,11 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
   const upload = useUploadLighthouse()
+  const api = useApi()
+  const config = useConfig()
 
   const mintNFT = useCallback(wrapPromise(async (form) => {
-    assertContract(contract, mark3dConfig.collectionToken.name)
+    assertContract(contract, config?.collectionToken.name ?? '')
     assertSigner(signer)
     assertAccount(address)
 
@@ -58,7 +61,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
 
     let tokenIdBN: BigNumber
     if (isPublicCollection) {
-      const { data } = await api.sequencer.acquireDetail(collectionAddress)
+      const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
       tokenIdBN = BigNumber.from(data.tokenId)
     } else {
       tokenIdBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })

@@ -11,18 +11,20 @@ import (
 
 type (
 	Config struct {
-		Postgres  *PostgresConfig
-		Server    *ServerConfig
-		Handler   *HandlerConfig
-		Service   *ServiceConfig
-		Redis     *RedisConfig
-		Sequencer *SequencerConfig
+		Postgres     *PostgresConfig
+		Server       *ServerConfig
+		Handler      *HandlerConfig
+		Service      *ServiceConfig
+		Redis        *RedisConfig
+		Sequencer    *SequencerConfig
+		TokenManager *TokenManagerConfig
 	}
 
 	SequencerConfig struct {
-		KeyPrefix     string
-		TokenIdTTL    time.Duration
-		CheckInterval time.Duration
+		KeyPrefix          string
+		TokenIdTTL         time.Duration
+		CheckInterval      time.Duration
+		SwitchTokenTimeout time.Duration // when sequencer should return new id for same wallet
 	}
 
 	PostgresConfig struct {
@@ -62,6 +64,14 @@ type (
 		CommonSignerKey              string
 		UncommonSignerKey            string
 		Mode                         string
+		ChainID                      string
+		AuthMessageTTL               time.Duration
+		AccessTokenTTL               time.Duration
+		RefreshTokenTTL              time.Duration
+	}
+
+	TokenManagerConfig struct {
+		SigningKey string
 	}
 
 	RedisConfig struct {
@@ -121,15 +131,23 @@ func Init(configPath string) (*Config, error) {
 			CommonSignerKey:              envCfg.GetString("COMMON_SIGNER_KEY"),
 			UncommonSignerKey:            envCfg.GetString("UNCOMMON_SIGNER_KEY"),
 			Mode:                         jsonCfg.GetString("service.mode"),
+			ChainID:                      jsonCfg.GetString("service.chainId"),
+			AccessTokenTTL:               jsonCfg.GetDuration("service.accessTokenTTL"),
+			RefreshTokenTTL:              jsonCfg.GetDuration("service.refreshTokenTTL"),
+			AuthMessageTTL:               jsonCfg.GetDuration("service.authMessageTTL"),
 		},
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),
 			Password: envCfg.GetString("REDIS_PASSWORD"),
 		},
 		Sequencer: &SequencerConfig{
-			KeyPrefix:     jsonCfg.GetString("service.sequencer.keyPrefix"),
-			TokenIdTTL:    jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
-			CheckInterval: jsonCfg.GetDuration("service.sequencer.checkInterval"),
+			KeyPrefix:          jsonCfg.GetString("service.sequencer.keyPrefix"),
+			TokenIdTTL:         jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
+			CheckInterval:      jsonCfg.GetDuration("service.sequencer.checkInterval"),
+			SwitchTokenTimeout: jsonCfg.GetDuration("service.sequencer.switchTokenTimeout"),
+		},
+		TokenManager: &TokenManagerConfig{
+			SigningKey: envCfg.GetString("JWT_SIGNING_KEY"),
 		},
 	}, nil
 }

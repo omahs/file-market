@@ -46,6 +46,7 @@
     "dayjs": "^1.11.7",
     "ethers": "^5",
     "file-saver": "^2.0.5",
+    "gsap": "^3.12.2",
     "jdenticon": "^3.2.0",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",

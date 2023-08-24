@@ -1,18 +1,15 @@
+import { BigNumber } from 'ethers'
 import React from 'react'
-import { useParams } from 'react-router-dom'
 
 import { useStores } from '../../../../../hooks'
-import { useConversionRateStore } from '../../../../../hooks/useConversionRateStore'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
-import { useOrderStore } from '../../../../../hooks/useOrderStore'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
-import { Params } from '../../../../../utils/router'
-import { toCurrency } from '../../../../../utils/web3'
-import BaseModal from '../../../../Modal/Modal'
+import { BaseModal } from '../../../../Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
 import { ActionButtonProps } from './types/types'
 
@@ -21,14 +18,12 @@ export type ButtonPlaceOrderProps = ActionButtonProps & {
 }
 
 export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
-  tokenFullId, onStart, onEnd, isDisabled, onError,
+  tokenFullId, isDisabled,
 }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder()
-  const conversionRateStore = useConversionRateStore()
-  const { collectionAddress, tokenId } = useParams<Params>()
-  const orderStore = useOrderStore(collectionAddress, tokenId)
-
+  const { wrapAction } = wrapButtonActionsFunction<OrderFormValue>()
+  const { transferStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -36,24 +31,16 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
     loadingMsg: 'Placing order',
   })
 
-  const { blockStore } = useStores()
-  const onSubmit = async ({ price }: OrderFormValue) => {
+  const onSubmit = wrapAction(async ({ price }: OrderFormValue) => {
     closeModal()
-    onStart?.()
     const receipt = await placeOrder({
       ...tokenFullId,
       price,
-    }).catch(e => {
-      onError?.()
-      throw e
     })
-    conversionRateStore.data?.rate &&
-    orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
     if (receipt?.blockNumber) {
-      blockStore.setReceiptBlock(receipt.blockNumber)
+      transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
     }
-    onEnd?.()
-  }
+  })
 
   return (
     <>

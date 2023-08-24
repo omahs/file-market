@@ -12,5 +12,18 @@ export const PageLayout = styled(Container, {
         paddingTop: 0,
       },
     },
+    collectionPage: {
+      true: {
+        '@md': {
+          paddingLR: '$3',
+          paddingRight: '0',
+        },
+      },
+    },
+    isHasSelectBlockChain: {
+      true: {
+        paddingTop: 'calc($layout$navBarHeight + $space$4 + 58px)',
+      },
+    },
   },
 })

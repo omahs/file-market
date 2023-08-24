@@ -1,3 +1,5 @@
+import { PressEvent } from '@react-types/shared/src/events'
+import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
@@ -6,16 +8,18 @@ import { useCancelOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonCancelOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, onStart, onEnd, isDisabled, onError }) => {
+export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, isDisabled }) => {
   const { cancelOrder, ...statuses } = useCancelOrder()
   const { isLoading } = statuses
-  const { blockStore } = useStores()
+  const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
+  const { transferStore } = useStores()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Order cancelled',
@@ -30,17 +34,13 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, onS
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
-        onPress={async () => {
-          onStart?.()
-          const receipt = await cancelOrder(tokenFullId).catch(e => {
-            onError?.()
-            throw e
-          })
+        onPress={wrapAction(async () => {
+          const receipt = await cancelOrder(tokenFullId)
           if (receipt?.blockNumber) {
-            blockStore.setReceiptBlock(receipt.blockNumber)
+            transferStore.onTransferCancellation(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
           }
-          onEnd?.()
-        }}
+        })
+        }
       >
         Cancel order
       </Button>

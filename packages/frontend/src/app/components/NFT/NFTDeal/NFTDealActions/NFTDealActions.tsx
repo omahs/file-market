@@ -1,14 +1,14 @@
 import { Tooltip } from '@nextui-org/react'
+import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 
 import { styled } from '../../../../../styles'
 import { Order, Transfer } from '../../../../../swagger/Api'
 import { useStores } from '../../../../hooks'
-import { useStatusModal } from '../../../../hooks/useStatusModal'
-import { useIsOwner } from '../../../../processing'
+import { useConfig } from '../../../../hooks/useConfig'
 import { TokenFullId } from '../../../../processing/types'
-import BaseModal from '../../../Modal/Modal'
+import { transferPermissions } from '../../../../utils/transfer/status'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -27,57 +27,58 @@ const ButtonsContainer = styled(Tooltip, {
 
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId
-  transfer?: Transfer
   order?: Order
   reFetchOrder?: () => void
+  transfer?: Transfer
+  isOwner?: boolean
+  isBuyer?: boolean
+  isApprovedExchange?: boolean
+  runIsApprovedRefetch: () => void
 }
+
+const permissions = transferPermissions.buyer
 
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
-  transfer,
   order,
+  transfer,
+  isOwner,
+  isApprovedExchange,
+  isBuyer,
+  runIsApprovedRefetch,
 }) => {
-  const { isOwner, error } = useIsOwner(tokenFullId)
   const { blockStore, transferStore } = useStores()
-  const { modalProps } = useStatusModal({
-    statuses: { result: undefined, isLoading: false, error: error as unknown as string },
-    okMsg: '',
-    loadingMsg: '',
-  })
 
-  const onActionStart = () => {
-    // we disable buttons when user starts contract interaction, and enable back when event arrives
-    transferStore.setIsWaitingForEvent(true)
-  }
+  const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
+  const config = useConfig()
+  const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
+  const fileBunniesAddressNormalized = utils.getAddress(config?.fileBunniesCollectionToken.address ?? '')
+  const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
+  const fileBunniesText = useMemo(() => {
+    return (isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 24.12.2023') : ''
+  }, [isFileBunnies, transfer, tokenFullId])
 
-  const onActionError = () => {
-    transferStore.setIsWaitingForEvent(false)
-  }
-
-  if (error) {
-    return <BaseModal {...modalProps} />
-  }
-
-  const isDisabled = !blockStore.canContinue || transferStore.isWaitingForEvent
+  const isDisabledFileBunnies = useMemo(() => {
+    return isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))
+  }, [isFileBunnies, transfer])
 
   return (
-    <ButtonsContainer content={blockStore.confirmationsText}>
+    <ButtonsContainer content={fileBunniesText ?? blockStore.confirmationsText}>
       {isOwner ? (
         <NFTDealActionOwner
           transfer={transfer}
           tokenFullId={tokenFullId}
-          onStart={onActionStart}
-          onError={onActionError}
-          isDisabled={isDisabled}
+          isDisabled={isDisabled || isDisabledFileBunnies}
+          isApprovedExchange={isApprovedExchange}
+          runIsApprovedRefetch={runIsApprovedRefetch}
         />
       ) : (
         <NFTDealActionsBuyer
           transfer={transfer}
           order={order}
           tokenFullId={tokenFullId}
-          onStart={onActionStart}
-          onError={onActionError}
-          isDisabled={isDisabled}
+          isBuyer={isBuyer}
+          isDisabled={isDisabled || isDisabledFileBunnies}
         />
       )}
     </ButtonsContainer>

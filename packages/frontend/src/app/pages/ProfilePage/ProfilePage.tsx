@@ -9,6 +9,7 @@ import { useCollectionAndTokenListStore } from '../../hooks'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
 import { Container, gradientPlaceholderImg, TabItem, Tabs, textVariant } from '../../UIkit'
+import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router'
@@ -70,10 +71,6 @@ const Inventory = styled(Container, {
   minHeight: 460, // prevent floating footer
 })
 
-const TabsContainer = styled('div', {
-  marginBottom: '$4',
-})
-
 const ProfilePage: React.FC = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { address: currentAddress } = useAccount()
@@ -85,12 +82,14 @@ const ProfilePage: React.FC = observer(() => {
   const tabs = useMemo(() => {
     const tabs: TabItem[] = [
       {
-        name: 'Owned',
+        value: 'Owned',
+        label: 'Owned',
         url: 'owned',
         amount: collectionAndTokenListStore.data.tokensTotal ?? 0,
       },
       {
-        name: 'History',
+        value: 'history',
+        label: 'History',
         url: 'history',
         amount: transferHistoryStore.total,
       },
@@ -100,7 +99,8 @@ const ProfilePage: React.FC = observer(() => {
       tabs.push({
         amount: userTransferStore.total,
         url: 'transfers',
-        name: 'Transfers',
+        value: 'transfers',
+        label: 'Transfers',
       })
     }
 

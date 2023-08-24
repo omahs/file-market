@@ -7,7 +7,7 @@
   },
   "handler": {
     "requestTimeout": "5s",
-    "swaggerHost": "https://dev-indexer-swagger.mark3d.xyz"
+    "swaggerHost": "*"
   },
   "service": {
     "accessTokenAddress": "0xC3F07F620715Fec92db305f718C7FA10C708Bf7A",
@@ -19,11 +19,16 @@
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
     "sequencer": {
-      "keyPrefix": "sequencer.",
-      "tokenIdTTL": "30m",
-      "checkInterval": "5m"
+      "keyPrefix": "sequencer",
+      "tokenIdTTL": "15m",
+      "checkInterval": "5m",
+      "switchTokenTimeout": "3m"
     },
+    "authMessageTTL": "5m",
+    "accessTokenTTL": "5m",
+    "refreshTokenTTL": "21600h",
     "currencyConversionCacheTTL": "1h",
-    "mode": "dev"
+    "mode": "dev",
+    "chainId": "314159"
   }
 }

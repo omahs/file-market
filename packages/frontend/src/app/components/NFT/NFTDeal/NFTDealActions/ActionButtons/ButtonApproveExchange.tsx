@@ -1,23 +1,25 @@
+import { PressEvent } from '@react-types/shared/src/events'
 import { FC } from 'react'
 
-import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveExchange } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
+  onEnd?: () => void
 }
 
 export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
-  tokenFullId, onStart, onEnd, isDisabled, onError,
+  tokenFullId, isDisabled, onEnd,
 }) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
-  const { blockStore } = useStores()
   const { isLoading } = statuses
+  const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'You have approved FileMarket to list your EFT. You can now place an order',
@@ -32,17 +34,10 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
-        onPress={async () => {
-          onStart?.()
-          const receipt = await approveExchange(tokenFullId).catch(e => {
-            onError?.()
-            throw e
-          })
-          if (receipt?.blockNumber) {
-            blockStore.setReceiptBlock(receipt.blockNumber)
-          }
+        onPress={wrapAction(async () => {
+          await approveExchange(tokenFullId)
           onEnd?.()
-        }}
+        })}
       >
         Prepare for sale
       </Button>

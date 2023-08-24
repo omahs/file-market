@@ -7,7 +7,7 @@ import TransfersSection from './sections/TransfersSection'
 export const profileRoutes: RouteObject[] = [
   {
     path: '',
-    element: <Navigate to={'owned'} />,
+    element: <Navigate replace to={'owned'} />,
   },
   {
     path: 'owned',

@@ -1,7 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom'
 
-import CreateCollectionPage from './CreateCollectionPage'
-import { CreateNFTPage } from './CreateNFTPage'
+import CreateCollectionPage from './Collection/CreateCollectionPage'
+import CreateNFTPage from './EFT/CreateNFTPage'
 
 export const createRoutes: RouteObject[] = [
   {
@@ -14,6 +14,6 @@ export const createRoutes: RouteObject[] = [
   },
   {
     path: '',
-    element: <Navigate to={'eft'} />,
+    element: <Navigate replace to={'eft'} />,
   },
 ]

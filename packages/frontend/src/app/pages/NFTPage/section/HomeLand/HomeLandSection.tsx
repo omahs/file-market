@@ -22,9 +22,9 @@ const BadgesContainer = styled('div', {
 })
 
 const HomeLandSection = () => {
-  const { collectionAddress, tokenId } = useParams<Params>()
+  const { collectionAddress, tokenId, chainName } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
-  const { collection } = useCollectionStore(collectionAddress)
+  const { collection } = useCollectionStore(collectionAddress, chainName)
 
   const { collectionImgUrl, collectionName } = useMemo(() => {
     const result = {
@@ -36,7 +36,7 @@ const HomeLandSection = () => {
     }
     if (collection?.type === 'Public Collection') {
       result.collectionImgUrl = FileLogo
-      result.collectionName = 'FileMarket'
+      result.collectionName = 'Public Collection'
     }
 
     return result
@@ -49,7 +49,7 @@ const HomeLandSection = () => {
           lgFullWidth
           to={
             collection?.address
-              ? `/collection/${collection?.address}`
+              ? `/collection/${chainName}/${collection?.address}`
               : location.pathname
           }
         >

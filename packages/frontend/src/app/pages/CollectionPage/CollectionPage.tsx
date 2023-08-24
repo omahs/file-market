@@ -4,9 +4,11 @@ import { Outlet, useLocation, useParams } from 'react-router'
 
 import FileLogo from '../../../assets/FilemarketFileLogo.png'
 import { styled } from '../../../styles'
-import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
+import { useConfig } from '../../hooks/useConfig'
+import { useMultiChainStore } from '../../hooks/useMultiChainStore'
 import { Badge, Container, gradientPlaceholderImg, Link, NavLink, Tabs, textVariant } from '../../UIkit'
+import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
@@ -57,6 +59,18 @@ const Badges = styled('div', {
   display: 'flex',
   gap: '$2',
   marginBottom: '$4',
+  flexWrap: 'wrap',
+  '& .firstLink': {
+    width: '400px',
+  },
+  '@sm': {
+    '& a': {
+      width: '100%',
+    },
+    '& .firstLink': {
+      width: '100%',
+    },
+  },
 })
 
 const GrayOverlay = styled('div', {
@@ -81,10 +95,6 @@ const Inventory = styled(Container, {
   minHeight: 460, // prevent floating footer
 })
 
-const TabsContainer = styled('div', {
-  marginBottom: '$4',
-})
-
 const StyledContainer = styled(Container, {
   display: 'flex',
   justifyContent: 'space-between',
@@ -96,9 +106,10 @@ const StyledContainer = styled(Container, {
 })
 
 const CollectionPage = observer(() => {
-  const { collectionAddress } = useParams<Params>()
-  const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress)
-
+  const { collectionAddress, chainName } = useParams<Params>()
+  useMultiChainStore()
+  const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress, chainName)
+  const config = useConfig()
   const { pathname: currentPath } = useLocation()
 
   const collectionImgUrl = useMemo(() => {
@@ -106,6 +117,14 @@ const CollectionPage = observer(() => {
     if (collectionAndNfts?.collection?.image) { return getHttpLinkFromIpfsString(collectionAndNfts.collection.image) }
 
     return gradientPlaceholderImg
+  }, [collectionAndNfts?.collection])
+
+  const collectionName = useMemo(() => {
+    if (collectionAndNfts?.collection?.type === 'Public Collection') {
+      return 'Public Collection'
+    }
+
+    return collectionAndNfts?.collection?.name
   }, [collectionAndNfts?.collection])
 
   return (
@@ -116,16 +135,16 @@ const CollectionPage = observer(() => {
           <Profile>
             <ProfileHeader>
               <ProfileImage src={collectionImgUrl} />
-              <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
+              <ProfileName>{collectionName}</ProfileName>
             </ProfileHeader>
             <Badges>
               <NavLink
-                style={{ width: '400px' }}
                 to={
                   collectionAndNfts.collection?.owner
                     ? `/profile/${collectionAndNfts.collection.owner}`
                     : currentPath
                 }
+                className={'firstLink'}
               >
                 <Badge
                   wrapperProps={{
@@ -145,10 +164,10 @@ const CollectionPage = observer(() => {
                 <Link
                   target='_blank'
                   rel='noopener noreferrer'
-                  href={`${mark3dConfig.chain.blockExplorers?.default.url}` +
+                  href={`${config?.chain.blockExplorers?.default.url}` +
                       `/address/${collectionAndNfts.collection?.address}`}
                 >
-                  <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+                  <Badge content={{ title: config?.chain.blockExplorers?.default.name, value: 'VRG' }} />
                 </Link>
               )}
             </Badges>
@@ -163,7 +182,8 @@ const CollectionPage = observer(() => {
           <Tabs
             tabs={[
               {
-                name: 'EFTs',
+                value: 'efts',
+                label: 'EFTs',
                 url: 'efts',
                 amount: collectionAndNfts?.total ?? 0,
               },

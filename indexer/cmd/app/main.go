@@ -4,15 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
-	log "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -41,6 +42,8 @@ func main() {
 		logger.WithFields(log.Fields{"error": err}).Fatal("failed to init config", nil)
 	}
 
+	domain.SetConfig(cfg)
+
 	ctx := context.Background()
 
 	pool, err := pgxpool.Connect(ctx, cfg.Postgres.PgSource())
@@ -65,18 +68,12 @@ func main() {
 	}
 
 	sequencerCfg := &sequencer.Config{
-		KeyPrefix:     cfg.Sequencer.KeyPrefix,
-		TokenIdTTL:    cfg.Sequencer.TokenIdTTL,
-		CheckInterval: cfg.Sequencer.CheckInterval,
+		KeyPrefix:          cfg.Sequencer.KeyPrefix,
+		TokenIdTTL:         cfg.Sequencer.TokenIdTTL,
+		CheckInterval:      cfg.Sequencer.CheckInterval,
+		SwitchTokenTimeout: cfg.Sequencer.CheckInterval,
 	}
-	pubCollectionAddr := strings.ToLower(cfg.Service.PublicCollectionAddress.String())
-	fileBunniesAddr := strings.ToLower(cfg.Service.FileBunniesCollectionAddress.String())
-	seq := sequencer.New(sequencerCfg, rdb, map[string]sequencer.Range{
-		pubCollectionAddr:                           {0, 1_000_000},
-		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 1500},
-		fmt.Sprintf("%s.uncommon", fileBunniesAddr): {6000, 6500},
-		fmt.Sprintf("%s.payed", fileBunniesAddr):    {7000, 7500},
-	})
+	seq := sequencer.New(sequencerCfg, rdb)
 
 	repositoryCfg := &repository.Config{
 		PublicCollectionAddress:      cfg.Service.PublicCollectionAddress,
@@ -99,13 +96,13 @@ func main() {
 		logger.Fatal("failed to create uncommonSigner", log.Fields{"error": err})
 	}
 
-	realtimeNotificationService := realtime_notification.New()
-
+	wsPool := ws.NewWsPool()
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb, repositoryCfg),
+		wsPool,
 		client,
-		realtimeNotificationService,
 		seq,
+		jwt.NewTokenManager(cfg.TokenManager.SigningKey),
 		healthNotifier,
 		currencyConverterCache,
 		commonSigner,
@@ -115,9 +112,10 @@ func main() {
 	if err != nil {
 		logger.WithFields(log.Fields{"error": err}).Fatal("failed to create service", nil)
 	}
-	indexHandler := handler.NewHandler(cfg.Handler, indexService, realtimeNotificationService) // handler who interact with a service and hashManager
-	router := indexHandler.Init()                                                              // gorilla mux here
-	srv := server.NewServer(cfg.Server, router)                                                // basically http.Server with config here
+
+	indexHandler := handler.NewHandler(cfg.Handler, indexService) // handler who interact with a service and hashManager
+	router := indexHandler.Init()                                 // gorilla mux here
+	srv := server.NewServer(cfg.Server, router)                   // basically http.Server with config here
 
 	// goroutine in which server running
 	go func() {
@@ -174,6 +172,7 @@ func main() {
 		logger.WithFields(log.Fields{"error": err}).Fatal("failed to shutdown server", nil)
 	}
 	indexService.Shutdown()
+	wsPool.Shutdown()
 
 	logger.Info("server shutdown", nil)
 

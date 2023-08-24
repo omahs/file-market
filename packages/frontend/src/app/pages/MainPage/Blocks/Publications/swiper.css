@@ -1,0 +1,8 @@
+.publications-slider {
+  overflow: visible;
+}
+
+.publications-slide {
+  align-self: stretch;
+  height: auto !important;
+}

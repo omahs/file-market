@@ -3,7 +3,6 @@ import { makeAutoObservable } from 'mobx'
 
 import { TokensResponse } from '../../../swagger/Api'
 import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
-import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { ComboBoxOption } from '../../UIkit/Form/Combobox'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -11,10 +10,12 @@ import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
+import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
+  currentBlockChainStore: CurrentBlockChainStore
 
   currentRequest?: RequestContext
   requestCount = 0
@@ -29,10 +30,12 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     tokensTotal: 0,
   }
 
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  constructor({ errorStore, currentBlockChainStore }: { errorStore: ErrorStore, currentBlockChainStore: CurrentBlockChainStore }) {
     this.errorStore = errorStore
+    this.currentBlockChainStore = currentBlockChainStore
     makeAutoObservable(this, {
       errorStore: false,
+      currentBlockChainStore: false,
     })
   }
 
@@ -57,21 +60,21 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   private request() {
     storeRequest(
       this,
-      api.tokens.tokensDetail(this.address, {
-        tokenLimit: 20,
+      this.currentBlockChainStore.api.tokens.tokensDetail(this.address, {
+        tokenLimit: 10,
       }),
       data => this.setData(data),
     )
   }
 
   requestMoreTokens() {
-    const { tokenId, collectionAddress } = lastItem(this.data.tokens ?? [])
+    const token = lastItem(this.data.tokens ?? [])
     storeRequest(
       this,
-      api.tokens.tokensDetail(this.address, {
-        lastTokenId: tokenId,
-        lastTokenCollectionAddress: collectionAddress,
-        tokenLimit: 20,
+      this.currentBlockChainStore.api.tokens.tokensDetail(this.address, {
+        lastTokenId: token?.tokenId,
+        lastTokenCollectionAddress: token?.collectionAddress,
+        tokenLimit: 10,
       }),
       (data) => this.addData(data),
     )
@@ -116,7 +119,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       hiddenFileMeta: token.hiddenFileMeta,
       button: {
         text: 'Go to page',
-        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
+        link: `/collection/${this.currentBlockChainStore.chain?.name}/${token.collectionAddress}/${token.tokenId}`,
       },
     }))
   }

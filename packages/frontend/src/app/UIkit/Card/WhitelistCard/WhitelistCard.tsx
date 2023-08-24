@@ -24,7 +24,7 @@ interface WhitelistCardProps {
   price?: number
   variant: 'whitelist' | 'mint'
   buttonProps: Omit<WhitelistCardButtonProps, 'variant'> & {
-    variant: 'free' | 'check' | 'mint' | 'notWl'
+    variant: 'free' | 'check' | 'mint' | 'notWl' | 'soldOut' | 'mintedOut' | 'incorrectNetwork'
   }
   rarityButtonProps: ButtonProps
 }
@@ -51,10 +51,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
       text: `${price} FIL`,
       rarities: rarityList.slice(1),
       total: 3000,
-      _buttonProps: {
-        ...buttonProps,
-        variant: 'mint' as const,
-      },
+      _buttonProps: buttonProps,
     }
   }, [variant, price, buttonProps])
 

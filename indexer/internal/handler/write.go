@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"log"
 	"net/http"
 )
@@ -18,4 +19,11 @@ func sendResponse(w http.ResponseWriter, code int64, res interface{}) {
 		log.Println("write response failed: ", err)
 		return
 	}
+}
+
+func sendSuccessResponse(w http.ResponseWriter) {
+	s := true
+	sendResponse(w, 200, &models.SuccessResponse{
+		Success: &s,
+	})
 }

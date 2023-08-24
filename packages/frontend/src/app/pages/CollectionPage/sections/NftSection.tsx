@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
+import { useParams } from 'react-router'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
@@ -7,6 +8,7 @@ import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../UIkit'
+import { Params } from '../../../utils/router'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -34,7 +36,8 @@ const NoNftContainer = styled('div', {
 })
 
 const NftSection = observer(() => {
-  const collectionTokenListStore = useCollectionTokenListStore()
+  const { collectionAddress, chainName } = useParams<Params>()
+  const collectionTokenListStore = useCollectionTokenListStore(collectionAddress, chainName)
   const navigate = useNavigate()
 
   return (
@@ -44,7 +47,9 @@ const NftSection = observer(() => {
         isLoading={collectionTokenListStore.isLoading}
         currentItemCount={collectionTokenListStore.nftCards.length}
         fetchMore={() => collectionTokenListStore.requestMore()}
-        render={({ index }) => <NFTCard {...collectionTokenListStore.nftCards[index]} key={index} />}
+        render={({ index }) => {
+          return <NFTCard {...collectionTokenListStore.nftCards[index]} key={index} />
+        }}
         listCss={nftCardListCss}
       />
       {!collectionTokenListStore.nftCards.length && !collectionTokenListStore.isLoading && (

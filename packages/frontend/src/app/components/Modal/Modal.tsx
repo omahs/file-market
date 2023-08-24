@@ -30,11 +30,12 @@ interface SuccessNavBodyProps {
   link: string
   onPress: () => void
   underText?: string
+  isSuccessImg?: boolean
 }
-export const SuccessNavBody = ({ buttonText, link, onPress, underText }: SuccessNavBodyProps) => {
+export const SuccessNavBody = ({ buttonText, link, onPress, underText, isSuccessImg = true }: SuccessNavBodyProps) => {
   return (
     <>
-      <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>
+      {isSuccessImg && <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>}
       <ModalP style={{ marginBottom: '40px' }}>Success</ModalP>
       {underText && <ModalP style={{ marginBottom: '40px', fontSize: '18px' }}>{underText}</ModalP>}
       <ModalButtonContainer style={{ justifyContent: 'center' }}>
@@ -53,15 +54,17 @@ export const SuccessNavBody = ({ buttonText, link, onPress, underText }: Success
 export interface SuccessOkBodyProps {
   description: ReactNode
   handleClose?: () => void
+  isSuccessImg?: boolean
+  buttonText?: string
 }
 
-export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose }) => (
+export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose, isSuccessImg = true, buttonText }) => (
   <>
-    <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>
+    {isSuccessImg && <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>}
     <ModalP style={{ marginBottom: '40px' }}>{description}</ModalP>
     {handleClose && (
       <ModalButtonContainer style={{ justifyContent: 'center' }}>
-        <ButtonGlowing whiteWithBlue modalButton onPress={handleClose}>Cool</ButtonGlowing>
+        <ButtonGlowing whiteWithBlue modalButton onPress={handleClose}>{buttonText ?? 'Cool'}</ButtonGlowing>
       </ModalButtonContainer>
     )}
   </>
@@ -96,7 +99,6 @@ export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () 
         whiteWithBlue
         modalButtonFontSize
         onPress={() => {
-          console.log(onClose)
           onClose?.()
         }}
       >

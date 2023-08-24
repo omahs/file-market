@@ -5,6 +5,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"log"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
@@ -12,8 +13,10 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 )
 
-func (s *service) GetOrders(ctx context.Context,
-	address common.Address) (*models.OrdersResponse, *models.ErrorResponse) {
+func (s *service) GetOrders(
+	ctx context.Context,
+	address common.Address,
+) (*models.OrdersResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -21,10 +24,15 @@ func (s *service) GetOrders(ctx context.Context,
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 
 	incomingOrders, err := s.repository.GetActiveIncomingOrdersByAddress(ctx, tx, address)
@@ -63,10 +71,14 @@ func (s *service) GetOrdersHistory(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 
 	incomingOrders, err := s.repository.GetIncomingOrdersByAddress(ctx, tx, address)
@@ -93,8 +105,11 @@ func (s *service) GetOrdersHistory(
 	}, nil
 }
 
-func (s *service) GetOrder(ctx context.Context, address common.Address,
-	tokenId *big.Int) (*models.Order, *models.ErrorResponse) {
+func (s *service) GetOrder(
+	ctx context.Context,
+	address common.Address,
+	tokenId *big.Int,
+) (*models.Order, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -102,10 +117,14 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 
 	res, err := s.repository.GetActiveOrder(ctx, tx, address, tokenId)
@@ -132,10 +151,14 @@ func (s *service) GetAllActiveOrders(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	currency := "FIL"
+	if strings.Contains(s.cfg.Mode, "era") {
+		currency = "ETH"
+	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, currency, "USD")
 	if err != nil {
 		log.Println("failed to get conversion rate: ", err)
-		return nil, internalError
+		rate = 0
 	}
 
 	orders, err := s.repository.GetAllActiveOrders(ctx, tx, lastOrderId, limit)

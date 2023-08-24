@@ -18,6 +18,11 @@ type Collection struct {
 	Image       string
 	Type        string
 	BlockNumber int64
+	OrdersCount uint64
+	OwnersCount uint64
+	TokensCount uint64
+	SalesVolume *big.Int
+	FloorPrice  *big.Int
 }
 
 type CollectionTransfer struct {
@@ -28,20 +33,35 @@ type CollectionTransfer struct {
 }
 
 func CollectionToModel(c *Collection) *models.Collection {
+	salesVolume := c.SalesVolume.String()
+	if c.SalesVolume == nil {
+		salesVolume = ""
+	}
+	floorPrice := c.FloorPrice.String()
+	if c.FloorPrice == nil {
+		floorPrice = ""
+	}
+
 	return &models.Collection{
-		Address:     c.Address.String(),
-		Creator:     c.Creator.String(),
-		MetaURI:     c.MetaUri,
-		Owner:       c.Owner.String(),
-		TokenID:     c.TokenId.String(),
-		Name:        c.Name,
-		Description: c.Description,
-		Image:       c.Image,
-		Type:        c.Type,
+		Address: c.Address.String(),
 		Block: &models.CollectionBlock{
 			ConfirmationsCount: 1,
 			Number:             c.BlockNumber,
 		},
+		Creator:     c.Creator.String(),
+		Description: c.Description,
+		Image:       c.Image,
+		MetaURI:     c.MetaUri,
+		Name:        c.Name,
+		Owner:       c.Owner.String(),
+		TokenID:     c.TokenId.String(),
+		ChainID:     cfg.Service.ChainID,
+		OrdersCount: c.OrdersCount,
+		OwnersCount: c.OwnersCount,
+		TokensCount: c.TokensCount,
+		Type:        c.Type,
+		SalesVolume: salesVolume,
+		FloorPrice:  floorPrice,
 	}
 }
 

@@ -1,8 +1,18 @@
-
 import { styled } from '../../../../../styles'
 import { NavButton } from '../../../Button'
 import { Txt } from '../../../Txt'
 import { StyledImgContainer } from '../../CardImg'
+
+export const StyledChain = styled('div', {
+  position: 'absolute',
+  right: 4,
+  top: 4,
+  zIndex: 1,
+  '& img': {
+    width: '21px',
+    height: '21px',
+  },
+})
 
 export const StyledFileTypeContainer = styled('div', {
   position: 'absolute',
@@ -37,6 +47,7 @@ export const StyledInfoWrapper = styled('div', {
 })
 
 export const StyledTitle = styled(Txt, {
+  width: '100%',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',

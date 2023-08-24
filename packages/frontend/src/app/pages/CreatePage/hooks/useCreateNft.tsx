@@ -5,7 +5,7 @@ import {
   MintNFTForm as FormToTransfer,
   useMintNFT,
 } from '../../../processing/nft-interaction'
-import { CreateNFTForm } from '../CreateNFTPage'
+import { CreateNFTForm } from '../EFT/sections/CreateEFT/CreateEFTSection'
 
 const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {
   return {
@@ -42,7 +42,6 @@ export const useCreateNft = () => {
   } = useMintNFT({ ...formToTransfer })
 
   useAfterDidMountEffect(() => {
-    console.log(formToTransfer.description)
     mintNFT({
       ...formToTransfer,
       ...options,
