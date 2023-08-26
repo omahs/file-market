@@ -4,7 +4,7 @@ import { useStatusState, useStores } from '../../../../hooks'
 import { useAfterDidMountEffect } from '../../../../hooks/useDidMountEffect'
 import { IProfileSettings } from '../types/formType'
 
-export const useUpdateProfile = () => {
+export const useUpdateProfile = (onSuccess?: () => void) => {
   const { userStore } = useStores()
   const [formToTransfer, setFormToTransfer] = useState<IProfileSettings>({
     name: '',
@@ -29,6 +29,7 @@ export const useUpdateProfile = () => {
       await userStore.updateEmail(props.email)
     }
     await userStore.updateUserInfo(props)
+    onSuccess?.()
   })
 
   useAfterDidMountEffect(() => {

@@ -129,14 +129,17 @@ func (s *service) CheckAuth(ctx context.Context) (*models.UserProfile, *models.E
 	}
 
 	profile := models.UserProfile{
-		AvatarURL:  res.AvatarURL,
-		BannerURL:  res.BannerURL,
-		Bio:        res.Bio,
-		Email:      res.Email,
-		Name:       res.Name,
-		Twitter:    res.Twitter,
-		Username:   res.Username,
-		WebsiteURL: res.WebsiteURL,
+		Address:                    res.Address,
+		AvatarURL:                  res.AvatarURL,
+		BannerURL:                  res.BannerURL,
+		Bio:                        res.Bio,
+		Email:                      res.Email,
+		Name:                       res.Name,
+		Twitter:                    res.Twitter,
+		Username:                   res.Username,
+		WebsiteURL:                 res.WebsiteURL,
+		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
 	}
 
 	return &profile, nil

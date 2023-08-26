@@ -19,9 +19,10 @@ import { StyledProfileCameraImage, StyledProfileImage, StyledProfileImageContent
 interface IProfileImageProps {
   src?: string
   isOwner?: boolean
+  onSuccess?: () => void
 }
 
-const ProfileImage = ({ src, isOwner }: IProfileImageProps) => {
+const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
   const [isShowEdit, setIsShowEdit] = useState<boolean>(false)
 
   const { dialogStore, userStore } = useStores()
@@ -59,7 +60,7 @@ const ProfileImage = ({ src, isOwner }: IProfileImageProps) => {
     isLoading,
     result,
     updateProfile,
-  } = useUpdateProfile()
+  } = useUpdateProfile(onSuccess)
 
   useAfterDidMountEffect(() => {
     if (isLoading) {

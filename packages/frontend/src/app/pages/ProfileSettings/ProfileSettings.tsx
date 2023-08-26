@@ -17,7 +17,7 @@ import Links from './sections/Links/Links'
 import Notifications from './sections/Notifications/Notifications'
 
 export default observer(function ProfileSettings() {
-  const { userStore } = useStores()
+  const { userStore, profileStore } = useStores()
 
   const {
     handleSubmit,
@@ -39,7 +39,7 @@ export default observer(function ProfileSettings() {
     isLoading,
     result,
     updateProfile,
-  } = useUpdateProfile()
+  } = useUpdateProfile(profileStore.reload)
   const { address } = useAccount()
   const onSubmit: SubmitHandler<IProfileSettings> = (data) => {
     updateProfile(data)

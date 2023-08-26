@@ -25,9 +25,9 @@ type Auth interface {
 
 type UserProfile interface {
 	GetUserProfileByAddress(ctx context.Context, address common.Address, isPrincipal bool) (*domain.UserProfile, *domain.APIError)
-	GetUserProfileByUsername(ctx context.Context, username string) (*domain.UserProfile, *domain.APIError)
+	GetUserProfileByUsername(ctx context.Context, username string, isPrincipal bool) (*domain.UserProfile, *domain.APIError)
 	UpdateUserProfile(ctx context.Context, profile *domain.UserProfile) (*domain.UserProfile, *domain.APIError)
-	GetProfileByIdentification(ctx context.Context, identification string) (*domain.UserProfile, *domain.APIError)
+	GetProfileByIdentification(ctx context.Context, identification string, isPrincipal bool) (*domain.UserProfile, *domain.APIError)
 	SetEmail(ctx context.Context, address common.Address, email string) (*domain.SetEmailResponse, *domain.APIError)
 	VerifyEmail(ctx context.Context, secretToken string) *domain.APIError
 }

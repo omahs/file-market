@@ -18,9 +18,10 @@ import { EditProfileBannerDialog } from './EditProfileBannerDialog/EditProfileBa
 interface IProfileImageProps {
   src?: string
   isOwner?: boolean
+  onSuccess?: () => void
 }
 
-const Banner = ({ src, isOwner }: IProfileImageProps) => {
+const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
   const [isShowEdit, setIsShowEdit] = useState<boolean>(false)
   const { dialogStore, userStore } = useStores()
   const upload = useUploadLighthouse()
@@ -56,7 +57,7 @@ const Banner = ({ src, isOwner }: IProfileImageProps) => {
     isLoading,
     result,
     updateProfile,
-  } = useUpdateProfile()
+  } = useUpdateProfile(onSuccess)
 
   useAfterDidMountEffect(() => {
     if (isLoading) {
