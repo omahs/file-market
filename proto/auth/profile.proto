@@ -16,6 +16,7 @@ message UserProfile {
   bool isPushNotificationEnabled = 9;
   string twitter = 10;
   string address = 11;
+  string discord = 12;
 }
 
 message GetUserProfileRequest {

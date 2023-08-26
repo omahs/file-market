@@ -10,21 +10,22 @@ import (
 )
 
 var (
-	ErrProfileExist            = errors.New("profile with address already exists")
-	ErrProfileNotUniqueSlug    = errors.New("slug is not unique")
-	ErrProfileNotUniqueTwitter = errors.New("twitter is not unique")
-	ErrProfileNotUniqueDiscord = errors.New("discord is not unique")
+	ErrProfileExist             = errors.New("profile with address already exists")
+	ErrProfileNotUniqueSlug     = errors.New("slug is not unique")
+	ErrProfileNotUniqueTwitter  = errors.New("twitter is not unique")
+	ErrProfileNotUniqueDiscord  = errors.New("discord is not unique")
+	ErrProfileNotUniqueTelegram = errors.New("telegram is not unique")
 )
 
 func (p *postgres) GetCollectionProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.CollectionProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT slug, website_url, twitter, discord
+		SELECT slug, website_url, twitter, discord, telegram
 		FROM collection_profiles
 		WHERE address=$1
 	`
 	var profile = domain.CollectionProfile{Address: address}
-	var twitter, discord *string
+	var twitter, discord, telegram *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(address.String()),
 	).Scan(
@@ -32,6 +33,7 @@ func (p *postgres) GetCollectionProfile(ctx context.Context, tx pgx.Tx, address 
 		&profile.WebsiteURL,
 		&twitter,
 		&discord,
+		&telegram,
 	); err != nil {
 		return nil, err
 	}
@@ -41,6 +43,9 @@ func (p *postgres) GetCollectionProfile(ctx context.Context, tx pgx.Tx, address 
 	}
 	if discord != nil {
 		profile.Discord = *discord
+	}
+	if telegram != nil {
+		profile.Telegram = *telegram
 	}
 
 	return &profile, nil
@@ -54,25 +59,27 @@ func (p *postgres) UpdateCollectionProfile(
 	// language=PostgreSQL
 	query := `
 		UPDATE collection_profiles
-		SET slug=$1, website_url=$2, twitter=$3, discord=$4
-		WHERE address=$5
-		RETURNING slug, website_url, twitter, discord
+		SET slug=$1, website_url=$2, twitter=$3, discord=$4, telegram=$5
+		WHERE address=$6
+		RETURNING slug, website_url, twitter, discord, telegram
 	`
 	res := domain.CollectionProfile{
 		Address: profile.Address,
 	}
-	var twitter, discord *string
+	var twitter, discord, telegram *string
 	if err := tx.QueryRow(ctx, query,
 		profile.Slug,
 		profile.WebsiteURL,
 		profile.Twitter,
 		profile.Discord,
+		profile.Telegram,
 		strings.ToLower(profile.Address.String()),
 	).Scan(
 		&res.Slug,
 		&res.WebsiteURL,
 		&twitter,
 		&discord,
+		&telegram,
 	); err != nil {
 		return nil, resolveCollectionProfileDBErr(err)
 	}
@@ -83,6 +90,9 @@ func (p *postgres) UpdateCollectionProfile(
 	if discord != nil {
 		res.Discord = *discord
 	}
+	if telegram != nil {
+		profile.Telegram = *telegram
+	}
 
 	return &res, nil
 }
@@ -90,14 +100,17 @@ func (p *postgres) UpdateCollectionProfile(
 func (p *postgres) InsertCollectionProfile(ctx context.Context, tx pgx.Tx, profile *domain.CollectionProfile) error {
 	// language=PostgreSQL
 	query := `
-		INSERT INTO collection_profiles (address, slug, website_url, twitter, discord)
-		VALUES ($1,$2,$3,NULL,NULL)
+		INSERT INTO collection_profiles (address, slug, website_url, twitter, discord, telegram)
+		VALUES ($1,$2,$3,$4,$5,$6)
 	`
 
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
 		strings.ToLower(profile.Slug),
 		strings.ToLower(profile.WebsiteURL),
+		strings.ToLower(profile.Twitter),
+		strings.ToLower(profile.Discord),
+		strings.ToLower(profile.Telegram),
 	); err != nil {
 		return resolveCollectionProfileDBErr(err)
 	}
@@ -135,6 +148,8 @@ func resolveCollectionProfileDBErr(err error) error {
 		return ErrProfileNotUniqueDiscord
 	} else if strings.Contains(err.Error(), "collection_profiles_twitter_key") {
 		return ErrProfileNotUniqueTwitter
+	} else if strings.Contains(err.Error(), "collection_profiles_telegram_key") {
+		return ErrProfileNotUniqueTelegram
 	} else if strings.Contains(err.Error(), "collection_profiles_pkey") {
 		return ErrProfileExist
 	}

@@ -20,6 +20,7 @@ type UserProfile struct {
 	Twitter                     string         `json:"twitter"`
 	Username                    string         `json:"username"`
 	WebsiteURL                  string         `json:"websiteUrl"`
+	Discord                     string         `json:"discord"`
 }
 
 func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
@@ -39,6 +40,7 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
 		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
 		Twitter:                    p.Twitter,
+		Discord:                    p.Discord,
 	}
 }
 
@@ -126,15 +128,18 @@ func GetDefaultUserProfile(address common.Address) *UserProfile {
 	addressLen := len(addressStr)
 
 	return &UserProfile{
-		Address:    address,
-		AvatarURL:  "",
-		BannerURL:  "",
-		Bio:        "",
-		Email:      "",
-		Name:       fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
-		Twitter:    "",
-		Username:   fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
-		WebsiteURL: "",
+		Address:                     address,
+		AvatarURL:                   "",
+		BannerURL:                   "",
+		Bio:                         "",
+		Email:                       "",
+		IsEmailNotificationsEnabled: false,
+		IsPushNotificationsEnabled:  false,
+		Name:                        fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
+		Twitter:                     "",
+		Username:                    fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
+		WebsiteURL:                  "",
+		Discord:                     "",
 	}
 }
 

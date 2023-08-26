@@ -63,6 +63,7 @@ func (s *service) UpdateCollectionProfile(
 			Discord:    res.Discord,
 			Slug:       res.Slug,
 			Twitter:    res.Twitter,
+			Telegram:   res.Telegram,
 			WebsiteURL: res.WebsiteURL,
 		}, nil
 	}
@@ -73,6 +74,7 @@ func (s *service) UpdateCollectionProfile(
 		Slug:       req.Slug,
 		WebsiteURL: req.WebsiteURL,
 		Twitter:    req.Twitter,
+		Telegram:   req.Telegram,
 		Discord:    req.Discord,
 	}
 	if err := s.repository.InsertCollectionProfile(ctx, tx, profile); err != nil {
@@ -85,6 +87,7 @@ func (s *service) UpdateCollectionProfile(
 		Discord:    profile.Discord,
 		Slug:       profile.Slug,
 		Twitter:    profile.Twitter,
+		Telegram:   profile.Telegram,
 		WebsiteURL: profile.WebsiteURL,
 	}, nil
 }

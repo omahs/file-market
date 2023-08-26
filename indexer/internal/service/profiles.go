@@ -22,6 +22,7 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 		Bio:                        res.Bio,
 		Name:                       res.Name,
 		Twitter:                    res.Twitter,
+		Discord:                    res.Discord,
 		Username:                   res.Username,
 		WebsiteURL:                 res.WebsiteURL,
 		Email:                      "",    // private
@@ -54,6 +55,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 		Email:      res.Email,
 		Name:       res.Name,
 		Twitter:    res.Twitter,
+		Discord:    res.Discord,
 		Username:   res.Username,
 		WebsiteURL: res.WebsiteURL,
 	}
