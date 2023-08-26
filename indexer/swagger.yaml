@@ -1221,6 +1221,9 @@ definitions:
       twitter:
         type: string
         description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
       discord:
         type: string
         description: ссылка на discord
@@ -1245,6 +1248,9 @@ definitions:
       twitter:
         type: string
         description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
       discord:
         type: string
         description: ссылка на discord
@@ -1499,6 +1505,9 @@ definitions:
       twitter:
         type: string
         description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
       discord:
         type: string
         description: ссылка на discord
