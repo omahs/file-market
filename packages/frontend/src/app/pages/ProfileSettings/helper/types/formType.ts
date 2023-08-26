@@ -1,6 +1,6 @@
 export interface IProfileSettings {
   name?: string
-  url?: string
+  username?: string
   bio?: string
   email?: string
   isEnableEmailNotification?: boolean
@@ -9,4 +9,6 @@ export interface IProfileSettings {
   twitter?: string
   telegram?: string
   discord?: string
+  avatarUrl?: string
+  bannerUrl?: string
 }

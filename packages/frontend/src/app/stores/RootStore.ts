@@ -20,6 +20,7 @@ import { TokenStore } from './Token/TokenStore'
 import { TransferListStore } from './Transfer/TransferListStore'
 import { TransferStore } from './Transfer/TransferStore'
 import { TransfersHistoryStore } from './TransfersHistory/TransfersHistoryStore'
+import { UserStore } from './User/UserStore'
 import { UserTransferStore } from './UserTransfers/UserTransfersStore'
 import { WhiteListStore } from './WhiteList/WhiteListStore'
 
@@ -48,6 +49,7 @@ export class RootStore {
   multiChainStore: MultiChainStore
   currentBlockChainStore: CurrentBlockChainStore
   socketStore: SocketStore
+  userStore: UserStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -56,6 +58,7 @@ export class RootStore {
     this.errorStore = new ErrorStore(this)
     this.profileStore = new ProfileStore(this)
     this.authStore = new AuthStore(this)
+    this.userStore = new UserStore(this)
     this.multiChainStore = new MultiChainStore(this)
     this.currentBlockChainStore = new CurrentBlockChainStore(this)
     this.collectionAndTokenList = new CollectionAndTokenListStore(this)

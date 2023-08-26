@@ -11,7 +11,7 @@ import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { callContract } from '../utils'
 import { assertAccount, assertContract, assertSigner } from '../utils/assert'
-import { useUploadLighthouse } from './useUploadLighthouse'
+import { useUploadErc721Meta } from './useUploadErc721Meta'
 
 export interface CreateCollectionForm {
   name?: string // required, hook will return error if omitted
@@ -28,7 +28,7 @@ export function useMintCollection() {
   const { address } = useAccount()
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult, CreateCollectionForm>()
-  const upload = useUploadLighthouse()
+  const upload = useUploadErc721Meta()
   const config = useConfig()
   const mintCollection = useCallback(wrapPromise(async (form: CreateCollectionForm) => {
     const { name, symbol, image, description } = form

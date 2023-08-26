@@ -1,9 +1,11 @@
+import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../components'
 import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../../components/Modal/Modal'
+import { useStores } from '../../hooks'
 import { useModalProperties } from '../../hooks/useModalProperties'
 import { Button, PageLayout, Txt } from '../../UIkit'
 import ReturnButton from './components/ReturnButton/ReturnButton'
@@ -14,12 +16,23 @@ import AppearanceSection from './sections/Appereance/Appereance'
 import Links from './sections/Links/Links'
 import Notifications from './sections/Notifications/Notifications'
 
-export default function ProfileSettings() {
+export default observer(function ProfileSettings() {
+  const { userStore } = useStores()
+
   const {
     handleSubmit,
     formState: { isValid, errors },
     control,
-  } = useForm<IProfileSettings>()
+  } = useForm<IProfileSettings>({
+    defaultValues: {
+      name: userStore.user?.name,
+      username: userStore.user?.username,
+      bio: userStore.user?.bio,
+      email: userStore.user?.email,
+      website: userStore.user?.websiteUrl,
+      twitter: userStore.user?.twitter,
+    },
+  })
 
   const {
     error,
@@ -98,7 +111,7 @@ export default function ProfileSettings() {
             }}
             url={{
               control,
-              name: 'url',
+              name: 'username',
             }}
             bio={{
               control,
@@ -152,4 +165,4 @@ export default function ProfileSettings() {
       </PageLayout>
     </>
   )
-}
+})

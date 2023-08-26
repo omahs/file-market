@@ -1,16 +1,12 @@
 import { styled } from '../../../styles'
 import { Container, textVariant, Txt } from '../../UIkit'
 
-export const Background = styled('div', {
-  background: 'linear-gradient(135deg, #028FFF 0%, #04E762 100%)',
-  width: '100%',
-  height: '240px',
-  borderRadius: '16px',
-})
-
 export const Profile = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
+  '@sm': {
+    justifyContent: 'center',
+  },
 })
 
 export const ProfileHeader = styled('div', {
@@ -23,16 +19,8 @@ export const ProfileHeader = styled('div', {
     flexDirection: 'column',
     alignItems: 'center',
     marginBottom: '$3',
+    marginLeft: '0',
   },
-})
-
-export const ProfileImage = styled('img', {
-  width: 120,
-  height: 120,
-  borderRadius: '50%',
-  border: '4px solid $white',
-  background: '$white',
-  objectFit: 'fill',
 })
 
 export const ProfileName = styled('h2', {
@@ -77,4 +65,19 @@ export const StyledSection = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
+  width: '445px',
+})
+
+export const StyledSectionContent = styled('div', {
+  display: 'flex',
+  gap: '16px',
+  flexWrap: 'wrap',
+})
+
+export const BioAndLinks = styled('div', {
+  display: 'flex',
+  marginTop: '32px',
+  justifyContent: 'space-between',
+  gap: '16px',
+  flexWrap: 'wrap',
 })

@@ -14,7 +14,7 @@ import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store
 import { DateStore } from '../Date/DateStore'
 import { DialogStore } from '../Dialog/DialogStore'
 import { ErrorStore } from '../Error/ErrorStore'
-import { ProfileStore } from '../Profile/ProfileStore'
+import { UserStore } from '../User/UserStore'
 
 const TIME_BEFORE_EXPIRED_ACCESS = 20000
 const TIME_BEFORE_EXPIRED_REFRESH = 40000
@@ -27,40 +27,37 @@ export class AuthStore implements IStoreRequester {
   requestCount = 0
   dialogStore: DialogStore
   dateStore: DateStore
-  profileStore: ProfileStore
+  userStore: UserStore
   authService: Api<{}>
 
   isAuth?: boolean
   isTryAuth?: boolean
 
-  constructor(rootStore: { dialogStore: DialogStore, profileStore: ProfileStore, dateStore: DateStore, errorStore: ErrorStore }) {
+  constructor(rootStore: { dialogStore: DialogStore, userStore: UserStore, dateStore: DateStore, errorStore: ErrorStore }) {
     this.authService = new Api<{}>({ baseUrl: '/api' })
     makeAutoObservable(this)
     this.dialogStore = rootStore.dialogStore
     this.dateStore = rootStore.dateStore
-    this.profileStore = rootStore.profileStore
     this.errorStore = rootStore.errorStore
+    this.userStore = rootStore.userStore
   }
 
   setData(response: AuthResponse) {
     saveAccessToken(response.access_token)
     saveRefreshToken(response.refresh_token)
     Cookies.remove('access-token')
+    console.log('CHECK1')
     Cookies.set('access-token', response.access_token?.token ?? '', {
       path: '/',
     })
-    this.setUser({
-      name: 'Aleshka',
-    })
+    this.setUser(response.profile)
+    console.log('CHECK2')
     this.isAuth = true
+    console.log('SET AUTH TRUE')
   }
 
   setUser(user?: UserProfile) {
-    this.profileStore.setUser(user)
-  }
-
-  setLoading(bool: boolean) {
-    this.isLoading = bool
+    this.userStore?.setUser(user)
   }
 
   async getMessageForAuth (address: `0x${string}`) {
@@ -72,6 +69,7 @@ export class AuthStore implements IStoreRequester {
       this,
       this.authService.auth.bySignatureCreate({ address, signature }),
       (response) => {
+        console.log('PPPPPPPPPPPPPPPPPPPPPPPP')
         this.setData(response)
       },
     )
@@ -82,28 +80,32 @@ export class AuthStore implements IStoreRequester {
     storeRequest(
       this,
       this.authService.auth.logoutCreate({
-        headers: { authorization: this.RefreshToken },
+        headers: { authorization: this.AccessToken },
       }),
       () => {},
     )
     removeAccessToken()
     removeRefreshToken()
-    this.profileStore.logout()
+    this.userStore.logout()
     this.isAuth = false
+    console.log('SET AUTH FALSE')
   }
 
   async checkAuth() {
     storeRequest(
       this,
-      this.authService.auth.refreshCreate({
-        headers: { authorization: this.RefreshToken },
+      this.authService.auth.checkAuthList({
+        headers: { authorization: this.AccessToken },
       }),
       (response) => {
-        this.setData(response)
+        this.setUser(response)
+        this.isAuth = true
+        console.log('SET AUTH TRUE')
       },
       () => {
         this.logout()
         this.isAuth = false
+        console.log('SET AUTH FALSE')
       },
     )
   }

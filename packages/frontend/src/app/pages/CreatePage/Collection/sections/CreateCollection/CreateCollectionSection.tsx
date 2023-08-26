@@ -158,14 +158,19 @@ export default function CreateCollectionSection() {
               </LetterCounter>
             </LabelWithCounter>
 
-            <TextArea
+            <TextArea<CreateCollectionForm>
               withoutDefaultBorder
-              {...register('description', {
+              controlledInputProps={{
+                control,
+                name: 'description',
+              }}
+              { ...control.register('description', {
                 onChange(event) {
                   setTextareaLength(event?.target?.value?.length ?? 0)
                 },
                 maxLength: 1000,
-              })}
+              })
+              }
               placeholder='Description of your token collection'
             />
           </FormControl>

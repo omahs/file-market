@@ -18,7 +18,6 @@ export const useAuth = (props?: IUseAuth) => {
     dialogStore.openDialog({
       component: ConnectFileWalletDialog,
       props: {
-        // @ts-expect-error
         name: 'ConnectMain',
         openWeb3Modal,
       },

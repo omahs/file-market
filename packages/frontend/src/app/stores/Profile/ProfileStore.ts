@@ -1,14 +1,23 @@
 import { makeAutoObservable } from 'mobx'
 
 import { Api, UserProfile } from '../../../swagger/Api'
-import { stringifyError } from '../../utils/error'
+import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 import { RootStore } from '../RootStore'
 
-export class ProfileStore {
-  user?: UserProfile
+export class ProfileStore implements IStoreRequester,
+  IActivateDeactivate<[string]> {
+  user?: UserProfile | null
   profileService: Api<{}>['profile']
   errorStore: ErrorStore
+
+  currentRequest?: RequestContext
+  requestCount = 0
+  isLoaded = false
+  isLoading = false
+  isActivated = false
+
+  address?: string
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this)
@@ -16,22 +25,33 @@ export class ProfileStore {
     this.errorStore = rootStore.errorStore
   }
 
-  setUser(user?: UserProfile) {
-    this.user = user
+  private request(address: string) {
+    storeRequest<UserProfile | null>(
+      this,
+      this.profileService.profileDetail(address),
+      resp => {
+        this.user = resp
+      })
   }
 
-  logout() {
-    this.user = undefined
+  activate(address: string): void {
+    this.isActivated = true
+    this.address = address
+    this.request(address)
   }
 
-  updateProfileInfo(user?: UserProfile) {
-    if (!user) return
-    this.profileService.updateCreate(user)
-      .then((resp) => {
-        this.setUser(resp.data)
-      })
-      .catch((e) => {
-        this.errorStore.showError(stringifyError(e))
-      })
+  deactivate(): void {
+    this.reset()
+    this.isActivated = false
+  }
+
+  reset(): void {
+    storeReset(this)
+  }
+
+  reload(): void {
+    if (this.address) {
+      this.request(this.address)
+    }
   }
 }

@@ -320,10 +320,14 @@ export const CreateEFTSection: React.FC = observer(() => {
               </LetterCounter>
             </LabelWithCounter>
 
-            <TextArea
+            <TextArea<CreateNFTForm>
               withoutDefaultBorder
+              controlledInputProps={{
+                control,
+                name: 'description',
+              }}
               placeholder='Description of your item'
-              {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
+              {...control.register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />
           </FormControl>
 

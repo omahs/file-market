@@ -11,13 +11,15 @@ import (
 
 type (
 	Config struct {
-		Postgres     *PostgresConfig
-		Server       *ServerConfig
-		Handler      *HandlerConfig
-		Service      *ServiceConfig
-		Redis        *RedisConfig
-		Sequencer    *SequencerConfig
-		TokenManager *TokenManagerConfig
+		Postgres       *PostgresConfig
+		Server         *ServerConfig
+		Handler        *HandlerConfig
+		Service        *ServiceConfig
+		Redis          *RedisConfig
+		Sequencer      *SequencerConfig
+		TokenManager   *TokenManagerConfig
+		Infrastructure *InfrastructureConfig
+		EmailSender    *EmailSenderConfig
 	}
 
 	SequencerConfig struct {
@@ -68,6 +70,7 @@ type (
 		AuthMessageTTL               time.Duration
 		AccessTokenTTL               time.Duration
 		RefreshTokenTTL              time.Duration
+		Host                         string
 	}
 
 	TokenManagerConfig struct {
@@ -76,6 +79,16 @@ type (
 
 	RedisConfig struct {
 		Addr     string
+		Password string
+	}
+
+	InfrastructureConfig struct {
+		AuthServerEndpoint string
+	}
+
+	EmailSenderConfig struct {
+		Name     string
+		Address  string
 		Password string
 	}
 )
@@ -135,6 +148,7 @@ func Init(configPath string) (*Config, error) {
 			AccessTokenTTL:               jsonCfg.GetDuration("service.accessTokenTTL"),
 			RefreshTokenTTL:              jsonCfg.GetDuration("service.refreshTokenTTL"),
 			AuthMessageTTL:               jsonCfg.GetDuration("service.authMessageTTL"),
+			Host:                         envCfg.GetString("HOST"),
 		},
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),
@@ -148,6 +162,14 @@ func Init(configPath string) (*Config, error) {
 		},
 		TokenManager: &TokenManagerConfig{
 			SigningKey: envCfg.GetString("JWT_SIGNING_KEY"),
+		},
+		Infrastructure: &InfrastructureConfig{
+			AuthServerEndpoint: envCfg.GetString("AUTHSERVER_ENDPOINT"),
+		},
+		EmailSender: &EmailSenderConfig{
+			Name:     envCfg.GetString("EMAIL_SENDER_NAME"),
+			Address:  envCfg.GetString("EMAIL_SENDER_ADDRESS"),
+			Password: envCfg.GetString("EMAIL_SENDER_PASSWORD"),
 		},
 	}, nil
 }

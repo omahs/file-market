@@ -1,14 +1,14 @@
 import { useState } from 'react'
 
-import { useStatusState } from '../../../../hooks'
+import { useStatusState, useStores } from '../../../../hooks'
 import { useAfterDidMountEffect } from '../../../../hooks/useDidMountEffect'
-import { wrapRequest } from '../../../../utils/error/wrapRequest'
 import { IProfileSettings } from '../types/formType'
 
 export const useUpdateProfile = () => {
+  const { userStore } = useStores()
   const [formToTransfer, setFormToTransfer] = useState<IProfileSettings>({
     name: '',
-    url: '',
+    username: '',
     bio: '',
     email: '',
     isEnableEmailNotification: false,
@@ -24,12 +24,11 @@ export const useUpdateProfile = () => {
   const { error, isLoading, result } = statuses
 
   const updateProfile = wrapPromise(async (props: IProfileSettings) => {
-    // @ts-expect-error
-    await wrapRequest(() => {
-      return new Promise(() => {
-        console.log(props)
-      })
-    })
+    console.log('update')
+    if (props.email !== userStore.user?.email) {
+      await userStore.updateEmail(props.email)
+    }
+    await userStore.updateUserInfo(props)
   })
 
   useAfterDidMountEffect(() => {
@@ -43,6 +42,7 @@ export const useUpdateProfile = () => {
     setIsLoading,
     result,
     updateProfile: (form: IProfileSettings) => {
+      console.log('Update2')
       setFormToTransfer(form)
     },
   }

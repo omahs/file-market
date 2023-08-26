@@ -1,12 +1,40 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
-import { StyledSection, StyledSectionTitle } from '../ProfilePage.styles'
+import LinkCard from '../components/LinksCard/LinkCard'
+import { typesCard } from '../helper/linkCard/types'
+import { StyledSection, StyledSectionContent, StyledSectionTitle } from '../ProfilePage.styles'
 
-const Links = () => {
+interface ILinksProps {
+  items: Record<typesCard, string | undefined>
+}
+
+const Links = (props: ILinksProps) => {
+  const { items } = props
+
+  const isContainLink = useMemo(() => {
+    for (const value of Object.values(items)) {
+      if (value) return true
+    }
+
+    return false
+  }, [items])
+
   return (
-    <StyledSection>
-      <StyledSectionTitle>Links</StyledSectionTitle>
-    </StyledSection>
+    isContainLink
+      ? (
+        <StyledSection>
+          <StyledSectionTitle>Links</StyledSectionTitle>
+          <StyledSectionContent>
+            {Object.keys(items).map(item => {
+              const text = items[item as keyof ILinksProps['items']]
+              if (!text) return null
+
+              return <LinkCard key={item} text={text} type={item as keyof ILinksProps['items']} />
+            })}
+          </StyledSectionContent>
+        </StyledSection>
+      )
+      : null
   )
 }
 

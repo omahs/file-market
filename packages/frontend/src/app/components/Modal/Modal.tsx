@@ -5,10 +5,9 @@ import SuccessfullImg from '../../../assets/img/SuccesfullIcon.svg'
 import { styled } from '../../../styles'
 import { ButtonGlowing, ButtonNavGlowing } from '../../UIkit'
 import { Modal, ModalBody, ModalButtonContainer, ModalP, ModalTitle } from '../../UIkit/Modal/Modal'
-import { DialogProps } from '../../utils/dialog'
 import { stringifyError } from '../../utils/error'
 
-export interface InProcessBodyProps extends DialogProps {
+export interface InProcessBodyProps {
   text: ReactNode
   waitForSign?: boolean
 }

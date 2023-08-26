@@ -8405,26 +8405,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/ethereum@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@web3modal/ethereum@npm:2.2.0"
-  peerDependencies:
-    "@wagmi/core": ">=0.10"
-    ethers: ">=5.7"
-  checksum: 8317b586045e2213166c024d7293e7562113709db9b135e566d94cb1c9c2d5efa1f26cb43bcfbfae88061104019c8d5eade0ec3dda9732a333af1d546e744974
+"@web3modal/core@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/core@npm:2.3.7"
+  dependencies:
+    buffer: 6.0.3
+    valtio: 1.10.4
+  checksum: 7848c4231383a18e467cbb8902b23eb19eaba4c879b9a5c686579bb1da3c26e65bb7152df2a63cf09a114b0e22a6134ec605d884496adc6e0973ebc029834332
   languageName: node
   linkType: hard
 
-"@web3modal/react@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@web3modal/react@npm:2.2.0"
+"@web3modal/ethereum@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/ethereum@npm:2.3.7"
+  peerDependencies:
+    "@wagmi/core": ">=0.10"
+    ethers: ">=5.7"
+  checksum: cdf0cf17b0d74d93daa6c105090e6d6d12cfce3968ba019324a8babbaabe2e8f372807fead4dcc47ba9e75606aa4f1789dfe425d9ce700a62f09cc28cb36c324
+  languageName: node
+  linkType: hard
+
+"@web3modal/react@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/react@npm:2.3.7"
   dependencies:
-    "@web3modal/core": 2.2.0
-    "@web3modal/ui": 2.2.0
+    "@web3modal/core": 2.3.7
+    "@web3modal/standalone": 2.3.7
+    "@web3modal/ui": 2.3.7
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 0ad25e8bffe581cfc37e5c4410ecf33509602e96141237d7fadb5e06c73f343685ce7b563282f7effec27d6b3c81c168539fed535bd0915ef366791031c4a31c
+  checksum: 4e87fa95e97eec5c200f9b37e1a1f422b31f71a5ed498531a3fc5b68271d3539af436f272ee62f7b4e862045f87e36724f9ff048939e4b1ebc77514d1a1312ae
+  languageName: node
+  linkType: hard
+
+"@web3modal/standalone@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/standalone@npm:2.3.7"
+  dependencies:
+    "@web3modal/core": 2.3.7
+    "@web3modal/ui": 2.3.7
+  checksum: 5062f1eb21e56c47c28445e2cef7b019ef6ea87e5d287ede2f077f421966a8436d9377abd7c764453e94ccc033a6e7ced92f9150ecfdf11c59ad74597450dfe6
   languageName: node
   linkType: hard
 
@@ -8447,6 +8468,18 @@ __metadata:
     motion: 10.15.5
     qrcode: 1.5.1
   checksum: e39f1c3ea81984703c995b6821b77eded94194fd72648fb71dbdb4f08a31c43f7f5cc6f91427d6e531027ce7c93844abf0cf2eeb2a6f2132f03ac51ef6b477f8
+  languageName: node
+  linkType: hard
+
+"@web3modal/ui@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/ui@npm:2.3.7"
+  dependencies:
+    "@web3modal/core": 2.3.7
+    lit: 2.7.3
+    motion: 10.15.5
+    qrcode: 1.5.3
+  checksum: bdcbc233a0537bd645b026beecb43fdc3144011fd07a64ddeafebedc4ee5d718b9c31c24079e05365ea4a04a8da8bee3f2a0695eebe5a61f4b8b0e7047555f99
   languageName: node
   linkType: hard
 
@@ -13585,8 +13618,8 @@ __metadata:
     "@types/react-dom": ^18.0.6
     "@typescript-eslint/eslint-plugin": ^5.0.0
     "@vitejs/plugin-react": ^2.1.0
-    "@web3modal/ethereum": ^2.2.0
-    "@web3modal/react": ^2.2.0
+    "@web3modal/ethereum": 2.3.7
+    "@web3modal/react": 2.3.7
     babel-loader: ^8.2.5
     bip39: ^3.1.0
     buffer: ^6.0.3
@@ -16815,6 +16848,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lit@npm:2.7.3":
+  version: 2.7.3
+  resolution: "lit@npm:2.7.3"
+  dependencies:
+    "@lit/reactive-element": ^1.6.0
+    lit-element: ^3.3.0
+    lit-html: ^2.7.0
+  checksum: 325be0255e8b95ba066d56f3e40dd8530cd423d1687ea6d55b2919df8fb1d63a399be439c5601de65a990dfa9a131d07b2e84a1004b1a52d34ce51569cdf4255
+  languageName: node
+  linkType: hard
+
 "lit@npm:^2.2.3":
   version: 2.7.4
   resolution: "lit@npm:2.7.4"
@@ -19796,6 +19840,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-compare@npm:2.5.0":
+  version: 2.5.0
+  resolution: "proxy-compare@npm:2.5.0"
+  checksum: 81ef2a3990a999b9c3d27f5e10b18603b9236e37d7772c5dadb5726c9ec2a30df46fe3067a216ee1d14f53783703767db9c19ff26ab2a9ffb2ea31f09c87b14f
+  languageName: node
+  linkType: hard
+
 "prr@npm:~1.0.1":
   version: 1.0.1
   resolution: "prr@npm:1.0.1"
@@ -19905,6 +19956,20 @@ __metadata:
   bin:
     qrcode: bin/qrcode
   checksum: 842f899d95caaad2ac507408b5498be3197e1df16bc6b537b20069d2cb1330e4588b50f672ce4a9ccf01338f7c97b5732ff9b5caaa6eb2338187d3c25a973e79
+  languageName: node
+  linkType: hard
+
+"qrcode@npm:1.5.3":
+  version: 1.5.3
+  resolution: "qrcode@npm:1.5.3"
+  dependencies:
+    dijkstrajs: ^1.0.1
+    encode-utf8: ^1.0.3
+    pngjs: ^5.0.0
+    yargs: ^15.3.1
+  bin:
+    qrcode: bin/qrcode
+  checksum: 9a8a20a0a9cb1d15de8e7b3ffa214e8b6d2a8b07655f25bd1b1d77f4681488f84d7bae569870c0652872d829d5f8ac4922c27a6bd14c13f0e197bf07b28dead7
   languageName: node
   linkType: hard
 
@@ -23367,6 +23432,21 @@ __metadata:
   dependencies:
     builtins: ^5.0.0
   checksum: 5342a994986199b3c28e53a8452a14b2bb5085727691ea7aa0d284a6606b127c371e0925ae99b3f1ef7cc7d2c9de75f52eb61a3d1cc45e39bca1e3a9444cbb4e
+  languageName: node
+  linkType: hard
+
+"valtio@npm:1.10.4":
+  version: 1.10.4
+  resolution: "valtio@npm:1.10.4"
+  dependencies:
+    proxy-compare: 2.5.0
+    use-sync-external-store: 1.2.0
+  peerDependencies:
+    react: ">=16.8"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 6d877e24cc065ef70b7d4fdfe0914398098c08505df885103bec3bc34ea4c0562d89a94e05c16ddc125ff800601564986eab4792e5ba9f1130013f932f224b1b
   languageName: node
   linkType: hard
 
