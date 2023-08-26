@@ -16,14 +16,17 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 	}
 
 	profile := models.UserProfile{
-		AvatarURL:  res.AvatarURL,
-		BannerURL:  res.BannerURL,
-		Bio:        res.Bio,
-		Email:      "", // private
-		Name:       res.Name,
-		Twitter:    res.Twitter,
-		Username:   res.Username,
-		WebsiteURL: res.WebsiteURL,
+		Address:                    res.Address,
+		AvatarURL:                  res.AvatarURL,
+		BannerURL:                  res.BannerURL,
+		Bio:                        res.Bio,
+		Name:                       res.Name,
+		Twitter:                    res.Twitter,
+		Username:                   res.Username,
+		WebsiteURL:                 res.WebsiteURL,
+		Email:                      "",    // private
+		IsPushNotificationEnabled:  false, // private
+		IsEmailNotificationEnabled: false, // private
 	}
 
 	return &profile, nil
