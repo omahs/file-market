@@ -1172,7 +1172,7 @@ definitions:
         description: Display name юзера
       username:
         type: string
-        pattern: '^(?!0x)[a-z0-9_]+$'
+        pattern: '^[a-z0-9_]+$'
         description: Уникальный никнейм, который будет юзаться в URL
       bio:
         type: string
@@ -1210,7 +1210,7 @@ definitions:
         description: Адрес коллекции
       slug:
         type: string
-        pattern: '^(?!0x)[a-z0-9_]+$'
+        pattern: '^[a-z0-9_]+$'
         minimum: 3
         maximum: 256
         description: Уникальное имя, которое будет показываться в url
@@ -1234,7 +1234,7 @@ definitions:
         description: Адрес коллекции
       slug:
         type: string
-        pattern: '^(?!0x)[a-z0-9_]+$'
+        pattern: '^[a-z0-9_]+$'
         minimum: 3
         maximum: 256
         description: Уникальное имя, которое будет показываться в url
@@ -1488,7 +1488,7 @@ definitions:
         $ref: "#/definitions/Collection"
       slug:
         type: string
-        pattern: '^(?!0x)[a-z0-9_]+$'
+        pattern: '^[a-z0-9_]+$'
         minimum: 3
         maximum: 256
         description: Уникальное имя, которое будет показываться в url
