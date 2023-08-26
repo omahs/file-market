@@ -18,6 +18,7 @@ import (
 func (s *service) GetUserProfileByUsername(
 	ctx context.Context,
 	username string,
+	isPrincipal bool,
 ) (*domain.UserProfile, *domain.APIError) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
@@ -41,7 +42,9 @@ func (s *service) GetUserProfileByUsername(
 		return nil, domain.InternalError
 	}
 
-	profile.HidePrivateFields()
+	if !isPrincipal {
+		profile.HidePrivateFields()
+	}
 
 	return profile, nil
 }
@@ -61,10 +64,7 @@ func (s *service) GetUserProfileByAddress(
 	profile, err := s.repository.GetUserProfile(ctx, tx, address)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, &domain.APIError{
-				Code:    http.StatusNotFound,
-				Message: "user was not found",
-			}
+			return &domain.UserProfile{Address: address}, nil
 		}
 		return nil, domain.InternalError
 	}
@@ -80,7 +80,7 @@ func (s *service) GetUserProfileByAddress(
 	return profile, nil
 }
 
-func (s *service) GetProfileByIdentification(ctx context.Context, identification string) (*domain.UserProfile, *domain.APIError) {
+func (s *service) GetProfileByIdentification(ctx context.Context, identification string, isPrincipal bool) (*domain.UserProfile, *domain.APIError) {
 	if identification == "" {
 		return nil, &domain.APIError{
 			Code:    http.StatusBadRequest,
@@ -95,16 +95,16 @@ func (s *service) GetProfileByIdentification(ctx context.Context, identification
 		identificationType = "username"
 	}
 
+	// NOTE: exposes private fields
 	switch identificationType {
 	case "address":
-		// NOTE: exposes private fields
-		profile, err := s.GetUserProfileByAddress(ctx, common.HexToAddress(identification), true)
+		profile, err := s.GetUserProfileByAddress(ctx, common.HexToAddress(identification), isPrincipal)
 		if err != nil {
 			return nil, err
 		}
 		return profile, nil
 	case "username":
-		profile, err := s.GetUserProfileByUsername(ctx, strings.ToLower(identification))
+		profile, err := s.GetUserProfileByUsername(ctx, strings.ToLower(identification), isPrincipal)
 		if err != nil {
 			return nil, err
 		}
@@ -138,9 +138,7 @@ func (s *service) UpdateUserProfile(
 	updateUserProfileFields(profile, oldProfile)
 
 	if err := s.repository.UpdateUserProfile(ctx, tx, profile); err != nil {
-		if errors.Is(err, pgx.ErrNoRows) ||
-			errors.Is(err, repository.ErrProfileNotUniqueUsername) ||
-			errors.Is(err, repository.ErrProfileNotUniqueEmail) {
+		if errors.As(err, &repository.Error{}) {
 			return nil, &domain.APIError{
 				Code:    http.StatusBadRequest,
 				Message: err.Error(),

@@ -11,15 +11,16 @@ import (
 )
 
 var (
-	ErrProfileNotUniqueEmail    = errors.New("email is not unique")
-	ErrProfileNotUniqueUsername = errors.New("username is not unique")
-	ErrProfileNotUniqueProfile  = errors.New("profile for this address already exists")
+	ErrProfileNotUniqueEmail    = Error{"email is not unique"}
+	ErrProfileNotUniqueUsername = Error{"username is not unique"}
+	ErrProfileNotUniqueProfile  = Error{"profile for this address already exists"}
 )
 
 func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT name, username, bio, website_url, twitter, email, avatar_url, banner_url 
+		SELECT name, username, bio, website_url, twitter, email, avatar_url, banner_url, is_email_notifications_enabled, 
+		       is_push_notifications_enabled
 		FROM user_profiles
 		WHERE address = $1
 	`
@@ -40,6 +41,8 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 		&email,
 		&profile.AvatarURL,
 		&profile.BannerURL,
+		&profile.IsEmailNotificationsEnabled,
+		&profile.IsPushNotificationsEnabled,
 	); err != nil {
 		return nil, err
 	}
@@ -57,7 +60,8 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address, name, username, bio, website_url, twitter, email, avatar_url, banner_url 
+		SELECT address, name, username, bio, website_url, twitter, email, avatar_url, banner_url, 
+		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE username = $1
 	`
@@ -77,6 +81,8 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 		&email,
 		&profile.AvatarURL,
 		&profile.BannerURL,
+		&profile.IsEmailNotificationsEnabled,
+		&profile.IsPushNotificationsEnabled,
 	); err != nil {
 		return nil, err
 	}
@@ -96,8 +102,10 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error {
 	// language=PostgreSQL
 	query := `
-		INSERT INTO user_profiles(address, name, username, bio, website_url, avatar_url, banner_url, email, twitter)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,NULL)
+		INSERT INTO user_profiles(
+			address, name, username, bio, website_url, avatar_url, banner_url, email, twitter, 
+		    is_email_notifications_enabled, is_push_notifications_enabled)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,NULL,$8,$9)
 	`
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
@@ -107,8 +115,10 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		profile.WebsiteURL,
 		profile.AvatarURL,
 		profile.BannerURL,
+		profile.IsEmailNotificationsEnabled,
+		profile.IsPushNotificationsEnabled,
 	); err != nil {
-		return resolveProfileDBErr(err)
+		return resolveUserProfileDBErr(err)
 	}
 
 	return nil
@@ -118,8 +128,9 @@ func (p *postgres) UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 	// language=PostgreSQL
 	query := `
 		UPDATE user_profiles 
-		SET name=$1, username=$2, bio=$3, website_url=$4, avatar_url=$5, banner_url=$6
-		WHERE address=$7
+		SET name=$1, username=$2, bio=$3, website_url=$4, avatar_url=$5, banner_url=$6, 
+		    is_email_notifications_enabled=$7, is_push_notifications_enabled=$8
+		WHERE address=$9
 	`
 	if _, err := tx.Exec(ctx, query,
 		profile.Name,
@@ -128,9 +139,11 @@ func (p *postgres) UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		profile.WebsiteURL,
 		profile.AvatarURL,
 		profile.BannerURL,
+		profile.IsEmailNotificationsEnabled,
+		profile.IsPushNotificationsEnabled,
 		strings.ToLower(profile.Address.String()),
 	); err != nil {
-		return resolveProfileDBErr(err)
+		return resolveUserProfileDBErr(err)
 	}
 
 	return nil
@@ -147,7 +160,7 @@ func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email 
 		strings.ToLower(email),
 		strings.ToLower(address.String()),
 	); err != nil {
-		return resolveProfileDBErr(err)
+		return resolveUserProfileDBErr(err)
 	}
 
 	return nil
@@ -164,7 +177,7 @@ func (p *postgres) UpdateUserProfileTwitter(ctx context.Context, tx pgx.Tx, twit
 		twitter,
 		strings.ToLower(address.String()),
 	); err != nil {
-		return resolveProfileDBErr(err)
+		return resolveUserProfileDBErr(err)
 	}
 
 	return nil
@@ -237,7 +250,7 @@ func (p *postgres) DeleteAllEmailVerificationTokens(
 	return err
 }
 
-func resolveProfileDBErr(err error) error {
+func resolveUserProfileDBErr(err error) error {
 	if err == nil {
 		return nil
 	}
@@ -248,6 +261,8 @@ func resolveProfileDBErr(err error) error {
 		return ErrProfileNotUniqueUsername
 	} else if strings.Contains(err.Error(), "user_profiles_pkey") {
 		return ErrProfileNotUniqueProfile
+	} else if errors.Is(err, pgx.ErrNoRows) {
+		return ErrNoRows
 	}
 
 	return err

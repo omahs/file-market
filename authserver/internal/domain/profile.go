@@ -9,15 +9,17 @@ import (
 )
 
 type UserProfile struct {
-	Address    common.Address `json:"-"`
-	AvatarURL  string         `json:"avatarUrl"`
-	BannerURL  string         `json:"bannerUrl"`
-	Bio        string         `json:"bio"`
-	Email      string         `json:"email"`
-	Name       string         `json:"name"`
-	Twitter    string         `json:"twitter"`
-	Username   string         `json:"username"`
-	WebsiteURL string         `json:"websiteUrl"`
+	Address                     common.Address `json:"address"`
+	AvatarURL                   string         `json:"avatarUrl"`
+	BannerURL                   string         `json:"bannerUrl"`
+	Bio                         string         `json:"bio"`
+	Email                       string         `json:"email"`
+	IsEmailNotificationsEnabled bool           `json:"isEmailNotificationsEnabled"`
+	IsPushNotificationsEnabled  bool           `json:"isPushNotificationsEnabled"`
+	Name                        string         `json:"name"`
+	Twitter                     string         `json:"twitter"`
+	Username                    string         `json:"username"`
+	WebsiteURL                  string         `json:"websiteUrl"`
 }
 
 func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
@@ -26,14 +28,17 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 	}
 
 	return &authserver_pb.UserProfile{
-		AvatarURL:  p.AvatarURL,
-		BannerURL:  p.BannerURL,
-		Bio:        p.Bio,
-		Name:       p.Name,
-		Username:   p.Username,
-		WebsiteURL: p.WebsiteURL,
-		Email:      p.Email,
-		Twitter:    p.Twitter,
+		Address:                    strings.ToLower(p.Address.String()),
+		AvatarURL:                  p.AvatarURL,
+		BannerURL:                  p.BannerURL,
+		Bio:                        p.Bio,
+		Name:                       p.Name,
+		Username:                   p.Username,
+		WebsiteURL:                 p.WebsiteURL,
+		Email:                      p.Email,
+		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
+		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
+		Twitter:                    p.Twitter,
 	}
 }
 
@@ -112,6 +117,8 @@ func (p *UserProfile) ValidateForUpdate() error {
 
 func (p *UserProfile) HidePrivateFields() {
 	p.Email = ""
+	p.IsPushNotificationsEnabled = false
+	p.IsEmailNotificationsEnabled = false
 }
 
 func GetDefaultUserProfile(address common.Address) *UserProfile {

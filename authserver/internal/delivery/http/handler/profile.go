@@ -17,7 +17,7 @@ func (h *handler) handleGetUserProfile(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		// Not Authenticated
 		identification := mux.Vars(r)["identification"]
-		profile, err := h.service.GetProfileByIdentification(ctx, identification)
+		profile, err := h.service.GetProfileByIdentification(ctx, identification, false)
 		if err != nil {
 			sendResponse(w, err.Code, err)
 			return

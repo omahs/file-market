@@ -49,6 +49,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/collections/full/public", h.handleGetFullPublicCollection)
 	router.HandleFunc("/collections/full/file-bunnies", h.handleGetFullFileBunniesCollection)
 	router.HandleFunc("/collections/full/{address:0x[0-9a-f-A-F]{40}}", h.handleGetFullCollection)
+	router.Handle("/collections/profile/update", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleUpdateCollectionProfile)))
 	router.HandleFunc("/collections/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollection)
 	router.HandleFunc("/collections", h.handleGetCollections)
 
