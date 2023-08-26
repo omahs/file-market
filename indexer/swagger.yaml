@@ -1184,6 +1184,9 @@ definitions:
       twitter:
         type: string
         description: ссылка на твиттер
+      discord:
+        type: string
+        description: ссылка на дискорд
       email:
         type: string
         pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'
