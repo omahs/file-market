@@ -21,8 +21,9 @@ export default observer(function ProfileSettings() {
 
   const {
     handleSubmit,
-    formState: { isValid, errors },
+    formState: { isValid },
     control,
+    watch,
   } = useForm<IProfileSettings>({
     defaultValues: {
       name: userStore.user?.name,
@@ -81,8 +82,13 @@ export default observer(function ProfileSettings() {
   }, [error])
 
   useEffect(() => {
-    console.log(errors)
-  }, [errors])
+    console.log(userStore.user)
+  }, [userStore.user])
+
+  const name = watch('name')
+  const username = watch('username')
+  const bio = watch('bio')
+  const email = watch('email')
 
   return (
     <>
@@ -108,29 +114,44 @@ export default observer(function ProfileSettings() {
             name={{
               control,
               name: 'name',
+              rules: {
+                validate: () => name?.length > 3 && name?.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters',
+              },
             }}
             url={{
               control,
               name: 'username',
+              rules: {
+                validate: () => {
+                  if (username?.length < 3 || username?.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
+                  if (!username?.match(/^[a-z0-9_]+$/) || (username?.[0] === '0' && username?.[1] === 'x')) return 'Please enter valid username'
+                },
+              },
             }}
             bio={{
               control,
               name: 'bio',
+              rules: {
+                validate: () => bio?.length > 1000 ? undefined : 'The bio must have less than 1000 characters',
+              },
             }}
           />
           <Notifications<IProfileSettings>
             email={{
               control,
               name: 'email',
+              rules: {
+                validate: () => email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email',
+              },
             }}
             emailNotification={{
               control,
               name: 'isEnableEmailNotification',
             }}
-            pushNotification={{
-              control,
-              name: 'isEnablePushNotification',
-            }}
+            // pushNotification={{
+            //   control,
+            //   name: 'isEnablePushNotification',
+            // }}
           />
           <Links<IProfileSettings>
             website={{

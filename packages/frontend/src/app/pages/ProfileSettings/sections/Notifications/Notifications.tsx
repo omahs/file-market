@@ -18,10 +18,10 @@ import {
 interface INotificationsSection<T extends FieldValues> {
   email: ControlledInputProps<T>
   emailNotification: ControlledCheckBoxProps<T>
-  pushNotification: ControlledCheckBoxProps<T>
+  // pushNotification: ControlledCheckBoxProps<T>
 }
 
-const NotificationsSection = <T extends FieldValues>({ email, emailNotification, pushNotification }: INotificationsSection<T>) => {
+const NotificationsSection = <T extends FieldValues>({ email, emailNotification }: INotificationsSection<T>) => {
   return (
     <StyledSectionContent>
       <StyledTitleSection>Notifications</StyledTitleSection>
@@ -60,21 +60,21 @@ const NotificationsSection = <T extends FieldValues>({ email, emailNotification,
           )}
           label={<Txt primary1>by email</Txt>}
         />
-        <CheckBoxContainer
-          control={(
-            <CheckBox<T>
-              controlledCheckBoxProps={pushNotification}
-              icon={<SettingCheckBoxIcon />}
-              checkedIcon={<SettingCheckBoxActiveIcon />}
-              disableRipple
-              sx={{
-                padding: 0,
-                paddingRight: '12px',
-              }}
-            />
-          )}
-          label={<Txt primary1>by push notification</Txt>}
-        />
+        {/* <CheckBoxContainer */}
+        {/*  control={( */}
+        {/*    <CheckBox<T> */}
+        {/*      controlledCheckBoxProps={pushNotification} */}
+        {/*      icon={<SettingCheckBoxIcon />} */}
+        {/*      checkedIcon={<SettingCheckBoxActiveIcon />} */}
+        {/*      disableRipple */}
+        {/*      sx={{ */}
+        {/*        padding: 0, */}
+        {/*        paddingRight: '12px', */}
+        {/*      }} */}
+        {/*    /> */}
+        {/*  )} */}
+        {/*  label={<Txt primary1>by push notification</Txt>} */}
+        {/* /> */}
       </FormControlSettings>
     </StyledSectionContent>
   )

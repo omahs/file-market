@@ -1,14 +1,14 @@
 import { makeAutoObservable } from 'mobx'
 
 import { Api, UserProfile } from '../../../swagger/Api'
+import { createToken } from '../../utils/jwt/createToken'
+import { getAccessToken } from '../../utils/jwt/get'
 import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store'
-import { AuthStore } from '../auth/AuthStore'
 import { ErrorStore } from '../Error/ErrorStore'
 import { RootStore } from '../RootStore'
 
 export class UserStore implements IStoreRequester {
   user?: UserProfile | null
-  authStore?: AuthStore
   profileService: Api<{}>['profile']
   errorStore: ErrorStore
 
@@ -24,11 +24,11 @@ export class UserStore implements IStoreRequester {
     makeAutoObservable(this)
     this.profileService = new Api<{}>({ baseUrl: '/api' }).profile
     this.errorStore = rootStore.errorStore
-    this.authStore = rootStore.authStore
   }
 
   setUser(user?: UserProfile) {
     this.user = user
+    console.log(user)
   }
 
   logout() {
@@ -40,14 +40,14 @@ export class UserStore implements IStoreRequester {
       ...this.user,
       ...user,
     })
-    if (!user || !this.authStore) return
+    if (!user) return
     storeRequest(
       this,
       this.profileService.updateCreate({
         ...this.user,
         ...user,
       }, {
-        headers: { authorization: this.authStore?.AccessToken },
+        headers: { authorization: createToken(getAccessToken()?.token ?? '') },
       }),
       (response) => {
         this.setUser(response)
@@ -56,11 +56,11 @@ export class UserStore implements IStoreRequester {
   }
 
   async updateEmail(email?: string) {
-    if (!email || !this.authStore) return
+    if (!email) return
     storeRequest(
       this,
       this.profileService.setEmailCreate({ email }, {
-        headers: { authorization: this.authStore?.AccessToken },
+        headers: { authorization: createToken(getAccessToken()?.token ?? '') },
       }),
       () => {},
     )

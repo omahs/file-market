@@ -12,6 +12,8 @@ import (
 
 var (
 	ErrProfileNotUniqueEmail    = Error{"email is not unique"}
+	ErrProfileNotUniqueDiscord  = Error{"discord is not unique"}
+	ErrProfileNotUniqueTwitter  = Error{"twitter is not unique"}
 	ErrProfileNotUniqueUsername = Error{"username is not unique"}
 	ErrProfileNotUniqueProfile  = Error{"profile for this address already exists"}
 )
@@ -60,15 +62,15 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address, name, username, bio, website_url, twitter, email, avatar_url, banner_url, 
-		       is_email_notifications_enabled, is_push_notifications_enabled
+		SELECT address, name, username, bio, website_url, twitter, discord, email, avatar_url, banner_url, 
+		       is_email_notifications_enabled, is_push_notifications_enabled, discord
 		FROM user_profiles
 		WHERE username = $1
 	`
 
 	var profile domain.UserProfile
 	var address string
-	var email, twitter *string
+	var email, twitter, discord *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(username),
 	).Scan(
@@ -78,6 +80,7 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 		&profile.Bio,
 		&profile.WebsiteURL,
 		&twitter,
+		&discord,
 		&email,
 		&profile.AvatarURL,
 		&profile.BannerURL,
@@ -95,6 +98,9 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 	if twitter != nil {
 		profile.Twitter = *twitter
 	}
+	if discord != nil {
+		profile.Discord = *discord
+	}
 
 	return &profile, nil
 }
@@ -103,9 +109,9 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 	// language=PostgreSQL
 	query := `
 		INSERT INTO user_profiles(
-			address, name, username, bio, website_url, avatar_url, banner_url, email, twitter, 
+			address, name, username, bio, website_url, avatar_url, banner_url, email, twitter, discord,
 		    is_email_notifications_enabled, is_push_notifications_enabled)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,NULL,$8,$9)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,NULL,NULL,$8,$9)
 	`
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
@@ -259,6 +265,10 @@ func resolveUserProfileDBErr(err error) error {
 		return ErrProfileNotUniqueEmail
 	} else if strings.Contains(err.Error(), "user_profiles_username_key") {
 		return ErrProfileNotUniqueUsername
+	} else if strings.Contains(err.Error(), "user_profiles_twitter_key") {
+		return ErrProfileNotUniqueTwitter
+	} else if strings.Contains(err.Error(), "user_profiles_discord_key") {
+		return ErrProfileNotUniqueDiscord
 	} else if strings.Contains(err.Error(), "user_profiles_pkey") {
 		return ErrProfileNotUniqueProfile
 	} else if errors.Is(err, pgx.ErrNoRows) {

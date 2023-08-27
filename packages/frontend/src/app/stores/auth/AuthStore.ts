@@ -35,11 +35,11 @@ export class AuthStore implements IStoreRequester {
 
   constructor(rootStore: { dialogStore: DialogStore, userStore: UserStore, dateStore: DateStore, errorStore: ErrorStore }) {
     this.authService = new Api<{}>({ baseUrl: '/api' })
+    this.userStore = rootStore.userStore
     makeAutoObservable(this)
     this.dialogStore = rootStore.dialogStore
     this.dateStore = rootStore.dateStore
     this.errorStore = rootStore.errorStore
-    this.userStore = rootStore.userStore
   }
 
   setData(response: AuthResponse) {
@@ -98,6 +98,7 @@ export class AuthStore implements IStoreRequester {
         headers: { authorization: this.AccessToken },
       }),
       (response) => {
+        console.log(this.userStore)
         this.setUser(response)
         this.isAuth = true
         console.log('SET AUTH TRUE')

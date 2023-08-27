@@ -75,5 +75,6 @@ type CollectionProfile struct {
 	Slug       string // unique name that will be used in url
 	WebsiteURL string
 	Twitter    string
+	Telegram   string
 	Discord    string
 }

@@ -35,6 +35,7 @@ const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanc
           settings
           placeholder='Profile name'
           controlledInputProps={name}
+          errorMessage={name.control._formState.errors as string}
         />
       </FormControlSettings>
       <FormControlSettings>
