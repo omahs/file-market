@@ -67,7 +67,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   }, [isFileBunnies, transfer, tokenFullId, canBuyByTime])
 
   const isDisabledFileBunnies = useMemo(() => {
-    return (isFileBunnies && !canBuyByTime && +tokenFullId.tokenId < 7000) && (!transfer || permissions.canFulfillOrder(transfer))
+    return ((isFileBunnies && !canBuyByTime) && (!transfer || permissions.canFulfillOrder(transfer))) || (isFileBunnies && +tokenFullId.tokenId < 7000)
   }, [isFileBunnies, transfer, canBuyByTime, tokenFullId])
 
   useEffect(() => {
