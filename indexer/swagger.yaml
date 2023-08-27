@@ -1037,6 +1037,20 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /server_time:
+    get:
+      description: Current server time
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/ServerTimeResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /ws/subscribe/block_number:
     get:
       summary: Subscribe to last block updates
@@ -1973,6 +1987,13 @@ definitions:
         type: number
         format: int64
         description: Размер данных
+  ServerTimeResponse:
+    type: object
+    properties:
+      serverTime:
+        type: number
+        format: int64
+        description: Current server time
   ConversionRateResponse:
     type: object
     description: Conversion rate
