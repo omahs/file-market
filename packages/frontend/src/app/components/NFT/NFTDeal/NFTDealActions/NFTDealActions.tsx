@@ -67,17 +67,19 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   }, [isFileBunnies, transfer, tokenFullId, canBuyByTime])
 
   const isDisabledFileBunnies = useMemo(() => {
-    return (isFileBunnies && !canBuyByTime) && (!transfer || permissions.canFulfillOrder(transfer))
-  }, [isFileBunnies, transfer, canBuyByTime])
+    return (isFileBunnies && !canBuyByTime && +tokenFullId.tokenId < 7000) && (!transfer || permissions.canFulfillOrder(transfer))
+  }, [isFileBunnies, transfer, canBuyByTime, tokenFullId])
 
   useEffect(() => {
-    timeService.serverTimeList().then((res) => {
-      setServerTime(res.data.serverTime)
-    })
-  }, [timeService])
+    if (!serverTime) {
+      timeService.serverTimeList().then((res) => {
+        setServerTime(res.data.serverTime)
+      })
+    }
+  }, [serverTime])
 
   return (
-    <ButtonsContainer content={fileBunniesText ?? blockStore.confirmationsText}>
+    <ButtonsContainer content={(isDisabledFileBunnies ? fileBunniesText : undefined) ?? blockStore.confirmationsText}>
       {isOwner ? (
         <NFTDealActionOwner
           transfer={transfer}
