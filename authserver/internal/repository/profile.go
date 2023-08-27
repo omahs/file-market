@@ -21,8 +21,8 @@ var (
 func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT name, username, bio, website_url, twitter, email, avatar_url, banner_url, is_email_notifications_enabled, 
-		       is_push_notifications_enabled
+		SELECT name, username, bio, website_url, twitter, email, discord, avatar_url, banner_url,
+		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE address = $1
 	`
@@ -31,7 +31,7 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 		Address: address,
 	}
 
-	var email, twitter *string
+	var email, twitter, discord *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(address.String()),
 	).Scan(
@@ -41,6 +41,7 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 		&profile.WebsiteURL,
 		&twitter,
 		&email,
+		&discord,
 		&profile.AvatarURL,
 		&profile.BannerURL,
 		&profile.IsEmailNotificationsEnabled,
@@ -55,6 +56,9 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 	if twitter != nil {
 		profile.Twitter = *twitter
 	}
+	if discord != nil {
+		profile.Discord = *discord
+	}
 
 	return &profile, nil
 }
@@ -63,7 +67,7 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 	// language=PostgreSQL
 	query := `
 		SELECT address, name, username, bio, website_url, twitter, discord, email, avatar_url, banner_url, 
-		       is_email_notifications_enabled, is_push_notifications_enabled, discord
+		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE username = $1
 	`
