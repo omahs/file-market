@@ -35,6 +35,7 @@ func (s *service) GetUserProfileByUsername(
 				Message: "user was not found",
 			}
 		}
+		log.Printf("failed to GetUserProfileByUsername: %s", err.Error())
 		return nil, domain.InternalError
 	}
 
@@ -66,6 +67,8 @@ func (s *service) GetUserProfileByAddress(
 		if errors.Is(err, pgx.ErrNoRows) {
 			return &domain.UserProfile{Address: address}, nil
 		}
+
+		log.Printf("failed to GetUserProfile: %s", err.Error())
 		return nil, domain.InternalError
 	}
 
@@ -93,6 +96,11 @@ func (s *service) GetProfileByIdentification(ctx context.Context, identification
 		identificationType = "address"
 	} else if validator.ValidateUsername(&identification) == nil {
 		identificationType = "username"
+	} else {
+		return nil, &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "wrong identification",
+		}
 	}
 
 	// NOTE: exposes private fields

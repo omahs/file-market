@@ -1,0 +1,2010 @@
+swagger: "2.0"
+info:
+  title: Mark3d service
+  description: >
+    Здесь можно **маркдауном** писать дополнительное описание.<br />
+  version: 1.0.0
+schemes:
+  - https
+host: filemarket.xyz
+basePath: /api
+paths:
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      description: Рефреш jwt-токенов. Это единственный случай, где с запросом передается **refresh** токен
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Результат успешной авторизации
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtRefreshTokenAuth: []
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      description: Закрытие текущей сессии пользователя (читать удаление одной пары jwt)
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success response
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /auth/full_logout:
+    post:
+      tags:
+        - auth
+      description: Закрытие всех действующих сессий пользователя (удаление всех jwt)
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success response
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /auth/message:
+    post:
+      tags:
+        - auth
+      description: Получение сообщения для авторизации по подписи
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: auth_message_request
+          schema:
+            $ref: '#/definitions/AuthMessageRequest'
+      responses:
+        '200':
+          description: Сообщение для подписи
+          schema:
+            $ref: '#/definitions/AuthMessageResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /auth/by_signature:
+    post:
+      tags:
+        - auth
+      description: Авторизация по подписи
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: auth_by_signature
+          schema:
+            $ref: '#/definitions/AuthBySignatureRequest'
+      responses:
+        '200':
+          description: Результат авторизации
+          schema:
+            $ref: '#/definitions/AuthResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /auth/check_auth:
+    get:
+      tags:
+        - auth
+        - profile
+      description: Получить профиль
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /collections:
+    get:
+      tags:
+        - collections
+      description: Получение списка всех коллекций
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекции
+          schema:
+            $ref: "#/definitions/CollectionsResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+      - name: lastCollectionAddress
+        in: query
+        description: Адрес последней коллекции.
+        type: string
+        pattern: "0x[0-9a-f-A-F]{40}"
+      - name: limit
+        in: query
+        description: Максимальное число коллекций, которое вернется на этой странице.
+        type: integer
+        format: int
+        default: 10
+        minimum: 0
+        maximum: 100
+  /collections/{address}:
+    get:
+      tags:
+        - collections
+      description: Получение коллекции по адресу
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /collections/file-bunnies/whitelist/{rarity}/sign/{address}:
+    get:
+      description: Получение подписи для вайтлиста
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Подпись
+          schema:
+            $ref: "#/definitions/WhitelistSignatureResponse"
+        "400":
+          description: Ошибка, адрес не в вайтлисте
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: rarity
+          description: Название вайтлиста
+          in: path
+          required: true
+          type: string
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /collections/file-bunnies/whitelist/{address}:
+    get:
+      tags:
+        - collections
+      description: Вернет название вайтлиста, в котором находится адрес. (e.g. "common")
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Названия вайтлиста
+          schema:
+            $ref: "#/definitions/WhitelistResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          description: Адрес пользователя
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /collections/full/{address}:
+    get:
+      tags:
+        - collections
+      description: Получение коллекции со всеми ее токенами по адресу
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /collections/full/public:
+    get:
+      tags:
+        - collections
+      description: Получение публичной коллекции со всеми ее токенами
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 0
+          minimum: 0
+          maximum: 100
+  /collections/full/file-bunnies:
+    get:
+      tags:
+        - collections
+      description: Получение коллекции File Bunnies со всеми ее токенами
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 0
+          minimum: 0
+          maximum: 100
+  /collections/profile/update:
+    post:
+      tags:
+        - collection profile
+      description: Обновление профиля коллекции
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: update_collection_profile_request
+          schema:
+            $ref: '#/definitions/UpdateCollectionProfileRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/UpdateCollectionProfileResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /tokens/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение списка токенов и коллекций пользователя с раздельной пагинацией
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Токены
+          schema:
+            $ref: "#/definitions/TokensResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastCollectionAddress
+          in: query
+          description: Адрес последней коллекции.
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastTokenCollectionAddress
+          in: query
+          description: Адрес последней коллекции последнего токена.
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: collectionLimit
+          in: query
+          description: Максимальное число коллекций, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: tokenLimit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /tokens/{collection}/{id}:
+    get:
+      tags:
+        - tokens
+      description: Получение токена по адресу коллекции и id
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Токен
+          schema:
+            $ref: "#/definitions/Token"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: collection
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /tokens/{collection}/{id}/encrypted_password:
+    get:
+      tags:
+        - tokens
+      description: Получение зашифрованного пароля из последней передачи токена по адресу коллекции и id
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Зашифрованный пароль
+          schema:
+            $ref: "#/definitions/EncryptedPasswordResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: collection
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /tokens/by_collection/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение токенов по адресу коллекции
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Токены
+          schema:
+            $ref: "#/definitions/TokensByCollectionResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /transfers/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение списка трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Трансферы
+          schema:
+            $ref: "#/definitions/TransfersResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /transfers/{address}/{id}:
+    get:
+      tags:
+        - transfers
+      description: Получение **активного** трансфера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Трансфер
+          schema:
+            $ref: "#/definitions/Transfer"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /transfers_history/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение истории трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Трансферы
+          schema:
+            $ref: "#/definitions/TransfersResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /v2/transfers/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение списка трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Трансферы
+          schema:
+            $ref: "#/definitions/TransfersResponseV2"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /v2/transfers/{address}/{id}:
+    get:
+      tags:
+        - transfers
+      description: Получение **активного** трансфера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Трансфер
+          schema:
+            $ref: "#/definitions/TransferWithData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /v2/transfers_history/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение истории трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Трансферы
+          schema:
+            $ref: "#/definitions/TransfersResponseV2"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /orders/all_active:
+    get:
+      tags:
+        - orders
+      description: Получение списка всех активных ордеров с информацией о токенах
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Список ордеров
+          schema:
+            $ref: "#/definitions/OrdersAllActiveResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: lastOrderId
+          in: query
+          description: Id последнего ордера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: limit
+          in: query
+          description: Максимальное число ордеров, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+  /orders/{address}:
+    get:
+      tags:
+        - orders
+      description: Получение списка активных ордеров
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Ордера
+          schema:
+            $ref: "#/definitions/OrdersResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /orders/{address}/{id}:
+    get:
+      tags:
+        - orders
+      description: Получение **активного** ордера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Ордер
+          schema:
+            $ref: "#/definitions/Order"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /orders_history/{address}:
+    get:
+      tags:
+        - orders
+      description: Получение истории ордеров
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Ордера
+          schema:
+            $ref: "#/definitions/OrdersResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /healthcheck:
+    get:
+      description: Возвращает статус здоровья сервиса
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Status
+          schema:
+            $ref: "#/definitions/HealthStatusResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /sequencer/acquire/{address}:
+    get:
+      description: Возвращает рандомный доступный tokenId
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Token Id
+          schema:
+            $ref: "#/definitions/SequencerAcquireResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+      - name: address
+        description: Адрес коллекции
+        in: path
+        required: true
+        type: string
+        pattern: "0x[0-9a-f-A-F]{40}"
+      - name: suffix
+        description: Дополнительная информация, о коллекции. Пример - при запросе tokenId у `common` вайтлиста в суффиксе нужно указать `common`
+        in: query
+        type: string
+      - name: wallet
+        description: Адрес кошелька человека, который запрашивает token id
+        in: query
+        pattern: "0x[0-9a-f-A-F]{40}"
+        required: true
+        type: string
+  /currency/conversion_rate:
+    get:
+      description: Возвращает conversion rate
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Conversion rate
+          schema:
+            $ref: '#/definitions/ConversionRateResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /report/collection:
+    post:
+      tags:
+        - report
+      description: Репорт коллекции
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: report_collection_request
+          schema:
+            $ref: '#/definitions/ReportCollectionRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /report/token:
+    post:
+      tags:
+        - report
+      description: Репорт токена
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: report_token_request
+          schema:
+            $ref: '#/definitions/ReportTokenRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/update:
+    post:
+      tags:
+        - profile
+      description: Обновление профиля пользователя
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: profile
+          schema:
+            $ref: '#/definitions/UserProfile'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/set_email:
+    post:
+      tags:
+        - profile
+      description: Запросить обновление имейла, на почту будет отправлена ссылка для подтверждения
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: set_email_request
+          schema:
+            $ref: '#/definitions/SetEmailRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/{identification}:
+    get:
+      tags:
+        - profile
+      description: Запрос на получение профиля пользователя без приватных полей
+      produces:
+        - application/json
+      parameters:
+        - name: identification
+          in: path
+          description: Адрес аккаунта или username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /server_time:
+    get:
+      description: Current server time
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/ServerTimeResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /ws/subscribe/block_number:
+    get:
+      summary: Subscribe to last block updates
+      description: | 
+        This is **WebSocket** handler, once connection is established you will receive:
+        ```json
+        {
+          "last_block_number": int64,
+        }
+        ```
+      responses:
+        '101':
+          description: ws upgrade
+        default:
+          description: Ошибка
+  /ws/subscribe/eft/{address}/{id}:
+    get:
+      summary: Subscribe to eft updates
+      description: |
+        This is **WebSocket** handler, once connection is established you will receive:
+        $ref: '#/definitions/EFTSubscriptionMessage'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес коллекции
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          description: Token id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+      responses:
+        '101':
+          description: ws upgrade
+        default:
+          description: Ошибка
+definitions:
+  EFTSubscriptionRequest:
+    type: object
+    description: Запрос на подписку на EFT
+    properties:
+      collectionAddress:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+  EFTSubscriptionMessage:
+    type: object
+    description: Сообщение об обновлении EFT
+    properties:
+      event:
+        type: string
+        description: Имя event'а
+      token:
+        $ref: '#/definitions/Token'
+      transfer:
+        $ref: '#/definitions/Transfer'
+      order:
+        $ref: '#/definitions/Order'
+  AuthMessageRequest:
+    type: object
+    description: Запрос получения сообщения для авторизации по подписи
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес кошелька, который хочет авторизоваться
+    required:
+      - address
+  AuthMessageResponse:
+    type: object
+    description: Ответ на запрос получения сообщения для авторизации по подписи
+    properties:
+      message:
+        type: string
+        description: Сообщение для подписи
+    required:
+      - message
+  AuthBySignatureRequest:
+    type: object
+    description: Запрос авторизации по подписи
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес кошелька
+      signature:
+        type: string
+        description: Подпись
+    required:
+      - address
+      - signature
+  AuthResponse:
+    type: object
+    description: Обобщенный ответ на разные запрос авторизации
+    properties:
+      access_token:
+        $ref: '#/definitions/JwtTokenInfo'
+      refresh_token:
+        $ref: '#/definitions/JwtTokenInfo'
+      profile:
+        $ref: '#/definitions/UserProfile'
+  JwtTokenInfo:
+    type: object
+    description: Данные jwt-токена
+    properties:
+      token:
+        description: Токен
+        type: string
+      expires_at:
+        description: Время истечения токена (timestamp в миллисекундах)
+        type: integer
+        format: int64
+        minimum: 1
+    required:
+      - token
+      - expires_at
+  UserProfile:
+    type: object
+    description: Профиль юзера
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес юзера
+      name:
+        type: string
+        description: Display name юзера
+      username:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        description: Уникальный никнейм, который будет юзаться в URL
+      bio:
+        type: string
+        description: Био человека
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на личный сайт
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      discord:
+        type: string
+        description: ссылка на дискорд
+      email:
+        type: string
+        pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'
+        description: Вернется если **Авторизирован**
+      isEmailNotificationEnabled:
+        type: boolean
+        description: Включены ли уведомления по почте
+      isPushNotificationEnabled:
+        type: boolean
+        description: Включены ли пуш уведомления
+      avatarUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
+  UpdateCollectionProfileResponse:
+    type: object
+    description: Ответ на обновление профиля коллекции
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      slug:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        minimum: 3
+        maximum: 256
+        description: Уникальное имя, которое будет показываться в url
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на сайт коллекции
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
+      discord:
+        type: string
+        description: ссылка на discord
+  UpdateCollectionProfileRequest:
+    type: object
+    description: Запрос на обновление профиля коллекции
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      slug:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        minimum: 3
+        maximum: 256
+        description: Уникальное имя, которое будет показываться в url
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на сайт коллекции
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
+      discord:
+        type: string
+        description: ссылка на discord
+    required:
+      - address
+  SetEmailRequest:
+    type: object
+    properties:
+      email:
+        type: string
+  ReportCollectionRequest:
+    type: object
+    description: Запрос на репорт коллекции
+    properties:
+      collectionAddress:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+    required:
+      - collectionAddress
+  ReportTokenRequest:
+    type: object
+    description: Запрос на репорт токена
+    properties:
+      collectionAddress:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+    required:
+      - collectionAddress
+      - tokenId
+  SuccessResponse:
+    type: object
+    required: [success]
+    description: Типовой запрос для ответа на Post запросы, которые не должны возвращать никаких данных
+    properties:
+      success:
+        type: boolean
+  ErrorResponse:
+    type: object
+    description: Типовая ошибка
+    properties:
+      code:
+        type: integer
+        description: Код ошибки
+      message:
+        type: string
+        description: Сообщение ошибки
+      detail:
+        type: string
+        description: Дополнительные детали
+  EncryptedPasswordResponse:
+    type: object
+    description: Ответ на запрос зашифрованного пароля из последней передачи токена
+    properties:
+      dealNumber:
+        type: string
+        description: Номер последнего трансфера токена
+      encryptedPassword:
+        type: string
+        description: Зашифрованный пароль из последней передачи токена
+  TokensResponse:
+    type: object
+    description: Ответ на запрос токенов пользователя
+    properties:
+      collections:
+        type: array
+        description: Коллекции пользователя
+        items:
+          $ref: "#/definitions/Collection"
+      collectionsTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+      tokens:
+        type: array
+        description: Токены пользователя
+        items:
+          $ref: "#/definitions/Token"
+      tokensTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+  TokensByCollectionResponse:
+    type: object
+    properties:
+      tokens:
+        type: array
+        items:
+          $ref: "#/definitions/Token"
+      total:
+        type: number
+        x-omitempty: false
+        format: uint64
+  TransfersResponse:
+    type: object
+    description: Ответ на запрос трансферов токенов от пользователя
+    properties:
+      incoming:
+        type: array
+        description: Входящие трансферы
+        items:
+          $ref: "#/definitions/Transfer"
+      incomingTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+      outgoing:
+        type: array
+        description: Исходящие трансферы
+        items:
+          $ref: "#/definitions/Transfer"
+      outgoingTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+  TransfersResponseV2:
+    type: object
+    description: Ответ на запрос трансферов токенов от пользователя
+    properties:
+      incoming:
+        type: array
+        description: Входящие трансферы
+        items:
+          $ref: "#/definitions/TransferWithData"
+      incomingTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+      outgoing:
+        type: array
+        description: Исходящие трансферы
+        items:
+          $ref: "#/definitions/TransferWithData"
+      outgoingTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+  OrdersResponse:
+    type: object
+    description: Ответ на запрос ордеров
+    properties:
+      incoming:
+        type: array
+        description: Входящие ордера (где пользователь - получатель)
+        items:
+          $ref: "#/definitions/Order"
+      incomingTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+      outgoing:
+        type: array
+        description: Исходящие ордера (где пользователь - продавец)
+        items:
+          $ref: "#/definitions/Order"
+      outgoingTotal:
+        type: number
+        x-omitempty: false
+        format: uint64
+  OrdersAllActiveResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/OrderWithToken"
+      total:
+        type: number
+        x-omitempty: false
+        format: uint64
+  OrderWithToken:
+    type: object
+    description: Ордер с токеном
+    properties:
+      order:
+        $ref: "#/definitions/Order"
+      token:
+        $ref: "#/definitions/Token"
+      transfer:
+        $ref: "#/definitions/Transfer"
+  WhitelistSignatureResponse:
+    type: object
+    properties:
+      signature:
+        type: string
+        description: Подпись
+  WhitelistResponse:
+    type: object
+    properties:
+      whitelist:
+        type: string
+        x-omitempty: false
+        description: Название вайтлиста, в котором есть адрес. Вернет пустую строку, если нет нигде
+      ordersLeft:
+        type: object
+        description: Количество оставшихся айдишников в сиквенсере
+        properties:
+          free:
+            type: number
+            format: int64
+            x-omitempty: false
+          payed:
+            type: number
+            format: int64
+            x-omitempty: false
+  CollectionData:
+    type: object
+    description: Коллекция со всеми токенами
+    properties:
+      collection:
+        $ref: "#/definitions/Collection"
+      tokens:
+        type: array
+        items:
+          $ref: "#/definitions/Token"
+      total:
+        type: number
+        x-omitempty: false
+        format: uint64
+  CollectionsResponse:
+    type: object
+    description: Коллекции
+    properties:
+      collections:
+        type: array
+        items:
+          $ref: "#/definitions/Collection"
+      total:
+        type: number
+        x-omitempty: false
+        format: uint64
+  CollectionResponse:
+    type: object
+    properties:
+      collection:
+        $ref: "#/definitions/Collection"
+      slug:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        minimum: 3
+        maximum: 256
+        description: Уникальное имя, которое будет показываться в url
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на сайт коллекции
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
+      discord:
+        type: string
+        description: ссылка на discord
+  Collection:
+    type: object
+    description: Коллекция
+    properties:
+      address:
+        type: string
+        description: Адрес контракта коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      creator:
+        type: string
+        description: Создатель коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      owner:
+        type: string
+        description: Владелец коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      tokenId:
+        type: string
+        description: Id Access токена
+        pattern: "^[0-9]+$"
+      metaUri:
+        type: string
+        description: uri метаданных access токена
+      name:
+        type: string
+        description: Имя токена из метаданных
+      description:
+        type: string
+        description: Описание токена из метаданных
+      image:
+        type: string
+        description: Ссылка на пикчу из метаданных
+      tokensCount:
+        type: number
+        format: uint64
+        description: Количество заминченных токенов в коллекции
+        x-omitempty: false
+      ordersCount:
+        type: number
+        format: uint64
+        description: Количество открытых ордеров
+        x-omitempty: false
+      ownersCount:
+        type: number
+        format: uint64
+        description: Количество уникальных адресов, которые владеют хотя бы 1 токеном в коллекции
+        x-omitempty: false
+      salesVolume:
+        type: string
+        pattern: "^[0-9]+$"
+        description: Сумма цены всех завершенных покупок
+      floorPrice:
+        type: string
+        pattern: "^[0-9]+$"
+        description: Цена самого дешевого токена в коллекции
+      contentTypes:
+        type: object
+        description: Уникальные категории, подкатегории, форматы файлов из всей коллекции
+        properties:
+          categories:
+            type: array
+            items:
+              type: string
+          subcategories:
+            type: array
+            items:
+              type: string
+          fileExtensions:
+            type: array
+            items:
+              type: string
+      chainId:
+        type: string
+        description: ChainId
+      type:
+        type: string
+        description: Тип коллекции <br />
+          * `File Market Collection` - Обычные коллекции <br />
+          * `Public Collection` - Общая коллекция, куда может заминтить каждый <br />
+          * `File Bunnies Collection` - Крош. Наша коллекция
+        enum:
+          - "File Market Collection"
+          - "Public Collection"
+          - "File Bunnies Collection"
+      stats:
+        type: array
+        description: Статы коллекции, присутствует только у зайцев
+        items:
+          $ref: "#/definitions/CollectionStat"
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
+  CollectionStat:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: number
+        x-omitempty: false
+  Token:
+    type: object
+    description: Токен
+    properties:
+      collectionAddress:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      collectionName:
+        type: string
+        description: Имя коллекции
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+      owner:
+        type: string
+        description: Владелец
+        pattern: "0x[0-9a-f-A-F]{40}"
+      creator:
+        type: string
+        description: Создатель
+        pattern: "0x[0-9a-f-A-F]{40}"
+      metaUri:
+        type: string
+        description: uri метаданных токена
+      name:
+        type: string
+        description: Метаданные - Имя токена из метаданных
+      description:
+        type: string
+        description: Метаданные - Описание токена из метаданных
+      image:
+        type: string
+        description: Метаданные - Ссылка на пикчу из метаданных
+      externalLink:
+        type: string
+        description: не интернал не амнистия
+      hiddenFile:
+        type: string
+        description: Метаданные - Ссылка на зашифрованный файл из метаданных
+      license:
+        type: string
+      licenseUrl:
+        type: string
+      royalty:
+        type: number
+        description: Роялти в формате, где 100% = 10000
+        x-omitempty: false
+        format: uint64
+      mintTxHash:
+        type: string
+        description: Хэш транзакции минта
+      mintTxTimestamp:
+        type: number
+        description: Время транзакции минта
+        format: uint64
+      hiddenFileMeta:
+        $ref: "#/definitions/HiddenFileMetaData"
+      categories:
+        type: array
+        description: Метаданные - Категории
+        items:
+          type: string
+      subcategories:
+        type: array
+        description: Метаданные - Подкатегории
+        items:
+          type: string
+      tags:
+        type: array
+        items:
+          type: string
+        description: Метаданные - Тэги
+      properties:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Аттрибуты
+      rankings:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Ранкинги
+      stats:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Статы
+      pendingTransferId:
+        type: integer
+        format: int64
+        description: id трансфера, находящегося в процессе
+      pendingOrderId:
+        type: integer
+        format: int64
+        description: id ордера, находящегося в процессе
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
+  TransferWithData:
+    type: object
+    description: Данные трансфера (Трансфер, токен, ордер если есть)
+    properties:
+      transfer:
+        $ref: "#/definitions/Transfer"
+      token:
+        $ref: "#/definitions/Token"
+      order:
+        $ref: "#/definitions/Order"
+      collection:
+        $ref: "#/definitions/Collection"
+  Transfer:
+    type: object
+    description: Трансфер
+    properties:
+      id:
+        type: integer
+        description: Id трансфера
+        format: int64
+      collection:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+      from:
+        type: string
+        description: Отправитель
+        pattern: "0x[0-9a-f-A-F]{40}"
+      to:
+        type: string
+        description: Получатель, если уже назначен
+        pattern: "0x[0-9a-f-A-F]{40}"
+      orderId:
+        type: integer
+        description: Id ордера, если трансфер создан из-за ордера
+        format: int64
+      fraudApproved:
+        type: boolean
+        description:
+          true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
+          был ли подан репорт, можно выяснить по статусам
+      publicKey:
+        type: string
+        description: публичный ключ (hex)
+      encryptedPassword:
+        type: string
+        description: зашифрованный пароль (hex)
+      statuses:
+        type: array
+        description: Статусы трансфера
+        items:
+          $ref: "#/definitions/TransferStatusInfo"
+      number:
+        type: string
+        description: Порядковый номер трансфера
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
+  Order:
+    type: object
+    description: Ордер
+    properties:
+      id:
+        type: integer
+        description: Id ордера
+        format: int64
+      transferId:
+        type: integer
+        description: Id трансфера
+        format: int64
+      price:
+        type: string
+        description: Цена
+        pattern: "^[0-9]+$"
+      currency:
+        type: string
+        description: Адрес ERC20. Если нулевой адрес, то нативная валюта
+        pattern: "0x[0-9a-f-A-F]{40}"
+      priceUsd:
+        type: string
+        description: Цена в долларах
+        pattern: "^[0-9]+.[0-9]+$"
+      exchangeAddress:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      statuses:
+        type: array
+        description: Статусы ордера
+        items:
+          $ref: "#/definitions/OrderStatusInfo"
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
+  TransferStatusInfo:
+    type: object
+    description: Изменение статуса трансфера
+    properties:
+      status:
+        $ref: "#/definitions/TransferStatus"
+      timestamp:
+        type: number
+        description: Время установки статуса
+        format: int64
+      txId:
+        type: string
+        description: Транзакция, которой был установлен статус
+        pattern: "0x[0-9a-f-A-F]{64}"
+  TransferStatus:
+    description: Статус трансфера <br />
+      * `Drafted` - Создан черновик трансфера <br />
+      * `Created` - Трансфер инициализирован <br />
+      * `PublicKeySet` - Сохранен публичный ключ получателя <br />
+      * `PasswordSet` - Сохранен зашифрованный пароль <br />
+      * `FraudReported` - Доложено мошенничество <br />
+      * `Finished` - Трансфер завершен <br />
+      * `Cancelled` - Трансфер отменен
+    type: string
+    enum:
+      - Drafted
+      - Created
+      - PublicKeySet
+      - PasswordSet
+      - FraudReported
+      - Finished
+      - Cancelled
+  OrderStatusInfo:
+    type: object
+    description: Изменение статуса ордера
+    properties:
+      status:
+        $ref: "#/definitions/OrderStatus"
+      timestamp:
+        type: number
+        description: Время установки статуса
+        format: int64
+      txId:
+        type: string
+        description: Транзакция, которой был установлен статус
+        pattern: "0x[0-9a-f-A-F]{64}"
+  OrderStatus:
+    description: Статус ордера <br />
+      * `Created` - ордер создан <br />
+      * `Fulfilled` - средства внесены покупателем <br />
+      * `Finished` - ордер завершен успешно <br />
+      * `FraudApproved` - доказано мошенничество и ордер отменен <br />
+      * `Cancelled` - ордер отменен
+    type: string
+    enum:
+      - Created
+      - Fulfilled
+      - Finished
+      - FraudApproved
+      - Cancelled
+  HealthStatusResponse:
+    type: object
+    description: Респонс на healthcheck
+    properties:
+      mode:
+        type: string
+      status:
+        $ref: "#/definitions/HealthStatus"
+      blockBacklog:
+        type: number
+        description: Насколько lastBlock в индексере отстает от head block'а на бч
+        format: int
+  HealthStatus:
+    description: Статус здоровья индексера
+    type: string
+    enum:
+      - Healthy
+      - Unhealthy
+  SequencerAcquireResponse:
+    type: object
+    properties:
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+      isSetEmpty:
+        type: boolean
+  MetadataProperty:
+    type: object
+    description: Структура для свойств в метаданных
+    properties:
+      traitType:
+        type: string
+        description: Название свойства
+      displayType:
+        type: string
+        description: Тип данных значения
+      value:
+        type: string
+        description: Значение свойства
+      max_value:
+        type: string
+      min_value:
+        type: string
+      traitValueCount:
+        type: integer
+        description: Количество таких же value в заданном trait_type
+      traitTotal:
+        type: integer
+        x-omitempty: false
+        description: Общее количество записей с таким trait_type
+  HiddenFileMetaData:
+    type: object
+    description: Метаданные скрытого файла
+    properties:
+      name:
+        type: string
+        description: Имя файла
+      type:
+        type: string
+        description: Тип файла
+      size:
+        type: number
+        format: int64
+        description: Размер данных
+  ServerTimeResponse:
+    type: object
+    properties:
+      serverTime:
+        type: number
+        format: int64
+        description: Current server time
+  ConversionRateResponse:
+    type: object
+    description: Conversion rate
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+      rate:
+        type: number
+tags:
+  - name: tokens
+  - name: transfers
+  - name: orders

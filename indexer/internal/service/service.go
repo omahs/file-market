@@ -1521,6 +1521,9 @@ func (s *service) Shutdown() {
 }
 
 func GRPCErrToHTTP(err error) *models.ErrorResponse {
+	if err == nil {
+		return nil
+	}
 	s := status.Convert(err)
 	hs := http.StatusInternalServerError
 

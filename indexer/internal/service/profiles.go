@@ -12,6 +12,7 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 		Identification: identification,
 	})
 	if err != nil {
+		logger.Error("failed to call GetUserProfile", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -45,6 +46,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 
 	res, err := s.authClient.UpdateUserProfile(ctx, &arg)
 	if err != nil {
+		logger.Error("failed to call UpdateUserProfile", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -66,6 +68,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorResponse {
 	res, err := s.authClient.SetEmail(ctx, &authserver_pb.SetEmailRequest{Email: email})
 	if err != nil {
+		logger.Error("failed to call SetEmail", err, nil)
 		return GRPCErrToHTTP(err)
 	}
 
@@ -93,6 +96,7 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 func (s *service) VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse) {
 	res, err := s.authClient.VerifyEmail(ctx, &authserver_pb.VerifyEmailRequest{SecretToken: secretToken})
 	if err != nil {
+		logger.Error("failed to call VerifyEmail", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
