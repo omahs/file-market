@@ -63,7 +63,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
     if (isLoading) {
       setModalOpen(true)
       setModalBody(<InProgressBody text='Banner is updating' />)
-    } else if (result) {
+    } else if (error) {
       setModalOpen(true)
       setModalBody(
         <ErrorBody
@@ -82,7 +82,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         />,
       )
     }
-  }, [error, isLoading])
+  }, [error, isLoading, result])
 
   return (
     <StyledBanner

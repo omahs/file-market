@@ -1,11 +1,12 @@
 import { observer } from 'mobx-react-lite'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../components'
 import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../../components/Modal/Modal'
 import { useStores } from '../../hooks'
+import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { useModalProperties } from '../../hooks/useModalProperties'
 import { Button, PageLayout, Txt } from '../../UIkit'
 import ReturnButton from './components/ReturnButton/ReturnButton'
@@ -50,37 +51,30 @@ export default observer(function ProfileSettings() {
   const { modalBody, setModalBody, modalOpen, setModalOpen } =
     useModalProperties()
 
-  useEffect(() => {
-    if (!isLoading) return
-
-    void setModalBody(<InProgressBody text='Profile is being updated' />)
-    void setModalOpen(true)
-  }, [isLoading])
-
-  useEffect(() => {
-    if (!result) return
-
-    void setModalBody(
-      <SuccessOkBody
-        description={'View collection'}
-      />,
-    )
-    void setModalOpen(true)
-  }, [result])
-
-  useEffect(() => {
-    if (!error) return
-
-    void setModalBody(
-      <ErrorBody
-        message={extractMessageFromError(error)}
-        onClose={() => {
-          void setModalOpen(false)
-        }
-        }
-      />,
-    )
-  }, [error])
+  useAfterDidMountEffect(() => {
+    if (isLoading) {
+      setModalOpen(true)
+      setModalBody(<InProgressBody text='Profile is updating' />)
+    } else if (error) {
+      setModalOpen(true)
+      setModalBody(
+        <ErrorBody
+          message={extractMessageFromError(result)}
+          onClose={() => {
+            void setModalOpen(false)
+          }}
+        />,
+      )
+    } else if (result) {
+      setModalOpen(true)
+      setModalBody(
+        <SuccessOkBody
+          buttonText='View EFT'
+          description={'Profile success'}
+        />,
+      )
+    }
+  }, [error, isLoading, result])
 
   const name = watch('name')
   const username = watch('username')

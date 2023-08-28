@@ -66,7 +66,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
     if (isLoading) {
       setModalOpen(true)
       setModalBody(<InProgressBody text='Avatar is updating' />)
-    } else if (result) {
+    } else if (error) {
       setModalOpen(true)
       setModalBody(
         <ErrorBody
@@ -85,7 +85,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         />,
       )
     }
-  }, [error, isLoading])
+  }, [error, isLoading, result])
 
   return (
     <StyledProfileImage
