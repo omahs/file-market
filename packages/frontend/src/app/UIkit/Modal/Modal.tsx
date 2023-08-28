@@ -101,6 +101,13 @@ export const Modal = (props: ComponentProps<typeof ModalBase> & { isError?: bool
 
 export const ModalBody = styled('div', {
   paddingTB: '40px',
+  variants: {
+    edit: {
+      true: {
+        paddingTB: '24px',
+      },
+    },
+  },
 })
 
 export const ModalTitle = styled('h3', {
@@ -148,6 +155,17 @@ export const ModalBanner = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '8px',
+  variants: {
+    edit: {
+      true: {
+        marginTop: '12px',
+        borderRadius: '12px',
+        border: '2px solid #EAEAEC',
+        background: '#EAEAEC',
+        fontWeight: '500',
+      },
+    },
+  },
 })
 
 export const ModalButtonContainer = styled('div', {
@@ -155,6 +173,14 @@ export const ModalButtonContainer = styled('div', {
   width: '100%',
   display: 'flex',
   justifyContent: 'flex-end',
+  variants: {
+    edit: {
+      true: {
+        marginTop: '24px',
+      },
+    },
+  },
+
 })
 
 export const InputModalTitleText = styled('p', {

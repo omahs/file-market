@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
 
 import { AppLayout } from '../components/App'
+import PrivateRouteJwt from '../HOC/PrivateRoute'
 import { Params } from '../utils/router/Params'
 import BrandingPage from './BrandingPage/BrandingPage'
 import CheckCryptoPage from './CheckCryptoPage/CheckCryptoPage'
@@ -14,6 +15,7 @@ import { marketRoutes } from './MarketPage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
+import ProfileSettings from './ProfileSettings/ProfileSettings'
 import SuccessSubscribePage from './SuccessSubscribePage/SuccessSubscribePage'
 
 const routes: RouteObject[] = [
@@ -59,6 +61,14 @@ const routes: RouteObject[] = [
   {
     path: 'checkCrypto',
     element: <CheckCryptoPage />,
+  },
+  {
+    path: 'settings',
+    element: <PrivateRouteJwt />,
+    children: [{
+      path: '',
+      element: <ProfileSettings />,
+    }],
   },
   {
     path: '*',

@@ -5,7 +5,9 @@ import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessN
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
 import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
-import { Button, FormControl, Input, PageLayout, TextArea } from '../../../../../UIkit'
+import { useModalProperties } from '../../../../../hooks/useModalProperties'
+import { Button, FormControl, Input, PageLayout } from '../../../../../UIkit'
+import { TextArea } from '../../../../../UIkit/Form/TextArea/TextArea'
 import {
   ButtonContainer,
   Description,
@@ -17,7 +19,6 @@ import {
   TitleGroup,
 } from '../../../helper/style/style'
 import { useCreateCollection } from '../../../hooks/useCreateCollection'
-import { useModalProperties } from '../../../hooks/useModalProperties'
 
 export interface CreateCollectionForm {
   image: FileList
@@ -157,14 +158,19 @@ export default function CreateCollectionSection() {
               </LetterCounter>
             </LabelWithCounter>
 
-            <TextArea
+            <TextArea<CreateCollectionForm>
               withoutDefaultBorder
-              {...register('description', {
+              controlledInputProps={{
+                control,
+                name: 'description',
+              }}
+              { ...control.register('description', {
                 onChange(event) {
                   setTextareaLength(event?.target?.value?.length ?? 0)
                 },
                 maxLength: 1000,
-              })}
+              })
+              }
               placeholder='Description of your token collection'
             />
           </FormControl>
