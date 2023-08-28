@@ -10,3 +10,10 @@ export const imgs: Record<typesCard, string> = {
   telegram: telegramImg,
   twitter: twitterImg,
 }
+
+export const baseUrls: Record<typesCard, string> = {
+  url: '',
+  discord: '',
+  telegram: 'https://t.me/',
+  twitter: 'https://twitter.com/',
+}

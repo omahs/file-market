@@ -10,7 +10,6 @@ import { AppPlusNav } from '../AppPlusNav'
 export const AppConnectWidget: FC = observer(() => {
   const { address, isConnected } = useAccount()
   const { connect } = useAuth()
-
   if (isConnected && address) {
     return (
       <>

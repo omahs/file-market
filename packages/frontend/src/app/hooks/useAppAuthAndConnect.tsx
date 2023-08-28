@@ -1,7 +1,8 @@
 import { useWeb3Modal } from '@web3modal/react'
 import assert from 'assert'
 import { useCallback, useEffect, useState } from 'react'
-import { useAccount, useSignMessage } from 'wagmi'
+import { useAccount, useConnect, useSignMessage } from 'wagmi'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 import { LoadingModal } from '../components/Modal/LoadingModal'
 import { InProcessBodyProps } from '../components/Modal/Modal'
@@ -21,7 +22,10 @@ export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
   const [isACanAuthEffect, setIsACanAuthEffect] = useState<boolean>(false)
   const [addressState, setAddressState] = useState<string | undefined>()
   const { authStore, dialogStore } = useStores()
-  const { open, setDefaultChain } = useWeb3Modal()
+  const { setDefaultChain } = useWeb3Modal()
+  const { connectAsync: open } = useConnect({
+    connector: new MetaMaskConnector(),
+  })
   const { signMessage } = useSignMessage({
     async onSuccess(data) {
       try {

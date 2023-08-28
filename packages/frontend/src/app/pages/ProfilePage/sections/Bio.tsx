@@ -29,7 +29,7 @@ const Bio = ({ text }: IBioProps) => {
                   : (
                     <>
                       {text.substring(0, 200)}
-                      {'...'}
+                      {text.length > 200 && '...'}
                       {' '}
                       {text.length > 200 && <Txt primary1 style={{ color: '#6B6F76', cursor: 'pointer' }} onClick={() => { setIsShowFullText(true) }}>Show more</Txt>}
                     </>

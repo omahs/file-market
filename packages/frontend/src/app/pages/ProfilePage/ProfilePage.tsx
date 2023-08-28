@@ -129,7 +129,7 @@ const ProfilePage: React.FC = observer(() => {
             url: user?.websiteUrl,
             twitter: user?.twitter,
             discord: user?.discord,
-            telegram: '@lewinUp',
+            telegram: user?.telegram,
           }}
           />
         </BioAndLinks>
