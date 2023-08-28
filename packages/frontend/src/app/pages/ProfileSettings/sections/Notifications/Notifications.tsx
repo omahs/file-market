@@ -31,6 +31,8 @@ const NotificationsSection = <T extends FieldValues>({ email, emailNotification 
           settings
           placeholder='Email address'
           controlledInputProps={email}
+          errorMessage={email.control._formState.errors.email?.message as string}
+          isError={!!email.control._formState.errors.email?.message}
         />
       </FormControlSettings>
       <FormControlSettings>

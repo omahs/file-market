@@ -128,8 +128,8 @@ const ProfilePage: React.FC = observer(() => {
           <Links items={{
             url: user?.websiteUrl,
             twitter: user?.twitter,
+            discord: user?.discord,
             telegram: '@lewinUp',
-            discord: 'discordik',
           }}
           />
         </BioAndLinks>
