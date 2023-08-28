@@ -8,7 +8,7 @@ import { useUpdateProfile } from '../../../pages/ProfileSettings/helper/hooks/us
 import { useUploadLighthouse } from '../../../processing'
 import { gradientPlaceholderImg } from '../../../UIkit'
 import { BaseModal } from '../../Modal'
-import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../../Modal/Modal'
+import { ErrorBody, extractMessageFromError, SuccessOkBody } from '../../Modal/Modal'
 import {
   EditProfileImageDialog,
   IEditProfileImageDialogForm,
@@ -57,16 +57,12 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
 
   const {
     error,
-    isLoading,
     result,
     updateProfile,
   } = useUpdateProfile(onSuccess)
 
   useAfterDidMountEffect(() => {
-    if (isLoading) {
-      setModalOpen(true)
-      setModalBody(<InProgressBody text='Avatar is updating' />)
-    } else if (error) {
+    if (error) {
       setModalOpen(true)
       setModalBody(
         <ErrorBody
@@ -85,7 +81,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         />,
       )
     }
-  }, [error, isLoading, result])
+  }, [error, result])
 
   return (
     <StyledProfileImage

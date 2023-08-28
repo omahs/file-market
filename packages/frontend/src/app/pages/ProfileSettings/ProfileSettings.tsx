@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../components'
-import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../../components/Modal/Modal'
+import { ErrorBody, extractMessageFromError, SuccessOkBody } from '../../components/Modal/Modal'
 import { useStores } from '../../hooks'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { useModalProperties } from '../../hooks/useModalProperties'
@@ -39,7 +39,6 @@ export default observer(function ProfileSettings() {
 
   const {
     error,
-    isLoading,
     result,
     updateProfile,
   } = useUpdateProfile()
@@ -52,10 +51,7 @@ export default observer(function ProfileSettings() {
     useModalProperties()
 
   useAfterDidMountEffect(() => {
-    if (isLoading) {
-      setModalOpen(true)
-      setModalBody(<InProgressBody text='Profile is updating' />)
-    } else if (error) {
+    if (error) {
       setModalOpen(true)
       setModalBody(
         <ErrorBody
@@ -74,7 +70,7 @@ export default observer(function ProfileSettings() {
         />,
       )
     }
-  }, [error, isLoading, result])
+  }, [error, result])
 
   const name = watch('name')
   const username = watch('username')
@@ -83,7 +79,7 @@ export default observer(function ProfileSettings() {
   const website = watch('website')
 
   return (
-    <>
+    <PageLayout css={{ minHeight: '100vh' }}>
       <BaseModal
         body={modalBody}
         open={modalOpen}
@@ -92,110 +88,108 @@ export default observer(function ProfileSettings() {
           setModalOpen(false)
         }}
       />
-      <PageLayout css={{ minHeight: '100vh' }}>
-        <ReturnButton />
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <StyledTitle>Profile settings</StyledTitle>
-          <GrayBgText YourWalletStyled>
-            <Txt primary1>
-              Your wallet:
-            </Txt>
-            <Txt body4>{address ?? 'Please connect the wallet'}</Txt>
-          </GrayBgText>
-          <AppearanceSection<IProfileSettings>
-            name={{
-              control,
-              name: 'name',
-              rules: {
-                validate: () => {
-                  if (!name) return
+      <ReturnButton />
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <StyledTitle>Profile settings</StyledTitle>
+        <GrayBgText YourWalletStyled>
+          <Txt primary1>
+            Your wallet:
+          </Txt>
+          <Txt body4>{address ?? 'Please connect the wallet'}</Txt>
+        </GrayBgText>
+        <AppearanceSection<IProfileSettings>
+          name={{
+            control,
+            name: 'name',
+            rules: {
+              validate: () => {
+                if (!name) return
 
-                  return name.length > 3 && name.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
-                },
+                return name.length > 3 && name.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
               },
-            }}
-            url={{
-              control,
-              name: 'username',
-              rules: {
-                validate: () => {
-                  if (!username) return
-                  if (username.length < 3 || username.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
-                  if (!username.match(/^[a-z0-9_]+$/) || (username[0] === '0' && username[1] === 'x')) return 'Please enter valid username'
-                },
+            },
+          }}
+          url={{
+            control,
+            name: 'username',
+            rules: {
+              validate: () => {
+                if (!username) return
+                if (username.length < 3 || username.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
+                if (!username.match(/^[a-z0-9_]+$/) || (username[0] === '0' && username[1] === 'x')) return 'Please enter valid username'
               },
-            }}
-            bio={{
-              control,
-              name: 'bio',
-              rules: {
-                validate: () => {
-                  if (!bio) return
+            },
+          }}
+          bio={{
+            control,
+            name: 'bio',
+            rules: {
+              validate: () => {
+                if (!bio) return
 
-                  return bio.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
-                },
+                return bio.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
               },
-            }}
-          />
-          <Notifications<IProfileSettings>
-            email={{
-              control,
-              name: 'email',
-              rules: {
-                validate: () => {
-                  if (!email) return
+            },
+          }}
+        />
+        <Notifications<IProfileSettings>
+          email={{
+            control,
+            name: 'email',
+            rules: {
+              validate: () => {
+                if (!email) return
 
-                  return email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
-                },
+                return email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
               },
-            }}
-            emailNotification={{
-              control,
-              name: 'isEnableEmailNotification',
-            }}
-            // pushNotification={{
-            //   control,
-            //   name: 'isEnablePushNotification',
-            // }}
-          />
-          <Links<IProfileSettings>
-            website={{
-              control,
-              name: 'website',
-              rules: {
-                validate: () => {
-                  if (!website) return
+            },
+          }}
+          emailNotification={{
+            control,
+            name: 'isEnableEmailNotification',
+          }}
+          // pushNotification={{
+          //   control,
+          //   name: 'isEnablePushNotification',
+          // }}
+        />
+        <Links<IProfileSettings>
+          website={{
+            control,
+            name: 'website',
+            rules: {
+              validate: () => {
+                if (!website) return
 
-                  return website?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
-                },
+                return website?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
               },
-            }}
-            twitter={{
-              control,
-              name: 'twitter',
-            }}
-            telegram={{
-              control,
-              name: 'telegram',
-            }}
-            discord={{
-              control,
-              name: 'discord',
-            }}
-          />
-          <Button
-            primary
-            type='submit'
-            isDisabled={!!Object.keys(errors).length}
-            title={!Object.keys(errors).length ? undefined : 'Required fields must be filled'}
-            css={{
-              width: '240px',
-            }}
-          >
-            Update profile
-          </Button>
-        </Form>
-      </PageLayout>
-    </>
+            },
+          }}
+          twitter={{
+            control,
+            name: 'twitter',
+          }}
+          telegram={{
+            control,
+            name: 'telegram',
+          }}
+          discord={{
+            control,
+            name: 'discord',
+          }}
+        />
+        <Button
+          primary
+          type='submit'
+          isDisabled={!!Object.keys(errors).length}
+          title={!Object.keys(errors).length ? undefined : 'Required fields must be filled'}
+          css={{
+            width: '240px',
+          }}
+        >
+          Update profile
+        </Button>
+      </Form>
+    </PageLayout>
   )
 })
