@@ -1201,6 +1201,9 @@ definitions:
       discord:
         type: string
         description: ссылка на дискорд
+      telegram:
+        type: string
+        description: ссылка на telegram
       email:
         type: string
         pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'

@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/mark3d-xyz/mark3d/authserver/internal/utils"
 	"github.com/mark3d-xyz/mark3d/authserver/pkg/validator"
 	authserver_pb "github.com/mark3d-xyz/mark3d/authserver/proto"
 	"strings"
@@ -17,10 +18,11 @@ type UserProfile struct {
 	IsEmailNotificationsEnabled bool           `json:"isEmailNotificationsEnabled"`
 	IsPushNotificationsEnabled  bool           `json:"isPushNotificationsEnabled"`
 	Name                        string         `json:"name"`
-	Twitter                     string         `json:"twitter"`
 	Username                    string         `json:"username"`
 	WebsiteURL                  string         `json:"websiteUrl"`
-	Discord                     string         `json:"discord"`
+	Twitter                     *string        `json:"twitter"`
+	Discord                     *string        `json:"discord"`
+	Telegram                    *string        `json:"telegram"`
 }
 
 func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
@@ -39,8 +41,9 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 		Email:                      p.Email,
 		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
 		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
-		Twitter:                    p.Twitter,
-		Discord:                    p.Discord,
+		Twitter:                    utils.UnwrapString(p.Twitter),
+		Discord:                    utils.UnwrapString(p.Discord),
+		Telegram:                   utils.UnwrapString(p.Telegram),
 	}
 }
 
@@ -136,10 +139,11 @@ func GetDefaultUserProfile(address common.Address) *UserProfile {
 		IsEmailNotificationsEnabled: false,
 		IsPushNotificationsEnabled:  false,
 		Name:                        fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
-		Twitter:                     "",
 		Username:                    fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
 		WebsiteURL:                  "",
-		Discord:                     "",
+		Twitter:                     nil,
+		Discord:                     nil,
+		Telegram:                    nil,
 	}
 }
 

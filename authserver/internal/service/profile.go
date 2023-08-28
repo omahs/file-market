@@ -269,5 +269,13 @@ func updateUserProfileFields(new *domain.UserProfile, old *domain.UserProfile) {
 	if new.BannerURL == "" {
 		new.BannerURL = old.BannerURL
 	}
-
+	if new.Telegram == nil || (new.Telegram != nil && *new.Telegram == "") {
+		new.Telegram = old.Telegram
+	}
+	if new.Twitter == nil || (new.Twitter != nil && *new.Twitter == "") {
+		new.Twitter = old.Twitter
+	}
+	if new.Discord == nil || (new.Discord != nil && *new.Discord == "") {
+		new.Discord = old.Discord
+	}
 }

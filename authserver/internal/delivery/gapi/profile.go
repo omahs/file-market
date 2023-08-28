@@ -43,6 +43,9 @@ func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.U
 		Name:       req.Name,
 		Username:   req.Username,
 		WebsiteURL: req.WebsiteURL,
+		Twitter:    &req.Twitter,
+		Discord:    &req.Discord,
+		Telegram:   &req.Telegram,
 	}
 
 	if err := profile.ValidateForUpdate(); err != nil {

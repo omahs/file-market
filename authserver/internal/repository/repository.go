@@ -39,7 +39,6 @@ type UserProfile interface {
 	InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error
 	UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error
 	UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, address common.Address) error
-	UpdateUserProfileTwitter(ctx context.Context, tx pgx.Tx, twitter string, address common.Address) error
 	GetEmailVerificationToken(ctx context.Context, tx pgx.Tx, token string) (*domain.EmailVerificationToken, error)
 	InsertEmailVerificationToken(ctx context.Context, tx pgx.Tx, token *domain.EmailVerificationToken) error
 	DeleteAllEmailVerificationTokens(ctx context.Context, tx pgx.Tx, address common.Address) error
