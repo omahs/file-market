@@ -23,8 +23,8 @@ const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanc
   const [bioLength, setBioLength] = useState<number>(0)
 
   useEffect(() => {
-    console.log(bio.control._formState.errors)
-  }, [bio.control._formState.errors])
+    console.log(url.control._formState.errors)
+  }, [url.control._formState.errors])
 
   return (
     <StyledSectionContent>
@@ -35,7 +35,6 @@ const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanc
           settings
           placeholder='Profile name'
           controlledInputProps={name}
-          errorMessage={name.control._formState.errors as string}
         />
       </FormControlSettings>
       <FormControlSettings>

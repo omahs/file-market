@@ -21,7 +21,7 @@ export default observer(function ProfileSettings() {
 
   const {
     handleSubmit,
-    formState: { isValid },
+    formState: { isValid, errors },
     control,
     watch,
   } = useForm<IProfileSettings>({
@@ -82,8 +82,9 @@ export default observer(function ProfileSettings() {
   }, [error])
 
   useEffect(() => {
-    console.log(userStore.user)
-  }, [userStore.user])
+    console.log(errors)
+    console.log(isValid)
+  }, [errors, isValid])
 
   const name = watch('name')
   const username = watch('username')
@@ -123,6 +124,7 @@ export default observer(function ProfileSettings() {
               name: 'username',
               rules: {
                 validate: () => {
+                  console.log(username)
                   if (username?.length < 3 || username?.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
                   if (!username?.match(/^[a-z0-9_]+$/) || (username?.[0] === '0' && username?.[1] === 'x')) return 'Please enter valid username'
                 },
