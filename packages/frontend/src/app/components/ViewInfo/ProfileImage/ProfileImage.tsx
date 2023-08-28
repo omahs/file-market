@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { useStores } from '../../../hooks'
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
@@ -86,10 +86,6 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
       )
     }
   }, [error, isLoading])
-
-  useEffect(() => {
-    updateProfile({})
-  }, [])
 
   return (
     <StyledProfileImage
