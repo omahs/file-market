@@ -5,12 +5,15 @@ import { useAccount, useSignMessage } from 'wagmi'
 
 import { LoadingModal } from '../components/Modal/LoadingModal'
 import { InProcessBodyProps } from '../components/Modal/Modal'
+import { DialogProps } from '../utils/dialog'
 import { useStores } from './useStores'
 
 export interface IUseAppAuthAndConnect {
   isWithSign?: boolean
   onSuccess?: () => void
 }
+
+type InProccess = InProcessBodyProps & DialogProps
 
 export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
   const { isConnected, address, connector } = useAccount()
@@ -81,7 +84,7 @@ export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
     if (isLoading) {
       console.log('Open')
       if (dialogStore.isDialogOpenByName('LoadingSign')) return
-      dialogStore.openDialog<InProcessBodyProps>({
+      dialogStore.openDialog<InProccess>({
         component: LoadingModal,
         props: {
           name: 'LoadingSign',

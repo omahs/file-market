@@ -18,7 +18,7 @@ const ConnectWalletWindowStyle = styled('div', {
 })
 
 type IConnectFileWalletDialog = AppDialogProps<{}> & {
-  openWeb3Modal: () => void
+  openWeb3Modal?: () => void
 }
 
 export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal }: IConnectFileWalletDialog) => {

@@ -27,6 +27,8 @@ const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitt
           settings
           placeholder='Website URL'
           controlledInputProps={website}
+          errorMessage={website.control._formState.errors.website?.message as string}
+          isError={!!website.control._formState.errors.website?.message}
         />
       </FormControlSettings>
       <FormControlSettings>

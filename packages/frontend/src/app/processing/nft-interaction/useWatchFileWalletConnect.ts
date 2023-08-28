@@ -19,7 +19,6 @@ export default function useWatchFileWalletConnect(): void {
     dialogStore.openDialog({
       component: canUnlock ? UnlockFWDialog : ConnectFileWalletDialog,
       props: {
-        // @ts-expect-error
         name: canUnlock ? 'UnlockFWDialog' : 'ConnectMain',
       },
     })

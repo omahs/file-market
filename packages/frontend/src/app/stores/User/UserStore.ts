@@ -1,8 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
 import { Api, UserProfile } from '../../../swagger/Api'
-import { createToken } from '../../utils/jwt/createToken'
-import { getAccessToken } from '../../utils/jwt/get'
+import { requestJwtAccess } from '../../utils/jwt/function'
 import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 import { RootStore } from '../RootStore'
@@ -36,18 +35,12 @@ export class UserStore implements IStoreRequester {
   }
 
   async updateUserInfo(user?: UserProfile) {
-    console.log({
-      ...this.user,
-      ...user,
-    })
     if (!user) return
     storeRequest(
       this,
-      this.profileService.updateCreate({
+      requestJwtAccess(this.profileService.updateCreate, {
         ...this.user,
         ...user,
-      }, {
-        headers: { authorization: createToken(getAccessToken()?.token ?? '') },
       }),
       (response) => {
         this.setUser(response)
@@ -59,9 +52,7 @@ export class UserStore implements IStoreRequester {
     if (!email) return
     storeRequest(
       this,
-      this.profileService.setEmailCreate({ email }, {
-        headers: { authorization: createToken(getAccessToken()?.token ?? '') },
-      }),
+      requestJwtAccess(this.profileService.setEmailCreate, { email }),
       () => {},
     )
   }

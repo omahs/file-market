@@ -17,7 +17,7 @@ import Links from './sections/Links/Links'
 import Notifications from './sections/Notifications/Notifications'
 
 export default observer(function ProfileSettings() {
-  const { userStore, profileStore } = useStores()
+  const { userStore } = useStores()
 
   const {
     handleSubmit,
@@ -25,6 +25,7 @@ export default observer(function ProfileSettings() {
     control,
     watch,
   } = useForm<IProfileSettings>({
+    mode: 'onBlur',
     defaultValues: {
       name: userStore.user?.name,
       username: userStore.user?.username,
@@ -40,7 +41,7 @@ export default observer(function ProfileSettings() {
     isLoading,
     result,
     updateProfile,
-  } = useUpdateProfile(profileStore.reload)
+  } = useUpdateProfile()
   const { address } = useAccount()
   const onSubmit: SubmitHandler<IProfileSettings> = (data) => {
     updateProfile(data)
@@ -81,15 +82,11 @@ export default observer(function ProfileSettings() {
     )
   }, [error])
 
-  useEffect(() => {
-    console.log(errors)
-    console.log(isValid)
-  }, [errors, isValid])
-
   const name = watch('name')
   const username = watch('username')
   const bio = watch('bio')
   const email = watch('email')
+  const website = watch('website')
 
   return (
     <>
@@ -116,7 +113,11 @@ export default observer(function ProfileSettings() {
               control,
               name: 'name',
               rules: {
-                validate: () => name?.length > 3 && name?.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters',
+                validate: () => {
+                  if (!name) return
+
+                  return name.length > 3 && name.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
+                },
               },
             }}
             url={{
@@ -124,9 +125,9 @@ export default observer(function ProfileSettings() {
               name: 'username',
               rules: {
                 validate: () => {
-                  console.log(username)
-                  if (username?.length < 3 || username?.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
-                  if (!username?.match(/^[a-z0-9_]+$/) || (username?.[0] === '0' && username?.[1] === 'x')) return 'Please enter valid username'
+                  if (!username) return
+                  if (username.length < 3 || username.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
+                  if (!username.match(/^[a-z0-9_]+$/) || (username[0] === '0' && username[1] === 'x')) return 'Please enter valid username'
                 },
               },
             }}
@@ -134,7 +135,11 @@ export default observer(function ProfileSettings() {
               control,
               name: 'bio',
               rules: {
-                validate: () => bio?.length > 1000 ? undefined : 'The bio must have less than 1000 characters',
+                validate: () => {
+                  if (!bio) return
+
+                  return bio.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
+                },
               },
             }}
           />
@@ -143,7 +148,11 @@ export default observer(function ProfileSettings() {
               control,
               name: 'email',
               rules: {
-                validate: () => email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email',
+                validate: () => {
+                  if (!email) return
+
+                  return email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
+                },
               },
             }}
             emailNotification={{
@@ -159,6 +168,13 @@ export default observer(function ProfileSettings() {
             website={{
               control,
               name: 'website',
+              rules: {
+                validate: () => {
+                  if (!website) return
+
+                  return website?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                },
+              },
             }}
             twitter={{
               control,
@@ -176,8 +192,8 @@ export default observer(function ProfileSettings() {
           <Button
             primary
             type='submit'
-            isDisabled={!isValid}
-            title={isValid ? undefined : 'Required fields must be filled'}
+            isDisabled={!!Object.keys(errors).length}
+            title={!Object.keys(errors).length ? undefined : 'Required fields must be filled'}
             css={{
               width: '240px',
             }}

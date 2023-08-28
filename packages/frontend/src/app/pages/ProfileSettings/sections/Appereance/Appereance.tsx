@@ -32,6 +32,8 @@ const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanc
       <FormControlSettings>
         <StyledTitleInput>Display name</StyledTitleInput>
         <Input<T>
+          errorMessage={name.control._formState.errors.name?.message as string}
+          isError={!!name.control._formState.errors.name?.message}
           settings
           placeholder='Profile name'
           controlledInputProps={name}
@@ -42,6 +44,9 @@ const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanc
         <TextStartInput<T>
           inputProps={{
             placeholder: 'URL',
+            errorMessage: url.control._formState.errors.username?.message as string,
+            isError: !!url.control._formState.errors.username?.message,
+            settings: true,
           }}
           controlledInputProps={url}
           textStart={'filemarket.xyz/profile/'}
