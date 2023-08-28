@@ -14,7 +14,7 @@ export const useJwtAuth = (props: IUseAppAuthAndConnect) => {
     } else {
       props.onSuccess?.()
     }
-  }, [isConnected])
+  }, [isConnected, props, connect])
 
   return connectFunc
 }
