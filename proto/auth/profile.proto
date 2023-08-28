@@ -17,6 +17,7 @@ message UserProfile {
   string twitter = 10;
   string address = 11;
   string discord = 12;
+  string telegram = 13;
 }
 
 message GetUserProfileRequest {

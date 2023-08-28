@@ -28,14 +28,19 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 		Token:     &res.RefreshToken.Token,
 	}
 	profile := models.UserProfile{
-		AvatarURL:  res.Profile.AvatarURL,
-		BannerURL:  res.Profile.BannerURL,
-		Bio:        res.Profile.Bio,
-		Email:      res.Profile.Email,
-		Name:       res.Profile.Name,
-		Twitter:    res.Profile.Twitter,
-		Username:   res.Profile.Username,
-		WebsiteURL: res.Profile.WebsiteURL,
+		Address:                    res.Profile.Address,
+		AvatarURL:                  res.Profile.AvatarURL,
+		BannerURL:                  res.Profile.BannerURL,
+		Bio:                        res.Profile.Bio,
+		Discord:                    res.Profile.Discord,
+		Email:                      res.Profile.Email,
+		IsEmailNotificationEnabled: res.Profile.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.Profile.IsPushNotificationEnabled,
+		Name:                       res.Profile.Name,
+		Telegram:                   res.Profile.Telegram,
+		Twitter:                    res.Profile.Twitter,
+		Username:                   res.Profile.Username,
+		WebsiteURL:                 res.Profile.WebsiteURL,
 	}
 
 	return &models.AuthResponse{
@@ -71,14 +76,19 @@ func (s *service) RefreshJwtTokens(ctx context.Context) (*models.AuthResponse, *
 		Token:     &res.RefreshToken.Token,
 	}
 	profile := models.UserProfile{
-		AvatarURL:  res.Profile.AvatarURL,
-		BannerURL:  res.Profile.BannerURL,
-		Bio:        res.Profile.Bio,
-		Email:      res.Profile.Email,
-		Name:       res.Profile.Name,
-		Twitter:    res.Profile.Twitter,
-		Username:   res.Profile.Username,
-		WebsiteURL: res.Profile.WebsiteURL,
+		Address:                    res.Profile.Address,
+		AvatarURL:                  res.Profile.AvatarURL,
+		BannerURL:                  res.Profile.BannerURL,
+		Bio:                        res.Profile.Bio,
+		Discord:                    res.Profile.Discord,
+		Email:                      res.Profile.Email,
+		IsEmailNotificationEnabled: res.Profile.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.Profile.IsPushNotificationEnabled,
+		Name:                       res.Profile.Name,
+		Telegram:                   res.Profile.Telegram,
+		Twitter:                    res.Profile.Twitter,
+		Username:                   res.Profile.Username,
+		WebsiteURL:                 res.Profile.WebsiteURL,
 	}
 
 	return &models.AuthResponse{
@@ -133,13 +143,15 @@ func (s *service) CheckAuth(ctx context.Context) (*models.UserProfile, *models.E
 		AvatarURL:                  res.AvatarURL,
 		BannerURL:                  res.BannerURL,
 		Bio:                        res.Bio,
+		Discord:                    res.Discord,
 		Email:                      res.Email,
+		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
 		Name:                       res.Name,
+		Telegram:                   res.Telegram,
 		Twitter:                    res.Twitter,
 		Username:                   res.Username,
 		WebsiteURL:                 res.WebsiteURL,
-		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
-		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
 	}
 
 	return &profile, nil

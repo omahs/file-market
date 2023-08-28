@@ -12,3 +12,10 @@ func RandomString(l int) string {
 
 	return string(res)
 }
+
+func UnwrapString(str *string) string {
+	if str == nil {
+		return ""
+	}
+	return *str
+}
