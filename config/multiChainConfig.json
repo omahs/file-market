@@ -37,7 +37,7 @@
     "accessTokenAddress": "0xdcbF452fEA133e28759F050C9BDD827C805B3030",
     "exchangeTokenAddress": "0x2f255f048c1510485bd3F7D65520EDFB9EbC9362",
     "isDefault": true,
-    "baseUrl": "https://filemarket.xyz/api",
+    "baseUrl": "filemarket.xyz/api",
     "explorer": "https://filfox.info/en/message/",
     "wsUrl": "wss://filemarket.xyz"
   },
@@ -93,12 +93,12 @@
       "rpcUrls": {
         "default": {
           "http": [
-            "https://nd-223-015-392.p2pify.com/80abe9200081e09a2ac7f6c101c9dd1e"
+            "https://rpc.ankr.com/zksync_era"
           ]
         },
         "public": {
           "http": [
-            "https://nd-223-015-392.p2pify.com/80abe9200081e09a2ac7f6c101c9dd1e"
+            "https://rpc.ankr.com/zksync_era"
           ]
         }
       },
