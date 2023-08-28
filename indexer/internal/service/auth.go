@@ -16,6 +16,7 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 		Signature: *req.Signature,
 	})
 	if err != nil {
+		logger.Error("failed to auth by signature", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -50,6 +51,7 @@ func (s *service) GetAuthMessage(ctx context.Context, req models.AuthMessageRequ
 		Address: *req.Address,
 	})
 	if err != nil {
+		logger.Error("failed to get auth message", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -59,6 +61,7 @@ func (s *service) GetAuthMessage(ctx context.Context, req models.AuthMessageRequ
 func (s *service) RefreshJwtTokens(ctx context.Context) (*models.AuthResponse, *models.ErrorResponse) {
 	res, err := s.authClient.RefreshTokens(ctx, &empty.Empty{})
 	if err != nil {
+		logger.Error("failed to refresh jwt", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -95,6 +98,7 @@ func (s *service) GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, to
 		Token:   token,
 	})
 	if err != nil {
+		logger.Error("failed to get uset by jwt", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -107,6 +111,7 @@ func (s *service) GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, to
 func (s *service) Logout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse) {
 	res, err := s.authClient.Logout(ctx, &empty.Empty{})
 	if err != nil {
+		logger.Error("failed to logout", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -116,6 +121,7 @@ func (s *service) Logout(ctx context.Context) (*models.SuccessResponse, *models.
 func (s *service) FullLogout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse) {
 	res, err := s.authClient.FullLogout(ctx, &empty.Empty{})
 	if err != nil {
+		logger.Error("failed to full logout", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
@@ -125,6 +131,7 @@ func (s *service) FullLogout(ctx context.Context) (*models.SuccessResponse, *mod
 func (s *service) CheckAuth(ctx context.Context) (*models.UserProfile, *models.ErrorResponse) {
 	res, err := s.authClient.CheckAuth(ctx, &empty.Empty{})
 	if err != nil {
+		logger.Error("failed to check auth", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 

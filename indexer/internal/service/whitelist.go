@@ -21,6 +21,7 @@ func (s *service) AddressInWhitelist(ctx context.Context, address common.Address
 
 	rarity, err := s.repository.AddressInWhitelist(ctx, tx, address)
 	if err != nil {
+		logger.Error("failed to get address in whitelist", err, nil)
 		return nil, internalError
 	}
 
