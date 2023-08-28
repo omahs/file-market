@@ -22,7 +22,7 @@ export default observer(function ProfileSettings() {
 
   const {
     handleSubmit,
-    formState: { isValid, errors },
+    formState: { errors },
     control,
     watch,
   } = useForm<IProfileSettings>({
@@ -34,6 +34,7 @@ export default observer(function ProfileSettings() {
       email: userStore.user?.email,
       website: userStore.user?.websiteUrl,
       twitter: userStore.user?.twitter,
+      telegram: userStore.user?.telegram,
     },
   })
 

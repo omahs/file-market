@@ -17,6 +17,8 @@ export function useStatusState<ResultType, Arguments extends any = void>() {
         setIsLoading(false)
         setResult(result)
 
+        console.log('SUCCESS')
+
         return result
       } catch (err) {
         setIsLoading(false)
