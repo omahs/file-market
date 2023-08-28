@@ -132,6 +132,7 @@ func (s *service) GetOrder(
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
+		logger.Error("failed to get active order", err, nil)
 		return nil, internalError
 	}
 	res.PriceUsd = currencyconversion.Convert(rate, res.Price)

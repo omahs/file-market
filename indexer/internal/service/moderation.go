@@ -37,6 +37,7 @@ func (s *service) ReportCollection(ctx context.Context, userAddress common.Addre
 	}
 
 	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit tx", err, nil)
 		return internalError
 	}
 
@@ -66,6 +67,7 @@ func (s *service) ReportToken(ctx context.Context, userAddress common.Address, r
 	collectionAddress := common.HexToAddress(*req.CollectionAddress)
 	tokenId, ok := new(big.Int).SetString(*req.TokenID, 10)
 	if !ok {
+		logger.Error("failed to cast tokenId", err, nil)
 		return internalError
 	}
 
@@ -75,6 +77,7 @@ func (s *service) ReportToken(ctx context.Context, userAddress common.Address, r
 	}
 
 	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit tx", err, nil)
 		return internalError
 	}
 

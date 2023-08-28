@@ -89,6 +89,7 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 	}
 
 	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit tx", err, nil)
 		return nil, internalError
 	}
 
@@ -111,7 +112,7 @@ func (s *service) GetAuthMessage(ctx context.Context, req models.AuthMessageRequ
 
 	msg, err := s.repository.GetAuthMessage(ctx, tx, address)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		log.Printf("failed to get auth message: %v\n", err)
+		logger.Error("failed to get auth message", err, nil)
 		return nil, internalError
 	}
 	if msg != nil {
@@ -137,6 +138,7 @@ func (s *service) GetAuthMessage(ctx context.Context, req models.AuthMessageRequ
 	}
 
 	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit tx", err, nil)
 		return nil, internalError
 	}
 
@@ -163,6 +165,7 @@ func (s *service) RefreshJwtTokens(ctx context.Context, address common.Address, 
 	}
 
 	if err := tx.Commit(ctx); err != nil {
+		logger.Error("failed to commit tx", err, nil)
 		return nil, internalError
 	}
 

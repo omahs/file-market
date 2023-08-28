@@ -111,6 +111,8 @@ func (s *service) GetTransfer(ctx context.Context, address common.Address,
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
+
+		logger.Error("failed to get active transfer", err, nil)
 		return nil, internalError
 	}
 	return domain.TransferToModel(res), nil
@@ -165,6 +167,7 @@ func (s *service) GetTransfersV2(
 	for i, t := range incomingTransfers {
 		token, err := s.repository.GetToken(ctx, tx, t.CollectionAddress, t.TokenId)
 		if err != nil {
+			logger.Error("failed to get token", err, nil)
 			return nil, internalError
 		}
 		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
@@ -173,12 +176,14 @@ func (s *service) GetTransfersV2(
 
 		collection, err := s.repository.GetCollection(ctx, tx, t.CollectionAddress)
 		if err != nil {
+			logger.Error("failed to get collection", err, nil)
 			return nil, internalError
 		}
 		var order *domain.Order
 		if t.OrderId != 0 {
 			order, err = s.repository.GetOrder(ctx, tx, t.OrderId)
 			if err != nil {
+				logger.Error("failed to get order", err, nil)
 				return nil, internalError
 			}
 			order.PriceUsd = currencyconversion.Convert(rate, order.Price)
@@ -193,6 +198,7 @@ func (s *service) GetTransfersV2(
 	for i, t := range outgoingTransfers {
 		token, err := s.repository.GetToken(ctx, tx, t.CollectionAddress, t.TokenId)
 		if err != nil {
+			logger.Error("failed to get token", err, nil)
 			return nil, internalError
 		}
 		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
@@ -201,12 +207,14 @@ func (s *service) GetTransfersV2(
 
 		collection, err := s.repository.GetCollection(ctx, tx, t.CollectionAddress)
 		if err != nil {
+			logger.Error("failed to get collection", err, nil)
 			return nil, internalError
 		}
 		var order *domain.Order
 		if t.OrderId != 0 {
 			order, err = s.repository.GetOrder(ctx, tx, t.OrderId)
 			if err != nil {
+				logger.Error("failed to get order", err, nil)
 				return nil, internalError
 			}
 			order.PriceUsd = currencyconversion.Convert(rate, order.Price)
