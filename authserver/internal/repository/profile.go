@@ -116,7 +116,6 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		profile.WebsiteURL,
 		profile.AvatarURL,
 		profile.BannerURL,
-		profile.Email,
 		profile.Twitter,
 		profile.Discord,
 		profile.Telegram,
