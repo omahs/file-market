@@ -22,7 +22,7 @@ var (
 func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT name, username, bio, website_url, twitter, email, discord, telegram, avatar_url, banner_url,
+		SELECT name, username, bio, website_url, twitter, email, is_email_confirmed, discord, telegram, avatar_url, banner_url,
 		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE address = $1
@@ -42,6 +42,7 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 		&profile.WebsiteURL,
 		&profile.Twitter,
 		&email,
+		&profile.IsEmailConfirmed,
 		&profile.Discord,
 		&profile.Telegram,
 		&profile.AvatarURL,
@@ -62,7 +63,7 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address, name, username, bio, website_url, twitter, discord, telegram, email, avatar_url, banner_url, 
+		SELECT address, name, username, bio, website_url, twitter, discord, telegram, email, is_email_confirmed, avatar_url, banner_url, 
 		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE username = $1
@@ -83,6 +84,7 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 		&profile.Discord,
 		&profile.Telegram,
 		&email,
+		&profile.IsEmailConfirmed,
 		&profile.AvatarURL,
 		&profile.BannerURL,
 		&profile.IsEmailNotificationsEnabled,
@@ -104,9 +106,9 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 	// language=PostgreSQL
 	query := `
 		INSERT INTO user_profiles(
-			address, name, username, bio, website_url, avatar_url, banner_url, email, twitter, discord, telegram,
+			address, name, username, bio, website_url, avatar_url, banner_url, email, is_email_confirmed, twitter, discord, telegram,
 		    is_email_notifications_enabled, is_push_notifications_enabled)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,$8,$9,$10,$11,$12)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,false,$8,$9,$10,$11,$12)
 	`
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
@@ -156,15 +158,16 @@ func (p *postgres) UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 	return nil
 }
 
-func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, address common.Address) error {
+func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, isConfirmed bool, address common.Address) error {
 	// language=PostgreSQL
 	query := `
 		UPDATE user_profiles 
-		SET email=$1
-		WHERE address=$2
+		SET email=$1, is_email_confirmed=$2
+		WHERE address=$3
 	`
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(email),
+		isConfirmed,
 		strings.ToLower(address.String()),
 	); err != nil {
 		return resolveUserProfileDBErr(err)

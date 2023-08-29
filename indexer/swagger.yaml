@@ -1208,6 +1208,9 @@ definitions:
         type: string
         pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'
         description: Вернется если **Авторизирован**
+      isEmailConfirmed:
+        type: boolean
+        description: Подтверждена ли почта
       isEmailNotificationEnabled:
         type: boolean
         description: Включены ли уведомления по почте

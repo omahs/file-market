@@ -152,6 +152,7 @@ func (s *service) CheckAuth(ctx context.Context) (*models.UserProfile, *models.E
 		Bio:                        res.Bio,
 		Discord:                    res.Discord,
 		Email:                      res.Email,
+		IsEmailConfirmed:           res.IsEmailConfirmed,
 		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
 		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
 		Name:                       res.Name,

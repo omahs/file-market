@@ -15,6 +15,7 @@ type UserProfile struct {
 	BannerURL                   string         `json:"bannerUrl"`
 	Bio                         string         `json:"bio"`
 	Email                       string         `json:"email"`
+	IsEmailConfirmed            bool           `json:"isEmailConfirmed"`
 	IsEmailNotificationsEnabled bool           `json:"isEmailNotificationsEnabled"`
 	IsPushNotificationsEnabled  bool           `json:"isPushNotificationsEnabled"`
 	Name                        string         `json:"name"`
@@ -124,6 +125,7 @@ func (p *UserProfile) HidePrivateFields() {
 	p.Email = ""
 	p.IsPushNotificationsEnabled = false
 	p.IsEmailNotificationsEnabled = false
+	p.IsEmailConfirmed = false
 }
 
 func GetDefaultUserProfile(address common.Address) *UserProfile {
