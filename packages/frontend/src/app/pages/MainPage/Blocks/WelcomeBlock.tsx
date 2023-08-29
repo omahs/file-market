@@ -254,7 +254,7 @@ export default function WelcomeBlock() {
         <WelcomeInfo>
           <StorageImg src={bgStorage} />
           <Title>
-            Marketplace for tokenizing and monetizing your data
+            Tokenized File Sharing platform with programmable access & incentives
           </Title>
           <Description>
             Your access point to decentralized storage for impactful content, where data hunters, keepers, and providers connect.
