@@ -3,9 +3,8 @@ export interface IProfileSettings {
   username?: string
   bio?: string
   email?: string
-  isEnableEmailNotification?: boolean
-  isEnablePushNotification?: boolean
-  website?: string
+  isEmailNotificationEnabled?: boolean
+  websiteUrl?: string
   twitter?: string
   telegram?: string
   discord?: string

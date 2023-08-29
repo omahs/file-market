@@ -30,9 +30,10 @@ export default observer(function ProfileSettings() {
       username: userStore.user?.username,
       bio: userStore.user?.bio,
       email: userStore.user?.email,
-      website: userStore.user?.websiteUrl,
+      websiteUrl: userStore.user?.websiteUrl,
       twitter: userStore.user?.twitter,
       telegram: userStore.user?.telegram,
+      isEmailNotificationEnabled: userStore.user?.isEmailNotificationEnabled,
     },
   })
 
@@ -55,7 +56,10 @@ export default observer(function ProfileSettings() {
   const username = watch('username')
   const bio = watch('bio')
   const email = watch('email')
-  const website = watch('website')
+  const websiteUrl = watch('websiteUrl')
+  const telegram = watch('telegram')
+  const twitter = watch('twitter')
+  const discord = watch('discord')
 
   return (
     <>
@@ -121,7 +125,7 @@ export default observer(function ProfileSettings() {
             }}
             emailNotification={{
               control,
-              name: 'isEnableEmailNotification',
+              name: 'isEmailNotificationEnabled',
             }}
           // pushNotification={{
           //   control,
@@ -129,28 +133,50 @@ export default observer(function ProfileSettings() {
           // }}
           />
           <Links<IProfileSettings>
-            website={{
+            websiteUrl={{
               control,
-              name: 'website',
+              name: 'websiteUrl',
               rules: {
                 validate: () => {
-                  if (!website) return
+                  if (!websiteUrl) return
+                  if (websiteUrl.length > 50) return 'The url less than 50 characters'
 
-                  return website?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                  return websiteUrl?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
                 },
               },
             }}
             twitter={{
               control,
               name: 'twitter',
+              rules: {
+                validate: () => {
+                  if (!twitter) return
+
+                  return twitter.length < 50 ? undefined : 'The twitter must have less than 1000 characters'
+                },
+              },
             }}
             telegram={{
               control,
               name: 'telegram',
+              rules: {
+                validate: () => {
+                  if (!telegram) return
+
+                  return telegram.length < 50 ? undefined : 'The telegram must have less than 1000 characters'
+                },
+              },
             }}
             discord={{
               control,
               name: 'discord',
+              rules: {
+                validate: () => {
+                  if (!discord) return
+
+                  return discord.length < 50 ? undefined : 'The discord must have less than 1000 characters'
+                },
+              },
             }}
           />
           <Button
