@@ -43,6 +43,8 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
       ...userStore.user,
       avatarUrl: url.url,
     })
+
+    return 'Vse good'
   })
 
   const connectFunc = useJwtAuth({
