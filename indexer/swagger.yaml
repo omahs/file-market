@@ -1238,6 +1238,9 @@ definitions:
         type: string
         pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
         description: Ссылка на сайт коллекции
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
       twitter:
         type: string
         description: ссылка на твиттер
@@ -1265,6 +1268,9 @@ definitions:
         type: string
         pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
         description: Ссылка на сайт коллекции
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
       twitter:
         type: string
         description: ссылка на твиттер
@@ -1531,6 +1537,9 @@ definitions:
       discord:
         type: string
         description: ссылка на discord
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
   Collection:
     type: object
     description: Коллекция
