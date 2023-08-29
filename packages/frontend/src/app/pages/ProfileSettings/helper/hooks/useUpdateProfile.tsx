@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { useStatusState, useStores } from '../../../../hooks'
 import { useAfterDidMountEffect } from '../../../../hooks/useDidMountEffect'
@@ -19,29 +19,27 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     discord: '',
   })
 
-  const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<void, IProfileSettings>()
+  const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<string, IProfileSettings>()
 
-  const { error, isLoading, result } = statuses
-
-  const updateProfile = wrapPromise(async (props: IProfileSettings) => {
+  const updateProfile = useCallback(wrapPromise(async (props: IProfileSettings) => {
     console.log('update')
     if (props.email !== userStore.user?.email) {
       await userStore.updateEmail(props.email)
     }
     await userStore.updateUserInfo(props)
     onSuccess?.()
-  })
+
+    return 'vse good'
+  }), [userStore, onSuccess])
 
   useAfterDidMountEffect(() => {
     updateProfile(formToTransfer)
   }, [formToTransfer])
 
   return {
-    error,
     setError,
-    isLoading,
     setIsLoading,
-    result,
+    statuses,
     updateProfile: (form: IProfileSettings) => {
       console.log('Update2')
       setFormToTransfer(form)

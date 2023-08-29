@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 
-import { useStores } from '../../../hooks'
-import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
+import { useStatusState, useStores } from '../../../hooks'
 import { useJwtAuth } from '../../../hooks/useJwtAuth'
-import { useModalProperties } from '../../../hooks/useModalProperties'
+import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useUpdateProfile } from '../../../pages/ProfileSettings/helper/hooks/useUpdateProfile'
 import { useUploadLighthouse } from '../../../processing'
 import { gradientPlaceholderImg } from '../../../UIkit'
 import { BaseModal } from '../../Modal'
-import { ErrorBody, extractMessageFromError, SuccessOkBody } from '../../Modal/Modal'
 import {
   EditProfileImageDialog,
   IEditProfileImageDialogForm,
@@ -37,13 +35,15 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
     })
   }
 
-  const updateProfileFunc = async (item: IEditProfileImageDialogForm) => {
+  const { wrapPromise, statuses } = useStatusState<string, IEditProfileImageDialogForm>()
+
+  const updateProfileFunc = wrapPromise(async (item: IEditProfileImageDialogForm) => {
     const url = await upload(item.image[0])
     updateProfile({
       ...userStore.user,
       avatarUrl: url.url,
     })
-  }
+  })
 
   const connectFunc = useJwtAuth({
     isWithSign: true,
@@ -52,70 +52,47 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
     },
   })
 
-  const { modalBody, setModalBody, modalOpen, setModalOpen } =
-    useModalProperties()
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Profile success',
+    loadingMsg: 'Profile is updating',
+  })
 
   const {
-    error,
-    result,
     updateProfile,
   } = useUpdateProfile(onSuccess)
 
-  useAfterDidMountEffect(() => {
-    if (error) {
-      setModalOpen(true)
-      setModalBody(
-        <ErrorBody
-          message={extractMessageFromError(result)}
-          onClose={() => {
-            void setModalOpen(false)
-          }}
-        />,
-      )
-    } else if (result) {
-      setModalOpen(true)
-      setModalBody(
-        <SuccessOkBody
-          buttonText='View EFT'
-          description={'Profile success'}
-        />,
-      )
-    }
-  }, [error, result])
-
   return (
-    <StyledProfileImage
-      onMouseEnter={() => setIsShowEdit(true)}
-      onMouseLeave={() => setIsShowEdit(false)}
-    >
+    <>
       <BaseModal
-        body={modalBody}
-        open={modalOpen}
-        isError={!!error}
-        handleClose={() => {
-          setModalOpen(false)
-        }}
+        {...modalProps}
       />
-      <StyledProfileImageContent style={{
-        backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-        borderRadius: '50%',
-      }}
+      <StyledProfileImage
+        onMouseEnter={() => setIsShowEdit(true)}
+        onMouseLeave={() => setIsShowEdit(false)}
       >
-        {
-          (isShowEdit && isOwner) && (
-            <StyledProfileCameraImage
-              src={ChangeLogoImg}
-              onClick={() => {
-                connectFunc()
-              }
-              }
-            />
-          )}
-      </StyledProfileImageContent>
-    </StyledProfileImage>
+
+        <StyledProfileImageContent style={{
+          backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          borderRadius: '50%',
+        }}
+        >
+          {
+            (isShowEdit && isOwner) && (
+              <StyledProfileCameraImage
+                src={ChangeLogoImg}
+                onClick={() => {
+                  connectFunc()
+                }
+                }
+              />
+            )}
+        </StyledProfileImageContent>
+      </StyledProfileImage>
+    </>
   )
 }
 

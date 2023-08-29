@@ -4,10 +4,8 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { BaseModal } from '../../components'
-import { ErrorBody, extractMessageFromError, SuccessOkBody } from '../../components/Modal/Modal'
 import { useStores } from '../../hooks'
-import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
-import { useModalProperties } from '../../hooks/useModalProperties'
+import { useStatusModal } from '../../hooks/useStatusModal'
 import { Button, PageLayout, Txt } from '../../UIkit'
 import ReturnButton from './components/ReturnButton/ReturnButton'
 import { useUpdateProfile } from './helper/hooks/useUpdateProfile'
@@ -39,8 +37,7 @@ export default observer(function ProfileSettings() {
   })
 
   const {
-    error,
-    result,
+    statuses,
     updateProfile,
   } = useUpdateProfile()
   const { address } = useAccount()
@@ -48,30 +45,11 @@ export default observer(function ProfileSettings() {
     updateProfile(data)
   }
 
-  const { modalBody, setModalBody, modalOpen, setModalOpen } =
-    useModalProperties()
-
-  useAfterDidMountEffect(() => {
-    if (error) {
-      setModalOpen(true)
-      setModalBody(
-        <ErrorBody
-          message={extractMessageFromError(result)}
-          onClose={() => {
-            void setModalOpen(false)
-          }}
-        />,
-      )
-    } else if (result) {
-      setModalOpen(true)
-      setModalBody(
-        <SuccessOkBody
-          buttonText='View EFT'
-          description={'Profile success'}
-        />,
-      )
-    }
-  }, [error, result])
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Profile success',
+    loadingMsg: 'Sending an encrypted encryption password',
+  })
 
   const name = watch('name')
   const username = watch('username')
@@ -80,117 +58,114 @@ export default observer(function ProfileSettings() {
   const website = watch('website')
 
   return (
-    <PageLayout css={{ minHeight: '100vh' }}>
+    <>
       <BaseModal
-        body={modalBody}
-        open={modalOpen}
-        isError={!!error}
-        handleClose={() => {
-          setModalOpen(false)
-        }}
+        {...modalProps}
       />
-      <ReturnButton />
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <StyledTitle>Profile settings</StyledTitle>
-        <GrayBgText YourWalletStyled>
-          <Txt primary1>
-            Your wallet:
-          </Txt>
-          <Txt body4>{address ?? 'Please connect the wallet'}</Txt>
-        </GrayBgText>
-        <AppearanceSection<IProfileSettings>
-          name={{
-            control,
-            name: 'name',
-            rules: {
-              validate: () => {
-                if (!name) return
+      <PageLayout css={{ minHeight: '100vh' }}>
+        <ReturnButton />
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <StyledTitle>Profile settings</StyledTitle>
+          <GrayBgText YourWalletStyled>
+            <Txt primary1>
+              Your wallet:
+            </Txt>
+            <Txt body4>{address ?? 'Please connect the wallet'}</Txt>
+          </GrayBgText>
+          <AppearanceSection<IProfileSettings>
+            name={{
+              control,
+              name: 'name',
+              rules: {
+                validate: () => {
+                  if (!name) return
 
-                return name.length > 3 && name.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
+                  return name.length > 3 && name.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
+                },
               },
-            },
-          }}
-          url={{
-            control,
-            name: 'username',
-            rules: {
-              validate: () => {
-                if (!username) return
-                if (username.length < 3 || username.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
-                if (!username.match(/^[a-z0-9_]+$/) || (username[0] === '0' && username[1] === 'x')) return 'Please enter valid username'
+            }}
+            url={{
+              control,
+              name: 'username',
+              rules: {
+                validate: () => {
+                  if (!username) return
+                  if (username.length < 3 || username.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
+                  if (!username.match(/^[a-z0-9_]+$/) || (username[0] === '0' && username[1] === 'x')) return 'Please enter valid username'
+                },
               },
-            },
-          }}
-          bio={{
-            control,
-            name: 'bio',
-            rules: {
-              validate: () => {
-                if (!bio) return
+            }}
+            bio={{
+              control,
+              name: 'bio',
+              rules: {
+                validate: () => {
+                  if (!bio) return
 
-                return bio.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
+                  return bio.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
+                },
               },
-            },
-          }}
-        />
-        <Notifications<IProfileSettings>
-          email={{
-            control,
-            name: 'email',
-            rules: {
-              validate: () => {
-                if (!email) return
+            }}
+          />
+          <Notifications<IProfileSettings>
+            email={{
+              control,
+              name: 'email',
+              rules: {
+                validate: () => {
+                  if (!email) return
 
-                return email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
+                  return email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
+                },
               },
-            },
-          }}
-          emailNotification={{
-            control,
-            name: 'isEnableEmailNotification',
-          }}
+            }}
+            emailNotification={{
+              control,
+              name: 'isEnableEmailNotification',
+            }}
           // pushNotification={{
           //   control,
           //   name: 'isEnablePushNotification',
           // }}
-        />
-        <Links<IProfileSettings>
-          website={{
-            control,
-            name: 'website',
-            rules: {
-              validate: () => {
-                if (!website) return
+          />
+          <Links<IProfileSettings>
+            website={{
+              control,
+              name: 'website',
+              rules: {
+                validate: () => {
+                  if (!website) return
 
-                return website?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                  return website?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                },
               },
-            },
-          }}
-          twitter={{
-            control,
-            name: 'twitter',
-          }}
-          telegram={{
-            control,
-            name: 'telegram',
-          }}
-          discord={{
-            control,
-            name: 'discord',
-          }}
-        />
-        <Button
-          primary
-          type='submit'
-          isDisabled={!!Object.keys(errors).length}
-          title={!Object.keys(errors).length ? undefined : 'Required fields must be filled'}
-          css={{
-            width: '240px',
-          }}
-        >
-          Update profile
-        </Button>
-      </Form>
-    </PageLayout>
+            }}
+            twitter={{
+              control,
+              name: 'twitter',
+            }}
+            telegram={{
+              control,
+              name: 'telegram',
+            }}
+            discord={{
+              control,
+              name: 'discord',
+            }}
+          />
+          <Button
+            primary
+            type='submit'
+            isDisabled={!!Object.keys(errors).length}
+            title={!Object.keys(errors).length ? undefined : 'Required fields must be filled'}
+            css={{
+              width: '240px',
+            }}
+          >
+            Update profile
+          </Button>
+        </Form>
+      </PageLayout>
+    </>
   )
 })
