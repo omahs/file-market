@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 
-import { useStores } from '../../../hooks'
-import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
+import { useStatusState, useStores } from '../../../hooks'
 import { useJwtAuth } from '../../../hooks/useJwtAuth'
-import { useModalProperties } from '../../../hooks/useModalProperties'
+import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useUpdateProfile } from '../../../pages/ProfileSettings/helper/hooks/useUpdateProfile'
 import { useUploadLighthouse } from '../../../processing'
 import { Txt } from '../../../UIkit'
 import { BaseModal } from '../../Modal'
-import { ErrorBody, extractMessageFromError, SuccessOkBody } from '../../Modal/Modal'
 import {
   IEditProfileImageDialogForm,
 } from '../ProfileImage/EditProfileImageDialog/EditProfileImageDialog'
@@ -34,13 +32,17 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
     })
   }
 
-  const updateProfileFunc = async (item: IEditProfileImageDialogForm) => {
+  const { wrapPromise, statuses } = useStatusState<string, IEditProfileImageDialogForm>()
+
+  const updateProfileFunc = wrapPromise(async (item: IEditProfileImageDialogForm) => {
     const url = await upload(item.image[0])
     updateProfile({
       ...userStore.user,
       bannerUrl: url.url,
     })
-  }
+
+    return 'All good'
+  })
 
   const connectFunc = useJwtAuth({
     isWithSign: true,
@@ -49,68 +51,44 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
     },
   })
 
-  const { modalBody, setModalBody, modalOpen, setModalOpen } =
-    useModalProperties()
-
   const {
-    error,
-    result,
     updateProfile,
   } = useUpdateProfile(onSuccess)
 
-  useAfterDidMountEffect(() => {
-    if (error) {
-      setModalOpen(true)
-      setModalBody(
-        <ErrorBody
-          message={extractMessageFromError(result)}
-          onClose={() => {
-            void setModalOpen(false)
-          }}
-        />,
-      )
-    } else if (result) {
-      setModalOpen(true)
-      setModalBody(
-        <SuccessOkBody
-          buttonText='View EFT'
-          description={'Profile success'}
-        />,
-      )
-    }
-  }, [error, result])
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Profile success',
+    loadingMsg: 'Profile is updating',
+  })
 
   return (
-    <StyledBanner
-      onMouseEnter={() => setIsShowEdit(true)}
-      onMouseLeave={() => setIsShowEdit(false)}
-    >
+    <>
       <BaseModal
-        body={modalBody}
-        open={modalOpen}
-        isError={!!error}
-        handleClose={() => {
-          setModalOpen(false)
-        }}
+        {...modalProps}
       />
-      <StyledBannerContent style={{
-        backgroundImage: !!src ? `url(${src})` : 'linear-gradient(135deg, #028FFF 0%, #04E762 100%)',
-        backgroundSize: 'contain',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-      }}
+      <StyledBanner
+        onMouseEnter={() => setIsShowEdit(true)}
+        onMouseLeave={() => setIsShowEdit(false)}
       >
-        {
-          (isShowEdit && isOwner) && (
-            <StyledBannerEditCard onClick={() => {
-              connectFunc()
-            }}
-            >
-              <Txt primary1>Edit cover</Txt>
-            </StyledBannerEditCard>
-          )}
-      </StyledBannerContent>
-    </StyledBanner>
+        <StyledBannerContent style={{
+          backgroundImage: !!src ? `url(${src})` : 'linear-gradient(135deg, #028FFF 0%, #04E762 100%)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }}
+        >
+          {
+            (isShowEdit && isOwner) && (
+              <StyledBannerEditCard onClick={() => {
+                connectFunc()
+              }}
+              >
+                <Txt primary1>Edit cover</Txt>
+              </StyledBannerEditCard>
+            )}
+        </StyledBannerContent>
+      </StyledBanner>
+    </>
   )
 }
 

@@ -46,6 +46,7 @@ export function useStatusModal({
         />,
       )
     } else if (result) {
+      console.log('RESULT TIT')
       setModalBody(
         <SuccessOkBody
           description={okMsg}
