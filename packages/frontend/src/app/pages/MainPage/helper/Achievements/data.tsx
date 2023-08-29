@@ -5,9 +5,19 @@ import FVMEarlyBuilders from '../../../../../assets/img/MainPage/achievements/fv
 import FVMMainnet from '../../../../../assets/img/MainPage/achievements/fvm_mainnet.svg'
 import FMSSpace from '../../../../../assets/img/MainPage/achievements/fvm_space.svg'
 import HackFS from '../../../../../assets/img/MainPage/achievements/hack_fs.svg'
+import MagicSquare from '../../../../../assets/img/MainPage/achievements/MagicSquare.svg'
+import SwitchUp from '../../../../../assets/img/MainPage/achievements/SwitchUp.svg'
 import { AchievementItemProps } from '../../Blocks/Achievements'
 
 export const AchievementsData: AchievementItemProps[] = [
+  {
+    img: SwitchUp,
+    title: (
+      <span>{'SwitchUp Accelerator finalist'}</span>
+    ),
+    description: 'Spores Accelerator Program 2023',
+    href: 'https://www.linkedin.com/feed/update/urn:li:activity:7099612538367090688',
+  },
   {
     img: AppOfTheMonthImg,
     title: (
@@ -66,5 +76,13 @@ export const AchievementsData: AchievementItemProps[] = [
       <span>{'FVM Early builders'}</span>
     ),
     description: 'F1 cohort Alumni',
+  },
+  {
+    img: MagicSquare,
+    title: (
+      <span>{'Winner of MagicSquare voting'}</span>
+    ),
+    description: 'Validation Score 4.9 with 12k+ votes',
+    href: 'https://magic.store/app/filemarket',
   },
 ]
