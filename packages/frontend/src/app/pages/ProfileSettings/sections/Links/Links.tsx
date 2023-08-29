@@ -11,13 +11,13 @@ import {
 } from '../../ProfileSettings.styles'
 
 interface ILinksSection<T extends FieldValues> {
-  website: ControlledInputProps<T>
+  websiteUrl: ControlledInputProps<T>
   twitter: ControlledInputProps<T>
   telegram: ControlledInputProps<T>
   discord: ControlledInputProps<T>
 }
 
-const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitter }: ILinksSection<T>) => {
+const LinksSection = <T extends FieldValues>({ websiteUrl, telegram, discord, twitter }: ILinksSection<T>) => {
   return (
     <StyledSectionContent>
       <StyledTitleSection>Links</StyledTitleSection>
@@ -26,9 +26,9 @@ const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitt
         <Input<T>
           settings
           placeholder='Website URL'
-          controlledInputProps={website}
-          errorMessage={website.control._formState.errors.website?.message as string}
-          isError={!!website.control._formState.errors.website?.message}
+          controlledInputProps={websiteUrl}
+          errorMessage={websiteUrl.control._formState.errors.websiteUrl?.message as string}
+          isError={!!websiteUrl.control._formState.errors.websiteUrl?.message}
         />
       </FormControlSettings>
       <FormControlSettings>
@@ -36,6 +36,9 @@ const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitt
         <TextStartInput<T>
           inputProps={{
             placeholder: 'X username',
+            settings: true,
+            errorMessage: twitter.control._formState.errors.twitter?.message as string,
+            isError: !!twitter.control._formState.errors.twitter?.message,
           }}
           controlledInputProps={twitter}
           textStart={'@'}
@@ -46,6 +49,9 @@ const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitt
         <TextStartInput<T>
           inputProps={{
             placeholder: 'Telegram username',
+            settings: true,
+            errorMessage: telegram.control._formState.errors.telegram?.message as string,
+            isError: !!telegram.control._formState.errors.telegram?.message,
           }}
           controlledInputProps={telegram}
           textStart={'@'}
@@ -57,6 +63,8 @@ const LinksSection = <T extends FieldValues>({ website, telegram, discord, twitt
           settings
           placeholder='Discord username'
           controlledInputProps={discord}
+          errorMessage={discord.control._formState.errors.discord?.message as string}
+          isError={!!discord.control._formState.errors.discord?.message}
         />
       </FormControlSettings>
     </StyledSectionContent>

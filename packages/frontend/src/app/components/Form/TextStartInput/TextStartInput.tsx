@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useRef } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { FieldValues } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
@@ -12,8 +12,7 @@ const TextStartInputStyle = styled('div', {
   color: '#6B6F76',
   '& .leftText': {
     position: 'absolute',
-    cursor: 'pointer',
-    top: '14px',
+    top: '15px',
     left: '16px',
     zIndex: '1',
     '&:hover': {
@@ -30,7 +29,13 @@ interface TextStartInputProps<T extends FieldValues> {
 }
 
 export const TextStartInput = <T extends FieldValues>(props: TextStartInputProps<T>) => {
+  const [refState, setRef] = useState<RefObject<HTMLSpanElement> | null>(null)
+
   const ref = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    setRef(ref)
+  }, [ref])
 
   return (
     <TextStartInputStyle>
@@ -49,7 +54,7 @@ export const TextStartInput = <T extends FieldValues>(props: TextStartInputProps
         placeholder={props.inputProps.placeholder ?? 'Start typing'}
         style={{
           width: '100%',
-          paddingLeft: +(ref?.current?.clientWidth ?? 0) + 24,
+          paddingLeft: +(refState?.current?.clientWidth ?? 0) + 24,
         }}
       />
     </TextStartInputStyle>

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 
-import { LinkButton, Txt } from '../../../../UIkit'
+import { Button, LinkButton, Txt } from '../../../../UIkit'
+import { copyToClipboard } from '../../../../utils/clipboard/clipboard'
 import { baseUrls, imgs } from '../../helper/linkCard/data'
 import { typesCard } from '../../helper/linkCard/types'
 
@@ -19,17 +20,41 @@ const LinkCard = ({ text, type }: ILinkCardProps) => {
   }, [type])
 
   return (
-    <LinkButton href={`${baseUrl}${text}`} target={'_blank'} settings>
-      <img src={img} />
-      <Txt
-        primary2
-        style={{
-          color: '#2F3134',
-        }}
-      >
-        {text}
-      </Txt>
-    </LinkButton>
+    <>
+      {type !== 'discord' && (
+        <LinkButton href={`${baseUrl}${text}`} target={'_blank'} settings>
+          <img src={img} />
+          <Txt
+            primary2
+            style={{
+              color: '#2F3134',
+            }}
+          >
+            {text}
+          </Txt>
+        </LinkButton>
+      )}
+      {type === 'discord' && (
+        <Button
+          onClick={() => {
+            copyToClipboard(text)
+          }
+          }
+          target={'_blank'}
+          settings
+        >
+          <img src={img} />
+          <Txt
+            primary2
+            style={{
+              color: '#2F3134',
+            }}
+          >
+            {text}
+          </Txt>
+        </Button>
+      )}
+    </>
   )
 }
 
