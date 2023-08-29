@@ -17,7 +17,7 @@ export interface IEditProfileImageDialogForm {
 }
 
 type IEditProfileImageDialog = AppDialogProps<{}> & {
-  onSubmit: (item: IEditProfileImageDialogForm) => Promise<void>
+  onSubmit: (item: IEditProfileImageDialogForm) => Promise<string>
 }
 
 export function EditProfileImageDialog({ open, onClose, onSubmit }: IEditProfileImageDialog): JSX.Element {
