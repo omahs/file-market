@@ -541,19 +541,19 @@ func (s *service) onTransferDraftCompletionEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification to owner
-	emailContentTemplate := `
-		Your <a href="%s">token</a> was fulfilled. Please transfer hidden file.
-	`
-	network := "Filecoin"
-	if strings.Contains(s.cfg.Mode, "era") {
-		network = "ZkSync"
-	}
-	link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
 	owner, e := s.GetUserProfile(ctx, token.Owner.String())
 	if e != nil {
 		return errors.New(e.Message)
 	}
-	if owner.Email != "" {
+	if owner.IsEmailNotificationEnabled && owner.Email != "" {
+		emailContentTemplate := `
+			Your <a href="%s">token</a> was fulfilled. Please transfer hidden file.
+		`
+		network := "Filecoin"
+		if strings.Contains(s.cfg.Mode, "era") {
+			network = "ZkSync"
+		}
+		link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
 		if err := s.emailSender.SendEmail(
 			"Your order was fulfilled",
 			fmt.Sprintf(emailContentTemplate, link),
@@ -563,7 +563,6 @@ func (s *service) onTransferDraftCompletionEvent(
 			nil,
 		); err != nil {
 			logger.Error("failed to send email", err, nil)
-			return err
 		}
 	}
 
@@ -692,19 +691,19 @@ func (s *service) onPasswordSetEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification
-	emailContentTemplate := `
-		<a href="%s">Token's'</a> hidden file was transferred. Please finish the order.
-	`
-	network := "Filecoin"
-	if strings.Contains(s.cfg.Mode, "era") {
-		network = "ZkSync"
-	}
-	link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
 	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String())
 	if e != nil {
 		return errors.New(e.Message)
 	}
-	if buyer.Email != "" {
+	if buyer.IsEmailNotificationEnabled && buyer.Email != "" {
+		emailContentTemplate := `
+			<a href="%s">Token's'</a> hidden file was transferred. Please finish the order.
+		`
+		network := "Filecoin"
+		if strings.Contains(s.cfg.Mode, "era") {
+			network = "ZkSync"
+		}
+		link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
 		if err := s.emailSender.SendEmail(
 			"Hidden file was transferred",
 			fmt.Sprintf(emailContentTemplate, link),
@@ -714,7 +713,6 @@ func (s *service) onPasswordSetEvent(
 			nil,
 		); err != nil {
 			logger.Error("failed to send email", err, nil)
-			return err
 		}
 	}
 

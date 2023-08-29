@@ -36,16 +36,18 @@ func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.U
 	}
 
 	profile := domain.UserProfile{
-		Address:    user.Address,
-		AvatarURL:  req.AvatarURL,
-		BannerURL:  req.BannerURL,
-		Bio:        req.Bio,
-		Name:       req.Name,
-		Username:   req.Username,
-		WebsiteURL: req.WebsiteURL,
-		Twitter:    &req.Twitter,
-		Discord:    &req.Discord,
-		Telegram:   &req.Telegram,
+		Address:                     user.Address,
+		AvatarURL:                   req.AvatarURL,
+		BannerURL:                   req.BannerURL,
+		Bio:                         req.Bio,
+		Name:                        req.Name,
+		Username:                    req.Username,
+		WebsiteURL:                  req.WebsiteURL,
+		Twitter:                     &req.Twitter,
+		Discord:                     &req.Discord,
+		Telegram:                    &req.Telegram,
+		IsEmailNotificationsEnabled: req.IsEmailNotificationEnabled,
+		IsPushNotificationsEnabled:  req.IsPushNotificationEnabled,
 	}
 
 	if err := profile.ValidateForUpdate(); err != nil {
