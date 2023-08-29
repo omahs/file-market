@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FieldValues } from 'react-hook-form'
 
 import { TextStartInput } from '../../../../components/Form/TextStartInput/TextStartInput'
@@ -20,11 +20,7 @@ interface IAppearanceSection<T extends FieldValues> {
 }
 
 const AppearanceSection = <T extends FieldValues>({ name, url, bio }: IAppearanceSection<T>) => {
-  const [bioLength, setBioLength] = useState<number>(0)
-
-  useEffect(() => {
-    console.log(url.control._formState.errors)
-  }, [url.control._formState.errors])
+  const [bioLength, setBioLength] = useState<number>(bio.control._defaultValues.bio?.length ?? 0)
 
   return (
     <StyledSectionContent>

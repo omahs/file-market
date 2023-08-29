@@ -7,7 +7,7 @@ import { Button, Txt } from '../../../../UIkit'
 const ReturnButtonStyle = styled(Button, {
   position: 'fixed',
   '@md': {
-    display: 'none',
+    display: 'none !important',
   },
 })
 
