@@ -32,7 +32,7 @@ const LinksSection = <T extends FieldValues>({ websiteUrl, telegram, discord, tw
         />
       </FormControlSettings>
       <FormControlSettings>
-        <StyledTitleInput>X (ex-twitter)</StyledTitleInput>
+        <StyledTitleInput>X (ex-twitter) handle</StyledTitleInput>
         <TextStartInput<T>
           inputProps={{
             placeholder: 'X username',
@@ -45,7 +45,7 @@ const LinksSection = <T extends FieldValues>({ websiteUrl, telegram, discord, tw
         />
       </FormControlSettings>
       <FormControlSettings>
-        <StyledTitleInput>Telegram</StyledTitleInput>
+        <StyledTitleInput>Telegram handle</StyledTitleInput>
         <TextStartInput<T>
           inputProps={{
             placeholder: 'Telegram username',
