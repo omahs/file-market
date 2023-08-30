@@ -56,19 +56,13 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const fileBunniesAddressNormalized = utils.getAddress(config?.fileBunniesCollectionToken.address ?? '')
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
 
-  const canBuyByTime = useMemo(() => {
-    if (!serverTime) return
-
-    return serverTime >= 1693180800000
-  }, [serverTime])
-
   const fileBunniesText = useMemo(() => {
-    return ((isFileBunnies && !canBuyByTime) && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 24.12.2023') : ''
-  }, [isFileBunnies, transfer, tokenFullId, canBuyByTime])
+    return ((isFileBunnies && +tokenFullId.tokenId < 7000) && (!transfer || permissions.canFulfillOrder(transfer))) ? 'Unlocked 24.12.2023' : ''
+  }, [isFileBunnies, transfer, tokenFullId])
 
   const isDisabledFileBunnies = useMemo(() => {
-    return ((isFileBunnies && !canBuyByTime) && (!transfer || permissions.canFulfillOrder(transfer))) || (isFileBunnies && +tokenFullId.tokenId < 7000)
-  }, [isFileBunnies, transfer, canBuyByTime, tokenFullId])
+    return ((!transfer || permissions.canFulfillOrder(transfer))) || (isFileBunnies && +tokenFullId.tokenId < 7000)
+  }, [isFileBunnies, transfer, tokenFullId])
 
   useEffect(() => {
     if (!serverTime) {
