@@ -76,7 +76,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
 
         <StyledProfileImageContent style={{
           backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
           borderRadius: '50%',

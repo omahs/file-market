@@ -75,6 +75,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
+          borderRadius: '16px',
         }}
         >
           {

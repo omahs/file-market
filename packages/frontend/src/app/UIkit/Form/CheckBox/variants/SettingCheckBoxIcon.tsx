@@ -4,11 +4,13 @@ import { styled } from '../../../../../styles'
 
 const SettingCheckBoxIconStyled = styled('div', {
   borderRadius: '8px',
-  border: '2px solid #A9ADB1',
   background: '#D9D9D9',
-  boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.25)',
-  width: '28px',
-  height: '28px',
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  '&:hover': {
+    boxShadow: 'none',
+  },
 })
 
 export const SettingCheckBoxIcon = () => {
@@ -19,11 +21,10 @@ export const SettingCheckBoxIcon = () => {
 
 const SettingCheckBoxIconActiveStyled = styled('div', {
   borderRadius: '8px',
-  border: '2px solid #A9ADB1',
   background: '#D9D9D9',
-  boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.25)',
-  width: '28px',
-  height: '28px',
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

@@ -126,7 +126,12 @@ const ProfilePage: React.FC = observer(() => {
         <BioAndLinks>
           <Bio text={user?.bio} />
           <Links items={{
-            url: user?.websiteUrl,
+            url: (() => {
+              const index = user?.websiteUrl?.indexOf('://')
+              if (index !== undefined && index > -1) {
+                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length - 1)
+              }
+            })(),
             twitter: user?.twitter,
             discord: user?.discord,
             telegram: user?.telegram,

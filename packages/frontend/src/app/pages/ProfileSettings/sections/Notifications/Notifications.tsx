@@ -55,8 +55,16 @@ const NotificationsSection = <T extends FieldValues>({ email, emailNotification 
               checkedIcon={<SettingCheckBoxActiveIcon />}
               disableRipple
               sx={{
-                padding: 0,
-                paddingRight: '12px',
+                borderRadius: '8px',
+                border: '2px solid #A9ADB1',
+                background: '#D9D9D9',
+                position: 'relative',
+                width: '28px',
+                height: '28px',
+                boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.25)',
+                '&:hover': {
+                  boxShadow: 'none',
+                },
               }}
             />
           )}
