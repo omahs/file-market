@@ -189,6 +189,7 @@ func (s *service) GetFileBunniesTokensForAutosell(ctx context.Context) ([]Autose
 
 	tokensInfo, err := s.repository.GetTokensForAutosell(ctx, tx, s.cfg.FileBunniesCollectionAddress, s.cfg.FileBunniesCreatorAddress)
 	if err != nil {
+		logger.Error("failed to get tokens for autosell", err, nil)
 		return nil, internalError
 	}
 

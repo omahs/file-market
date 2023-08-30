@@ -8,15 +8,15 @@ postgres.start:
 		docker run --restart unless-stopped -d -p 1339:5432 -e POSTGRES_PASSWORD=1337 --name test-auth-postgres postgres:13 ;\
         sleep 5s; \
     fi;
-	-docker exec test-auth-postgres psql -U postgres -c "create user auth_user password '1337'"
+	-docker exec test-auth-postgres psql -U postgres -c "create user indexer password '1337'"
 	-docker exec test-auth-postgres psql -U postgres -c "create database auth_server"
-	-docker exec test-auth-postgres psql -U postgres -c "grant all privileges on database auth_server to auth_user"
+	-docker exec test-auth-postgres psql -U postgres -c "grant all privileges on database auth_server to indexer"
 
 migrate.up:
-	goose -dir migrations postgres "host=localhost port=1339 user=auth_user password=1337 dbname=auth_server sslmode=disable" up
+	goose -dir migrations postgres "host=localhost port=1339 user=indexer password=1337 dbname=auth_server sslmode=disable" up
 
 migrate.down:
-	goose -dir migrations postgres "host=localhost port=1339 user=auth_user password=1337 dbname=auth_server sslmode=disable" down
+	goose -dir migrations postgres "host=localhost port=1339 user=indexer password=1337 dbname=auth_server sslmode=disable" down
 
 proto:
 	@if [ `basename \`pwd\`` != "authserver" ]; then \

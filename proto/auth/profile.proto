@@ -12,7 +12,12 @@ message UserProfile {
   string username = 5;
   string websiteURL = 6;
   string email = 7;
-  string twitter = 8;
+  bool isEmailNotificationEnabled = 8;
+  bool isPushNotificationEnabled = 9;
+  string twitter = 10;
+  string address = 11;
+  string discord = 12;
+  string telegram = 13;
 }
 
 message GetUserProfileRequest {

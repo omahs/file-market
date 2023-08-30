@@ -10,8 +10,8 @@ var (
 	isValidAddress  = regexp.MustCompile("^0x[0-9a-fA-F]{40}$").MatchString
 	isValidUsername = regexp.MustCompile("^[a-z0-9_]+$").MatchString
 	isValidIPFS     = regexp.MustCompile("^ipfs://[0-9a-zA-Z]+$").MatchString
-	isValidEmail    = regexp.MustCompile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").MatchString
-	isValidUrl      = regexp.MustCompile("^(https?://)?(?:www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$").MatchString
+	isValidEmail    = regexp.MustCompile(`^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$`).MatchString
+	isValidUrl      = regexp.MustCompile(`^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$`).MatchString
 )
 
 func ValidateAddress(address *string) error {
@@ -37,6 +37,14 @@ func ValidateUsername(username *string) error {
 
 	if !isValidUsername(*username) {
 		return errors.New("wrong username format")
+	}
+
+	if (*username)[0] == '0' && (*username)[1] == 'x' {
+		return errors.New("username has address format")
+	}
+
+	if *username == "validate" {
+		return errors.New("wrong username")
 	}
 
 	return nil

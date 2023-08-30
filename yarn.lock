@@ -7468,6 +7468,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-cookie@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@types/js-cookie@npm:3.0.3"
+  checksum: 927254ec37ce4fbe4d9d54f53a446b4351259799d9933db5808ddb7c430396aa2496bdd0a4e47e1b56048ffbec98645cbd4daa9e3ed9a6fff55e25eb640fcb15
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -8485,27 +8492,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/ethereum@npm:^2.2.0":
-  version: 2.2.2
-  resolution: "@web3modal/ethereum@npm:2.2.2"
-  peerDependencies:
-    "@wagmi/core": ">=0.10"
-    ethers: ">=5.7"
-  checksum: 81337bc01ffbc35ac5591f4f01e4e913a3e15fedaef35c7b33bf17b814777207bec0adb7f9fc6aaa835a99c45058f789698614938fc1f43791c14bbf9d29c9d8
+"@web3modal/core@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/core@npm:2.3.7"
+  dependencies:
+    buffer: 6.0.3
+    valtio: 1.10.4
+  checksum: 7848c4231383a18e467cbb8902b23eb19eaba4c879b9a5c686579bb1da3c26e65bb7152df2a63cf09a114b0e22a6134ec605d884496adc6e0973ebc029834332
   languageName: node
   linkType: hard
 
-"@web3modal/react@npm:^2.2.0":
-  version: 2.2.2
-  resolution: "@web3modal/react@npm:2.2.2"
+"@web3modal/ethereum@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/ethereum@npm:2.3.7"
+  peerDependencies:
+    "@wagmi/core": ">=0.10"
+    ethers: ">=5.7"
+  checksum: cdf0cf17b0d74d93daa6c105090e6d6d12cfce3968ba019324a8babbaabe2e8f372807fead4dcc47ba9e75606aa4f1789dfe425d9ce700a62f09cc28cb36c324
+  languageName: node
+  linkType: hard
+
+"@web3modal/react@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/react@npm:2.3.7"
   dependencies:
-    "@web3modal/core": 2.2.2
-    "@web3modal/standalone": 2.2.2
-    "@web3modal/ui": 2.2.2
+    "@web3modal/core": 2.3.7
+    "@web3modal/standalone": 2.3.7
+    "@web3modal/ui": 2.3.7
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 53617f1a3673d1e2ef3cc366a5a5a0c688079391a586c2334c132c2ded61a93dea38f00afe0df236133fbd545baeeb2dc1b86dcebc0e10b6cb7eed8c210e6275
+  checksum: 4e87fa95e97eec5c200f9b37e1a1f422b31f71a5ed498531a3fc5b68271d3539af436f272ee62f7b4e862045f87e36724f9ff048939e4b1ebc77514d1a1312ae
   languageName: node
   linkType: hard
 
@@ -8519,6 +8536,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web3modal/standalone@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/standalone@npm:2.3.7"
+  dependencies:
+    "@web3modal/core": 2.3.7
+    "@web3modal/ui": 2.3.7
+  checksum: 5062f1eb21e56c47c28445e2cef7b019ef6ea87e5d287ede2f077f421966a8436d9377abd7c764453e94ccc033a6e7ced92f9150ecfdf11c59ad74597450dfe6
+  languageName: node
+  linkType: hard
+
 "@web3modal/ui@npm:2.2.2":
   version: 2.2.2
   resolution: "@web3modal/ui@npm:2.2.2"
@@ -8528,6 +8555,18 @@ __metadata:
     motion: 10.15.5
     qrcode: 1.5.1
   checksum: 1dc36a9f8d43aaa3b69e720ef12399566e892a114395cd6fd8a0d0c82723cf3f56c042e714cb7de18ed0affe36ce662e3248194a35b864f6f402e1b058c1afb5
+  languageName: node
+  linkType: hard
+
+"@web3modal/ui@npm:2.3.7":
+  version: 2.3.7
+  resolution: "@web3modal/ui@npm:2.3.7"
+  dependencies:
+    "@web3modal/core": 2.3.7
+    lit: 2.7.3
+    motion: 10.15.5
+    qrcode: 1.5.3
+  checksum: bdcbc233a0537bd645b026beecb43fdc3144011fd07a64ddeafebedc4ee5d718b9c31c24079e05365ea4a04a8da8bee3f2a0695eebe5a61f4b8b0e7047555f99
   languageName: node
   linkType: hard
 
@@ -13722,13 +13761,14 @@ __metadata:
     "@tanstack/react-query": ^4.29.15
     "@types/aes-js": ^3.1.1
     "@types/file-saver": ^2.0.5
+    "@types/js-cookie": ^3.0.3
     "@types/node-rsa": ^1.1.1
     "@types/react": ^18.0.17
     "@types/react-dom": ^18.0.6
     "@typescript-eslint/eslint-plugin": ^5.0.0
     "@vitejs/plugin-react": ^2.1.0
-    "@web3modal/ethereum": ^2.2.0
-    "@web3modal/react": ^2.2.0
+    "@web3modal/ethereum": 2.3.7
+    "@web3modal/react": 2.3.7
     babel-loader: ^8.2.5
     bip39: ^3.1.0
     buffer: ^6.0.3
@@ -13747,7 +13787,9 @@ __metadata:
     file-saver: ^2.0.5
     gsap: ^3.12.2
     jdenticon: ^3.2.0
+    js-cookie: ^3.0.5
     mobx: ^6.7.0
+    mobx-localstorage: ^1.2.0
     mobx-react-lite: ^3.4.0
     nft.storage: ^7.0.0
     npm: ^9.2.0
@@ -16517,6 +16559,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-cookie@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "js-cookie@npm:3.0.5"
+  checksum: 2dbd2809c6180fbcf060c6957cb82dbb47edae0ead6bd71cbeedf448aa6b6923115003b995f7d3e3077bfe2cb76295ea6b584eb7196cca8ba0a09f389f64967a
+  languageName: node
+  linkType: hard
+
 "js-sdsl@npm:^4.1.4":
   version: 4.4.0
   resolution: "js-sdsl@npm:4.4.0"
@@ -17110,6 +17159,17 @@ __metadata:
     lit-element: ^3.2.0
     lit-html: ^2.6.0
   checksum: 74f2813152a48f195784f01b6b4ff7e4e7d8fa90ac272b725d1953fa3e1d6c9dca60b77da435f34144fcdd38705480889a8ea986835676932a8559c897cea517
+  languageName: node
+  linkType: hard
+
+"lit@npm:2.7.3":
+  version: 2.7.3
+  resolution: "lit@npm:2.7.3"
+  dependencies:
+    "@lit/reactive-element": ^1.6.0
+    lit-element: ^3.3.0
+    lit-html: ^2.7.0
+  checksum: 325be0255e8b95ba066d56f3e40dd8530cd423d1687ea6d55b2919df8fb1d63a399be439c5601de65a990dfa9a131d07b2e84a1004b1a52d34ce51569cdf4255
   languageName: node
   linkType: hard
 
@@ -18019,6 +18079,17 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: a96865108c6c3b1b8e1d5e9f11843de1e077e57737602de1b82030815f311be11f96f09cce59bd5b903d0b29834733e5313f9301e3ed6d6f6fba2eae0df4298f
+  languageName: node
+  linkType: hard
+
+"mobx-localstorage@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "mobx-localstorage@npm:1.2.0"
+  dependencies:
+    reactive-localstorage: ^0.0.2
+  peerDependencies:
+    mobx: ">=3"
+  checksum: 0a8ca334de938587ea65d2e06f79b39812302c61ff028d502f11f8fc37944b2f71e0ad25d6161e7e843d42b92c8b641686ea167e76a064834d15fb37e0f51933
   languageName: node
   linkType: hard
 
@@ -20256,6 +20327,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qrcode@npm:1.5.3":
+  version: 1.5.3
+  resolution: "qrcode@npm:1.5.3"
+  dependencies:
+    dijkstrajs: ^1.0.1
+    encode-utf8: ^1.0.3
+    pngjs: ^5.0.0
+    yargs: ^15.3.1
+  bin:
+    qrcode: bin/qrcode
+  checksum: 9a8a20a0a9cb1d15de8e7b3ffa214e8b6d2a8b07655f25bd1b1d77f4681488f84d7bae569870c0652872d829d5f8ac4922c27a6bd14c13f0e197bf07b28dead7
+  languageName: node
+  linkType: hard
+
 "qs@npm:6.11.0":
   version: 6.11.0
   resolution: "qs@npm:6.11.0"
@@ -20730,6 +20815,13 @@ __metadata:
   dependencies:
     loose-envify: ^1.1.0
   checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
+  languageName: node
+  linkType: hard
+
+"reactive-localstorage@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "reactive-localstorage@npm:0.0.2"
+  checksum: e58ed5933a477b719be98d3acad0846172bec6987ecdbf2ac1748a55dd7cdbebf955dc7b46cdff56c2ea363c4ae8fd891310bdd847a48917e5632f531ca2479b
   languageName: node
   linkType: hard
 
@@ -23854,6 +23946,21 @@ __metadata:
     react:
       optional: true
   checksum: 2e0951090a0bc9c63ecc1c4fa3bf4dea46b561a1c8e35ae7c7359908029a3b56ea202ebe485152e7c79dfa3781e84d59be5c5cf082bb005ba5b463c3309ed850
+  languageName: node
+  linkType: hard
+
+"valtio@npm:1.10.4":
+  version: 1.10.4
+  resolution: "valtio@npm:1.10.4"
+  dependencies:
+    proxy-compare: 2.5.0
+    use-sync-external-store: 1.2.0
+  peerDependencies:
+    react: ">=16.8"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 6d877e24cc065ef70b7d4fdfe0914398098c08505df885103bec3bc34ea4c0562d89a94e05c16ddc125ff800601564986eab4792e5ba9f1130013f932f224b1b
   languageName: node
   linkType: hard
 

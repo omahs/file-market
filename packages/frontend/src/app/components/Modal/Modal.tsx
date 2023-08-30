@@ -7,13 +7,14 @@ import { ButtonGlowing, ButtonNavGlowing } from '../../UIkit'
 import { Modal, ModalBody, ModalButtonContainer, ModalP, ModalTitle } from '../../UIkit/Modal/Modal'
 import { stringifyError } from '../../utils/error'
 
-interface InProcessBodyProps {
+export interface InProcessBodyProps {
   text: ReactNode
   waitForSign?: boolean
 }
 
 const Loading = styled('img', {
   width: '130px',
+  margin: '0 auto',
   marginBottom: '20px',
 })
 
@@ -108,7 +109,7 @@ export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () 
   </>
 )
 
-interface MintModalProps {
+export interface MintModalProps {
   open: boolean
   handleClose: () => void
   body?: ReactNode
@@ -137,7 +138,9 @@ export default function BaseModal({
       style={{
         maxWidth: '690px',
       }}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose?.()
+      }}
       onOpen={onOpen}
     >
       {body && <ModalBody style={{ padding: 0 }}>{body}</ModalBody>}

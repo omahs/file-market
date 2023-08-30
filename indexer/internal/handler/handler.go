@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
+	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
@@ -49,6 +51,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/collections/full/public", h.handleGetFullPublicCollection)
 	router.HandleFunc("/collections/full/file-bunnies", h.handleGetFullFileBunniesCollection)
 	router.HandleFunc("/collections/full/{address:0x[0-9a-f-A-F]{40}}", h.handleGetFullCollection)
+	router.Handle("/collections/profile/update", h.headerAuthMiddleware(jwt.PurposeAccess)(http.HandlerFunc(h.handleUpdateCollectionProfile)))
 	router.HandleFunc("/collections/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollection)
 	router.HandleFunc("/collections", h.handleGetCollections)
 
@@ -83,6 +86,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
 	router.HandleFunc("/ws/subscribe/block_number", h.subscribeToBlockNumber)
 	router.HandleFunc("/ws/subscribe/eft/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.subscribeToEFT)
+	router.HandleFunc("/server_time", h.handleServerTime)
 
 	router.Use(h.corsMiddleware)
 
@@ -119,4 +123,11 @@ func (h *handler) handleGetCurrencyConversionRate(w http.ResponseWriter, r *http
 		return
 	}
 	sendResponse(w, 200, response)
+}
+
+func (h *handler) handleServerTime(w http.ResponseWriter, r *http.Request) {
+	res := models.ServerTimeResponse{
+		ServerTime: time.Now().UnixMilli(),
+	}
+	sendResponse(w, 200, res)
 }

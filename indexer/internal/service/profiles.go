@@ -12,18 +12,24 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 		Identification: identification,
 	})
 	if err != nil {
+		logger.Error("failed to call GetUserProfile", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{
-		AvatarURL:  res.AvatarURL,
-		BannerURL:  res.BannerURL,
-		Bio:        res.Bio,
-		Email:      "", // private
-		Name:       res.Name,
-		Twitter:    res.Twitter,
-		Username:   res.Username,
-		WebsiteURL: res.WebsiteURL,
+		Address:                    res.Address,
+		AvatarURL:                  res.AvatarURL,
+		BannerURL:                  res.BannerURL,
+		Bio:                        res.Bio,
+		Name:                       res.Name,
+		Twitter:                    res.Twitter,
+		Discord:                    res.Discord,
+		Telegram:                   res.Telegram,
+		Username:                   res.Username,
+		WebsiteURL:                 res.WebsiteURL,
+		Email:                      "",    // private
+		IsPushNotificationEnabled:  false, // private
+		IsEmailNotificationEnabled: false, // private
 	}
 
 	return &profile, nil
@@ -31,28 +37,39 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 
 func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse) {
 	arg := authserver_pb.UserProfile{
-		AvatarURL:  p.AvatarURL,
-		BannerURL:  p.BannerURL,
-		Bio:        p.Bio,
-		Name:       p.Name,
-		Username:   p.Username,
-		WebsiteURL: p.WebsiteURL,
+		AvatarURL:                  p.AvatarURL,
+		BannerURL:                  p.BannerURL,
+		Bio:                        p.Bio,
+		Name:                       p.Name,
+		Username:                   p.Username,
+		WebsiteURL:                 p.WebsiteURL,
+		IsEmailNotificationEnabled: p.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  p.IsPushNotificationEnabled,
+		Twitter:                    p.Twitter,
+		Discord:                    p.Discord,
+		Telegram:                   p.Telegram,
 	}
 
 	res, err := s.authClient.UpdateUserProfile(ctx, &arg)
 	if err != nil {
+		logger.Error("failed to call UpdateUserProfile", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{
-		AvatarURL:  res.AvatarURL,
-		BannerURL:  res.BannerURL,
-		Bio:        res.Bio,
-		Email:      res.Email,
-		Name:       res.Name,
-		Twitter:    res.Twitter,
-		Username:   res.Username,
-		WebsiteURL: res.WebsiteURL,
+		Address:                    res.Address,
+		AvatarURL:                  res.AvatarURL,
+		BannerURL:                  res.BannerURL,
+		Bio:                        res.Bio,
+		Discord:                    res.Discord,
+		Email:                      res.Email,
+		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
+		Name:                       res.Name,
+		Telegram:                   res.Telegram,
+		Twitter:                    res.Twitter,
+		Username:                   res.Username,
+		WebsiteURL:                 res.WebsiteURL,
 	}
 
 	return &profile, nil
@@ -61,6 +78,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorResponse {
 	res, err := s.authClient.SetEmail(ctx, &authserver_pb.SetEmailRequest{Email: email})
 	if err != nil {
+		logger.Error("failed to call SetEmail", err, nil)
 		return GRPCErrToHTTP(err)
 	}
 
@@ -88,6 +106,7 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 func (s *service) VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse) {
 	res, err := s.authClient.VerifyEmail(ctx, &authserver_pb.VerifyEmailRequest{SecretToken: secretToken})
 	if err != nil {
+		logger.Error("failed to call VerifyEmail", err, nil)
 		return nil, GRPCErrToHTTP(err)
 	}
 

@@ -3,21 +3,26 @@ package domain
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/mark3d-xyz/mark3d/authserver/internal/utils"
 	"github.com/mark3d-xyz/mark3d/authserver/pkg/validator"
 	authserver_pb "github.com/mark3d-xyz/mark3d/authserver/proto"
 	"strings"
 )
 
 type UserProfile struct {
-	Address    common.Address `json:"-"`
-	AvatarURL  string         `json:"avatarUrl"`
-	BannerURL  string         `json:"bannerUrl"`
-	Bio        string         `json:"bio"`
-	Email      string         `json:"email"`
-	Name       string         `json:"name"`
-	Twitter    string         `json:"twitter"`
-	Username   string         `json:"username"`
-	WebsiteURL string         `json:"websiteUrl"`
+	Address                     common.Address `json:"address"`
+	AvatarURL                   string         `json:"avatarUrl"`
+	BannerURL                   string         `json:"bannerUrl"`
+	Bio                         string         `json:"bio"`
+	Email                       string         `json:"email"`
+	IsEmailNotificationsEnabled bool           `json:"isEmailNotificationsEnabled"`
+	IsPushNotificationsEnabled  bool           `json:"isPushNotificationsEnabled"`
+	Name                        string         `json:"name"`
+	Username                    string         `json:"username"`
+	WebsiteURL                  string         `json:"websiteUrl"`
+	Twitter                     *string        `json:"twitter"`
+	Discord                     *string        `json:"discord"`
+	Telegram                    *string        `json:"telegram"`
 }
 
 func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
@@ -26,14 +31,19 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 	}
 
 	return &authserver_pb.UserProfile{
-		AvatarURL:  p.AvatarURL,
-		BannerURL:  p.BannerURL,
-		Bio:        p.Bio,
-		Name:       p.Name,
-		Username:   p.Username,
-		WebsiteURL: p.WebsiteURL,
-		Email:      p.Email,
-		Twitter:    p.Twitter,
+		Address:                    strings.ToLower(p.Address.String()),
+		AvatarURL:                  p.AvatarURL,
+		BannerURL:                  p.BannerURL,
+		Bio:                        p.Bio,
+		Name:                       p.Name,
+		Username:                   p.Username,
+		WebsiteURL:                 p.WebsiteURL,
+		Email:                      p.Email,
+		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
+		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
+		Twitter:                    utils.UnwrapString(p.Twitter),
+		Discord:                    utils.UnwrapString(p.Discord),
+		Telegram:                   utils.UnwrapString(p.Telegram),
 	}
 }
 
@@ -112,6 +122,8 @@ func (p *UserProfile) ValidateForUpdate() error {
 
 func (p *UserProfile) HidePrivateFields() {
 	p.Email = ""
+	p.IsPushNotificationsEnabled = false
+	p.IsEmailNotificationsEnabled = false
 }
 
 func GetDefaultUserProfile(address common.Address) *UserProfile {
@@ -119,15 +131,19 @@ func GetDefaultUserProfile(address common.Address) *UserProfile {
 	addressLen := len(addressStr)
 
 	return &UserProfile{
-		Address:    address,
-		AvatarURL:  "",
-		BannerURL:  "",
-		Bio:        "",
-		Email:      "",
-		Name:       fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
-		Twitter:    "",
-		Username:   fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
-		WebsiteURL: "",
+		Address:                     address,
+		AvatarURL:                   "",
+		BannerURL:                   "",
+		Bio:                         "",
+		Email:                       "",
+		IsEmailNotificationsEnabled: false,
+		IsPushNotificationsEnabled:  false,
+		Name:                        fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
+		Username:                    fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
+		WebsiteURL:                  "",
+		Twitter:                     nil,
+		Discord:                     nil,
+		Telegram:                    nil,
 	}
 }
 

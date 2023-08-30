@@ -19,6 +19,7 @@ type Postgres interface {
 	Orders
 	Whitelist
 	Moderation
+	CollectionProfile
 }
 
 type Transactions interface {
@@ -39,6 +40,7 @@ type Collections interface {
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error
 	CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error)
+	IsCollectionOwner(ctx context.Context, tx pgx.Tx, owner common.Address, collectionAddress common.Address) (bool, error)
 }
 
 type Tokens interface {
@@ -94,6 +96,13 @@ type Moderation interface {
 
 type Whitelist interface {
 	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) (string, error)
+}
+
+type CollectionProfile interface {
+	GetCollectionProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.CollectionProfile, error)
+	CollectionProfileExists(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error)
+	InsertCollectionProfile(ctx context.Context, tx pgx.Tx, profile *domain.CollectionProfile) error
+	UpdateCollectionProfile(ctx context.Context, tx pgx.Tx, profile *domain.CollectionProfile) (*domain.CollectionProfile, error)
 }
 
 type postgresConfig struct {

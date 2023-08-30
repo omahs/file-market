@@ -79,11 +79,12 @@ type EthClient interface {
 }
 
 type Collections interface {
-	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
+	GetCollection(ctx context.Context, address common.Address) (*models.CollectionResponse, *models.ErrorResponse)
 	GetCollections(ctx context.Context, lastCollectionAddress *common.Address, limit int) (*models.CollectionsResponse, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetPublicCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetFileBunniesCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
+	UpdateCollectionProfile(ctx context.Context, owner common.Address, req *models.UpdateCollectionProfileRequest) (*models.UpdateCollectionProfileResponse, *models.ErrorResponse)
 }
 
 type Tokens interface {
@@ -1520,6 +1521,9 @@ func (s *service) Shutdown() {
 }
 
 func GRPCErrToHTTP(err error) *models.ErrorResponse {
+	if err == nil {
+		return nil
+	}
 	s := status.Convert(err)
 	hs := http.StatusInternalServerError
 

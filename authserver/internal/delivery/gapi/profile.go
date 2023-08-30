@@ -11,7 +11,12 @@ import (
 )
 
 func (s *GRPCServer) GetUserProfile(ctx context.Context, req *authserver_pb.GetUserProfileRequest) (*authserver_pb.UserProfile, error) {
-	profile, e := s.service.GetProfileByIdentification(ctx, req.Identification)
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	_, err := s.authorizeUser(ctx, jwt.PurposeAccess)
+	isPrincipal := err == nil
+	profile, e := s.service.GetProfileByIdentification(ctx, req.Identification, isPrincipal)
 	if e != nil {
 		return nil, e.ToGRPC()
 	}
@@ -38,6 +43,9 @@ func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.U
 		Name:       req.Name,
 		Username:   req.Username,
 		WebsiteURL: req.WebsiteURL,
+		Twitter:    &req.Twitter,
+		Discord:    &req.Discord,
+		Telegram:   &req.Telegram,
 	}
 
 	if err := profile.ValidateForUpdate(); err != nil {

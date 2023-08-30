@@ -136,6 +136,20 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           },
         },
       },
+      settings: {
+        true: {
+          borderRadius: '8px',
+          border: '1px solid #C9CBCF',
+          background: '#FFF',
+          boxShadow: '2px 2px 0px 0px rgba(35, 37, 40, 0.25)',
+          color: '#6B6F76',
+          display: 'flex',
+          gap: '8px',
+          padding: '8px 16px',
+          minWidth: '0',
+          height: '32px',
+        },
+      },
       small: {
         true: {
           height: '32px',
