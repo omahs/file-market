@@ -57,7 +57,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
 
   const { modalProps } = useStatusModal({
     statuses,
-    okMsg: 'Profile success',
+    okMsg: 'Profile data update completed successfully!',
     loadingMsg: 'Profile is updating',
   })
 

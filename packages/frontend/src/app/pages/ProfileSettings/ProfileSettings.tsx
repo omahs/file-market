@@ -48,8 +48,8 @@ export default observer(function ProfileSettings() {
 
   const { modalProps } = useStatusModal({
     statuses,
-    okMsg: 'Profile success',
-    loadingMsg: 'Sending an encrypted encryption password',
+    okMsg: 'Profile data update completed successfully!',
+    loadingMsg: 'Profile is updating',
   })
 
   const name = watch('name')
