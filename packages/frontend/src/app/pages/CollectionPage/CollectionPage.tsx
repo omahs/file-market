@@ -43,7 +43,7 @@ const ProfileImage = styled('img', {
   borderRadius: '25%',
   border: '8px solid $white',
   objectFit: 'cover',
-  background: '$gradients$main',
+  background: '$gradients$mainNew',
 })
 
 const ProfileName = styled('h2', {
@@ -188,6 +188,7 @@ const CollectionPage = observer(() => {
                 amount: collectionAndNfts?.total ?? 0,
               },
             ]}
+            isSmall
           />
         </TabsContainer>
         <Outlet />

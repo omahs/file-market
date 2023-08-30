@@ -16,7 +16,7 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
 
   return (
     <CurrentBlockchainStyle isLight={isLight}>
-      <Txt>Current blockchain:</Txt>
+      <Txt css={{ fontWeight: 500 }}>Current blockchain:</Txt>
       <>
         {multiChainStore.data?.map(item => {
           return (
@@ -34,7 +34,7 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
           )
         })}
       </>
-      <LinearText css={{ fontSize: '14px' }}>
+      <LinearText css={{ fontSize: '14px', fontWeight: 600, marginLeft: 20 }}>
         Ethereum and Polygon is coming soon!
       </LinearText>
     </CurrentBlockchainStyle>
