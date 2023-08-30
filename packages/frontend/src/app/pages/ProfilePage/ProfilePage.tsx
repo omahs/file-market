@@ -1,83 +1,60 @@
+import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
-import { Outlet } from 'react-router'
-import { useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
-import { styled } from '../../../styles'
-import { useCollectionAndTokenListStore } from '../../hooks'
+import Banner from '../../components/ViewInfo/Banner/Banner'
+import ProfileImage from '../../components/ViewInfo/ProfileImage/ProfileImage'
+import SettingsButton from '../../components/ViewInfo/SettingsButton/SettingsButton'
+import { useCollectionAndTokenListStore, useStores } from '../../hooks'
+import { useProfileStore } from '../../hooks/useProfileStore'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { Container, gradientPlaceholderImg, TabItem, Tabs, textVariant } from '../../UIkit'
+import { Button, PageLayout, TabItem, Tabs, Txt } from '../../UIkit'
 import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
+import { copyToClipboard } from '../../utils/clipboard/clipboard'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router'
-
-const Background = styled('div', {
-  background: '$gradients$background',
-  width: '100%',
-  height: 352,
-})
-
-const Profile = styled('div', {
-  paddingBottom: '$4',
-})
-
-const ProfileHeader = styled('div', {
-  display: 'flex',
-  alignItems: 'flex-end',
-  gap: '$3',
-  marginTop: -80,
-  marginBottom: '$4',
-  '@sm': {
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '$3',
-  },
-})
-
-const ProfileImage = styled('img', {
-  width: 160,
-  height: 160,
-  borderRadius: '50%',
-  border: '8px solid $white',
-  background: '$white',
-  objectFit: 'fill',
-})
-
-const ProfileName = styled('h2', {
-  ...textVariant('h2').true,
-  color: '$blue900',
-  paddingBottom: '$3',
-  '@sm': {
-    fontSize: 'calc(5vw + 10px)',
-  },
-})
-
-const GrayOverlay = styled('div', {
-  backgroundColor: '$gray100',
-})
-
-const Inventory = styled(Container, {
-  paddingTop: '$4',
-  paddingBottom: 48,
-  backgroundColor: '$white',
-  borderRadius: '$6 $6 0 0',
-  '@md': {
-    borderRadius: '$4 $4 0 0',
-  },
-  boxShadow: '$footer',
-  minHeight: 460, // prevent floating footer
-})
+import CopyImg from './img/CopyIcon.svg'
+import EthereumImg from './img/EthereumIcon.svg'
+import {
+  AddressesButtonsContainer,
+  BioAndLinks,
+  GrayOverlay,
+  Inventory,
+  Profile,
+  ProfileHeader,
+  ProfileName,
+} from './ProfilePage.styles'
+import Bio from './sections/Bio'
+import Links from './sections/Links'
 
 const ProfilePage: React.FC = observer(() => {
   const { profileAddress } = useParams<Params>()
-  const { address: currentAddress } = useAccount()
+  const { userStore } = useStores()
+  const profileStore = useProfileStore(profileAddress)
+  const profileAddressMemo = useMemo(() => {
+    if (profileAddress?.[0] === '0' && profileAddress?.[1] === 'x') return profileAddress
 
-  const transferHistoryStore = useTransfersHistoryStore(profileAddress)
-  const collectionAndTokenListStore = useCollectionAndTokenListStore(profileAddress)
-  const userTransferStore = useUserTransferStore(profileAddress)
+    return profileStore.user?.address
+  }, [profileAddress, profileStore.user])
+
+  const { address: currentAddress } = useAccount()
+  const transferHistoryStore = useTransfersHistoryStore(profileAddressMemo)
+  const collectionAndTokenListStore = useCollectionAndTokenListStore(profileAddressMemo)
+  const userTransferStore = useUserTransferStore(profileAddressMemo)
+
+  const isOwner = useMemo(() => {
+    console.log(profileAddressMemo)
+    console.log(currentAddress)
+
+    if (!currentAddress || !profileAddressMemo) return false
+
+    return utils.getAddress(currentAddress ?? '') === utils.getAddress(profileAddressMemo ?? '')
+  }, [profileAddressMemo, currentAddress])
 
   const tabs = useMemo(() => {
     const tabs: TabItem[] = [
@@ -95,7 +72,7 @@ const ProfilePage: React.FC = observer(() => {
       },
     ]
 
-    if (currentAddress === profileAddress) {
+    if (isOwner) {
       tabs.push({
         amount: userTransferStore.total,
         url: 'transfers',
@@ -107,28 +84,65 @@ const ProfilePage: React.FC = observer(() => {
     return tabs
   }, [collectionAndTokenListStore.data.tokensTotal, transferHistoryStore.tableRows, userTransferStore.total])
 
+  const user = useMemo(() => {
+    if (isOwner && userStore.user) return userStore.user
+
+    return profileStore.user
+  }, [isOwner, profileStore.user, userStore.user])
+
   return (
     <GrayOverlay>
-      <Background />
-
-      <Container>
+      <PageLayout isHasSelectBlockChain>
+        <Banner
+          isOwner={isOwner}
+          src={user?.bannerUrl ? getHttpLinkFromIpfsString(user?.bannerUrl) : undefined}
+        />
         <Profile>
           <ProfileHeader>
             <ProfileImage
-              src={getProfileImageUrl(profileAddress ?? '')}
-              onError={({ currentTarget }) => {
-                currentTarget.onerror = null
-                currentTarget.src = gradientPlaceholderImg
-              }}
+              src={user?.avatarUrl ? getHttpLinkFromIpfsString(user?.avatarUrl) : getProfileImageUrl(profileAddress ?? '')}
+              isOwner={isOwner}
             />
-            <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
+            <ProfileName>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
           </ProfileHeader>
+          {isOwner && <SettingsButton />}
         </Profile>
-      </Container>
+        <AddressesButtonsContainer>
+          <Button
+            settings
+            onClick={() => {
+              copyToClipboard(profileAddressMemo)
+            }}
+          >
+            <img src={EthereumImg} />
+            <Txt primary2>{reduceAddress(profileAddressMemo ?? '')}</Txt>
+            <img src={CopyImg} />
+          </Button>
+          {/* <Button settings> */}
+          {/*  <Txt primary2>f4 address</Txt> */}
+          {/*  <img src={CopyImg} /> */}
+          {/* </Button> */}
+        </AddressesButtonsContainer>
+        <BioAndLinks>
+          <Bio text={user?.bio} />
+          <Links items={{
+            url: (() => {
+              const index = user?.websiteUrl?.indexOf('://')
+              if (index !== undefined && index > -1) {
+                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length - 1)
+              }
+            })(),
+            twitter: user?.twitter,
+            discord: user?.discord,
+            telegram: user?.telegram,
+          }}
+          />
+        </BioAndLinks>
+      </PageLayout>
 
       <Inventory>
         <TabsContainer>
-          <Tabs tabs={tabs} />
+          <Tabs tabs={tabs} isSmall isTransparent />
         </TabsContainer>
         <Outlet />
       </Inventory>

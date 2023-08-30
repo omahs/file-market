@@ -1,8 +1,8 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 
 import { InfoModal } from '../components/Modal/InfoModal'
-import { useModalProperties } from '../pages/CreatePage/hooks/useModalProperties'
 import { DialogRef } from '../stores/Dialog/DialogStore'
+import { useModalProperties } from './useModalProperties'
 import { useStores } from './useStores'
 
 export interface UseModalArgs {

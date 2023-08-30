@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/mark3d-xyz/mark3d/authserver-pb";
+
+message UserProfile {
+  string avatarURL = 1;
+  string bannerURL = 2;
+  string bio = 3;
+  string name = 4;
+  string username = 5;
+  string websiteURL = 6;
+  string email = 7;
+  bool isEmailNotificationEnabled = 8;
+  bool isPushNotificationEnabled = 9;
+  string twitter = 10;
+  string address = 11;
+  string discord = 12;
+  string telegram = 13;
+}
+
+message GetUserProfileRequest {
+  string identification = 1;
+}
+
+message SetEmailRequest {
+  string email = 1;
+}
+
+message VerifyEmailRequest {
+  string secretToken = 1;
+}
+message SetEmailResponse {
+  string token = 1;
+  string email = 2;
+}

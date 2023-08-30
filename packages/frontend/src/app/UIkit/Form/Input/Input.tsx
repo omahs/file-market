@@ -7,7 +7,8 @@ import {
 import { RegisterOptions } from 'react-hook-form/dist/types/validator'
 
 import { Txt } from '../../Txt'
-import { StyledAfterContainer, StyledErrorMessage, StyledInput, StyledInputContainer } from './Input.styles'
+import { StyledAfterContainer, StyledErrorMessage, StyledTextFieldsContainer } from '../TextFields.styles'
+import { StyledInput } from './Input.styles'
 
 export interface ControlledInputProps<T extends FieldValues> {
   control: Control<T, any>
@@ -16,7 +17,7 @@ export interface ControlledInputProps<T extends FieldValues> {
   rules?: RegisterOptions
 }
 
-export type InputProps = ComponentProps<typeof StyledInputContainer> & ComponentProps<typeof StyledInput> & {
+export type InputProps = ComponentProps<typeof StyledTextFieldsContainer> & ComponentProps<typeof StyledInput> & {
   errorMessage?: string
 }
 
@@ -38,7 +39,7 @@ export const Input = <T extends FieldValues>({
       name={controlledInputProps?.name}
       rules={controlledInputProps?.rules}
       render={({ field }) => (
-        <StyledInputContainer>
+        <StyledTextFieldsContainer>
           <StyledInput
             {...inputProps}
             {...field}
@@ -53,7 +54,7 @@ export const Input = <T extends FieldValues>({
               <Txt primary1>{errorMessage}</Txt>
             </StyledErrorMessage>
           )}
-        </StyledInputContainer>
+        </StyledTextFieldsContainer>
       )}
     />
   )

@@ -10,7 +10,7 @@ export type AppDialogProps<T> = T & DialogProps
 
 export interface DialogCall<Props extends DialogProps> {
   component: ComponentType<Props>
-  props: Omit<Props, keyof DialogProps>
+  props: Omit<Props, keyof Omit<DialogProps, 'name'>>
 }
 
 export type DialogCallInstance = DialogCall<any> & {

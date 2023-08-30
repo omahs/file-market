@@ -109,6 +109,25 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /auth/check_auth:
+    get:
+      tags:
+        - auth
+        - profile
+      description: Получить профиль
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
   /collections:
     get:
       tags:
@@ -150,7 +169,7 @@ paths:
         "200":
           description: Коллекция
           schema:
-            $ref: "#/definitions/Collection"
+            $ref: "#/definitions/CollectionResponse"
         default:
           description: Ошибка
           schema:
@@ -311,6 +330,31 @@ paths:
           default: 0
           minimum: 0
           maximum: 100
+  /collections/profile/update:
+    post:
+      tags:
+        - collection profile
+      description: Обновление профиля коллекции
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: update_collection_profile_request
+          schema:
+            $ref: '#/definitions/UpdateCollectionProfileRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/UpdateCollectionProfileResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
   /tokens/{address}:
     get:
       tags:
@@ -894,6 +938,8 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
   /report/token:
     post:
       tags:
@@ -913,6 +959,80 @@ paths:
           description: Ответ
           schema:
             $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/update:
+    post:
+      tags:
+        - profile
+      description: Обновление профиля пользователя
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: profile
+          schema:
+            $ref: '#/definitions/UserProfile'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/UserProfile'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/set_email:
+    post:
+      tags:
+        - profile
+      description: Запросить обновление имейла, на почту будет отправлена ссылка для подтверждения
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: set_email_request
+          schema:
+            $ref: '#/definitions/SetEmailRequest'
+      responses:
+        '200':
+          description: Ответ
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+        - jwtAccessTokenAuth: [ ]
+  /profile/{identification}:
+    get:
+      tags:
+        - profile
+      description: Запрос на получение профиля пользователя без приватных полей
+      produces:
+        - application/json
+      parameters:
+        - name: identification
+          in: path
+          description: Адрес аккаунта или username
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/UserProfile'
         default:
           description: Ошибка
           schema:
@@ -1057,7 +1177,109 @@ definitions:
     type: object
     description: Профиль юзера
     properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес юзера
       name:
+        type: string
+        description: Display name юзера
+      username:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        description: Уникальный никнейм, который будет юзаться в URL
+      bio:
+        type: string
+        description: Био человека
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на личный сайт
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      discord:
+        type: string
+        description: ссылка на дискорд
+      telegram:
+        type: string
+        description: ссылка на telegram
+      email:
+        type: string
+        pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'
+        description: Вернется если **Авторизирован**
+      isEmailNotificationEnabled:
+        type: boolean
+        description: Включены ли уведомления по почте
+      isPushNotificationEnabled:
+        type: boolean
+        description: Включены ли пуш уведомления
+      avatarUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
+  UpdateCollectionProfileResponse:
+    type: object
+    description: Ответ на обновление профиля коллекции
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      slug:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        minimum: 3
+        maximum: 256
+        description: Уникальное имя, которое будет показываться в url
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на сайт коллекции
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
+      discord:
+        type: string
+        description: ссылка на discord
+  UpdateCollectionProfileRequest:
+    type: object
+    description: Запрос на обновление профиля коллекции
+    properties:
+      address:
+        type: string
+        pattern: '^0x[0-9a-fA-F]{40}$'
+        description: Адрес коллекции
+      slug:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        minimum: 3
+        maximum: 256
+        description: Уникальное имя, которое будет показываться в url
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на сайт коллекции
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
+      discord:
+        type: string
+        description: ссылка на discord
+    required:
+      - address
+  SetEmailRequest:
+    type: object
+    properties:
+      email:
         type: string
   ReportCollectionRequest:
     type: object
@@ -1285,6 +1507,30 @@ definitions:
         type: number
         x-omitempty: false
         format: uint64
+  CollectionResponse:
+    type: object
+    properties:
+      collection:
+        $ref: "#/definitions/Collection"
+      slug:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+        minimum: 3
+        maximum: 256
+        description: Уникальное имя, которое будет показываться в url
+      websiteUrl:
+        type: string
+        pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
+        description: Ссылка на сайт коллекции
+      twitter:
+        type: string
+        description: ссылка на твиттер
+      telegram:
+        type: string
+        description: ссылка на телегу
+      discord:
+        type: string
+        description: ссылка на discord
   Collection:
     type: object
     description: Коллекция
