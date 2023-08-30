@@ -14,7 +14,7 @@ import SelectBlockchainBlock from './SelectBlockchainBlock/SelectBlockchainBlock
 const SelectBlockchainContainer = styled('div', {
   width: 'max-content',
   display: 'flex',
-  gap: '16px',
+  gap: '28px',
   rowGap: '28px',
   color: '#2F3134',
   '@md': {
@@ -40,7 +40,6 @@ const SelectBlockchainContent = styled('div', {
 const TextBlock = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '24px',
   width: '728px',
   '@md': {
     width: '100%',
@@ -48,6 +47,7 @@ const TextBlock = styled('div', {
 })
 
 const TitleStyled = styled(Txt, {
+  marginBottom: '24px',
   ...textVariant('fourfold1').true,
   '@md': {
     fontSize: '32px',
@@ -67,6 +67,7 @@ const TitleStyled = styled(Txt, {
 })
 
 const DescriptionStyled = styled(Txt, {
+  marginBottom: '48px',
   width: '640px',
   ...textVariant('body2').true,
   '@md': {

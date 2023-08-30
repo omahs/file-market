@@ -37,7 +37,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         true: {
           color: '$white',
           fill: '$white',
-          background: '$gradients$main',
+          background: '$gradients$mainNew',
           '&[data-focus-ring=true]': {
             focusRing: '$blue500',
           },
@@ -414,7 +414,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         css: {
           color: '$white',
           fill: '$white',
-          background: '$gradients$main',
+          background: '$gradients$mainNew',
         },
       },
       {

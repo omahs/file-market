@@ -1,10 +1,10 @@
 import { Tooltip } from '@nextui-org/react'
 import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import { styled } from '../../../../../styles'
-import { Order, Transfer } from '../../../../../swagger/Api'
+import { Api, Order, Transfer } from '../../../../../swagger/Api'
 import { useStores } from '../../../../hooks'
 import { useConfig } from '../../../../hooks/useConfig'
 import { TokenFullId } from '../../../../processing/types'
@@ -48,22 +48,38 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   runIsApprovedRefetch,
 }) => {
   const { blockStore, transferStore } = useStores()
-
+  const [serverTime, setServerTime] = useState<number>()
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
   const config = useConfig()
+  const timeService = new Api({ baseUrl: '/api' }).serverTime
   const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
   const fileBunniesAddressNormalized = utils.getAddress(config?.fileBunniesCollectionToken.address ?? '')
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
+
+  const canBuyByTime = useMemo(() => {
+    if (!serverTime) return
+
+    return serverTime >= 1693180800000
+  }, [serverTime])
+
   const fileBunniesText = useMemo(() => {
-    return (isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 24.12.2023') : ''
-  }, [isFileBunnies, transfer, tokenFullId])
+    return ((isFileBunnies && !canBuyByTime) && (!transfer || permissions.canFulfillOrder(transfer))) ? (+tokenFullId.tokenId >= 7000 ? 'The secondary market will open on August 28th' : 'Unlocked 24.12.2023') : ''
+  }, [isFileBunnies, transfer, tokenFullId, canBuyByTime])
 
   const isDisabledFileBunnies = useMemo(() => {
-    return isFileBunnies && (!transfer || permissions.canFulfillOrder(transfer))
-  }, [isFileBunnies, transfer])
+    return ((isFileBunnies && !canBuyByTime) && (!transfer || permissions.canFulfillOrder(transfer))) || (isFileBunnies && +tokenFullId.tokenId < 7000)
+  }, [isFileBunnies, transfer, canBuyByTime, tokenFullId])
+
+  useEffect(() => {
+    if (!serverTime) {
+      timeService.serverTimeList().then((res) => {
+        setServerTime(res.data.serverTime)
+      })
+    }
+  }, [serverTime])
 
   return (
-    <ButtonsContainer content={fileBunniesText ?? blockStore.confirmationsText}>
+    <ButtonsContainer content={(isDisabledFileBunnies ? fileBunniesText : undefined) ?? blockStore.confirmationsText}>
       {isOwner ? (
         <NFTDealActionOwner
           transfer={transfer}

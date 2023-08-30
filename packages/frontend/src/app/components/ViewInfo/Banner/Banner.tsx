@@ -72,7 +72,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
       >
         <StyledBannerContent style={{
           backgroundImage: !!src ? `url(${src})` : 'linear-gradient(135deg, #028FFF 0%, #04E762 100%)',
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
           borderRadius: '16px',

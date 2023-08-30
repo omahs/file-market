@@ -142,7 +142,7 @@ const ProfilePage: React.FC = observer(() => {
 
       <Inventory>
         <TabsContainer>
-          <Tabs tabs={tabs} />
+          <Tabs tabs={tabs} isSmall isTransparent />
         </TabsContainer>
         <Outlet />
       </Inventory>
