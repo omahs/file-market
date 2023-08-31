@@ -91,8 +91,6 @@ func (s *PostmarkappEmailSender) SendEmail(subject, content, tag string, to, cc,
 		return err
 	}
 
-	fmt.Println(string(data))
-
 	req, err := http.NewRequest(http.MethodPost, s.endpoint, bytes.NewBuffer(data))
 	if err != nil {
 		return err
