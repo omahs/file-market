@@ -127,10 +127,13 @@ func (h *handler) handleVerifyEmail(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	if err := h.service.VerifyEmail(ctx, token); err != nil {
+	address, err := h.service.VerifyEmail(ctx, token)
+	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
 	}
 
-	sendSuccessResponse(w)
+	sendResponse(w, 200, map[string]string{
+		"address": address,
+	})
 }

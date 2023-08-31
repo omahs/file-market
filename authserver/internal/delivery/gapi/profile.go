@@ -100,13 +100,14 @@ func (s *GRPCServer) SetEmail(ctx context.Context, req *authserver_pb.SetEmailRe
 	}, nil
 }
 
-func (s *GRPCServer) VerifyEmail(ctx context.Context, req *authserver_pb.VerifyEmailRequest) (*authserver_pb.SuccessResponse, error) {
+func (s *GRPCServer) VerifyEmail(ctx context.Context, req *authserver_pb.VerifyEmailRequest) (*authserver_pb.VerifyEmailResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
 	defer cancel()
 
-	if err := s.service.VerifyEmail(ctx, req.SecretToken); err != nil {
+	address, err := s.service.VerifyEmail(ctx, req.SecretToken)
+	if err != nil {
 		return nil, err.ToGRPC()
 	}
 
-	return &authserver_pb.SuccessResponse{Success: true}, nil
+	return &authserver_pb.VerifyEmailResponse{Address: address}, nil
 }

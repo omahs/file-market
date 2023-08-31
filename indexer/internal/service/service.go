@@ -136,7 +136,7 @@ type Profiles interface {
 	GetUserProfile(ctx context.Context, identification string) (*models.UserProfile, *models.ErrorResponse)
 	UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse)
 	SetEmail(ctx context.Context, email string) *models.ErrorResponse
-	VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse)
+	VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse)
 }
 
 type Moderation interface {

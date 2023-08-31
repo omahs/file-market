@@ -29,7 +29,7 @@ type UserProfile interface {
 	UpdateUserProfile(ctx context.Context, profile *domain.UserProfile) (*domain.UserProfile, *domain.APIError)
 	GetProfileByIdentification(ctx context.Context, identification string, isPrincipal bool) (*domain.UserProfile, *domain.APIError)
 	SetEmail(ctx context.Context, address common.Address, email string) (*domain.SetEmailResponse, *domain.APIError)
-	VerifyEmail(ctx context.Context, secretToken string) *domain.APIError
+	VerifyEmail(ctx context.Context, secretToken string) (string, *domain.APIError)
 }
 
 type service struct {
