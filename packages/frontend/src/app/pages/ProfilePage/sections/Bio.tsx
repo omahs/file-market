@@ -5,16 +5,17 @@ import { StyledSection, StyledSectionContent, StyledSectionTitle } from '../Prof
 
 interface IBioProps {
   text?: string
+  isTitleEmpty?: boolean
 }
 
-const Bio = ({ text }: IBioProps) => {
+const Bio = ({ text, isTitleEmpty }: IBioProps) => {
   const [isShowFullText, setIsShowFullText] = useState<boolean>(false)
 
   return (
     !!text
       ? (
         <StyledSection style={{ maxWidth: '600px', width: 'inherit' }}>
-          <StyledSectionTitle>Bio</StyledSectionTitle>
+          {!isTitleEmpty && <StyledSectionTitle>Bio</StyledSectionTitle>}
           <StyledSectionContent>
             <Txt primary1 style={{ fontWeight: 400 }}>
               {

@@ -21,7 +21,7 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   isLoading = false
   isActivated = false
 
-  collection?: Collection
+  collectionResp?: CollectionResponse
   address: string = ''
 
   api?: Api<{}>
@@ -43,7 +43,7 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
       this,
       api.collections.collectionsDetail(address),
       (resp) => {
-        this.collection = resp.collection
+        this.collectionResp = resp
       },
     )
   }
@@ -66,5 +66,9 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
 
   reload(): void {
     this.request(this.address, this.api)
+  }
+
+  get collection(): Collection | undefined {
+    return this.collectionResp?.collection
   }
 }

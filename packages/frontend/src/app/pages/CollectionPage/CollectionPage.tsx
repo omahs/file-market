@@ -1,68 +1,37 @@
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
 import { Outlet, useLocation, useParams } from 'react-router'
+import { useAccount } from 'wagmi'
 
 import FileLogo from '../../../assets/FilemarketFileLogo.png'
 import { styled } from '../../../styles'
+import Banner from '../../components/ViewInfo/Banner/Banner'
+import ProfileImage from '../../components/ViewInfo/ProfileImage/ProfileImage'
+import SettingsButton from '../../components/ViewInfo/SettingsButton/SettingsButton'
+import { useStores } from '../../hooks'
+import { useCollectionStore } from '../../hooks/useCollectionStore'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { useConfig } from '../../hooks/useConfig'
 import { useMultiChainStore } from '../../hooks/useMultiChainStore'
-import { Badge, Container, gradientPlaceholderImg, Link, NavLink, Tabs, textVariant } from '../../UIkit'
+import { Badge, Container, gradientPlaceholderImg, Link, NavLink, PageLayout, Tabs } from '../../UIkit'
 import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
+import { reduceAddress } from '../../utils/nfts'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router'
+import { Profile, ProfileHeader, ProfileName } from '../ProfilePage/ProfilePage.styles'
+import Bio from '../ProfilePage/sections/Bio'
 
-const Background = styled('div', {
-  background: '$gradients$background',
-  width: '100%',
-  height: 352,
-})
-
-const Profile = styled('div', {
-  paddingBottom: '$4',
-})
-
-const ProfileHeader = styled('div', {
-  display: 'flex',
-  alignItems: 'flex-end',
-  gap: '$3',
-  marginTop: -80,
-  marginBottom: '$4',
-  '@sm': {
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '$3',
-  },
-})
-
-const ProfileImage = styled('img', {
-  width: 160,
-  height: 160,
-  borderRadius: '25%',
-  border: '8px solid $white',
-  objectFit: 'cover',
-  background: '$gradients$mainNew',
-})
-
-const ProfileName = styled('h2', {
-  ...textVariant('h2').true,
-  color: '$blue900',
-  paddingBottom: '$3',
-  '@sm': {
-    fontSize: 'calc(5vw + 10px)',
-  },
+const GrayOverlay = styled('div', {
+  backgroundColor: '$gray100',
 })
 
 const Badges = styled('div', {
-  display: 'flex',
+  display: 'grid',
   gap: '$2',
   marginBottom: '$4',
   flexWrap: 'wrap',
-  '& .firstLink': {
-    width: '400px',
-  },
+  gridTemplateColumns: 'repeat(2, 1fr)',
   '@sm': {
     '& a': {
       width: '100%',
@@ -71,17 +40,6 @@ const Badges = styled('div', {
       width: '100%',
     },
   },
-})
-
-const GrayOverlay = styled('div', {
-  backgroundColor: '$gray100',
-})
-
-const ProfileDescription = styled('pre', {
-  ...textVariant('body3').true,
-  maxWidth: 540,
-  whiteSpace: 'break-spaces',
-  color: '$gray500',
 })
 
 const Inventory = styled(Container, {
@@ -95,20 +53,13 @@ const Inventory = styled(Container, {
   minHeight: 460, // prevent floating footer
 })
 
-const StyledContainer = styled(Container, {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  '@lg': {
-    flexDirection: 'column',
-    paddingBottom: '$4',
-  },
-})
-
 const CollectionPage = observer(() => {
   const { collectionAddress, chainName } = useParams<Params>()
+  const { userStore } = useStores()
+  const { address } = useAccount()
   useMultiChainStore()
   const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress, chainName)
+  const collectionStore = useCollectionStore(collectionAddress, chainName)
   const config = useConfig()
   const { pathname: currentPath } = useLocation()
 
@@ -127,56 +78,66 @@ const CollectionPage = observer(() => {
     return collectionAndNfts?.collection?.name
   }, [collectionAndNfts?.collection])
 
+  const isOwner = useMemo(() => {
+    return collectionStore.collection?.owner === address
+  }, [collectionStore.collection, address])
+
+  const { user } = userStore
+  const { collection } = collectionStore
+
   return (
     <GrayOverlay>
-      <Background />
-      {collectionAndNfts && (
-        <StyledContainer>
-          <Profile>
-            <ProfileHeader>
-              <ProfileImage src={collectionImgUrl} />
-              <ProfileName>{collectionName}</ProfileName>
-            </ProfileHeader>
-            <Badges>
-              <NavLink
-                to={
-                  collectionAndNfts.collection?.owner
-                    ? `/profile/${collectionAndNfts.collection.owner}`
-                    : currentPath
-                }
-                className={'firstLink'}
-              >
-                <Badge
-                  wrapperProps={{
-                    fullWidth: true,
-                  }}
-                  content={{
-                    title: 'Creator',
-                    value: reduceAddress(collectionAndNfts.collection?.owner ?? ''),
-                  }}
-                  image={{
-                    url: getProfileImageUrl(collectionAndNfts.collection?.owner ?? ''),
-                    borderRadius: 'circle',
-                  }}
-                />
-              </NavLink>
-              {collectionAndNfts.collection?.address && (
-                <Link
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  href={`${config?.chain.blockExplorers?.default.url}` +
-                      `/address/${collectionAndNfts.collection?.address}`}
-                >
-                  <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
-                </Link>
-              )}
-            </Badges>
-            <ProfileDescription>
-              {collectionAndNfts.collection?.description}
-            </ProfileDescription>
-          </Profile>
-        </StyledContainer>
-      )}
+      <PageLayout>
+        <Banner
+          isOwner={isOwner}
+          src={user?.bannerUrl ? getHttpLinkFromIpfsString(user?.bannerUrl) : undefined}
+        />
+        <Profile>
+          <ProfileHeader>
+            <ProfileImage
+              src={user?.avatarUrl ? getHttpLinkFromIpfsString(user?.avatarUrl) : getProfileImageUrl(collectionAddress ?? '')}
+              isOwner={isOwner}
+            />
+            <ProfileName>{collectionName}</ProfileName>
+          </ProfileHeader>
+          {isOwner && <SettingsButton />}
+        </Profile>
+        <Badges>
+          <NavLink
+            to={
+              collectionAndNfts.collection?.owner
+                ? `/profile/${collectionAndNfts.collection.owner}`
+                : currentPath
+            }
+            className={'firstLink'}
+          >
+            <Badge
+              wrapperProps={{
+                fullWidth: true,
+              }}
+              content={{
+                title: 'Creator',
+                value: reduceAddress(collectionAndNfts.collection?.owner ?? ''),
+              }}
+              image={{
+                url: getProfileImageUrl(collectionAndNfts.collection?.owner ?? ''),
+                borderRadius: 'circle',
+              }}
+            />
+          </NavLink>
+          {collectionAndNfts.collection?.address && (
+            <Link
+              target='_blank'
+              rel='noopener noreferrer'
+              href={`${config?.chain.blockExplorers?.default.url}` +
+                `/address/${collectionAndNfts.collection?.address}`}
+            >
+              <Badge content={{ title: config?.chain.blockExplorers?.default.name, value: 'VRG' }} />
+            </Link>
+          )}
+        </Badges>
+        <Bio isTitleEmpty text={user?.bio} />
+      </PageLayout>
       <Inventory>
         <TabsContainer>
           <Tabs
