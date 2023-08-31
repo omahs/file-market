@@ -17,7 +17,7 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 	})
 	if err != nil {
 		logger.Error("failed to auth by signature", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	accessToken := models.JwtTokenInfo{
@@ -57,7 +57,7 @@ func (s *service) GetAuthMessage(ctx context.Context, req models.AuthMessageRequ
 	})
 	if err != nil {
 		logger.Error("failed to get auth message", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	return &models.AuthMessageResponse{Message: &res.Message}, nil
@@ -67,7 +67,7 @@ func (s *service) RefreshJwtTokens(ctx context.Context) (*models.AuthResponse, *
 	res, err := s.authClient.RefreshTokens(ctx, &empty.Empty{})
 	if err != nil {
 		logger.Error("failed to refresh jwt", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	accessToken := models.JwtTokenInfo{
@@ -109,7 +109,7 @@ func (s *service) GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, to
 	})
 	if err != nil {
 		logger.Error("failed to get uset by jwt", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	return &domain.User{
@@ -122,7 +122,7 @@ func (s *service) Logout(ctx context.Context) (*models.SuccessResponse, *models.
 	res, err := s.authClient.Logout(ctx, &empty.Empty{})
 	if err != nil {
 		logger.Error("failed to logout", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	return &models.SuccessResponse{Success: &res.Success}, nil
@@ -132,7 +132,7 @@ func (s *service) FullLogout(ctx context.Context) (*models.SuccessResponse, *mod
 	res, err := s.authClient.FullLogout(ctx, &empty.Empty{})
 	if err != nil {
 		logger.Error("failed to full logout", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	return &models.SuccessResponse{Success: &res.Success}, nil
@@ -142,7 +142,7 @@ func (s *service) CheckAuth(ctx context.Context) (*models.UserProfile, *models.E
 	res, err := s.authClient.CheckAuth(ctx, &empty.Empty{})
 	if err != nil {
 		logger.Error("failed to check auth", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{

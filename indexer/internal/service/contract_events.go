@@ -12,6 +12,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/types"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/utils"
 	"log"
 	"math/big"
 	"strings"
@@ -541,28 +542,37 @@ func (s *service) onTransferDraftCompletionEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification to owner
+	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String())
+	if e != nil {
+		return errors.New(e.Message)
+	}
 	owner, e := s.GetUserProfile(ctx, token.Owner.String())
 	if e != nil {
 		return errors.New(e.Message)
 	}
+
 	if owner.IsEmailNotificationEnabled && owner.Email != "" {
-		emailContentTemplate := `
-			Your <a href="%s">token</a> was fulfilled. Please transfer hidden file.
-		`
 		network := "Filecoin"
+		currency := "FIL"
 		if strings.Contains(s.cfg.Mode, "era") {
 			network = "ZkSync"
+			currency = "ETH"
 		}
-		link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
-		if err := s.emailSender.SendEmail(
-			"Your order was fulfilled",
-			fmt.Sprintf(emailContentTemplate, link),
-			"owner notification",
-			[]string{owner.Email},
-			nil,
-			nil,
-		); err != nil {
-			logger.Error("failed to send email", err, nil)
+		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
+		data := emailBuyNotificationTemplateParams{
+			OwnerUsername:      owner.Username,
+			BuyerUsername:      buyer.Username,
+			TokenName:          token.Metadata.Name,
+			TokenUrl:           tokenUrl,
+			Price:              utils.ParseEth(order.Price).String(),
+			Currency:           currency,
+			ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, buyer.Address),
+			BottomFilename:     "bottompng",
+			LogoFilename:       "logopng",
+		}
+
+		if err := s.sendEmail("email_transfer_notification", owner.Email, "Your order was fulfilled", "owner notification", data); err != nil {
+			logger.Error("failed to send fulfill notification email", err, nil)
 		}
 	}
 
@@ -691,28 +701,33 @@ func (s *service) onPasswordSetEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification
+	owner, e := s.GetUserProfile(ctx, transfer.FromAddress.String())
+	if e != nil {
+		return errors.New(e.Message)
+	}
 	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String())
 	if e != nil {
 		return errors.New(e.Message)
 	}
+
 	if buyer.IsEmailNotificationEnabled && buyer.Email != "" {
-		emailContentTemplate := `
-			<a href="%s">Token's'</a> hidden file was transferred. Please finish the order.
-		`
 		network := "Filecoin"
 		if strings.Contains(s.cfg.Mode, "era") {
 			network = "ZkSync"
 		}
-		link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
-		if err := s.emailSender.SendEmail(
-			"Hidden file was transferred",
-			fmt.Sprintf(emailContentTemplate, link),
-			"buyer notification",
-			[]string{buyer.Email},
-			nil,
-			nil,
-		); err != nil {
-			logger.Error("failed to send email", err, nil)
+		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
+		data := emailTransferNotificationTemplateParams{
+			BuyerUsername:      buyer.Username,
+			OwnerUsername:      owner.Username,
+			TokenName:          token.Metadata.Name,
+			TokenUrl:           tokenUrl,
+			ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, buyer.Address),
+			BottomFilename:     "bottompng",
+			LogoFilename:       "logopng",
+		}
+
+		if err := s.sendEmail("email_transfer_notification", buyer.Email, "Hidden file was transferred", "buyer notification", data); err != nil {
+			logger.Error("failed to send file transfer notification email", err, nil)
 		}
 	}
 

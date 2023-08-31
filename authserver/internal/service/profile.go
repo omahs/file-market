@@ -198,13 +198,20 @@ func (s *service) SetEmail(
 		return nil, domain.InternalError
 	}
 
+	profile, err := s.repository.GetUserProfile(ctx, tx, address)
+	if err != nil {
+		log.Printf("failed to get user profile: %v", err)
+		return nil, domain.InternalError
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		return nil, domain.InternalError
 	}
 
 	return &domain.SetEmailResponse{
-		Token: verificationToken,
-		Email: email,
+		Token:   verificationToken,
+		Email:   email,
+		Profile: profile,
 	}, nil
 }
 

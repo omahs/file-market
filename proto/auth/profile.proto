@@ -35,4 +35,5 @@ message VerifyEmailRequest {
 message SetEmailResponse {
   string token = 1;
   string email = 2;
+  UserProfile profile = 3;
 }

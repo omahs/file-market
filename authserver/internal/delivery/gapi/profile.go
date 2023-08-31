@@ -94,8 +94,9 @@ func (s *GRPCServer) SetEmail(ctx context.Context, req *authserver_pb.SetEmailRe
 	}
 
 	return &authserver_pb.SetEmailResponse{
-		Token: res.Token,
-		Email: res.Email,
+		Token:   res.Token,
+		Email:   res.Email,
+		Profile: res.Profile.ToGRPC(),
 	}, nil
 }
 
