@@ -16,8 +16,6 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"io"
 	"log"
 	"math/big"
@@ -1518,26 +1516,4 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 func (s *service) Shutdown() {
 	s.closeCh <- struct{}{}
 	close(s.closeCh)
-}
-
-func GRPCErrToHTTP(err error) *models.ErrorResponse {
-	if err == nil {
-		return nil
-	}
-	s := status.Convert(err)
-	hs := http.StatusInternalServerError
-
-	switch s.Code() {
-	case codes.InvalidArgument:
-		hs = http.StatusBadRequest
-	case codes.Unauthenticated:
-		hs = http.StatusUnauthorized
-	case codes.NotFound:
-		hs = http.StatusNotFound
-	}
-
-	return &models.ErrorResponse{
-		Code:    int64(hs),
-		Message: s.Message(),
-	}
 }

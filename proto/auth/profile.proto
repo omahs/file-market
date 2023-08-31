@@ -18,6 +18,7 @@ message UserProfile {
   string address = 11;
   string discord = 12;
   string telegram = 13;
+  bool isEmailConfirmed = 14;
 }
 
 message GetUserProfileRequest {
@@ -34,4 +35,5 @@ message VerifyEmailRequest {
 message SetEmailResponse {
   string token = 1;
   string email = 2;
+  UserProfile profile = 3;
 }

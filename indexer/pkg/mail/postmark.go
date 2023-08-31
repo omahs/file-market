@@ -70,19 +70,20 @@ func NewPostmarkSender(cfg *config.EmailSenderConfig) EmailSender {
 	}
 }
 
-func (s *PostmarkappEmailSender) SendEmail(subject, content, tag string, to, cc, bcc []string) error {
+func (s *PostmarkappEmailSender) SendEmail(subject, content, tag string, to, cc, bcc []string, attachments []Attachment) error {
 	if len(to) < 1 {
 		return errors.New("receiver address is not specified")
 	}
 
 	e := postmarkEmail{
-		From:     s.fromAddress,
-		To:       strings.Join(to, ","),
-		Cc:       strings.Join(cc, ","),
-		Bcc:      strings.Join(bcc, ","),
-		Subject:  subject,
-		Tag:      tag,
-		HtmlBody: content,
+		From:        s.fromAddress,
+		To:          strings.Join(to, ","),
+		Cc:          strings.Join(cc, ","),
+		Bcc:         strings.Join(bcc, ","),
+		Subject:     subject,
+		Tag:         tag,
+		HtmlBody:    content,
+		Attachments: attachmentToPostmarkapp(attachments),
 	}
 
 	data, err := json.Marshal(e)
@@ -118,7 +119,25 @@ func (s *PostmarkappEmailSender) SendEmail(subject, content, tag string, to, cc,
 		return err
 	}
 
+	if response.MessageID == "" {
+		return fmt.Errorf("failed to send email: %w", string(body))
+	}
+
 	log.Printf("`%s` email was sent. Id: %s", tag, response.MessageID)
 
 	return nil
+}
+
+func attachmentToPostmarkapp(attachments []Attachment) []postmarkAttachment {
+	pa := make([]postmarkAttachment, len(attachments))
+	for i, a := range attachments {
+		pa[i] = postmarkAttachment{
+			Name:        a.Name,
+			ContentID:   a.ContentID,
+			Content:     a.Content,
+			ContentType: a.ContentType,
+		}
+	}
+
+	return pa
 }

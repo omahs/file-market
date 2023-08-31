@@ -193,13 +193,25 @@ func (s *service) SetEmail(
 		return nil, domain.InternalError
 	}
 
+	if err := s.repository.UpdateUserProfileEmail(ctx, tx, email, false, address); err != nil {
+		log.Printf("failed to update profile email: %v", err)
+		return nil, domain.InternalError
+	}
+
+	profile, err := s.repository.GetUserProfile(ctx, tx, address)
+	if err != nil {
+		log.Printf("failed to get user profile: %v", err)
+		return nil, domain.InternalError
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		return nil, domain.InternalError
 	}
 
 	return &domain.SetEmailResponse{
-		Token: verificationToken,
-		Email: email,
+		Token:   verificationToken,
+		Email:   email,
+		Profile: profile,
 	}, nil
 }
 
@@ -233,7 +245,7 @@ func (s *service) VerifyEmail(
 		}
 	}
 
-	if err := s.repository.UpdateUserProfileEmail(ctx, tx, token.Email, token.Address); err != nil {
+	if err := s.repository.UpdateUserProfileEmail(ctx, tx, token.Email, true, token.Address); err != nil {
 		log.Printf("failed to update profile email: %v", err)
 		return domain.InternalError
 	}
