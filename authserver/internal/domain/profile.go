@@ -40,6 +40,7 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 		Username:                   p.Username,
 		WebsiteURL:                 p.WebsiteURL,
 		Email:                      p.Email,
+		IsEmailConfirmed:           p.IsEmailConfirmed,
 		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
 		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
 		Twitter:                    utils.UnwrapString(p.Twitter),
