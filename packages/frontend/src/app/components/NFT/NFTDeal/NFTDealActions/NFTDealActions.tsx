@@ -57,11 +57,11 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
 
   const fileBunniesText = useMemo(() => {
-    return ((isFileBunnies && +tokenFullId.tokenId < 7000) && (!transfer || permissions.canFulfillOrder(transfer))) ? 'Unlocked 24.12.2023' : ''
+    return (isFileBunnies && +tokenFullId.tokenId < 7000) ? 'Unlocked 24.12.2023' : ''
   }, [isFileBunnies, transfer, tokenFullId])
 
   const isDisabledFileBunnies = useMemo(() => {
-    return ((!transfer || permissions.canFulfillOrder(transfer))) || (isFileBunnies && +tokenFullId.tokenId < 7000)
+    return (isFileBunnies && +tokenFullId.tokenId < 7000)
   }, [isFileBunnies, transfer, tokenFullId])
 
   useEffect(() => {
