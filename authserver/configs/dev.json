@@ -10,8 +10,8 @@
     "requestTimeout": "5s"
   },
   "service": {
-    "authMessageTTL": "5m",
-    "accessTokenTTL": "1h",
+    "authMessageTTL": "15m",
+    "accessTokenTTL": "60h",
     "refreshTokenTTL": "2160h",
     "emailVerificationTokenTTL": "30m"
   }
