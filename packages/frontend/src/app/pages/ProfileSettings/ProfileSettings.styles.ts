@@ -97,7 +97,7 @@ export const GrayBgText = styled('span', {
     YourWalletStyled: {
       true: {
         display: 'flex',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
         gap: '8px',
       },
     },
@@ -116,5 +116,25 @@ export const CheckBoxContainer = styled(FormControlLabel, {
     '> span:first-child': {
       boxShadow: 'none',
     },
+  },
+})
+
+export const WalletName = styled(Txt, {
+  ...textVariant('body4').true,
+  display: 'block',
+  '@sm': {
+    fontSize: 15,
+  },
+  '@media (max-width: 500px)': {
+    display: 'none',
+  },
+})
+
+export const WalletNameMobile = styled(Txt, {
+  ...textVariant('body4').true,
+  display: 'none',
+  '@media (max-width: 500px)': {
+    fontSize: 16,
+    display: 'block',
   },
 })

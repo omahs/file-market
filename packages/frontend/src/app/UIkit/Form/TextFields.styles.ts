@@ -75,6 +75,18 @@ export const textFieldsStyles = {
         padding: '8px 16px',
         borderRadius: '12px',
         color: '#6B6F76',
+        '@md': {
+          height: 44,
+          fontSize: '15px',
+        },
+        '@sm': {
+          height: 42,
+          fontSize: '13px',
+        },
+        '@xs': {
+          height: 40,
+          fontSize: '12px',
+        },
       },
     },
     textStartInput: {
