@@ -218,28 +218,28 @@ func (s *service) SetEmail(
 func (s *service) VerifyEmail(
 	ctx context.Context,
 	secretToken string,
-) *domain.APIError {
+) (string, *domain.APIError) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
 	token, err := s.repository.GetEmailVerificationToken(ctx, tx, secretToken)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return &domain.APIError{
+			return "", &domain.APIError{
 				Code:    http.StatusNotFound,
 				Message: "Token not found",
 			}
 		}
 		log.Printf("failed to get verification token: %v", err)
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 
 	if time.Since(token.CreatedAt) > s.cfg.EmailVerificationTokenTTL {
-		return &domain.APIError{
+		return "", &domain.APIError{
 			Code:    http.StatusBadRequest,
 			Message: "Token is expired",
 		}
@@ -247,7 +247,7 @@ func (s *service) VerifyEmail(
 
 	if err := s.repository.UpdateUserProfileEmail(ctx, tx, token.Email, true, token.Address); err != nil {
 		log.Printf("failed to update profile email: %v", err)
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 
 	if err := s.repository.DeleteAllEmailVerificationTokens(ctx, tx, token.Address); err != nil {
@@ -255,10 +255,10 @@ func (s *service) VerifyEmail(
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 
-	return nil
+	return strings.ToLower(token.Address.String()), nil
 }
 
 // updateUserProfileFields updates `new` profile fields except email and twitter

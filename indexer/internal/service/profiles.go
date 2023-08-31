@@ -103,12 +103,14 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 	return nil
 }
 
-func (s *service) VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse) {
+func (s *service) VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse) {
 	res, err := s.authClient.VerifyEmail(ctx, &authserver_pb.VerifyEmailRequest{SecretToken: secretToken})
 	if err != nil {
 		logger.Error("failed to call VerifyEmail", err, nil)
-		return nil, grpcErrToHTTP(err)
+		return "", grpcErrToHTTP(err)
 	}
 
-	return &models.SuccessResponse{Success: &res.Success}, nil
+	link := fmt.Sprintf("%s/profile/%s", s.cfg.Host, res.Address)
+
+	return link, nil
 }
