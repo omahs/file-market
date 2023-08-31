@@ -25,7 +25,7 @@ export const textFieldsStyles = {
   lineHeight: '19px',
   color: '$blue900',
   border: '2px solid transparent',
-  transition: 'outline-width 0.5s',
+  transition: 'outline 0.25s ease-in-out, box-shadow 0.3s ease-in-out',
   width: '100%',
 
   '&:placeholder': {

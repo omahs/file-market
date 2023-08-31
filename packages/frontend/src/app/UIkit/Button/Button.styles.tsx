@@ -148,6 +148,18 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           padding: '8px 16px',
           minWidth: '0',
           height: '32px',
+          transition: 'all 0.25s ease-in-out',
+          svg: {
+            color: '#6B6F76',
+            transition: 'all 0.25s ease-in-out',
+          },
+          '&:hover': {
+            opacity: 1,
+            boxShadow: 'none',
+            svg: {
+              color: '$blue500',
+            },
+          },
         },
       },
       small: {

@@ -15,6 +15,7 @@ const TextStartInputStyle = styled('div', {
     top: '15px',
     left: '16px',
     zIndex: '1',
+    pointerEvents: 'none', // hover effect are lost without this
     '&:hover': {
       filter: 'brightness(110%)',
     },

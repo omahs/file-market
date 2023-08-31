@@ -60,6 +60,12 @@ const P = styled('p', {
 })
 
 const FileStyle = styled(File, {
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    transition: 'all 0.12s ease-in-out',
+    zIndex: 2,
+  },
   variants: {
     avatar: {
       true: {
@@ -68,10 +74,17 @@ const FileStyle = styled(File, {
         background: 'none',
         margin: '0 auto',
         boxShadow: 'none',
-        border: '1px solid #0090FF',
         borderRadius: '50%',
+        '&::before': {
+          width: '160px !important',
+          height: '160px !important',
+          borderRadius: '50%',
+          border: '1px solid #0090FF',
+        },
         '&:hover': {
-          border: '4px solid #0090FF',
+          '&::before': {
+            border: '4px solid #0090FF',
+          },
         },
       },
     },
@@ -81,9 +94,16 @@ const FileStyle = styled(File, {
         height: '100px !important',
         margin: '0 auto',
         boxShadow: 'none',
-        border: '2px solid #0090FF',
+        '&::before': {
+          width: '400px !important',
+          height: '100px !important',
+          border: '2px solid #0090FF',
+          borderRadius: '16px',
+        },
         '&:hover': {
-          border: '4px solid #0090FF',
+          '&::before': {
+            border: '4px solid #0090FF',
+          },
         },
       },
     },

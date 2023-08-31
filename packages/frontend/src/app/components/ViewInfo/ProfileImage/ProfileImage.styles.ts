@@ -16,9 +16,31 @@ export const StyledProfileImageContent = styled('div', {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  variants: {
+    withHover: {
+      true: {
+        '&:hover::before': {
+          opacity: '0.25',
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          zIndex: 1,
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          backgroundColor: 'black',
+          opacity: '0',
+          transition: 'opacity 0.2s ease-in-out',
+        },
+      },
+    },
+  },
 })
 
 export const StyledProfileCameraImage = styled('img', {
+  position: 'relative',
+  zIndex: 2,
   cursor: 'pointer',
   '&:hover': {
     filter: 'brightness(120%)',
