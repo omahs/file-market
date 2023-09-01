@@ -2,14 +2,18 @@ import React from 'react'
 import { FieldValues } from 'react-hook-form'
 
 import { ControlledInputProps, Input, Txt } from '../../../../UIkit'
-import { CheckBox, ControlledCheckBoxProps } from '../../../../UIkit/Form/CheckBox/CheckBox'
+import {
+  CheckBox,
+  ControlledCheckBoxProps,
+} from '../../../../UIkit/Form/CheckBox/CheckBox'
 import {
   SettingCheckBoxActiveIcon,
   SettingCheckBoxIcon,
 } from '../../../../UIkit/Form/CheckBox/variants/SettingCheckBoxIcon'
 import {
   CheckBoxContainer,
-  FormControlSettings, GrayBgText,
+  FormControlSettings,
+  GrayBgText,
   StyledSectionContent,
   StyledTitleInput,
   StyledTitleSection,
@@ -21,7 +25,10 @@ interface INotificationsSection<T extends FieldValues> {
   // pushNotification: ControlledCheckBoxProps<T>
 }
 
-const NotificationsSection = <T extends FieldValues>({ email, emailNotification }: INotificationsSection<T>) => {
+const NotificationsSection = <T extends FieldValues>({
+  email,
+  emailNotification,
+}: INotificationsSection<T>) => {
   return (
     <StyledSectionContent>
       <StyledTitleSection>Notifications</StyledTitleSection>
@@ -31,7 +38,9 @@ const NotificationsSection = <T extends FieldValues>({ email, emailNotification 
           settings
           placeholder='Email address'
           controlledInputProps={email}
-          errorMessage={email.control._formState.errors.email?.message as string}
+          errorMessage={
+            email.control._formState.errors.email?.message as string
+          }
           isError={!!email.control._formState.errors.email?.message}
         />
       </FormControlSettings>
@@ -62,6 +71,8 @@ const NotificationsSection = <T extends FieldValues>({ email, emailNotification 
                 width: '28px',
                 height: '28px',
                 boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.25)',
+                marginRight: '12px',
+                transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                   boxShadow: 'none',
                 },

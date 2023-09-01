@@ -8,6 +8,7 @@ export const StyledTitle = styled(Txt, {
   fontSize: '40px',
   fontWeight: '700',
   lineHeight: '48px',
+  fontFamily: '$fourfold',
 })
 
 export const StyledTitleSection = styled(Txt, {
@@ -16,6 +17,7 @@ export const StyledTitleSection = styled(Txt, {
   fontWeight: '700',
   color: '#2F3134',
   paddingBottom: '8px',
+  fontFamily: '$primary',
 })
 
 export const StyledTitleInput = styled(Txt, {
@@ -95,7 +97,7 @@ export const GrayBgText = styled('span', {
     YourWalletStyled: {
       true: {
         display: 'flex',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
         gap: '8px',
       },
     },
@@ -108,4 +110,31 @@ export const CheckBoxContainer = styled(FormControlLabel, {
   padding: '16px',
   width: '100%',
   margin: '0 !important',
+  transition: 'outline 0.25s ease-in-out',
+  '&:hover': {
+    outline: '1px solid $blue500',
+    '> span:first-child': {
+      boxShadow: 'none',
+    },
+  },
+})
+
+export const WalletName = styled(Txt, {
+  ...textVariant('body4').true,
+  display: 'block',
+  '@sm': {
+    fontSize: 15,
+  },
+  '@media (max-width: 500px)': {
+    display: 'none',
+  },
+})
+
+export const WalletNameMobile = styled(Txt, {
+  ...textVariant('body4').true,
+  display: 'none',
+  '@media (max-width: 500px)': {
+    fontSize: 16,
+    display: 'block',
+  },
 })

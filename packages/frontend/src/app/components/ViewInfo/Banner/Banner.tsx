@@ -70,13 +70,15 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         onMouseEnter={() => setIsShowEdit(true)}
         onMouseLeave={() => setIsShowEdit(false)}
       >
-        <StyledBannerContent style={{
-          backgroundImage: !!src ? `url(${src})` : 'linear-gradient(135deg, #028FFF 0%, #04E762 100%)',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          borderRadius: '16px',
-        }}
+        <StyledBannerContent
+          style={{
+            backgroundImage: !!src ? `url(${src})` : 'linear-gradient(135deg, #028FFF 0%, #04E762 100%)',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            borderRadius: '16px',
+          }}
+          withHover={isOwner}
         >
           {
             (isShowEdit && isOwner) && (

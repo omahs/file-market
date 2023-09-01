@@ -74,13 +74,15 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         onMouseLeave={() => setIsShowEdit(false)}
       >
 
-        <StyledProfileImageContent style={{
-          backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          borderRadius: '50%',
-        }}
+        <StyledProfileImageContent
+          style={{
+            backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            borderRadius: '50%',
+          }}
+          withHover={isOwner}
         >
           {
             (isShowEdit && isOwner) && (

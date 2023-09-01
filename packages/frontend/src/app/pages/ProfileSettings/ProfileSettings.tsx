@@ -7,10 +7,11 @@ import { BaseModal } from '../../components'
 import { useStores } from '../../hooks'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { Button, PageLayout, Txt } from '../../UIkit'
+import { reduceAddress } from '../../utils/nfts'
 import ReturnButton from './components/ReturnButton/ReturnButton'
 import { useUpdateProfile } from './helper/hooks/useUpdateProfile'
 import { IProfileSettings } from './helper/types/formType'
-import { Form, GrayBgText, StyledTitle } from './ProfileSettings.styles'
+import { Form, GrayBgText, StyledTitle, WalletName, WalletNameMobile } from './ProfileSettings.styles'
 import AppearanceSection from './sections/Appereance/Appereance'
 import Links from './sections/Links/Links'
 import Notifications from './sections/Notifications/Notifications'
@@ -74,7 +75,14 @@ export default observer(function ProfileSettings() {
             <Txt primary1>
               Your wallet:
             </Txt>
-            <Txt body4>{address ?? 'Please connect the wallet'}</Txt>
+            <WalletName>
+              {address ?? 'Please connect the wallet'}
+
+            </WalletName>
+            <WalletNameMobile>
+              {reduceAddress(address as string) ?? 'Please connect the wallet'}
+
+            </WalletNameMobile>
           </GrayBgText>
           <AppearanceSection<IProfileSettings>
             name={{
