@@ -38,7 +38,7 @@ func grpcErrToHTTP(err error) *models.ErrorResponse {
 }
 
 type emailVerificationTemplateParams struct {
-	Username           string
+	Name               string
 	VerifyUrl          string
 	ProfileSettingsUrl string
 	BottomFilename     string
@@ -46,8 +46,8 @@ type emailVerificationTemplateParams struct {
 }
 
 type emailTransferNotificationTemplateParams struct {
-	BuyerUsername      string
-	OwnerUsername      string
+	BuyerName          string
+	OwnerName          string
 	TokenName          string
 	TokenUrl           string
 	ProfileSettingsUrl string
@@ -56,8 +56,8 @@ type emailTransferNotificationTemplateParams struct {
 }
 
 type emailBuyNotificationTemplateParams struct {
-	OwnerUsername      string
-	BuyerUsername      string
+	OwnerName          string
+	BuyerName          string
 	TokenName          string
 	TokenUrl           string
 	Price              string

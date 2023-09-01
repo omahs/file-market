@@ -82,8 +82,12 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 		return grpcErrToHTTP(err)
 	}
 
+	name := res.Profile.Name
+	if name == "" {
+		name = res.Profile.Address
+	}
 	data := emailVerificationTemplateParams{
-		Username:           res.Profile.Username,
+		Name:               name,
 		VerifyUrl:          fmt.Sprintf("%s/api/profile/verify_email?secret_token=%s", s.cfg.Host, res.Token),
 		ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, res.Profile.Address),
 		BottomFilename:     "bottompng",

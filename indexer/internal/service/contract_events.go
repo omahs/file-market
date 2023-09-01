@@ -559,9 +559,17 @@ func (s *service) onTransferDraftCompletionEvent(
 			currency = "ETH"
 		}
 		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
+		ownerName := owner.Name
+		if ownerName == "" {
+			ownerName = owner.Address
+		}
+		buyerName := buyer.Name
+		if buyerName == "" {
+			buyerName = buyer.Address
+		}
 		data := emailBuyNotificationTemplateParams{
-			OwnerUsername:      owner.Username,
-			BuyerUsername:      buyer.Username,
+			OwnerName:          ownerName,
+			BuyerName:          buyerName,
 			TokenName:          token.Metadata.Name,
 			TokenUrl:           tokenUrl,
 			Price:              utils.ParseEth(order.Price).String(),
@@ -716,9 +724,17 @@ func (s *service) onPasswordSetEvent(
 			network = "ZkSync"
 		}
 		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
+		ownerName := owner.Name
+		if ownerName == "" {
+			ownerName = owner.Address
+		}
+		buyerName := buyer.Name
+		if buyerName == "" {
+			buyerName = buyer.Address
+		}
 		data := emailTransferNotificationTemplateParams{
-			BuyerUsername:      buyer.Username,
-			OwnerUsername:      owner.Username,
+			BuyerName:          buyerName,
+			OwnerName:          ownerName,
 			TokenName:          token.Metadata.Name,
 			TokenUrl:           tokenUrl,
 			ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, buyer.Address),
