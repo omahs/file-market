@@ -37,15 +37,21 @@ export const GrayOverlay = styled('div', {
 })
 
 export const Inventory = styled(Container, {
+  position: 'relative',
+  zIndex: 2,
   paddingTop: '$4',
   paddingBottom: 48,
   backgroundColor: '#F9F9F9',
   borderRadius: '$6 $6 0 0',
+  border: '4px solid #C9CBCF',
+  borderBottom: 0,
+  boxShadow: '0px -4px 15px 0px rgba(19, 19, 45, 0.05)',
+  width: 'calc(100% + 8px)', // to hide left and right borders, overflow: hidden on parent is nessesary
+  left: '-4px',
+  minHeight: 460, // prevent floating footer
   '@md': {
     borderRadius: '$4 $4 0 0',
   },
-  boxShadow: '$footer',
-  minHeight: 460, // prevent floating footer
 })
 
 export const AddressesButtonsContainer = styled('div', {

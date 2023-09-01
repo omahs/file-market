@@ -12,7 +12,14 @@ const (
 )
 
 type EmailSender interface {
-	SendEmail(subject, content, tag string, to, cc, bcc []string) error
+	SendEmail(subject, content, tag string, to, cc, bcc []string, attachments []Attachment) error
+}
+
+type Attachment struct {
+	Name        string
+	Content     string
+	ContentType string
+	ContentID   string
 }
 
 type GmailSender struct {
@@ -31,7 +38,7 @@ func NewGmailSender(cfg *config.EmailSenderConfig) EmailSender {
 	}
 }
 
-func (s *GmailSender) SendEmail(subject, content, tag string, to, cc, bcc []string) error {
+func (s *GmailSender) SendEmail(subject, content, tag string, to, cc, bcc []string, attachments []Attachment) error {
 	e := email.NewEmail()
 	e.From = fmt.Sprintf("%s <%s>", s.name, s.fromAddress)
 	e.Subject = subject

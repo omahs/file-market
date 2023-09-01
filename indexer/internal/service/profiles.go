@@ -13,7 +13,7 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 	})
 	if err != nil {
 		logger.Error("failed to call GetUserProfile", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{
@@ -53,7 +53,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 	res, err := s.authClient.UpdateUserProfile(ctx, &arg)
 	if err != nil {
 		logger.Error("failed to call UpdateUserProfile", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{
@@ -79,22 +79,22 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 	res, err := s.authClient.SetEmail(ctx, &authserver_pb.SetEmailRequest{Email: email})
 	if err != nil {
 		logger.Error("failed to call SetEmail", err, nil)
-		return GRPCErrToHTTP(err)
+		return grpcErrToHTTP(err)
 	}
 
-	contentTemplate := `
-		<h1>Filemarket Email Verification</h1>
-		<a href="%s">Click to verify email on Filemarket.xyz</a>
-	`
-	link := fmt.Sprintf("%s/api/profile/verify_email?secret_token=%s", s.cfg.Host, res.Token) // https://filemarket.xyz
-
-	if err := s.emailSender.SendEmail(
+	data := emailVerificationTemplateParams{
+		Username:           res.Profile.Username,
+		VerifyUrl:          fmt.Sprintf("%s/api/profile/verify_email?secret_token=%s", s.cfg.Host, res.Token),
+		ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, res.Profile.Address),
+		BottomFilename:     "bottompng",
+		LogoFilename:       "logopng",
+	}
+	if err := s.sendEmail(
+		"email_verify",
+		res.Email,
 		"Email Verification",
-		fmt.Sprintf(contentTemplate, link),
 		"verification",
-		[]string{res.Email},
-		nil,
-		nil,
+		data,
 	); err != nil {
 		logger.Error("failed to send verification email", err, nil)
 		return internalError
@@ -103,12 +103,14 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 	return nil
 }
 
-func (s *service) VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse) {
+func (s *service) VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse) {
 	res, err := s.authClient.VerifyEmail(ctx, &authserver_pb.VerifyEmailRequest{SecretToken: secretToken})
 	if err != nil {
 		logger.Error("failed to call VerifyEmail", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return "", grpcErrToHTTP(err)
 	}
 
-	return &models.SuccessResponse{Success: &res.Success}, nil
+	link := fmt.Sprintf("%s/profile/%s", s.cfg.Host, res.Address)
+
+	return link, nil
 }

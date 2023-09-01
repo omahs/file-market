@@ -15,6 +15,7 @@ type UserProfile struct {
 	BannerURL                   string         `json:"bannerUrl"`
 	Bio                         string         `json:"bio"`
 	Email                       string         `json:"email"`
+	IsEmailConfirmed            bool           `json:"isEmailConfirmed"`
 	IsEmailNotificationsEnabled bool           `json:"isEmailNotificationsEnabled"`
 	IsPushNotificationsEnabled  bool           `json:"isPushNotificationsEnabled"`
 	Name                        string         `json:"name"`
@@ -39,6 +40,7 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 		Username:                   p.Username,
 		WebsiteURL:                 p.WebsiteURL,
 		Email:                      p.Email,
+		IsEmailConfirmed:           p.IsEmailConfirmed,
 		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
 		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
 		Twitter:                    utils.UnwrapString(p.Twitter),
@@ -124,6 +126,7 @@ func (p *UserProfile) HidePrivateFields() {
 	p.Email = ""
 	p.IsPushNotificationsEnabled = false
 	p.IsEmailNotificationsEnabled = false
+	p.IsEmailConfirmed = false
 }
 
 func GetDefaultUserProfile(address common.Address) *UserProfile {
@@ -164,6 +167,7 @@ func (r *SetEmailRequest) Validate() error {
 }
 
 type SetEmailResponse struct {
-	Token string `json:"token"`
-	Email string `json:"email"`
+	Token   string       `json:"token"`
+	Email   string       `json:"email"`
+	Profile *UserProfile `json:"profile"`
 }

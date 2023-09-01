@@ -90,11 +90,11 @@ func (h *handler) handleVerifyEmail(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	res, e := h.service.VerifyEmail(ctx, token)
+	link, e := h.service.VerifyEmail(ctx, token)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return
 	}
 
-	sendResponse(w, 200, res)
+	http.Redirect(w, r, link, http.StatusMovedPermanently)
 }

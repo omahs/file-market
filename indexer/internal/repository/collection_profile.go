@@ -20,7 +20,7 @@ var (
 func (p *postgres) GetCollectionProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.CollectionProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT slug, website_url, twitter, discord, telegram
+		SELECT slug, website_url, twitter, discord, telegram, banner_url
 		FROM collection_profiles
 		WHERE address=$1
 	`
@@ -34,6 +34,7 @@ func (p *postgres) GetCollectionProfile(ctx context.Context, tx pgx.Tx, address 
 		&twitter,
 		&discord,
 		&telegram,
+		&profile.BannerUrl,
 	); err != nil {
 		return nil, err
 	}
@@ -59,9 +60,9 @@ func (p *postgres) UpdateCollectionProfile(
 	// language=PostgreSQL
 	query := `
 		UPDATE collection_profiles
-		SET slug=$1, website_url=$2, twitter=$3, discord=$4, telegram=$5
-		WHERE address=$6
-		RETURNING slug, website_url, twitter, discord, telegram
+		SET slug=$1, website_url=$2, twitter=$3, discord=$4, telegram=$5, banner_url=$6
+		WHERE address=$7
+		RETURNING slug, website_url, twitter, discord, telegram, banner_url
 	`
 	res := domain.CollectionProfile{
 		Address: profile.Address,
@@ -73,6 +74,7 @@ func (p *postgres) UpdateCollectionProfile(
 		profile.Twitter,
 		profile.Discord,
 		profile.Telegram,
+		profile.BannerUrl,
 		strings.ToLower(profile.Address.String()),
 	).Scan(
 		&res.Slug,
@@ -80,6 +82,7 @@ func (p *postgres) UpdateCollectionProfile(
 		&twitter,
 		&discord,
 		&telegram,
+		&profile.BannerUrl,
 	); err != nil {
 		return nil, resolveCollectionProfileDBErr(err)
 	}
@@ -100,7 +103,7 @@ func (p *postgres) UpdateCollectionProfile(
 func (p *postgres) InsertCollectionProfile(ctx context.Context, tx pgx.Tx, profile *domain.CollectionProfile) error {
 	// language=PostgreSQL
 	query := `
-		INSERT INTO collection_profiles (address, slug, website_url, twitter, discord, telegram)
+		INSERT INTO collection_profiles (address, slug, website_url, twitter, discord, telegram, banner_url)
 		VALUES ($1,$2,$3,$4,$5,$6)
 	`
 
@@ -108,9 +111,10 @@ func (p *postgres) InsertCollectionProfile(ctx context.Context, tx pgx.Tx, profi
 		strings.ToLower(profile.Address.String()),
 		strings.ToLower(profile.Slug),
 		strings.ToLower(profile.WebsiteURL),
-		strings.ToLower(profile.Twitter),
-		strings.ToLower(profile.Discord),
-		strings.ToLower(profile.Telegram),
+		profile.Twitter,
+		profile.Discord,
+		profile.Telegram,
+		profile.BannerUrl,
 	); err != nil {
 		return resolveCollectionProfileDBErr(err)
 	}
