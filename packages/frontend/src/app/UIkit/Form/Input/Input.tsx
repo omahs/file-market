@@ -25,6 +25,7 @@ export type InputControlProps<T extends FieldValues> = InputProps & {
   errorMessage?: string
   controlledInputProps: ControlledInputProps<T>
   after?: string
+  notification?: string
 }
 
 export const Input = <T extends FieldValues>({

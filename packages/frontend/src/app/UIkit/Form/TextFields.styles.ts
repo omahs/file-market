@@ -57,6 +57,12 @@ export const textFieldsStyles = {
         animation: 'none !important',
       },
     },
+    isNotification: {
+      true: {
+        outline: ' 1px solid #0090FF; !important',
+        animation: 'none !important',
+      },
+    },
     isDisabledFocusStyle: {
       true: {
         '&:focus': {
@@ -126,4 +132,14 @@ export const StyledAfterContainer = styled('div', {
   transform: 'translateY(-50%)',
   fontWeight: 600,
   color: '$gray600',
+})
+
+export const StyledNotificationMessage = styled('div', {
+  textAlign: 'left',
+  padding: '24px 16px 12px',
+  background: 'rgba(0, 144, 255, 0.05)',
+  border: '1px solid rgba(0, 144, 255, 0.25)',
+  borderRadius: '0px 0px 16px 16px',
+  marginTop: '-12px',
+  color: '$red500',
 })
