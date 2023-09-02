@@ -551,7 +551,8 @@ func (s *service) onTransferDraftCompletionEvent(
 		return errors.New(e.Message)
 	}
 
-	if owner.IsEmailNotificationEnabled && owner.Email != "" {
+	log.Println(owner)
+	if owner.IsEmailNotificationEnabled && owner.Email != "" && owner.IsEmailConfirmed {
 		network := "Filecoin"
 		currency := "FIL"
 		if strings.Contains(s.cfg.Mode, "era") {

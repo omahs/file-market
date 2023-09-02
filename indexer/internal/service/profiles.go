@@ -33,6 +33,7 @@ func (s *service) GetUserProfile(ctx context.Context, identification string, isP
 		profile.Email = ""
 		profile.IsPushNotificationEnabled = false
 		profile.IsEmailNotificationEnabled = false
+		profile.IsEmailConfirmed = false
 	}
 
 	return &profile, nil
