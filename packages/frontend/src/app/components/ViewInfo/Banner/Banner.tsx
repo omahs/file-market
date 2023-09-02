@@ -22,7 +22,7 @@ interface IProfileImageProps {
 const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
   const [isShowEdit, setIsShowEdit] = useState<boolean>(false)
   const { dialogStore, userStore } = useStores()
-  const upload = useUploadLighthouse()
+  const { uploadWithoutToken } = useUploadLighthouse()
   const openWindow = () => {
     dialogStore.openDialog({
       component: EditProfileBannerDialog,
@@ -35,7 +35,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
   const { wrapPromise, statuses } = useStatusState<string, IEditProfileImageDialogForm>()
 
   const updateProfileFunc = wrapPromise(async (item: IEditProfileImageDialogForm) => {
-    const url = await upload(item.image[0])
+    const url = await uploadWithoutToken(item.image[0])
     updateProfile({
       ...userStore.user,
       bannerUrl: url.url,
