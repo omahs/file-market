@@ -135,6 +135,9 @@ export default observer(function ProfileSettings() {
               control,
               name: 'isEmailNotificationEnabled',
             }}
+            isEmailConfirmed={userStore.user?.isEmailConfirmed || !userStore.user?.email || userStore.user?.email !== email}
+            isEmailChanged={userStore.user?.email !== email}
+            leftTime={userStore.timeToCanResend}
           // pushNotification={{
           //   control,
           //   name: 'isEnablePushNotification',

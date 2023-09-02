@@ -1,5 +1,5 @@
 import { ComponentProps } from '@stitches/react'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import {
   Control,
   Controller, FieldValues, Path,
@@ -7,7 +7,12 @@ import {
 import { RegisterOptions } from 'react-hook-form/dist/types/validator'
 
 import { Txt } from '../../Txt'
-import { StyledAfterContainer, StyledErrorMessage, StyledTextFieldsContainer } from '../TextFields.styles'
+import {
+  StyledAfterContainer,
+  StyledErrorMessage,
+  StyledNotificationMessage, StyledRightContent,
+  StyledTextFieldsContainer,
+} from '../TextFields.styles'
 import { StyledInput } from './Input.styles'
 
 export interface ControlledInputProps<T extends FieldValues> {
@@ -25,12 +30,16 @@ export type InputControlProps<T extends FieldValues> = InputProps & {
   errorMessage?: string
   controlledInputProps: ControlledInputProps<T>
   after?: string
+  notification?: ReactNode
+  rightInputContent?: ReactNode
 }
 
 export const Input = <T extends FieldValues>({
   after,
   errorMessage,
   controlledInputProps,
+  notification,
+  rightInputContent,
   ...inputProps
 }: InputControlProps<T>) => {
   return (
@@ -53,6 +62,16 @@ export const Input = <T extends FieldValues>({
             <StyledErrorMessage>
               <Txt primary1>{errorMessage}</Txt>
             </StyledErrorMessage>
+          )}
+          {(notification && inputProps.isNotification) && (
+            <StyledNotificationMessage>
+              {notification}
+            </StyledNotificationMessage>
+          )}
+          {rightInputContent && (
+            <StyledRightContent>
+              { rightInputContent }
+            </StyledRightContent>
           )}
         </StyledTextFieldsContainer>
       )}

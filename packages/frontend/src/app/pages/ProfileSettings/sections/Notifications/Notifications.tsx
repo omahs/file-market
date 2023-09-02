@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { FieldValues } from 'react-hook-form'
 
+import { BaseModal } from '../../../../components'
+import { Timer } from '../../../../components/Timer'
+import { useStores } from '../../../../hooks'
+import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { ControlledInputProps, Input, Txt } from '../../../../UIkit'
 import {
   CheckBox,
@@ -10,6 +14,8 @@ import {
   SettingCheckBoxActiveIcon,
   SettingCheckBoxIcon,
 } from '../../../../UIkit/Form/CheckBox/variants/SettingCheckBoxIcon'
+import { stringifyError } from '../../../../utils/error'
+import { useUpdateProfile } from '../../helper/hooks/useUpdateProfile'
 import {
   CheckBoxContainer,
   FormControlSettings,
@@ -22,15 +28,41 @@ import {
 interface INotificationsSection<T extends FieldValues> {
   email: ControlledInputProps<T>
   emailNotification: ControlledCheckBoxProps<T>
+  isEmailConfirmed?: boolean
+  isEmailChanged?: boolean
+  leftTime?: number
   // pushNotification: ControlledCheckBoxProps<T>
 }
 
 const NotificationsSection = <T extends FieldValues>({
   email,
   emailNotification,
+  isEmailChanged,
+  isEmailConfirmed,
+  leftTime,
 }: INotificationsSection<T>) => {
+  const {
+    statuses,
+    updateEmail,
+  } = useUpdateProfile()
+
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Em data update completed successfully!',
+    loadingMsg: 'Profile is updating',
+  })
+
+  const { errorStore } = useStores()
+
+  const emailValue = email.control._getWatch('email')
+
+  const isSuccessResendEmail = useMemo(() => {
+    return (leftTime ?? 0) > 0
+  }, [leftTime])
+
   return (
     <StyledSectionContent>
+      <BaseModal {...modalProps} />
       <StyledTitleSection>Notifications</StyledTitleSection>
       <FormControlSettings>
         <StyledTitleInput>Email</StyledTitleInput>
@@ -38,11 +70,35 @@ const NotificationsSection = <T extends FieldValues>({
           settings
           placeholder='Email address'
           controlledInputProps={email}
+          disabled={isSuccessResendEmail}
           errorMessage={
             email.control._formState.errors.email?.message as string
           }
           isError={!!email.control._formState.errors.email?.message}
+          notification={
+            <Txt primary1>{'Please, verify your email address'}</Txt>
+          }
+          isNotification={!isEmailConfirmed && !isEmailChanged && !email.control._formState.errors.email?.message}
+          rightInputContent={(leftTime ?? 0) > 0 ? <Timer time={leftTime ?? 0} /> : undefined}
         />
+        {!isEmailConfirmed && (
+          <div className='resetPassword' style={{ width: '100%', textAlign: 'right', marginTop: '8px' }}>
+            <Txt
+              primary1
+              style={{ color: '#0090FF', cursor: isSuccessResendEmail ? 'inherit' : 'pointer' }}
+              onClick={() => {
+                if (isSuccessResendEmail) return
+                updateEmail(emailValue).catch((e) => {
+                  errorStore.showError(stringifyError(e))
+                })
+              }}
+            >
+              {
+                isSuccessResendEmail ? 'Successfully sent' : 'Resend verification email'
+              }
+            </Txt>
+          </div>
+        )}
       </FormControlSettings>
       <FormControlSettings>
         <GrayBgText>
