@@ -59,7 +59,7 @@ export const textFieldsStyles = {
     },
     isNotification: {
       true: {
-        outline: ' 1px solid #0090FF; !important',
+        outline: ' 2px solid #0090FF; !important',
         animation: 'none !important',
       },
     },
@@ -153,5 +153,18 @@ export const StyledNotificationMessage = styled('div', {
   border: '1px solid rgba(0, 144, 255, 0.25)',
   borderRadius: '0px 0px 16px 16px',
   marginTop: '-12px',
-  color: '$red500',
+  color: '#6B6F76',
+})
+
+export const StyledRightContent = styled('div', {
+  position: 'absolute',
+  color: '$gray400',
+  ...textVariant('primary1').true,
+  fontWeight: '600',
+  top: '16px',
+  right: '12px',
+  cursor: 'pointer',
+  '&:hover': {
+    filter: 'brightness(120%)',
+  },
 })
