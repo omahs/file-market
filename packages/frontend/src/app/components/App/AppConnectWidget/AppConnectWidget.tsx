@@ -15,7 +15,7 @@ export const AppConnectWidget: FC = observer(() => {
     return (
       <>
         <AppPlusNav />
-        <AppAccountMenu address={address} />
+        <AppAccountMenu />
       </>
     )
   } else {
