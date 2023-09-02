@@ -7,7 +7,7 @@ import (
 	authserver_pb "github.com/mark3d-xyz/mark3d/indexer/proto"
 )
 
-func (s *service) GetUserProfile(ctx context.Context, identification string) (*models.UserProfile, *models.ErrorResponse) {
+func (s *service) GetUserProfile(ctx context.Context, identification string, isPrincipal bool) (*models.UserProfile, *models.ErrorResponse) {
 	res, err := s.authClient.GetUserProfile(ctx, &authserver_pb.GetUserProfileRequest{
 		Identification: identification,
 	})
@@ -17,19 +17,22 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 	}
 
 	profile := models.UserProfile{
-		Address:                    res.Address,
-		AvatarURL:                  res.AvatarURL,
-		BannerURL:                  res.BannerURL,
-		Bio:                        res.Bio,
-		Name:                       res.Name,
-		Twitter:                    res.Twitter,
-		Discord:                    res.Discord,
-		Telegram:                   res.Telegram,
-		Username:                   res.Username,
-		WebsiteURL:                 res.WebsiteURL,
-		Email:                      "",    // private
-		IsPushNotificationEnabled:  false, // private
-		IsEmailNotificationEnabled: false, // private
+		Address:    res.Address,
+		AvatarURL:  res.AvatarURL,
+		BannerURL:  res.BannerURL,
+		Bio:        res.Bio,
+		Name:       res.Name,
+		Twitter:    res.Twitter,
+		Discord:    res.Discord,
+		Telegram:   res.Telegram,
+		Username:   res.Username,
+		WebsiteURL: res.WebsiteURL,
+	}
+
+	if !isPrincipal {
+		profile.Email = ""
+		profile.IsPushNotificationEnabled = false
+		profile.IsEmailNotificationEnabled = false
 	}
 
 	return &profile, nil

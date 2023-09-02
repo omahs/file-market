@@ -542,11 +542,11 @@ func (s *service) onTransferDraftCompletionEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification to owner
-	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String())
+	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String(), true)
 	if e != nil {
 		return errors.New(e.Message)
 	}
-	owner, e := s.GetUserProfile(ctx, token.Owner.String())
+	owner, e := s.GetUserProfile(ctx, token.Owner.String(), true)
 	if e != nil {
 		return errors.New(e.Message)
 	}
@@ -709,11 +709,11 @@ func (s *service) onPasswordSetEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification
-	owner, e := s.GetUserProfile(ctx, transfer.FromAddress.String())
+	owner, e := s.GetUserProfile(ctx, transfer.FromAddress.String(), true)
 	if e != nil {
 		return errors.New(e.Message)
 	}
-	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String())
+	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String(), true)
 	if e != nil {
 		return errors.New(e.Message)
 	}

@@ -17,6 +17,7 @@ service Auth {
   rpc FullLogout(google.protobuf.Empty) returns (SuccessResponse);
   rpc CheckAuth(google.protobuf.Empty) returns (UserProfile);
 
+  //  GetUserProfile exposes private fields. Make sure to clean them
   rpc GetUserProfile(GetUserProfileRequest) returns (UserProfile);
   rpc UpdateUserProfile(UserProfile) returns (UserProfile);
   rpc SetEmail(SetEmailRequest) returns (SetEmailResponse);

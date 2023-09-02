@@ -16,7 +16,7 @@ func (h *handler) handleGetUserProfile(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	res, e := h.service.GetUserProfile(ctx, identification)
+	res, e := h.service.GetUserProfile(ctx, identification, false)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return

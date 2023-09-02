@@ -14,9 +14,7 @@ func (s *GRPCServer) GetUserProfile(ctx context.Context, req *authserver_pb.GetU
 	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
 	defer cancel()
 
-	_, err := s.authorizeUser(ctx, jwt.PurposeAccess)
-	isPrincipal := err == nil
-	profile, e := s.service.GetProfileByIdentification(ctx, req.Identification, isPrincipal)
+	profile, e := s.service.GetProfileByIdentification(ctx, req.Identification, true)
 	if e != nil {
 		return nil, e.ToGRPC()
 	}
