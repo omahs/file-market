@@ -1303,6 +1303,7 @@ definitions:
     properties:
       exist:
         type: boolean
+        x-omitempty: false
   ProfileNameExistsRequest:
     type: object
     properties:
@@ -1313,6 +1314,7 @@ definitions:
     properties:
       exist:
         type: boolean
+        x-omitempty: false
   ProfileUsernameExistsRequest:
     type: object
     properties:
@@ -1324,6 +1326,7 @@ definitions:
     properties:
       exist:
         type: boolean
+        x-omitempty: false
   UpdateCollectionProfileResponse:
     type: object
     description: Ответ на обновление профиля коллекции
