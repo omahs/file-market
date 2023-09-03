@@ -43,6 +43,42 @@ func (s *service) GetUserProfile(ctx context.Context, identification string, isP
 	return &profile, nil
 }
 
+func (s *service) EmailExists(ctx context.Context, email string) (*models.ProfileEmailExistsResponse, *models.ErrorResponse) {
+	res, err := s.authClient.EmailExists(ctx, &authserver_pb.EmailExistsRequest{Email: email})
+	if err != nil {
+		logger.Error("failed to get email exists", err, nil)
+		return nil, grpcErrToHTTP(err)
+	}
+
+	return &models.ProfileEmailExistsResponse{
+		Exist: res.Exist,
+	}, nil
+}
+
+func (s *service) NameExists(ctx context.Context, name string) (*models.ProfileNameExistsResponse, *models.ErrorResponse) {
+	res, err := s.authClient.NameExists(ctx, &authserver_pb.NameExistsRequest{Name: name})
+	if err != nil {
+		logger.Error("failed to get name exists", err, nil)
+		return nil, grpcErrToHTTP(err)
+	}
+
+	return &models.ProfileNameExistsResponse{
+		Exist: res.Exist,
+	}, nil
+}
+
+func (s *service) UsernameExists(ctx context.Context, username string) (*models.ProfileUsernameExistsResponse, *models.ErrorResponse) {
+	res, err := s.authClient.UsernameExists(ctx, &authserver_pb.UsernameExistsRequest{Username: username})
+	if err != nil {
+		logger.Error("failed to get username exists", err, nil)
+		return nil, grpcErrToHTTP(err)
+	}
+
+	return &models.ProfileUsernameExistsResponse{
+		Exist: res.Exist,
+	}, nil
+}
+
 func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse) {
 	arg := authserver_pb.UserProfile{
 		AvatarURL:                  p.AvatarURL,
@@ -92,7 +128,7 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 
 	name := res.Profile.Name
 	if name == "" {
-		name = res.Profile.Address
+		name = "FileMarketer"
 	}
 	data := emailVerificationTemplateParams{
 		Name:               name,

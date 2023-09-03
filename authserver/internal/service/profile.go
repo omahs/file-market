@@ -126,6 +126,66 @@ func (s *service) GetProfileByIdentification(ctx context.Context, identification
 	}
 }
 
+func (s *service) EmailExist(ctx context.Context, email string) (bool, *domain.APIError) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return false, domain.InternalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	exist, err := s.repository.EmailExists(ctx, tx, email)
+	if err != nil {
+		log.Println("failed to get email exist: ", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return false, domain.InternalError
+	}
+
+	return exist, nil
+}
+
+func (s *service) NameExist(ctx context.Context, name string) (bool, *domain.APIError) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return false, domain.InternalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	exist, err := s.repository.NameExists(ctx, tx, name)
+	if err != nil {
+		log.Println("failed to get name exist: ", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return false, domain.InternalError
+	}
+
+	return exist, nil
+}
+
+func (s *service) UsernameExist(ctx context.Context, username string) (bool, *domain.APIError) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return false, domain.InternalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	exist, err := s.repository.UsernameExists(ctx, tx, username)
+	if err != nil {
+		log.Println("failed to get username exist: ", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return false, domain.InternalError
+	}
+
+	return exist, nil
+}
+
 func (s *service) UpdateUserProfile(
 	ctx context.Context,
 	profile *domain.UserProfile,

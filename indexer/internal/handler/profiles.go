@@ -25,6 +25,81 @@ func (h *handler) handleGetUserProfile(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, 200, res)
 }
 
+func (h *handler) handleProfileEmailExists(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var req models.ProfileEmailExistsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.Error("failed to decode request", err, nil)
+		sendResponse(w, http.StatusBadRequest, &models.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "failed to parse body",
+		})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	res, e := h.service.EmailExists(ctx, req.Email)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+
+	sendResponse(w, 200, res)
+}
+
+func (h *handler) handleProfileNameExists(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var req models.ProfileNameExistsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.Error("failed to decode request", err, nil)
+		sendResponse(w, http.StatusBadRequest, &models.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "failed to parse body",
+		})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	res, e := h.service.NameExists(ctx, req.Name)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+
+	sendResponse(w, 200, res)
+}
+
+func (h *handler) handleProfileUsernameExists(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var req models.ProfileUsernameExistsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.Error("failed to decode request", err, nil)
+		sendResponse(w, http.StatusBadRequest, &models.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "failed to parse body",
+		})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	res, e := h.service.UsernameExists(ctx, req.Username)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+
+	sendResponse(w, 200, res)
+}
+
 func (h *handler) handleUpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 

@@ -44,6 +44,7 @@ CREATE TABLE public.user_profiles (
 );
 ALTER TABLE public.user_profiles OWNER TO indexer;
 
+
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';

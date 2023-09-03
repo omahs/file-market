@@ -102,13 +102,70 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 	return &profile, nil
 }
 
+func (p *postgres) EmailExists(ctx context.Context, tx pgx.Tx, email string) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS (
+		    SELECT email
+		    FROM user_profiles
+			WHERE email=$1 AND is_email_confirmed=TRUE
+		)
+	`
+	var exists bool
+	if err := tx.QueryRow(ctx, query,
+		email,
+	).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (p *postgres) NameExists(ctx context.Context, tx pgx.Tx, name string) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS (
+		    SELECT name
+		    FROM user_profiles
+			WHERE name=$1
+		)
+	`
+	var exists bool
+	if err := tx.QueryRow(ctx, query,
+		name,
+	).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (p *postgres) UsernameExists(ctx context.Context, tx pgx.Tx, username string) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS (
+		    SELECT username
+		    FROM user_profiles
+			WHERE username=$1
+		)
+	`
+	var exists bool
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(username),
+	).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
 func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error {
 	// language=PostgreSQL
 	query := `
 		INSERT INTO user_profiles(
 			address, name, username, bio, website_url, avatar_url, banner_url, email, is_email_confirmed, twitter, discord, telegram,
 		    is_email_notifications_enabled, is_push_notifications_enabled)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,false,$8,$9,$10,$11,$12)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,FALSE,$8,$9,$10,$11,$12)
 	`
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
