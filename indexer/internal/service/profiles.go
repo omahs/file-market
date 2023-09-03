@@ -17,16 +17,20 @@ func (s *service) GetUserProfile(ctx context.Context, identification string, isP
 	}
 
 	profile := models.UserProfile{
-		Address:    res.Address,
-		AvatarURL:  res.AvatarURL,
-		BannerURL:  res.BannerURL,
-		Bio:        res.Bio,
-		Name:       res.Name,
-		Twitter:    res.Twitter,
-		Discord:    res.Discord,
-		Telegram:   res.Telegram,
-		Username:   res.Username,
-		WebsiteURL: res.WebsiteURL,
+		Address:                    res.Address,
+		AvatarURL:                  res.AvatarURL,
+		BannerURL:                  res.BannerURL,
+		Bio:                        res.Bio,
+		Discord:                    res.Discord,
+		Email:                      res.Email,
+		IsEmailConfirmed:           res.IsEmailConfirmed,
+		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
+		Name:                       res.Name,
+		Telegram:                   res.Telegram,
+		Twitter:                    res.Twitter,
+		Username:                   res.Username,
+		WebsiteURL:                 res.WebsiteURL,
 	}
 
 	if !isPrincipal {

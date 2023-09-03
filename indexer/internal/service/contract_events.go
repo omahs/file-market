@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
@@ -551,9 +550,6 @@ func (s *service) onTransferDraftCompletionEvent(
 	if e != nil {
 		return errors.New(e.Message)
 	}
-
-	b, _ := json.MarshalIndent(owner, "", " ")
-	log.Println(string(b))
 
 	if owner.IsEmailNotificationEnabled && owner.Email != "" && owner.IsEmailConfirmed {
 		network := "Filecoin"
