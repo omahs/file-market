@@ -561,7 +561,7 @@ func (s *service) onTransferDraftCompletionEvent(
 		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
 		ownerName := owner.Name
 		if ownerName == "" {
-			ownerName = owner.Address
+			ownerName = "FileMarketer"
 		}
 		buyerName := buyer.Name
 		if buyerName == "" {
@@ -579,7 +579,7 @@ func (s *service) onTransferDraftCompletionEvent(
 			LogoFilename:       "logopng",
 		}
 
-		if err := s.sendEmail("email_transfer_notification", owner.Email, "Your order was fulfilled", "owner notification", data); err != nil {
+		if err := s.sendEmail("email_buy_notification", owner.Email, "Your order was fulfilled", "owner notification", data); err != nil {
 			logger.Error("failed to send fulfill notification email", err, nil)
 		}
 	}
@@ -730,7 +730,7 @@ func (s *service) onPasswordSetEvent(
 		}
 		buyerName := buyer.Name
 		if buyerName == "" {
-			buyerName = buyer.Address
+			buyerName = "FileMarketer"
 		}
 		data := emailTransferNotificationTemplateParams{
 			BuyerName:          buyerName,

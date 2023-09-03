@@ -42,3 +42,27 @@ message SetEmailResponse {
   string email = 2;
   UserProfile profile = 3;
 }
+
+message EmailExistsRequest {
+  string email = 1;
+}
+
+message EmailExistsResponse {
+  bool exist = 1;
+}
+
+message NameExistsRequest {
+  string name = 1;
+}
+
+message NameExistsResponse {
+  bool exist = 1;
+}
+
+message UsernameExistsRequest {
+  string username = 1;
+}
+
+message UsernameExistsResponse {
+  bool exist = 1;
+}

@@ -134,6 +134,9 @@ type Auth interface {
 
 type Profiles interface {
 	GetUserProfile(ctx context.Context, identification string, isPrincipal bool) (*models.UserProfile, *models.ErrorResponse)
+	EmailExists(ctx context.Context, email string) (*models.ProfileEmailExistsResponse, *models.ErrorResponse)
+	NameExists(ctx context.Context, name string) (*models.ProfileNameExistsResponse, *models.ErrorResponse)
+	UsernameExists(ctx context.Context, username string) (*models.ProfileUsernameExistsResponse, *models.ErrorResponse)
 	UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse)
 	SetEmail(ctx context.Context, email string) *models.ErrorResponse
 	VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse)

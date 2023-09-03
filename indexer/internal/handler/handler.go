@@ -79,6 +79,9 @@ func (h *handler) Init() http.Handler {
 	router.Handle("/profile/update", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleUpdateUserProfile)))
 	router.Handle("/profile/set_email", h.headerAuthCtxMiddleware()(http.HandlerFunc(h.handleSetEmail)))
 	router.HandleFunc("/profile/verify_email", h.handleVerifyEmail)
+	router.HandleFunc("/profile/email/exists", h.handleProfileEmailExists)
+	router.HandleFunc("/profile/name/exists", h.handleProfileNameExists)
+	router.HandleFunc("/profile/username/exists", h.handleProfileUsernameExists)
 	router.HandleFunc("/profile/{identification}", h.handleGetUserProfile)
 
 	router.HandleFunc("/sequencer/acquire/{address:0x[0-9a-f-A-F]{40}}", h.handleSequencerAcquire)

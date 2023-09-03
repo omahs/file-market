@@ -22,6 +22,42 @@ func (s *GRPCServer) GetUserProfile(ctx context.Context, req *authserver_pb.GetU
 	return profile.ToGRPC(), nil
 }
 
+func (s *GRPCServer) EmailExists(ctx context.Context, req *authserver_pb.EmailExistsRequest) (*authserver_pb.EmailExistsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	exist, err := s.service.EmailExist(ctx, req.Email)
+	if err != nil {
+		return nil, err.ToGRPC()
+	}
+
+	return &authserver_pb.EmailExistsResponse{Exist: exist}, nil
+}
+
+func (s *GRPCServer) NameExists(ctx context.Context, req *authserver_pb.NameExistsRequest) (*authserver_pb.NameExistsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	exist, err := s.service.NameExist(ctx, req.Name)
+	if err != nil {
+		return nil, err.ToGRPC()
+	}
+
+	return &authserver_pb.NameExistsResponse{Exist: exist}, nil
+}
+
+func (s *GRPCServer) UsernameExists(ctx context.Context, req *authserver_pb.UsernameExistsRequest) (*authserver_pb.UsernameExistsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	exist, err := s.service.UsernameExist(ctx, req.Username)
+	if err != nil {
+		return nil, err.ToGRPC()
+	}
+
+	return &authserver_pb.UsernameExistsResponse{Exist: exist}, nil
+}
+
 func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.UserProfile) (*authserver_pb.UserProfile, error) {
 	ctx, err := s.authorizeUser(ctx, jwt.PurposeAccess)
 	if err != nil {
