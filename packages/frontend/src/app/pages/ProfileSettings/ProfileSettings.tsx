@@ -1,12 +1,16 @@
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { useDebouncedCallback } from 'use-debounce'
 import { useAccount } from 'wagmi'
 
+import { Api, ProfileEmailExistsResponse } from '../../../swagger/Api'
 import { BaseModal } from '../../components'
 import { useStores } from '../../hooks'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { Button, PageLayout, Txt } from '../../UIkit'
+import { wrapRequest } from '../../utils/error/wrapRequest'
+import { requestJwtAccess } from '../../utils/jwt/function'
 import { reduceAddress } from '../../utils/nfts'
 import ReturnButton from './components/ReturnButton/ReturnButton'
 import { useUpdateProfile } from './helper/hooks/useUpdateProfile'
@@ -18,6 +22,11 @@ import Notifications from './sections/Notifications/Notifications'
 
 export default observer(function ProfileSettings() {
   const { userStore } = useStores()
+  const profileService = new Api({ baseUrl: '/api' }).profile
+
+  const [isEmailExist, setIsEmailExist] = useState<boolean>()
+  const [isNameExist, setIsNamelExist] = useState<boolean>()
+  const [isUrlExist, setIsUrlExist] = useState<boolean>()
 
   const {
     handleSubmit,
@@ -25,7 +34,7 @@ export default observer(function ProfileSettings() {
     control,
     watch,
   } = useForm<IProfileSettings>({
-    mode: 'onBlur',
+    mode: 'all',
     defaultValues: {
       name: userStore.user?.name,
       username: userStore.user?.username,
@@ -34,9 +43,59 @@ export default observer(function ProfileSettings() {
       websiteUrl: userStore.user?.websiteUrl,
       twitter: userStore.user?.twitter,
       telegram: userStore.user?.telegram,
+      discord: userStore.user?.discord,
       isEmailNotificationEnabled: userStore.user?.isEmailNotificationEnabled,
     },
   })
+
+  const email = watch('email')
+  const name = watch('name')
+  const username = watch('username')
+
+  const emailExistCheck = useDebouncedCallback(async (value) => {
+    if (userStore.user?.email === email) {
+      setIsEmailExist(false)
+
+      return
+    }
+
+    return wrapRequest<ProfileEmailExistsResponse>(async () => {
+      return requestJwtAccess(profileService.emailExistsCreate, { email: value })
+    }).then((res) => {
+      setIsEmailExist(res.exist)
+    })
+  }, 500,
+  )
+
+  const nameExistCheck = useDebouncedCallback(async (value) => {
+    if (userStore.user?.name === name) {
+      setIsEmailExist(false)
+
+      return
+    }
+
+    return wrapRequest<ProfileEmailExistsResponse>(async () => {
+      return requestJwtAccess(profileService.nameExistsCreate, { name: value })
+    }).then((res) => {
+      setIsNamelExist(res.exist)
+    })
+  }, 500,
+  )
+
+  const urlExistCheck = useDebouncedCallback(async (value) => {
+    if (userStore.user?.username === username) {
+      setIsEmailExist(false)
+
+      return
+    }
+
+    return wrapRequest<ProfileEmailExistsResponse>(async () => {
+      return requestJwtAccess(profileService.usernameExistsCreate, { username: value })
+    }).then((res) => {
+      setIsUrlExist(res.exist)
+    })
+  }, 500,
+  )
 
   const {
     statuses,
@@ -53,14 +112,9 @@ export default observer(function ProfileSettings() {
     loadingMsg: 'Profile is updating',
   })
 
-  const name = watch('name')
-  const username = watch('username')
-  const bio = watch('bio')
-  const email = watch('email')
-  const websiteUrl = watch('websiteUrl')
-  const telegram = watch('telegram')
-  const twitter = watch('twitter')
-  const discord = watch('discord')
+  const isExistProblem = useMemo(() => {
+    return isNameExist || isUrlExist || isEmailExist
+  }, [isNameExist, isUrlExist, isEmailExist])
 
   return (
     <>
@@ -89,32 +143,40 @@ export default observer(function ProfileSettings() {
               control,
               name: 'name',
               rules: {
-                validate: () => {
-                  if (!name) return
+                validate: async (value) => {
+                  if (!value) return
+                  nameExistCheck(value)
 
-                  return name.length > 3 && name.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
+                  return value.length > 3 && value.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
                 },
               },
+              error: isNameExist ? 'This name is exist' : undefined,
             }}
             url={{
               control,
               name: 'username',
               rules: {
-                validate: () => {
-                  if (!username) return
-                  if (username.length < 3 || username.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
-                  if (!username.match(/^[a-z0-9_]+$/) || (username[0] === '0' && username[1] === 'x')) return 'Please enter valid username'
+                validate: async (value) => {
+                  console.log(value)
+                  if (!value) return
+
+                  urlExistCheck(value)
+
+                  if (value.length < 3 || value.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
+                  if (!value.match(/^[a-z0-9_]+$/) || (value[0] === '0' && value[1] === 'x')) return 'Please enter valid username'
                 },
               },
+
+              error: isUrlExist ? 'This username is exist' : undefined,
             }}
             bio={{
               control,
               name: 'bio',
               rules: {
-                validate: () => {
-                  if (!bio) return
+                validate: (value) => {
+                  if (!value) return
 
-                  return bio.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
+                  return value.length < 1000 ? undefined : 'The bio must have less than 1000 characters'
                 },
               },
             }}
@@ -124,12 +186,15 @@ export default observer(function ProfileSettings() {
               control,
               name: 'email',
               rules: {
-                validate: () => {
-                  if (!email) return
+                validate: async (value) => {
+                  if (!value) return
 
-                  return email?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
+                  emailExistCheck(value)
+
+                  return value?.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) ? undefined : 'Please enter valid email'
                 },
               },
+              error: isEmailExist ? 'This email is exist' : undefined,
             }}
             emailNotification={{
               control,
@@ -138,21 +203,17 @@ export default observer(function ProfileSettings() {
             isEmailConfirmed={userStore.user?.isEmailConfirmed || !userStore.user?.email || userStore.user?.email !== email}
             isEmailChanged={userStore.user?.email !== email}
             leftTime={userStore.timeToCanResend}
-          // pushNotification={{
-          //   control,
-          //   name: 'isEnablePushNotification',
-          // }}
           />
           <Links<IProfileSettings>
             websiteUrl={{
               control,
               name: 'websiteUrl',
               rules: {
-                validate: () => {
-                  if (!websiteUrl) return
-                  if (websiteUrl.length > 50) return 'The url less than 50 characters'
+                validate: (value) => {
+                  if (!value) return
+                  if (value.length > 50) return 'The url less than 50 characters'
 
-                  return websiteUrl?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                  return value?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
                 },
               },
             }}
@@ -160,10 +221,10 @@ export default observer(function ProfileSettings() {
               control,
               name: 'twitter',
               rules: {
-                validate: () => {
-                  if (!twitter) return
+                validate: (value) => {
+                  if (!value) return
 
-                  return twitter.length < 50 ? undefined : 'The twitter must have less than 1000 characters'
+                  return value.length < 50 ? undefined : 'The twitter must have less than 1000 characters'
                 },
               },
             }}
@@ -171,10 +232,10 @@ export default observer(function ProfileSettings() {
               control,
               name: 'telegram',
               rules: {
-                validate: () => {
-                  if (!telegram) return
+                validate: (value) => {
+                  if (!value) return
 
-                  return telegram.length < 50 ? undefined : 'The telegram must have less than 1000 characters'
+                  return value.length < 50 ? undefined : 'The telegram must have less than 1000 characters'
                 },
               },
             }}
@@ -182,10 +243,10 @@ export default observer(function ProfileSettings() {
               control,
               name: 'discord',
               rules: {
-                validate: () => {
-                  if (!discord) return
+                validate: (value) => {
+                  if (!value) return
 
-                  return discord.length < 50 ? undefined : 'The discord must have less than 1000 characters'
+                  return value.length < 50 ? undefined : 'The discord must have less than 1000 characters'
                 },
               },
             }}
@@ -193,7 +254,7 @@ export default observer(function ProfileSettings() {
           <Button
             primary
             type='submit'
-            isDisabled={!!Object.keys(errors).length}
+            isDisabled={!!Object.keys(errors).length || isExistProblem}
             title={!Object.keys(errors).length ? undefined : 'Required fields must be filled'}
             css={{
               width: '240px',

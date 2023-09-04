@@ -69,6 +69,7 @@
     "screenfull": "^6.0.2",
     "swagger-typescript-api": "^12.0.2",
     "swiper": "^8.4.4",
+    "use-debounce": "^9.0.4",
     "wagmi": "^0.12.1"
   },
   "devDependencies": {
