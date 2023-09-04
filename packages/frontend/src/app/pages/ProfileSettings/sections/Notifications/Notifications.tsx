@@ -31,7 +31,6 @@ interface INotificationsSection<T extends FieldValues> {
   isEmailConfirmed?: boolean
   isEmailChanged?: boolean
   leftTime?: number
-  // pushNotification: ControlledCheckBoxProps<T>
 }
 
 const NotificationsSection = <T extends FieldValues>({
@@ -72,9 +71,9 @@ const NotificationsSection = <T extends FieldValues>({
           controlledInputProps={email}
           disabled={isSuccessResendEmail}
           errorMessage={
-            email.control._formState.errors.email?.message as string
+            email.error ?? email.control._formState.errors.email?.message as string
           }
-          isError={!!email.control._formState.errors.email?.message}
+          isError={!!(email.error ?? email.control._formState.errors.email?.message)}
           notification={
             <Txt primary1>{'Please, verify your email address'}</Txt>
           }
@@ -137,21 +136,6 @@ const NotificationsSection = <T extends FieldValues>({
           )}
           label={<Txt primary1>by email</Txt>}
         />
-        {/* <CheckBoxContainer */}
-        {/*  control={( */}
-        {/*    <CheckBox<T> */}
-        {/*      controlledCheckBoxProps={pushNotification} */}
-        {/*      icon={<SettingCheckBoxIcon />} */}
-        {/*      checkedIcon={<SettingCheckBoxActiveIcon />} */}
-        {/*      disableRipple */}
-        {/*      sx={{ */}
-        {/*        padding: 0, */}
-        {/*        paddingRight: '12px', */}
-        {/*      }} */}
-        {/*    /> */}
-        {/*  )} */}
-        {/*  label={<Txt primary1>by push notification</Txt>} */}
-        {/* /> */}
       </FormControlSettings>
     </StyledSectionContent>
   )

@@ -20,6 +20,8 @@ export interface ControlledInputProps<T extends FieldValues> {
   name: Path<T>
   placeholder?: string
   rules?: RegisterOptions
+  onChange?: () => void
+  error?: any
 }
 
 export type InputProps = ComponentProps<typeof StyledTextFieldsContainer> & ComponentProps<typeof StyledInput> & {
