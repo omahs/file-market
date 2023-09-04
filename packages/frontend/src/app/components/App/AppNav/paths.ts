@@ -6,6 +6,10 @@ export const paths: NavBarItemData[] = [
     label: 'Explore',
   },
   {
+    to: '/market/collections',
+    label: 'Collections',
+  },
+  {
     to: 'https://medium.com/filemarket-xyz',
     label: 'Blogs',
     isLink: true,
@@ -14,10 +18,6 @@ export const paths: NavBarItemData[] = [
     to: 'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5',
     label: 'How to get FIL',
     isLink: true,
-  },
-  {
-    to: '/market/collections',
-    label: 'Collections',
   },
 ]
 

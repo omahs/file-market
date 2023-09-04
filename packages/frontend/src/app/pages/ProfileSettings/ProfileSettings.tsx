@@ -22,11 +22,16 @@ import Notifications from './sections/Notifications/Notifications'
 
 export default observer(function ProfileSettings() {
   const { userStore } = useStores()
+  const { address } = useAccount()
   const profileService = new Api({ baseUrl: '/api' }).profile
 
   const [isEmailExist, setIsEmailExist] = useState<boolean>()
   const [isNameExist, setIsNamelExist] = useState<boolean>()
   const [isUrlExist, setIsUrlExist] = useState<boolean>()
+
+  const redirectAddress = useMemo(() => {
+    return userStore.user?.username ?? address
+  }, [address, userStore.user])
 
   const {
     handleSubmit,
@@ -101,7 +106,7 @@ export default observer(function ProfileSettings() {
     statuses,
     updateProfile,
   } = useUpdateProfile()
-  const { address } = useAccount()
+
   const onSubmit: SubmitHandler<IProfileSettings> = (data) => {
     updateProfile(data)
   }
@@ -110,6 +115,7 @@ export default observer(function ProfileSettings() {
     statuses,
     okMsg: 'Profile data update completed successfully!',
     loadingMsg: 'Profile is updating',
+    successNavTo: `/profile/${redirectAddress}`,
   })
 
   const isExistProblem = useMemo(() => {

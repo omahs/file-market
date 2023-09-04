@@ -1,6 +1,12 @@
 import { ReactNode, useCallback, useEffect } from 'react'
 
-import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../components/Modal/Modal'
+import {
+  ErrorBody,
+  extractMessageFromError,
+  InProgressBody,
+  SuccessNavBody,
+  SuccessOkBody,
+} from '../components/Modal/Modal'
 import { useModalProperties } from './useModalProperties'
 import { useStatusState } from './useStatusState'
 
@@ -11,6 +17,7 @@ export interface UseModalOkArgs {
   loadingMsg: ReactNode
   okMsg: ReactNode
   waitForSign?: boolean
+  successNavTo?: string
   // error message is retrieved from error
 }
 
@@ -19,6 +26,7 @@ export function useStatusModal({
   okMsg,
   loadingMsg,
   waitForSign = true,
+  successNavTo,
 }: UseModalOkArgs) {
   const {
     modalOpen,
@@ -47,12 +55,25 @@ export function useStatusModal({
       )
     } else if (result) {
       console.log('RESULT TIT')
-      setModalBody(
-        <SuccessOkBody
-          description={okMsg}
-          handleClose={handleClose}
-        />,
-      )
+      if (successNavTo) {
+        setModalBody(
+          <SuccessNavBody
+            buttonText='Cool'
+            link={successNavTo}
+            onPress={() => {
+              window.scrollTo(0, 0)
+              setModalOpen(false)
+            }}
+          />,
+        )
+      } else {
+        setModalBody(
+          <SuccessOkBody
+            description={okMsg}
+            handleClose={handleClose}
+          />,
+        )
+      }
     } else if (error) {
       setModalBody(
         <ErrorBody

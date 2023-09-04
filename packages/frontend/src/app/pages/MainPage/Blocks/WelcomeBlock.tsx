@@ -288,7 +288,7 @@ export default function WelcomeBlock() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                Apply for own shop
+                Explore files
               </LinkButton>
             </div>
           </NavigateBlock>
