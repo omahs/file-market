@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { ReactNode, useMemo } from 'react'
 
 import { styled } from '../../../../styles'
 import { Collection } from '../../../../swagger/Api'
-import { textVariant, Txt } from '../../../UIkit'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
+import { textVariant, Txt } from '../../../UIkit'
+import { cutNumber } from '../../../utils/number'
 
 const StyledInfoCard = styled('div', {
   display: 'flex',
@@ -26,9 +27,14 @@ const StyledTitleTextLine = styled(Txt, {
   color: '#4E5156',
 })
 
+const StyledTextTextLine = styled(Txt, {
+  ...textVariant('primary1').true,
+  color: '#1D1E20',
+})
+
 const StyledContainerValueTextLine = styled('div', {
   display: 'flex',
-  gap: '8px'
+  gap: '8px',
 })
 
 const InfoCard = (collection?: Collection) => {
@@ -36,47 +42,55 @@ const InfoCard = (collection?: Collection) => {
 
   const chain = useMemo(() => {
     if (!collection?.chainId) return
+
     return multiChainStore.getChainById(+collection.chainId)
   }, [collection])
 
-  const data = useMemo(() => {
+  const data: Array<{ title: string, value?: ReactNode }> | undefined = useMemo(() => {
     if (!collection) return
 
     return [
       {
         title: 'Volume',
-        value: `${collection.salesVolume} `,
+        value: parseFloat(collection.salesVolume ?? '0').toFixed(2),
       },
       {
         title: 'Floor price',
-        value: collection.floorPrice,
+        value: parseFloat(collection.floorPrice ?? '0').toFixed(2),
       },
       {
         title: 'Items',
-        value: collection.tokensCount,
+        value: cutNumber(collection.tokensCount),
       },
       {
         title: 'On sale',
-        value: collection.ordersCount,
+        value: cutNumber(collection.ordersCount),
       },
       {
         title: 'Owners',
-        value: collection.ownersCount,
+        value: cutNumber(collection.ownersCount),
       },
       {
         title: 'Blockchain',
-        value: multiChainStore.getChainById(collection.chainId).,
+        value: <StyledContainerValueTextLine>
+          <img src={chain?.img} />
+          <Txt>{chain?.chain.name}</Txt>
+               </StyledContainerValueTextLine>,
       },
-      {
-        title: 'Volume',
-        value: collection.salesVolume,
-      },
-
     ]
   }, [collection])
 
   return (
-    <StyledInfoCard />
+    <StyledInfoCard>
+      {data?.map((item, index) => {
+        return (
+          <StyledTextLine key={index}>
+            <StyledTitleTextLine>{item.title}</StyledTitleTextLine>
+            <StyledTextTextLine>{item.value}</StyledTextTextLine>
+          </StyledTextLine>
+        )
+      })}
+    </StyledInfoCard>
   )
 }
 

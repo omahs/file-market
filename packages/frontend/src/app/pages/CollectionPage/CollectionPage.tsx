@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
 import { Outlet, useLocation, useParams } from 'react-router'
@@ -39,6 +40,20 @@ const Badges = styled('div', {
     '& .firstLink': {
       width: '100%',
     },
+  },
+})
+
+const GridLayout = styled('div', {
+  display: 'flex',
+})
+
+const GridBlockSection = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gridArea: 'GridBlock',
+  gap: '32px',
+  '@md': {
+    display: 'none',
   },
 })
 
@@ -84,6 +99,7 @@ const CollectionPage = observer(() => {
 
   const { user } = userStore
   const { collection } = collectionStore
+  const md = useMediaQuery('(max-width:900px)')
 
   return (
     <GrayOverlay>
@@ -102,41 +118,43 @@ const CollectionPage = observer(() => {
           </ProfileHeader>
           {isOwner && <SettingsButton />}
         </Profile>
-        <Badges>
-          <NavLink
-            to={
-              collectionAndNfts.collection?.owner
-                ? `/profile/${collectionAndNfts.collection.owner}`
-                : currentPath
-            }
-            className={'firstLink'}
-          >
-            <Badge
-              wrapperProps={{
-                fullWidth: true,
-              }}
-              content={{
-                title: 'Creator',
-                value: reduceAddress(collectionAndNfts.collection?.owner ?? ''),
-              }}
-              image={{
-                url: getProfileImageUrl(collectionAndNfts.collection?.owner ?? ''),
-                borderRadius: 'circle',
-              }}
-            />
-          </NavLink>
-          {collectionAndNfts.collection?.address && (
-            <Link
-              target='_blank'
-              rel='noopener noreferrer'
-              href={`${config?.chain.blockExplorers?.default.url}` +
-                `/address/${collectionAndNfts.collection?.address}`}
+        <GridLayout>
+          <Badges>
+            <NavLink
+              to={
+                collectionAndNfts.collection?.owner
+                  ? `/profile/${collectionAndNfts.collection.owner}`
+                  : currentPath
+              }
+              className={'firstLink'}
             >
-              <Badge content={{ title: config?.chain.blockExplorers?.default.name, value: 'VRG' }} />
-            </Link>
-          )}
-        </Badges>
-        <Bio isTitleEmpty text={user?.bio} />
+              <Badge
+                wrapperProps={{
+                  fullWidth: true,
+                }}
+                content={{
+                  title: 'Creator',
+                  value: reduceAddress(collectionAndNfts.collection?.owner ?? ''),
+                }}
+                image={{
+                  url: getProfileImageUrl(collectionAndNfts.collection?.owner ?? ''),
+                  borderRadius: 'circle',
+                }}
+              />
+            </NavLink>
+            {collectionAndNfts.collection?.address && (
+              <Link
+                target='_blank'
+                rel='noopener noreferrer'
+                href={`${config?.chain.blockExplorers?.default.url}` +
+                `/address/${collectionAndNfts.collection?.address}`}
+              >
+                <Badge content={{ title: config?.chain.blockExplorers?.default.name, value: 'VRG' }} />
+              </Link>
+            )}
+          </Badges>
+          <Bio isTitleEmpty text={user?.bio} />
+        </GridLayout>
       </PageLayout>
       <Inventory>
         <TabsContainer>
