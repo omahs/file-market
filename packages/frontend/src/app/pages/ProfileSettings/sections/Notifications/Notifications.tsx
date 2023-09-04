@@ -54,6 +54,7 @@ const NotificationsSection = <T extends FieldValues>({
   const { errorStore } = useStores()
 
   const emailValue = email.control._getWatch('email')
+  const emailNotificationValue = emailNotification.control._getWatch('isEmailNotificationEnabled')
 
   const isSuccessResendEmail = useMemo(() => {
     return (leftTime ?? 0) > 0
@@ -112,6 +113,7 @@ const NotificationsSection = <T extends FieldValues>({
           of the files
         </GrayBgText>
         <CheckBoxContainer
+          checked={emailNotificationValue}
           control={(
             <CheckBox<T>
               controlledCheckBoxProps={emailNotification}
