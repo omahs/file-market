@@ -35,6 +35,7 @@ func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatur
 		Bio:                        res.Profile.Bio,
 		Discord:                    res.Profile.Discord,
 		Email:                      res.Profile.Email,
+		IsEmailConfirmed:           res.Profile.IsEmailConfirmed,
 		IsEmailNotificationEnabled: res.Profile.IsEmailNotificationEnabled,
 		IsPushNotificationEnabled:  res.Profile.IsPushNotificationEnabled,
 		Name:                       res.Profile.Name,

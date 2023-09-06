@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/mark3d-xyz/mark3d/authserver/internal/utils"
 	"github.com/mark3d-xyz/mark3d/authserver/pkg/validator"
@@ -127,27 +126,6 @@ func (p *UserProfile) HidePrivateFields() {
 	p.IsPushNotificationsEnabled = false
 	p.IsEmailNotificationsEnabled = false
 	p.IsEmailConfirmed = false
-}
-
-func GetDefaultUserProfile(address common.Address) *UserProfile {
-	addressStr := strings.ToLower(address.String())
-	addressLen := len(addressStr)
-
-	return &UserProfile{
-		Address:                     address,
-		AvatarURL:                   "",
-		BannerURL:                   "",
-		Bio:                         "",
-		Email:                       "",
-		IsEmailNotificationsEnabled: false,
-		IsPushNotificationsEnabled:  false,
-		Name:                        fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
-		Username:                    fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
-		WebsiteURL:                  "",
-		Twitter:                     nil,
-		Discord:                     nil,
-		Telegram:                    nil,
-	}
 }
 
 type SetEmailRequest struct {

@@ -32,12 +32,12 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 		Address: address,
 	}
 
-	var email *string
+	var email, username, name *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(address.String()),
 	).Scan(
-		&profile.Name,
-		&profile.Username,
+		&name,
+		&username,
 		&profile.Bio,
 		&profile.WebsiteURL,
 		&profile.Twitter,
@@ -56,6 +56,12 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 	if email != nil {
 		profile.Email = *email
 	}
+	if username != nil {
+		profile.Username = *username
+	}
+	if name != nil {
+		profile.Name = *name
+	}
 
 	return &profile, nil
 }
@@ -71,13 +77,13 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 
 	var profile domain.UserProfile
 	var address string
-	var email *string
+	var email, uname, name *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(username),
 	).Scan(
 		&address,
-		&profile.Name,
-		&profile.Username,
+		&name,
+		&uname,
 		&profile.Bio,
 		&profile.WebsiteURL,
 		&profile.Twitter,
@@ -97,6 +103,12 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 
 	if email != nil {
 		profile.Email = *email
+	}
+	if uname != nil {
+		profile.Username = *uname
+	}
+	if name != nil {
+		profile.Name = *name
 	}
 
 	return &profile, nil
@@ -219,7 +231,7 @@ func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email 
 	// language=PostgreSQL
 	query := `
 		UPDATE user_profiles 
-		SET email=$1, is_email_confirmed=$2
+		SET email=$1, is_email_confirmed=$2, is_email_notifications_enabled=TRUE
 		WHERE address=$3
 	`
 	if _, err := tx.Exec(ctx, query,

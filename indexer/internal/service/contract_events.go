@@ -470,7 +470,7 @@ func (s *service) onTransferDraftCompletionEvent(
 
 	token.BlockNumber = blockNumber.Int64()
 
-	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
 		metadata, metaUri, err := s.processMetadata(ctx, token)
 		if err != nil {
 			return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
