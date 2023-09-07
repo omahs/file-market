@@ -242,6 +242,19 @@ func (s *service) SetEmail(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
+	exists, err := s.repository.EmailExists(ctx, tx, email)
+	if err != nil {
+		log.Println("failed to get email exists", err)
+		return nil, domain.InternalError
+	}
+
+	if exists {
+		return nil, &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "email already taken",
+		}
+	}
+
 	verificationToken := utils.RandomString(32)
 	if err := s.repository.InsertEmailVerificationToken(ctx, tx, &domain.EmailVerificationToken{
 		Address:   address,
@@ -302,6 +315,19 @@ func (s *service) VerifyEmail(
 		return "", &domain.APIError{
 			Code:    http.StatusBadRequest,
 			Message: "Token is expired",
+		}
+	}
+
+	exists, err := s.repository.EmailExists(ctx, tx, token.Email)
+	if err != nil {
+		log.Println("failed to get email exists", err)
+		return "", domain.InternalError
+	}
+
+	if exists {
+		return "", &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "email already taken",
 		}
 	}
 
