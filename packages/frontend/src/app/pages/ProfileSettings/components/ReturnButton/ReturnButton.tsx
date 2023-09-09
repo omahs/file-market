@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
+import { useStores } from '../../../../hooks'
 import { Button, Txt } from '../../../../UIkit'
 
 const ReturnButtonStyle = styled(Button, {
@@ -13,12 +15,19 @@ const ReturnButtonStyle = styled(Button, {
 
 const ReturnButton = () => {
   const navigate = useNavigate()
+  const { address } = useAccount()
+  const { userStore } = useStores()
+
+  const username = useMemo(() => {
+    return userStore.user?.username ?? address
+  }, [userStore.user?.username, address])
 
   return (
     <ReturnButtonStyle
       settings
       onPress={() => {
-        navigate(-1)
+        window.scrollTo(0, 0)
+        navigate(`/profile/${username}`)
       }}
     >
       <svg

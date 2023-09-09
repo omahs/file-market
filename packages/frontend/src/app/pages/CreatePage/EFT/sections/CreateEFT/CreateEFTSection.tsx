@@ -106,6 +106,7 @@ export const CreateEFTSection: React.FC = observer(() => {
     control,
     formState: { isValid },
     resetField,
+    setValue,
     watch,
   } = useForm<CreateNFTForm>({
     defaultValues: {
@@ -274,6 +275,7 @@ export const CreateEFTSection: React.FC = observer(() => {
               controlledInputProps={{
                 name: 'name',
                 control,
+                setValue,
                 rules: {
                   required: true,
                 },
@@ -440,6 +442,7 @@ export const CreateEFTSection: React.FC = observer(() => {
                 placeholder='Amount of creator’s royalty'
                 controlledInputProps={{
                   name: 'royalty',
+                  setValue,
                   control,
                   rules: {
                     required: true,

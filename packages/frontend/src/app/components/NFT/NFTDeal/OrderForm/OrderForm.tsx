@@ -47,7 +47,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
     price: fromCurrency(+rawValue.price ?? 0),
   }), [fromCurrency])
 
-  const { handleSubmit, control, watch } = useForm<OrderFormRawValue>({
+  const { handleSubmit, control, watch, setValue } = useForm<OrderFormRawValue>({
     defaultValues: importFormValue(defaultValues),
   })
   const price = watch('price')
@@ -74,6 +74,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
               control,
               name: 'price',
               rules: { required: true },
+              setValue,
             }}
           />
           {(!!fee || !!tokenStore.data?.royalty) && (

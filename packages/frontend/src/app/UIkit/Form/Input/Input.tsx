@@ -1,11 +1,13 @@
 import { ComponentProps } from '@stitches/react'
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import {
   Control,
   Controller, FieldValues, Path,
 } from 'react-hook-form'
+import { UseFormSetValue } from 'react-hook-form/dist/types/form'
 import { RegisterOptions } from 'react-hook-form/dist/types/validator'
 
+import { filterData, IFilterData } from '../../../utils/input/filterData'
 import { Txt } from '../../Txt'
 import {
   StyledAfterContainer,
@@ -22,6 +24,8 @@ export interface ControlledInputProps<T extends FieldValues> {
   rules?: RegisterOptions
   onChange?: () => void
   error?: any
+  validateParams?: Omit<IFilterData, 'value'>
+  setValue: UseFormSetValue<T>
 }
 
 export type InputProps = ComponentProps<typeof StyledTextFieldsContainer> & ComponentProps<typeof StyledInput> & {
@@ -44,6 +48,8 @@ export const Input = <T extends FieldValues>({
   rightInputContent,
   ...inputProps
 }: InputControlProps<T>) => {
+  const [state, setState] = useState<string | undefined>(controlledInputProps.control._defaultValues[controlledInputProps.name])
+
   return (
     <Controller
       control={controlledInputProps?.control}
@@ -54,6 +60,16 @@ export const Input = <T extends FieldValues>({
           <StyledInput
             {...inputProps}
             {...field}
+            onChange={(e) => {
+              field.onChange?.(e)
+              const value = filterData({
+                value: e.target.value,
+                ...controlledInputProps.validateParams,
+              })
+              controlledInputProps.setValue(controlledInputProps.name, value as any)
+              setState(value)
+            }}
+            value={state}
           />
           {after && (
             <StyledAfterContainer>
