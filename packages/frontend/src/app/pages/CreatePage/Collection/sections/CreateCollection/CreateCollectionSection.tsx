@@ -35,6 +35,7 @@ export default function CreateCollectionSection() {
     getValues,
     resetField,
     control,
+    setValue,
   } = useForm<CreateCollectionForm>()
 
   const {
@@ -129,6 +130,7 @@ export default function CreateCollectionSection() {
                 control,
                 name: 'name',
                 rules: { required: true },
+                setValue,
               }}
             />
           </FormControl>
@@ -142,6 +144,7 @@ export default function CreateCollectionSection() {
                 control,
                 name: 'symbol',
                 rules: { required: true },
+                setValue,
               }}
             />
           </FormControl>

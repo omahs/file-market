@@ -33,7 +33,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
-  const { handleSubmit, formState: { errors }, watch, control } = useForm<CreatePasswordValue>()
+  const { handleSubmit, formState: { errors }, watch, control, setValue } = useForm<CreatePasswordValue>()
 
   const password = watch('password')
   const passwordRepeat = watch('repeatPassword')
@@ -51,6 +51,7 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
           controlledInputProps={{
             name: 'password',
             control,
+            setValue,
             rules: {
               required: true,
               validate: validatePassword,
@@ -68,6 +69,7 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
           }}
           controlledInputProps={{
             name: 'repeatPassword',
+            setValue,
             control,
             rules: {
               required: true,

@@ -38,6 +38,7 @@ export default observer(function ProfileSettings() {
     formState: { errors },
     control,
     watch,
+    setValue,
   } = useForm<IProfileSettings>({
     mode: 'all',
     defaultValues: {
@@ -115,7 +116,6 @@ export default observer(function ProfileSettings() {
     statuses,
     okMsg: 'Profile data update completed successfully!',
     loadingMsg: 'Profile is updating',
-    successNavTo: `/profile/${redirectAddress}`,
   })
 
   const isExistProblem = useMemo(() => {
@@ -147,11 +147,18 @@ export default observer(function ProfileSettings() {
           <AppearanceSection<IProfileSettings>
             name={{
               control,
+              setValue,
               name: 'name',
               rules: {
+                setValueAs: (value) => {
+                  console.log(value)
+
+                  return value.toLowerCase()
+                },
                 validate: async (value) => {
                   if (!value) return
                   nameExistCheck(value)
+                  if (value[0] === '0' && value[1] === 'x') return 'Please enter valid username'
 
                   return value.length > 3 && value.length < 50 ? undefined : 'The name must have more than 3 characters and less than 50 characters'
                 },
@@ -160,6 +167,7 @@ export default observer(function ProfileSettings() {
             }}
             url={{
               control,
+              setValue,
               name: 'username',
               rules: {
                 validate: async (value) => {
@@ -169,13 +177,17 @@ export default observer(function ProfileSettings() {
                   urlExistCheck(value)
 
                   if (value.length < 3 || value.length > 50) return 'The username must have more than 3 characters and less than 50 characters'
-                  if (!value.match(/^[a-z0-9_]+$/) || (value[0] === '0' && value[1] === 'x')) return 'Please enter valid username'
+                  if (value[0] === '0' && value[1] === 'x') return 'Please enter valid username'
                 },
               },
-
+              validateParams: {
+                pattern: /^[a-z0-9_]+$/,
+                isLowerCase: true,
+              },
               error: isUrlExist ? 'This username is exist' : undefined,
             }}
             bio={{
+              setValue,
               control,
               name: 'bio',
               rules: {
@@ -190,6 +202,7 @@ export default observer(function ProfileSettings() {
           <Notifications<IProfileSettings>
             email={{
               control,
+              setValue,
               name: 'email',
               rules: {
                 validate: async (value) => {
@@ -213,6 +226,7 @@ export default observer(function ProfileSettings() {
           <Links<IProfileSettings>
             websiteUrl={{
               control,
+              setValue,
               name: 'websiteUrl',
               rules: {
                 validate: (value) => {
@@ -225,6 +239,7 @@ export default observer(function ProfileSettings() {
             }}
             twitter={{
               control,
+              setValue,
               name: 'twitter',
               rules: {
                 validate: (value) => {
@@ -236,6 +251,7 @@ export default observer(function ProfileSettings() {
             }}
             telegram={{
               control,
+              setValue,
               name: 'telegram',
               rules: {
                 validate: (value) => {
@@ -247,6 +263,7 @@ export default observer(function ProfileSettings() {
             }}
             discord={{
               control,
+              setValue,
               name: 'discord',
               rules: {
                 validate: (value) => {
