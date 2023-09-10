@@ -17,7 +17,7 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     telegram: '',
     discord: '',
   })
-
+  const [isEmailUpdated, setIsEmailUpdated] = useState<boolean>(false)
   const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<string, IProfileSettings>()
 
   const updateEmail = async (email?: string) => {
@@ -28,7 +28,8 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     console.log('update')
     if (props.email !== userStore.user?.email) {
       await updateEmail(props.email)
-    }
+      setIsEmailUpdated(true)
+    } else setIsEmailUpdated(false)
     await userStore.updateUserInfo(props)
     onSuccess?.()
 
@@ -43,6 +44,7 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     setError,
     setIsLoading,
     statuses,
+    isEmailUpdated,
     updateProfile: (form: IProfileSettings) => {
       console.log('Update2')
       setFormToTransfer(form)
