@@ -1,12 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import Plug from '../../../components/Plug/Plug'
 import { ITableColumn } from '../../../components/Table/TableBuilder'
 import { useTransfersHistoryStore } from '../../../hooks/useTransfersHistory'
 import { Button, InfiniteScroll, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
 
 const columns: ITableColumn[] = [
@@ -19,8 +18,7 @@ const columns: ITableColumn[] = [
 ]
 
 export const HistorySection: React.FC = observer(() => {
-  const { profileAddress } = useParams<Params>()
-  const transferHistoryStore = useTransfersHistoryStore(profileAddress)
+  const transferHistoryStore = useTransfersHistoryStore()
   const navigate = useNavigate()
   const historyTableBuilder = new HistoryTableBuilder(columns, transferHistoryStore.tableRows)
 
