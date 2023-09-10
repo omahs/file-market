@@ -32,7 +32,7 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     await userStore.updateUserInfo(props)
     onSuccess?.()
 
-    return 'vse good'
+    return Date.now().toString()
   }), [userStore, onSuccess])
 
   useAfterDidMountEffect(() => {

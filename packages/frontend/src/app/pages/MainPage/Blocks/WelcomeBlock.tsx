@@ -284,7 +284,7 @@ export default function WelcomeBlock() {
                   navigate('/market')
                 }}
               >
-                Upload file right here
+                Explore files
               </Button>
             </div>
           </NavigateBlock>
