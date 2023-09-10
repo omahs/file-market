@@ -8,6 +8,7 @@ import Banner from '../../components/ViewInfo/Banner/Banner'
 import ProfileImage from '../../components/ViewInfo/ProfileImage/ProfileImage'
 import SettingsButton from '../../components/ViewInfo/SettingsButton/SettingsButton'
 import { useCollectionAndTokenListStore, useStores } from '../../hooks'
+import { useAddress } from '../../hooks/useAddress'
 import { useProfileStore } from '../../hooks/useProfileStore'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
@@ -53,11 +54,7 @@ const ProfilePage: React.FC = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { userStore } = useStores()
   const profileStore = useProfileStore(profileAddress)
-  const profileAddressMemo = useMemo(() => {
-    if (profileAddress?.[0] === '0' && profileAddress?.[1] === 'x') return profileAddress
-
-    return profileStore.user?.address
-  }, [profileAddress, profileStore.user])
+  const profileAddressMemo = useAddress()
 
   const { address: currentAddress } = useAccount()
   const transferHistoryStore = useTransfersHistoryStore(profileAddressMemo)
