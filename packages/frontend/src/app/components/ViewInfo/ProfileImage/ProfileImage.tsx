@@ -44,7 +44,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
       avatarUrl: url.url,
     })
 
-    return 'Vse good'
+    return Date.now().toString()
   })
 
   const connectFunc = useJwtAuth({

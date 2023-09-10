@@ -41,7 +41,7 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
       bannerUrl: url.url,
     })
 
-    return 'All good'
+    return Date.now().toString()
   })
 
   const connectFunc = useJwtAuth({
