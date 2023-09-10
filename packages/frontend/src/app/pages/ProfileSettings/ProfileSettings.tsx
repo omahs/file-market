@@ -106,6 +106,7 @@ export default observer(function ProfileSettings() {
   const {
     statuses,
     updateProfile,
+    isEmailUpdated,
   } = useUpdateProfile()
 
   const onSubmit: SubmitHandler<IProfileSettings> = (data) => {
@@ -116,6 +117,7 @@ export default observer(function ProfileSettings() {
     statuses,
     okMsg: 'Profile data update completed successfully!',
     loadingMsg: 'Profile is updating',
+    successNavTo: isEmailUpdated ? undefined : `/profile/${redirectAddress}`,
   })
 
   const isExistProblem = useMemo(() => {
@@ -140,7 +142,7 @@ export default observer(function ProfileSettings() {
 
             </WalletName>
             <WalletNameMobile>
-              {reduceAddress(address as string) ?? 'Please connect the wallet'}
+              {reduceAddress(address ?? '') ?? 'Please connect the wallet'}
 
             </WalletNameMobile>
           </GrayBgText>

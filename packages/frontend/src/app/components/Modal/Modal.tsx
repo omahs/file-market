@@ -30,14 +30,15 @@ interface SuccessNavBodyProps {
   buttonText: string
   link: string
   onPress: () => void
-  underText?: string
+  underText?: ReactNode
   isSuccessImg?: boolean
+  mainText?: ReactNode
 }
-export const SuccessNavBody = ({ buttonText, link, onPress, underText, isSuccessImg = true }: SuccessNavBodyProps) => {
+export const SuccessNavBody = ({ buttonText, link, onPress, underText, mainText, isSuccessImg = true }: SuccessNavBodyProps) => {
   return (
     <>
       {isSuccessImg && <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>}
-      <ModalP style={{ marginBottom: '40px' }}>Success</ModalP>
+      <ModalP style={{ marginBottom: '40px' }}>{ mainText ?? 'Success'}</ModalP>
       {underText && <ModalP style={{ marginBottom: '40px', fontSize: '18px' }}>{underText}</ModalP>}
       <ModalButtonContainer style={{ justifyContent: 'center' }}>
         <ButtonNavGlowing

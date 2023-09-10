@@ -59,6 +59,7 @@ export function useStatusModal({
         setModalBody(
           <SuccessNavBody
             buttonText='Cool'
+            mainText={okMsg}
             link={successNavTo}
             onPress={() => {
               window.scrollTo(0, 0)
