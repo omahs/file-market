@@ -177,7 +177,7 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		INSERT INTO user_profiles(
 			address, name, username, bio, website_url, avatar_url, banner_url, email, is_email_confirmed, twitter, discord, telegram,
 		    is_email_notifications_enabled, is_push_notifications_enabled)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,FALSE,$8,$9,$10,$11,$12)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,FALSE,$8,$9,$10,TRUE,$11)
 	`
 	var name, username *string
 	if profile.Name != "" {
@@ -198,7 +198,6 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		profile.Twitter,
 		profile.Discord,
 		profile.Telegram,
-		profile.IsEmailNotificationsEnabled,
 		profile.IsPushNotificationsEnabled,
 	); err != nil {
 		return resolveUserProfileDBErr(err)
@@ -239,7 +238,7 @@ func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email 
 	// language=PostgreSQL
 	query := `
 		UPDATE user_profiles 
-		SET email=$1, is_email_confirmed=$2, is_email_notifications_enabled=TRUE
+		SET email=$1, is_email_confirmed=$2
 		WHERE address=$3
 	`
 	if _, err := tx.Exec(ctx, query,
