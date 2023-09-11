@@ -10,10 +10,13 @@ export const filterData = ({ value, pattern, isLowerCase, isDisableEnglishPriori
   let result = value
   if (isLowerCase) result = result.toLowerCase()
   if (!isDisableEnglishPriority) {
-    const patternEnglish = /^[a-zA-Z0-9\W]+$/
+    const patternEnglish = /[a-zA-Z0-9!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/
     result = result.split('').filter(item => {
+      console.log(item)
+
       return patternEnglish?.test(item)
     }).join('')
+    console.log(result)
   }
   if (pattern) {
     result = result.split('').filter(item => {
