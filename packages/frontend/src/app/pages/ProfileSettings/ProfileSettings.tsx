@@ -152,11 +152,6 @@ export default observer(function ProfileSettings() {
               setValue,
               name: 'name',
               rules: {
-                setValueAs: (value) => {
-                  console.log(value)
-
-                  return value.toLowerCase()
-                },
                 validate: async (value) => {
                   if (!value) return
                   nameExistCheck(value)
