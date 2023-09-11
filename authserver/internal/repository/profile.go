@@ -179,10 +179,18 @@ func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		    is_email_notifications_enabled, is_push_notifications_enabled)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,FALSE,$8,$9,$10,$11,$12)
 	`
+	var name, username *string
+	if profile.Name != "" {
+		name = &profile.Name
+	}
+	if profile.Username != "" {
+		lk := strings.ToLower(profile.Username)
+		username = &lk
+	}
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
-		profile.Name,
-		strings.ToLower(profile.Username),
+		name,
+		username,
 		profile.Bio,
 		profile.WebsiteURL,
 		profile.AvatarURL,
