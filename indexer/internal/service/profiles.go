@@ -109,6 +109,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 		Email:                      res.Email,
 		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
 		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
+		IsEmailConfirmed:           res.IsEmailConfirmed,
 		Name:                       res.Name,
 		Telegram:                   res.Telegram,
 		Twitter:                    res.Twitter,
