@@ -17,6 +17,7 @@ const TransfersSection: React.FC = observer(() => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    if (!currentAddress || !userAddress) navigate('/')
     if (utils.getAddress(currentAddress ?? '') !== utils.getAddress(userAddress ?? '')) {
       console.log(utils.getAddress(currentAddress ?? ''))
       console.log(utils.getAddress(userAddress ?? ''))
