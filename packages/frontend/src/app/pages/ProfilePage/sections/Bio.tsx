@@ -17,7 +17,7 @@ const Bio = ({ text, isTitleEmpty }: IBioProps) => {
         <StyledSection style={{ maxWidth: '600px', width: 'inherit' }}>
           {!isTitleEmpty && <StyledSectionTitle>Bio</StyledSectionTitle>}
           <StyledSectionContent>
-            <Txt primary1 style={{ fontWeight: 400 }}>
+            <Txt primary1 style={{ fontWeight: 400, overflowWrap: 'anywhere' }}>
               {
                 isShowFullText
                   ? (

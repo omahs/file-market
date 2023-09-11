@@ -24,7 +24,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
   const [isShowEdit, setIsShowEdit] = useState<boolean>(false)
 
   const { dialogStore, userStore } = useStores()
-  const upload = useUploadLighthouse()
+  const { uploadWithoutToken } = useUploadLighthouse()
   const openWindow = () => {
     dialogStore.openDialog({
       component: EditProfileImageDialog,
@@ -38,13 +38,13 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
   const { wrapPromise, statuses } = useStatusState<string, IEditProfileImageDialogForm>()
 
   const updateProfileFunc = wrapPromise(async (item: IEditProfileImageDialogForm) => {
-    const url = await upload(item.image[0])
+    const url = await uploadWithoutToken(item.image[0])
     updateProfile({
       ...userStore.user,
       avatarUrl: url.url,
     })
 
-    return 'Vse good'
+    return Date.now().toString()
   })
 
   const connectFunc = useJwtAuth({
@@ -74,13 +74,15 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         onMouseLeave={() => setIsShowEdit(false)}
       >
 
-        <StyledProfileImageContent style={{
-          backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          borderRadius: '50%',
-        }}
+        <StyledProfileImageContent
+          style={{
+            backgroundImage: `url(${!!src ? src : gradientPlaceholderImg})`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            borderRadius: '50%',
+          }}
+          withHover={isOwner}
         >
           {
             (isShowEdit && isOwner) && (

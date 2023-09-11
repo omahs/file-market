@@ -36,9 +36,12 @@ type Auth interface {
 type UserProfile interface {
 	GetUserProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.UserProfile, error)
 	GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.UserProfile, error)
+	EmailExists(ctx context.Context, tx pgx.Tx, email string) (bool, error)
+	NameExists(ctx context.Context, tx pgx.Tx, name string) (bool, error)
+	UsernameExists(ctx context.Context, tx pgx.Tx, username string) (bool, error)
 	InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error
 	UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error
-	UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, address common.Address) error
+	UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, isConfirmed bool, address common.Address) error
 	GetEmailVerificationToken(ctx context.Context, tx pgx.Tx, token string) (*domain.EmailVerificationToken, error)
 	InsertEmailVerificationToken(ctx context.Context, tx pgx.Tx, token *domain.EmailVerificationToken) error
 	DeleteAllEmailVerificationTokens(ctx context.Context, tx pgx.Tx, address common.Address) error

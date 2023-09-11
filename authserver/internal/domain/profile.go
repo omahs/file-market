@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/mark3d-xyz/mark3d/authserver/internal/utils"
 	"github.com/mark3d-xyz/mark3d/authserver/pkg/validator"
@@ -15,6 +14,7 @@ type UserProfile struct {
 	BannerURL                   string         `json:"bannerUrl"`
 	Bio                         string         `json:"bio"`
 	Email                       string         `json:"email"`
+	IsEmailConfirmed            bool           `json:"isEmailConfirmed"`
 	IsEmailNotificationsEnabled bool           `json:"isEmailNotificationsEnabled"`
 	IsPushNotificationsEnabled  bool           `json:"isPushNotificationsEnabled"`
 	Name                        string         `json:"name"`
@@ -39,6 +39,7 @@ func (p *UserProfile) ToGRPC() *authserver_pb.UserProfile {
 		Username:                   p.Username,
 		WebsiteURL:                 p.WebsiteURL,
 		Email:                      p.Email,
+		IsEmailConfirmed:           p.IsEmailConfirmed,
 		IsEmailNotificationEnabled: p.IsEmailNotificationsEnabled,
 		IsPushNotificationEnabled:  p.IsPushNotificationsEnabled,
 		Twitter:                    utils.UnwrapString(p.Twitter),
@@ -124,27 +125,7 @@ func (p *UserProfile) HidePrivateFields() {
 	p.Email = ""
 	p.IsPushNotificationsEnabled = false
 	p.IsEmailNotificationsEnabled = false
-}
-
-func GetDefaultUserProfile(address common.Address) *UserProfile {
-	addressStr := strings.ToLower(address.String())
-	addressLen := len(addressStr)
-
-	return &UserProfile{
-		Address:                     address,
-		AvatarURL:                   "",
-		BannerURL:                   "",
-		Bio:                         "",
-		Email:                       "",
-		IsEmailNotificationsEnabled: false,
-		IsPushNotificationsEnabled:  false,
-		Name:                        fmt.Sprintf("%s..%s", addressStr[:8], addressStr[addressLen-6:]),
-		Username:                    fmt.Sprintf("user_%s", addressStr[2:addressLen-13]),
-		WebsiteURL:                  "",
-		Twitter:                     nil,
-		Discord:                     nil,
-		Telegram:                    nil,
-	}
+	p.IsEmailConfirmed = false
 }
 
 type SetEmailRequest struct {
@@ -164,6 +145,7 @@ func (r *SetEmailRequest) Validate() error {
 }
 
 type SetEmailResponse struct {
-	Token string `json:"token"`
-	Email string `json:"email"`
+	Token   string       `json:"token"`
+	Email   string       `json:"email"`
+	Profile *UserProfile `json:"profile"`
 }

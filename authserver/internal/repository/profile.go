@@ -22,7 +22,7 @@ var (
 func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT name, username, bio, website_url, twitter, email, discord, telegram, avatar_url, banner_url,
+		SELECT name, username, bio, website_url, twitter, email, is_email_confirmed, discord, telegram, avatar_url, banner_url,
 		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE address = $1
@@ -32,16 +32,17 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 		Address: address,
 	}
 
-	var email *string
+	var email, username, name *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(address.String()),
 	).Scan(
-		&profile.Name,
-		&profile.Username,
+		&name,
+		&username,
 		&profile.Bio,
 		&profile.WebsiteURL,
 		&profile.Twitter,
 		&email,
+		&profile.IsEmailConfirmed,
 		&profile.Discord,
 		&profile.Telegram,
 		&profile.AvatarURL,
@@ -55,6 +56,12 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 	if email != nil {
 		profile.Email = *email
 	}
+	if username != nil {
+		profile.Username = *username
+	}
+	if name != nil {
+		profile.Name = *name
+	}
 
 	return &profile, nil
 }
@@ -62,7 +69,7 @@ func (p *postgres) GetUserProfile(ctx context.Context, tx pgx.Tx, address common
 func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.UserProfile, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address, name, username, bio, website_url, twitter, discord, telegram, email, avatar_url, banner_url, 
+		SELECT address, name, username, bio, website_url, twitter, discord, telegram, email, is_email_confirmed, avatar_url, banner_url, 
 		       is_email_notifications_enabled, is_push_notifications_enabled
 		FROM user_profiles
 		WHERE username = $1
@@ -70,19 +77,20 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 
 	var profile domain.UserProfile
 	var address string
-	var email *string
+	var email, uname, name *string
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(username),
 	).Scan(
 		&address,
-		&profile.Name,
-		&profile.Username,
+		&name,
+		&uname,
 		&profile.Bio,
 		&profile.WebsiteURL,
 		&profile.Twitter,
 		&profile.Discord,
 		&profile.Telegram,
 		&email,
+		&profile.IsEmailConfirmed,
 		&profile.AvatarURL,
 		&profile.BannerURL,
 		&profile.IsEmailNotificationsEnabled,
@@ -96,22 +104,93 @@ func (p *postgres) GetUserProfileByUsername(ctx context.Context, tx pgx.Tx, user
 	if email != nil {
 		profile.Email = *email
 	}
+	if uname != nil {
+		profile.Username = *uname
+	}
+	if name != nil {
+		profile.Name = *name
+	}
 
 	return &profile, nil
+}
+
+func (p *postgres) EmailExists(ctx context.Context, tx pgx.Tx, email string) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS (
+		    SELECT email
+		    FROM user_profiles
+			WHERE email=$1 AND is_email_confirmed=TRUE
+		)
+	`
+	var exists bool
+	if err := tx.QueryRow(ctx, query,
+		email,
+	).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (p *postgres) NameExists(ctx context.Context, tx pgx.Tx, name string) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS (
+		    SELECT name
+		    FROM user_profiles
+			WHERE name=$1
+		)
+	`
+	var exists bool
+	if err := tx.QueryRow(ctx, query,
+		name,
+	).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (p *postgres) UsernameExists(ctx context.Context, tx pgx.Tx, username string) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS (
+		    SELECT username
+		    FROM user_profiles
+			WHERE username=$1
+		)
+	`
+	var exists bool
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(username),
+	).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }
 
 func (p *postgres) InsertUserProfile(ctx context.Context, tx pgx.Tx, profile *domain.UserProfile) error {
 	// language=PostgreSQL
 	query := `
 		INSERT INTO user_profiles(
-			address, name, username, bio, website_url, avatar_url, banner_url, email, twitter, discord, telegram,
+			address, name, username, bio, website_url, avatar_url, banner_url, email, is_email_confirmed, twitter, discord, telegram,
 		    is_email_notifications_enabled, is_push_notifications_enabled)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,$8,$9,$10,$11,$12)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,NULL,FALSE,$8,$9,$10,$11,$12)
 	`
+	var name, username *string
+	if profile.Name != "" {
+		name = &profile.Name
+	}
+	if profile.Username != "" {
+		lk := strings.ToLower(profile.Username)
+		username = &lk
+	}
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(profile.Address.String()),
-		profile.Name,
-		strings.ToLower(profile.Username),
+		name,
+		username,
 		profile.Bio,
 		profile.WebsiteURL,
 		profile.AvatarURL,
@@ -156,15 +235,16 @@ func (p *postgres) UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 	return nil
 }
 
-func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, address common.Address) error {
+func (p *postgres) UpdateUserProfileEmail(ctx context.Context, tx pgx.Tx, email string, isConfirmed bool, address common.Address) error {
 	// language=PostgreSQL
 	query := `
 		UPDATE user_profiles 
-		SET email=$1
-		WHERE address=$2
+		SET email=$1, is_email_confirmed=$2, is_email_notifications_enabled=TRUE
+		WHERE address=$3
 	`
 	if _, err := tx.Exec(ctx, query,
 		strings.ToLower(email),
+		isConfirmed,
 		strings.ToLower(address.String()),
 	); err != nil {
 		return resolveUserProfileDBErr(err)

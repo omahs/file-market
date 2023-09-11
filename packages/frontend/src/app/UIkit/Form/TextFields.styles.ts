@@ -25,7 +25,7 @@ export const textFieldsStyles = {
   lineHeight: '19px',
   color: '$blue900',
   border: '2px solid transparent',
-  transition: 'outline-width 0.5s',
+  transition: 'outline 0.25s ease-in-out, box-shadow 0.3s ease-in-out',
   width: '100%',
 
   '&:placeholder': {
@@ -57,6 +57,12 @@ export const textFieldsStyles = {
         animation: 'none !important',
       },
     },
+    isNotification: {
+      true: {
+        outline: ' 2px solid #0090FF; !important',
+        animation: 'none !important',
+      },
+    },
     isDisabledFocusStyle: {
       true: {
         '&:focus': {
@@ -75,6 +81,18 @@ export const textFieldsStyles = {
         padding: '8px 16px',
         borderRadius: '12px',
         color: '#6B6F76',
+        '@md': {
+          height: 44,
+          fontSize: '15px',
+        },
+        '@sm': {
+          height: 42,
+          fontSize: '13px',
+        },
+        '@xs': {
+          height: 40,
+          fontSize: '12px',
+        },
       },
     },
     textStartInput: {
@@ -126,4 +144,27 @@ export const StyledAfterContainer = styled('div', {
   transform: 'translateY(-50%)',
   fontWeight: 600,
   color: '$gray600',
+})
+
+export const StyledNotificationMessage = styled('div', {
+  textAlign: 'left',
+  padding: '24px 16px 12px',
+  background: 'rgba(0, 144, 255, 0.05)',
+  border: '1px solid rgba(0, 144, 255, 0.25)',
+  borderRadius: '0px 0px 16px 16px',
+  marginTop: '-12px',
+  color: '#6B6F76',
+})
+
+export const StyledRightContent = styled('div', {
+  position: 'absolute',
+  color: '$gray400',
+  ...textVariant('primary1').true,
+  fontWeight: '600',
+  top: '16px',
+  right: '12px',
+  cursor: 'pointer',
+  '&:hover': {
+    filter: 'brightness(120%)',
+  },
 })

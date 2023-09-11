@@ -12,6 +12,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/types"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/utils"
 	"log"
 	"math/big"
 	"strings"
@@ -469,7 +470,7 @@ func (s *service) onTransferDraftCompletionEvent(
 
 	token.BlockNumber = blockNumber.Int64()
 
-	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
 		metadata, metaUri, err := s.processMetadata(ctx, token)
 		if err != nil {
 			return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
@@ -541,29 +542,45 @@ func (s *service) onTransferDraftCompletionEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification to owner
-	emailContentTemplate := `
-		Your <a href="%s">token</a> was fulfilled. Please transfer hidden file.
-	`
-	network := "Filecoin"
-	if strings.Contains(s.cfg.Mode, "era") {
-		network = "ZkSync"
-	}
-	link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
-	owner, e := s.GetUserProfile(ctx, token.Owner.String())
+	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String(), true)
 	if e != nil {
 		return errors.New(e.Message)
 	}
-	if owner.Email != "" {
-		if err := s.emailSender.SendEmail(
-			"Your order was fulfilled",
-			fmt.Sprintf(emailContentTemplate, link),
-			"owner notification",
-			[]string{owner.Email},
-			nil,
-			nil,
-		); err != nil {
-			logger.Error("failed to send email", err, nil)
-			return err
+	owner, e := s.GetUserProfile(ctx, token.Owner.String(), true)
+	if e != nil {
+		return errors.New(e.Message)
+	}
+
+	if owner.IsEmailNotificationEnabled && owner.Email != "" && owner.IsEmailConfirmed {
+		network := "Filecoin"
+		currency := "FIL"
+		if strings.Contains(s.cfg.Mode, "era") {
+			network = "ZkSync"
+			currency = "ETH"
+		}
+		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
+		ownerName := owner.Name
+		if ownerName == "" {
+			ownerName = "FileMarketer"
+		}
+		buyerName := buyer.Name
+		if buyerName == "" {
+			buyerName = buyer.Address
+		}
+		data := emailBuyNotificationTemplateParams{
+			OwnerName:          ownerName,
+			BuyerName:          buyerName,
+			TokenName:          token.Metadata.Name,
+			TokenUrl:           tokenUrl,
+			Price:              utils.ParseEth(order.Price).String(),
+			Currency:           currency,
+			ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, buyer.Address),
+			BottomFilename:     "bottompng",
+			LogoFilename:       "logopng",
+		}
+
+		if err := s.sendEmail("email_buy_notification", owner.Email, "Your order was fulfilled", "owner notification", data); err != nil {
+			logger.Error("failed to send fulfill notification email", err, nil)
 		}
 	}
 
@@ -618,7 +635,9 @@ func (s *service) onPublicKeySetEvent(
 	// only for ws
 	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
 	if err != nil {
-		return fmt.Errorf("failed to get active order: %w", err)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("failed to get active order: %w", err)
+		}
 	}
 
 	msg := domain.EFTSubMessage{
@@ -681,7 +700,9 @@ func (s *service) onPasswordSetEvent(
 	// only for ws
 	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
 	if err != nil {
-		return fmt.Errorf("failed to get active order: %w", err)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("failed to get active order: %w", err)
+		}
 	}
 	msg := domain.EFTSubMessage{
 		Event:    "TransferPasswordSet",
@@ -692,29 +713,41 @@ func (s *service) onPasswordSetEvent(
 	s.SendEFTSubscriptionUpdate(token.CollectionAddress, token.TokenId, &msg)
 
 	// Send email notification
-	emailContentTemplate := `
-		<a href="%s">Token's'</a> hidden file was transferred. Please finish the order.
-	`
-	network := "Filecoin"
-	if strings.Contains(s.cfg.Mode, "era") {
-		network = "ZkSync"
-	}
-	link := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, token.CollectionAddress.String(), token.TokenId.String())
-	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String())
+	owner, e := s.GetUserProfile(ctx, transfer.FromAddress.String(), true)
 	if e != nil {
 		return errors.New(e.Message)
 	}
-	if buyer.Email != "" {
-		if err := s.emailSender.SendEmail(
-			"Hidden file was transferred",
-			fmt.Sprintf(emailContentTemplate, link),
-			"buyer notification",
-			[]string{buyer.Email},
-			nil,
-			nil,
-		); err != nil {
-			logger.Error("failed to send email", err, nil)
-			return err
+	buyer, e := s.GetUserProfile(ctx, transfer.ToAddress.String(), true)
+	if e != nil {
+		return errors.New(e.Message)
+	}
+
+	if buyer.IsEmailNotificationEnabled && buyer.Email != "" {
+		network := "Filecoin"
+		if strings.Contains(s.cfg.Mode, "era") {
+			network = "ZkSync"
+		}
+		tokenUrl := fmt.Sprintf("%s/collection/%s/%s/%s", s.cfg.Host, network, strings.ToLower(token.CollectionAddress.String()), token.TokenId.String())
+		ownerName := owner.Name
+		if ownerName == "" {
+			ownerName = owner.Address
+		}
+		buyerName := buyer.Name
+		if buyerName == "" {
+			buyerName = "FileMarketer"
+		}
+		data := emailTransferNotificationTemplateParams{
+			BuyerName:          buyerName,
+			OwnerName:          ownerName,
+			TokenName:          token.Metadata.Name,
+			TokenUrl:           tokenUrl,
+			ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, buyer.Address),
+			BottomFilename:     "bottompng",
+			LogoFilename:       "logopng",
+		}
+
+		if err := s.sendEmail("email_transfer_notification", buyer.Email, "Hidden file was transferred", "buyer notification", data); err != nil {
+			logger.Error("failed to send file transfer notification email", err, nil)
 		}
 	}
 
@@ -752,7 +785,9 @@ func (s *service) onTransferFinishEvent(
 	// only for ws
 	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
 	if err != nil {
-		return fmt.Errorf("failed to get active order: %w", err)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("failed to get active order: %w", err)
+		}
 	}
 	transferStatus := domain.TransferStatus{
 		Timestamp: timestamp,
@@ -770,7 +805,7 @@ func (s *service) onTransferFinishEvent(
 		Status:    string(models.OrderStatusFinished),
 		TxId:      t.Hash(),
 	}
-	if transfer.OrderId != 0 {
+	if transfer.OrderId != 0 && order != nil {
 		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &orderStatus); err != nil {
 			return err
 		}
@@ -833,7 +868,9 @@ func (s *service) onTransferFraudReportedEvent(
 	// only for ws
 	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
 	if err != nil {
-		return fmt.Errorf("failed to get active order: %w", err)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("failed to get active order: %w", err)
+		}
 	}
 	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &transferStatus); err != nil {
 		return err
@@ -882,7 +919,9 @@ func (s *service) onTransferFraudDecidedEvent(
 	// only for ws
 	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
 	if err != nil {
-		return fmt.Errorf("failed to get active order: %w", err)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("failed to get active order: %w", err)
+		}
 	}
 	transferStatus := domain.TransferStatus{
 		Timestamp: timestamp,
@@ -893,7 +932,7 @@ func (s *service) onTransferFraudDecidedEvent(
 		return err
 	}
 	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
-	if transfer.OrderId != 0 {
+	if transfer.OrderId != 0 && order != nil {
 		var orderStatus string
 		if approved {
 			orderStatus = string(models.OrderStatusFraudApproved)
@@ -969,7 +1008,9 @@ func (s *service) onTransferCancel(
 	// only for ws
 	order, err := s.repository.GetActiveOrder(ctx, tx, token.CollectionAddress, token.TokenId)
 	if err != nil {
-		return fmt.Errorf("failed to get active order: %w", err)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("failed to get active order: %w", err)
+		}
 	}
 	transferStatus := domain.TransferStatus{
 		Timestamp: timestamp,
@@ -981,7 +1022,7 @@ func (s *service) onTransferCancel(
 	}
 	transfer.Statuses = append([]*domain.TransferStatus{&transferStatus}, transfer.Statuses...)
 
-	if transfer.OrderId != 0 {
+	if transfer.OrderId != 0 && order != nil {
 		status := domain.OrderStatus{
 			Timestamp: timestamp,
 			Status:    string(models.OrderStatusCancelled),

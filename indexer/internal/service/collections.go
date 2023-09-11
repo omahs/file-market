@@ -73,6 +73,7 @@ func (s *service) GetCollection(
 		res.WebsiteURL = profile.WebsiteURL
 		res.Twitter = profile.Twitter
 		res.Discord = profile.Discord
+		res.BannerURL = profile.BannerUrl
 	}
 
 	return &res, nil

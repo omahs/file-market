@@ -14,14 +14,48 @@ func (s *GRPCServer) GetUserProfile(ctx context.Context, req *authserver_pb.GetU
 	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
 	defer cancel()
 
-	_, err := s.authorizeUser(ctx, jwt.PurposeAccess)
-	isPrincipal := err == nil
-	profile, e := s.service.GetProfileByIdentification(ctx, req.Identification, isPrincipal)
+	profile, e := s.service.GetProfileByIdentification(ctx, req.Identification, true)
 	if e != nil {
 		return nil, e.ToGRPC()
 	}
 
 	return profile.ToGRPC(), nil
+}
+
+func (s *GRPCServer) EmailExists(ctx context.Context, req *authserver_pb.EmailExistsRequest) (*authserver_pb.EmailExistsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	exist, err := s.service.EmailExist(ctx, req.Email)
+	if err != nil {
+		return nil, err.ToGRPC()
+	}
+
+	return &authserver_pb.EmailExistsResponse{Exist: exist}, nil
+}
+
+func (s *GRPCServer) NameExists(ctx context.Context, req *authserver_pb.NameExistsRequest) (*authserver_pb.NameExistsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	exist, err := s.service.NameExist(ctx, req.Name)
+	if err != nil {
+		return nil, err.ToGRPC()
+	}
+
+	return &authserver_pb.NameExistsResponse{Exist: exist}, nil
+}
+
+func (s *GRPCServer) UsernameExists(ctx context.Context, req *authserver_pb.UsernameExistsRequest) (*authserver_pb.UsernameExistsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
+	defer cancel()
+
+	exist, err := s.service.UsernameExist(ctx, req.Username)
+	if err != nil {
+		return nil, err.ToGRPC()
+	}
+
+	return &authserver_pb.UsernameExistsResponse{Exist: exist}, nil
 }
 
 func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.UserProfile) (*authserver_pb.UserProfile, error) {
@@ -36,16 +70,18 @@ func (s *GRPCServer) UpdateUserProfile(ctx context.Context, req *authserver_pb.U
 	}
 
 	profile := domain.UserProfile{
-		Address:    user.Address,
-		AvatarURL:  req.AvatarURL,
-		BannerURL:  req.BannerURL,
-		Bio:        req.Bio,
-		Name:       req.Name,
-		Username:   req.Username,
-		WebsiteURL: req.WebsiteURL,
-		Twitter:    &req.Twitter,
-		Discord:    &req.Discord,
-		Telegram:   &req.Telegram,
+		Address:                     user.Address,
+		AvatarURL:                   req.AvatarURL,
+		BannerURL:                   req.BannerURL,
+		Bio:                         req.Bio,
+		Name:                        req.Name,
+		Username:                    req.Username,
+		WebsiteURL:                  req.WebsiteURL,
+		Twitter:                     &req.Twitter,
+		Discord:                     &req.Discord,
+		Telegram:                    &req.Telegram,
+		IsEmailNotificationsEnabled: req.IsEmailNotificationEnabled,
+		IsPushNotificationsEnabled:  req.IsPushNotificationEnabled,
 	}
 
 	if err := profile.ValidateForUpdate(); err != nil {
@@ -92,18 +128,20 @@ func (s *GRPCServer) SetEmail(ctx context.Context, req *authserver_pb.SetEmailRe
 	}
 
 	return &authserver_pb.SetEmailResponse{
-		Token: res.Token,
-		Email: res.Email,
+		Token:   res.Token,
+		Email:   res.Email,
+		Profile: res.Profile.ToGRPC(),
 	}, nil
 }
 
-func (s *GRPCServer) VerifyEmail(ctx context.Context, req *authserver_pb.VerifyEmailRequest) (*authserver_pb.SuccessResponse, error) {
+func (s *GRPCServer) VerifyEmail(ctx context.Context, req *authserver_pb.VerifyEmailRequest) (*authserver_pb.VerifyEmailResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, s.cfg.RequestTimeout)
 	defer cancel()
 
-	if err := s.service.VerifyEmail(ctx, req.SecretToken); err != nil {
+	address, err := s.service.VerifyEmail(ctx, req.SecretToken)
+	if err != nil {
 		return nil, err.ToGRPC()
 	}
 
-	return &authserver_pb.SuccessResponse{Success: true}, nil
+	return &authserver_pb.VerifyEmailResponse{Address: address}, nil
 }

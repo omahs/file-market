@@ -126,6 +126,66 @@ func (s *service) GetProfileByIdentification(ctx context.Context, identification
 	}
 }
 
+func (s *service) EmailExist(ctx context.Context, email string) (bool, *domain.APIError) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return false, domain.InternalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	exist, err := s.repository.EmailExists(ctx, tx, email)
+	if err != nil {
+		log.Println("failed to get email exist: ", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return false, domain.InternalError
+	}
+
+	return exist, nil
+}
+
+func (s *service) NameExist(ctx context.Context, name string) (bool, *domain.APIError) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return false, domain.InternalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	exist, err := s.repository.NameExists(ctx, tx, name)
+	if err != nil {
+		log.Println("failed to get name exist: ", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return false, domain.InternalError
+	}
+
+	return exist, nil
+}
+
+func (s *service) UsernameExist(ctx context.Context, username string) (bool, *domain.APIError) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return false, domain.InternalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	exist, err := s.repository.UsernameExists(ctx, tx, username)
+	if err != nil {
+		log.Println("failed to get username exist: ", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return false, domain.InternalError
+	}
+
+	return exist, nil
+}
+
 func (s *service) UpdateUserProfile(
 	ctx context.Context,
 	profile *domain.UserProfile,
@@ -182,6 +242,19 @@ func (s *service) SetEmail(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
+	exists, err := s.repository.EmailExists(ctx, tx, email)
+	if err != nil {
+		log.Println("failed to get email exists", err)
+		return nil, domain.InternalError
+	}
+
+	if exists {
+		return nil, &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "email already taken",
+		}
+	}
+
 	verificationToken := utils.RandomString(32)
 	if err := s.repository.InsertEmailVerificationToken(ctx, tx, &domain.EmailVerificationToken{
 		Address:   address,
@@ -193,49 +266,74 @@ func (s *service) SetEmail(
 		return nil, domain.InternalError
 	}
 
+	if err := s.repository.UpdateUserProfileEmail(ctx, tx, email, false, address); err != nil {
+		log.Printf("failed to update profile email: %v", err)
+		return nil, domain.InternalError
+	}
+
+	profile, err := s.repository.GetUserProfile(ctx, tx, address)
+	if err != nil {
+		log.Printf("failed to get user profile: %v", err)
+		return nil, domain.InternalError
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		return nil, domain.InternalError
 	}
 
 	return &domain.SetEmailResponse{
-		Token: verificationToken,
-		Email: email,
+		Token:   verificationToken,
+		Email:   email,
+		Profile: profile,
 	}, nil
 }
 
 func (s *service) VerifyEmail(
 	ctx context.Context,
 	secretToken string,
-) *domain.APIError {
+) (string, *domain.APIError) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
 	token, err := s.repository.GetEmailVerificationToken(ctx, tx, secretToken)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return &domain.APIError{
+			return "", &domain.APIError{
 				Code:    http.StatusNotFound,
 				Message: "Token not found",
 			}
 		}
 		log.Printf("failed to get verification token: %v", err)
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 
 	if time.Since(token.CreatedAt) > s.cfg.EmailVerificationTokenTTL {
-		return &domain.APIError{
+		return "", &domain.APIError{
 			Code:    http.StatusBadRequest,
 			Message: "Token is expired",
 		}
 	}
 
-	if err := s.repository.UpdateUserProfileEmail(ctx, tx, token.Email, token.Address); err != nil {
+	exists, err := s.repository.EmailExists(ctx, tx, token.Email)
+	if err != nil {
+		log.Println("failed to get email exists", err)
+		return "", domain.InternalError
+	}
+
+	if exists {
+		return "", &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "email already taken",
+		}
+	}
+
+	if err := s.repository.UpdateUserProfileEmail(ctx, tx, token.Email, true, token.Address); err != nil {
 		log.Printf("failed to update profile email: %v", err)
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 
 	if err := s.repository.DeleteAllEmailVerificationTokens(ctx, tx, token.Address); err != nil {
@@ -243,10 +341,10 @@ func (s *service) VerifyEmail(
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return domain.InternalError
+		return "", domain.InternalError
 	}
 
-	return nil
+	return strings.ToLower(token.Address.String()), nil
 }
 
 // updateUserProfileFields updates `new` profile fields except email and twitter

@@ -77,4 +77,5 @@ type CollectionProfile struct {
 	Twitter    string
 	Telegram   string
 	Discord    string
+	BannerUrl  string
 }

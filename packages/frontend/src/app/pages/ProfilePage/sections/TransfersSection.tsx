@@ -1,25 +1,28 @@
+import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { TransferCard } from '../../../components/MarketCard/TransferCard'
 import Plug from '../../../components/Plug/Plug'
+import { useAddress } from '../../../hooks/useAddress'
 import { useUserTransferStore } from '../../../hooks/useUserTransfers'
 import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router'
 
 const TransfersSection: React.FC = observer(() => {
   const { address: currentAddress } = useAccount()
-  const { profileAddress } = useParams<Params>()
-  const userTransferStore = useUserTransferStore(profileAddress)
+  const userAddress = useAddress()
+  const userTransferStore = useUserTransferStore(userAddress)
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (currentAddress !== profileAddress) {
+    if (utils.getAddress(currentAddress ?? '') !== utils.getAddress(userAddress ?? '')) {
+      console.log(utils.getAddress(currentAddress ?? ''))
+      console.log(utils.getAddress(userAddress ?? ''))
       navigate('/')
     }
-  }, [])
+  }, [userAddress, currentAddress])
 
   return (
     <>

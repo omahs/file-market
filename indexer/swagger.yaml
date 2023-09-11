@@ -1015,6 +1015,75 @@ paths:
             $ref: '#/definitions/ErrorResponse'
       security:
         - jwtAccessTokenAuth: [ ]
+  /profile/email/exists:
+    post:
+      tags:
+        - profile
+      description: Запрос на проверку существования имейла
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: email_exists_req
+          in: body
+          schema:
+            $ref: '#/definitions/ProfileEmailExistsRequest'
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/ProfileEmailExistsResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /profile/name/exists:
+    post:
+      tags:
+        - profile
+      description: Запрос на проверку существования имени
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: name_exists_req
+          in: body
+          schema:
+            $ref: '#/definitions/ProfileNameExistsRequest'
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/ProfileNameExistsResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /profile/username/exists:
+    post:
+      tags:
+        - profile
+      description: Запрос на проверку существования username
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: username_exists_req
+          in: body
+          schema:
+            $ref: '#/definitions/ProfileUsernameExistsRequest'
+      responses:
+        '200':
+          description: Профиль
+          schema:
+            $ref: '#/definitions/ProfileUsernameExistsResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /profile/{identification}:
     get:
       tags:
@@ -1208,6 +1277,9 @@ definitions:
         type: string
         pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'
         description: Вернется если **Авторизирован**
+      isEmailConfirmed:
+        type: boolean
+        description: Подтверждена ли почта
       isEmailNotificationEnabled:
         type: boolean
         description: Включены ли уведомления по почте
@@ -1220,6 +1292,41 @@ definitions:
       bannerUrl:
         type: string
         pattern: '^ipfs://[0-9a-zA-Z]+$'
+  ProfileEmailExistsRequest:
+    type: object
+    properties:
+      email:
+        type: string
+        pattern: '^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$'
+  ProfileEmailExistsResponse:
+    type: object
+    properties:
+      exist:
+        type: boolean
+        x-omitempty: false
+  ProfileNameExistsRequest:
+    type: object
+    properties:
+      name:
+        type: string
+  ProfileNameExistsResponse:
+    type: object
+    properties:
+      exist:
+        type: boolean
+        x-omitempty: false
+  ProfileUsernameExistsRequest:
+    type: object
+    properties:
+      username:
+        type: string
+        pattern: '^[a-z0-9_]+$'
+  ProfileUsernameExistsResponse:
+    type: object
+    properties:
+      exist:
+        type: boolean
+        x-omitempty: false
   UpdateCollectionProfileResponse:
     type: object
     description: Ответ на обновление профиля коллекции
@@ -1238,6 +1345,9 @@ definitions:
         type: string
         pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
         description: Ссылка на сайт коллекции
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
       twitter:
         type: string
         description: ссылка на твиттер
@@ -1265,6 +1375,9 @@ definitions:
         type: string
         pattern: '^(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$'
         description: Ссылка на сайт коллекции
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
       twitter:
         type: string
         description: ссылка на твиттер
@@ -1531,6 +1644,9 @@ definitions:
       discord:
         type: string
         description: ссылка на discord
+      bannerUrl:
+        type: string
+        pattern: '^ipfs://[0-9a-zA-Z]+$'
   Collection:
     type: object
     description: Коллекция

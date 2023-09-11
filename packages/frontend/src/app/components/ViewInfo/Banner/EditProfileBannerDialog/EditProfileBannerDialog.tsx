@@ -67,7 +67,7 @@ export function EditProfileBannerDialog({ open, onClose, onSubmit }: IEditProfil
               <Txt primary1 style={{ color: '#6B6F76', fontWeight: '500' }}>
                 <Txt primary1 style={{ color: '#2F3134' }}> Size: </Txt>
                 {' '}
-                1200x300px
+                1200x240px
               </Txt>
             </ModalBanner>
             <ModalButtonContainer style={{ width: '100%', marginTop: '24px' }}>

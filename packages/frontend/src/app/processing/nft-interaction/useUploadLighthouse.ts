@@ -1,4 +1,5 @@
 import lighthouse from '@lighthouse-web3/sdk'
+import { Signer } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount, useSigner } from 'wagmi'
 
@@ -9,18 +10,16 @@ export function useUploadLighthouse() {
   const { data: signer } = useSigner()
   const { address } = useAccount()
 
-  return useCallback(async (file: File | Blob) => {
+  const getAccessToken = async (address: string, signer: Signer) => {
+    const message = await lighthouseService.getMessage(address)
+    const signedMessage = await signer.signMessage(message) // Sign message
+
+    return lighthouseService.getAccessToken(address, signedMessage)
+  }
+
+  const upload = useCallback(async (file: File | Blob, accessToken: string) => {
     assertSigner(signer)
     assertAccount(address)
-
-    const getAccessToken = async () => {
-      const message = await lighthouseService.getMessage(address)
-      const signedMessage = await signer.signMessage(message) // Sign message
-
-      return lighthouseService.getAccessToken(address, signedMessage)
-    }
-
-    const accessToken = await getAccessToken()
 
     const uploadFile = async (fileOrBlob: File | Blob) => {
       let file: File
@@ -42,4 +41,14 @@ export function useUploadLighthouse() {
 
     return uploadFile(file)
   }, [signer, address])
+
+  const uploadWithoutToken = useCallback(async (file: File | Blob) => {
+    assertSigner(signer)
+    assertAccount(address)
+    const accessToken = await getAccessToken(address, signer)
+
+    return upload(file, accessToken)
+  }, [signer, address])
+
+  return { upload, getAccessToken, uploadWithoutToken }
 }

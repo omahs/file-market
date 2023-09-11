@@ -16,8 +16,6 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"io"
 	"log"
 	"math/big"
@@ -135,10 +133,13 @@ type Auth interface {
 }
 
 type Profiles interface {
-	GetUserProfile(ctx context.Context, identification string) (*models.UserProfile, *models.ErrorResponse)
+	GetUserProfile(ctx context.Context, identification string, isPrincipal bool) (*models.UserProfile, *models.ErrorResponse)
+	EmailExists(ctx context.Context, email string) (*models.ProfileEmailExistsResponse, *models.ErrorResponse)
+	NameExists(ctx context.Context, name string) (*models.ProfileNameExistsResponse, *models.ErrorResponse)
+	UsernameExists(ctx context.Context, username string) (*models.ProfileUsernameExistsResponse, *models.ErrorResponse)
 	UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse)
 	SetEmail(ctx context.Context, email string) *models.ErrorResponse
-	VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse)
+	VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse)
 }
 
 type Moderation interface {
@@ -1518,26 +1519,4 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 func (s *service) Shutdown() {
 	s.closeCh <- struct{}{}
 	close(s.closeCh)
-}
-
-func GRPCErrToHTTP(err error) *models.ErrorResponse {
-	if err == nil {
-		return nil
-	}
-	s := status.Convert(err)
-	hs := http.StatusInternalServerError
-
-	switch s.Code() {
-	case codes.InvalidArgument:
-		hs = http.StatusBadRequest
-	case codes.Unauthenticated:
-		hs = http.StatusUnauthorized
-	case codes.NotFound:
-		hs = http.StatusNotFound
-	}
-
-	return &models.ErrorResponse{
-		Code:    int64(hs),
-		Message: s.Message(),
-	}
 }

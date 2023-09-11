@@ -7,13 +7,13 @@ import (
 	authserver_pb "github.com/mark3d-xyz/mark3d/indexer/proto"
 )
 
-func (s *service) GetUserProfile(ctx context.Context, identification string) (*models.UserProfile, *models.ErrorResponse) {
+func (s *service) GetUserProfile(ctx context.Context, identification string, isPrincipal bool) (*models.UserProfile, *models.ErrorResponse) {
 	res, err := s.authClient.GetUserProfile(ctx, &authserver_pb.GetUserProfileRequest{
 		Identification: identification,
 	})
 	if err != nil {
 		logger.Error("failed to call GetUserProfile", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{
@@ -21,18 +21,62 @@ func (s *service) GetUserProfile(ctx context.Context, identification string) (*m
 		AvatarURL:                  res.AvatarURL,
 		BannerURL:                  res.BannerURL,
 		Bio:                        res.Bio,
-		Name:                       res.Name,
-		Twitter:                    res.Twitter,
 		Discord:                    res.Discord,
+		Email:                      res.Email,
+		IsEmailConfirmed:           res.IsEmailConfirmed,
+		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
+		Name:                       res.Name,
 		Telegram:                   res.Telegram,
+		Twitter:                    res.Twitter,
 		Username:                   res.Username,
 		WebsiteURL:                 res.WebsiteURL,
-		Email:                      "",    // private
-		IsPushNotificationEnabled:  false, // private
-		IsEmailNotificationEnabled: false, // private
+	}
+
+	if !isPrincipal {
+		profile.Email = ""
+		profile.IsPushNotificationEnabled = false
+		profile.IsEmailNotificationEnabled = false
+		profile.IsEmailConfirmed = false
 	}
 
 	return &profile, nil
+}
+
+func (s *service) EmailExists(ctx context.Context, email string) (*models.ProfileEmailExistsResponse, *models.ErrorResponse) {
+	res, err := s.authClient.EmailExists(ctx, &authserver_pb.EmailExistsRequest{Email: email})
+	if err != nil {
+		logger.Error("failed to get email exists", err, nil)
+		return nil, grpcErrToHTTP(err)
+	}
+
+	return &models.ProfileEmailExistsResponse{
+		Exist: res.Exist,
+	}, nil
+}
+
+func (s *service) NameExists(ctx context.Context, name string) (*models.ProfileNameExistsResponse, *models.ErrorResponse) {
+	res, err := s.authClient.NameExists(ctx, &authserver_pb.NameExistsRequest{Name: name})
+	if err != nil {
+		logger.Error("failed to get name exists", err, nil)
+		return nil, grpcErrToHTTP(err)
+	}
+
+	return &models.ProfileNameExistsResponse{
+		Exist: res.Exist,
+	}, nil
+}
+
+func (s *service) UsernameExists(ctx context.Context, username string) (*models.ProfileUsernameExistsResponse, *models.ErrorResponse) {
+	res, err := s.authClient.UsernameExists(ctx, &authserver_pb.UsernameExistsRequest{Username: username})
+	if err != nil {
+		logger.Error("failed to get username exists", err, nil)
+		return nil, grpcErrToHTTP(err)
+	}
+
+	return &models.ProfileUsernameExistsResponse{
+		Exist: res.Exist,
+	}, nil
 }
 
 func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse) {
@@ -53,7 +97,7 @@ func (s *service) UpdateUserProfile(ctx context.Context, p *models.UserProfile) 
 	res, err := s.authClient.UpdateUserProfile(ctx, &arg)
 	if err != nil {
 		logger.Error("failed to call UpdateUserProfile", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	profile := models.UserProfile{
@@ -79,22 +123,26 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 	res, err := s.authClient.SetEmail(ctx, &authserver_pb.SetEmailRequest{Email: email})
 	if err != nil {
 		logger.Error("failed to call SetEmail", err, nil)
-		return GRPCErrToHTTP(err)
+		return grpcErrToHTTP(err)
 	}
 
-	contentTemplate := `
-		<h1>Filemarket Email Verification</h1>
-		<a href="%s">Click to verify email on Filemarket.xyz</a>
-	`
-	link := fmt.Sprintf("%s/api/profile/verify_email?secret_token=%s", s.cfg.Host, res.Token) // https://filemarket.xyz
-
-	if err := s.emailSender.SendEmail(
+	name := res.Profile.Name
+	if name == "" {
+		name = "FileMarketer"
+	}
+	data := emailVerificationTemplateParams{
+		Name:               name,
+		VerifyUrl:          fmt.Sprintf("%s/api/profile/verify_email?secret_token=%s", s.cfg.Host, res.Token),
+		ProfileSettingsUrl: fmt.Sprintf("%s/profile/%s", s.cfg.Host, res.Profile.Address),
+		BottomFilename:     "bottompng",
+		LogoFilename:       "logopng",
+	}
+	if err := s.sendEmail(
+		"email_verify",
+		res.Email,
 		"Email Verification",
-		fmt.Sprintf(contentTemplate, link),
 		"verification",
-		[]string{res.Email},
-		nil,
-		nil,
+		data,
 	); err != nil {
 		logger.Error("failed to send verification email", err, nil)
 		return internalError
@@ -103,12 +151,14 @@ func (s *service) SetEmail(ctx context.Context, email string) *models.ErrorRespo
 	return nil
 }
 
-func (s *service) VerifyEmail(ctx context.Context, secretToken string) (*models.SuccessResponse, *models.ErrorResponse) {
+func (s *service) VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse) {
 	res, err := s.authClient.VerifyEmail(ctx, &authserver_pb.VerifyEmailRequest{SecretToken: secretToken})
 	if err != nil {
 		logger.Error("failed to call VerifyEmail", err, nil)
-		return nil, GRPCErrToHTTP(err)
+		return "", grpcErrToHTTP(err)
 	}
 
-	return &models.SuccessResponse{Success: &res.Success}, nil
+	link := fmt.Sprintf("%s/profile/%s", s.cfg.Host, res.Address)
+
+	return link, nil
 }

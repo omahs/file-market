@@ -22,7 +22,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const TransferForm: FC<TransferFormProps> = ({ defaultValues, onSubmit }) => {
-  const { handleSubmit, control } = useForm<TransferFormValue>({
+  const { handleSubmit, control, setValue } = useForm<TransferFormValue>({
     defaultValues,
   })
 
@@ -40,6 +40,7 @@ export const TransferForm: FC<TransferFormProps> = ({ defaultValues, onSubmit })
             control,
             name: 'address',
             rules: { pattern: /^0x[0-9a-fA-F]{40}$/ },
+            setValue,
           }}
         />
       </FormControl>

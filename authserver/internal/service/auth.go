@@ -147,7 +147,7 @@ func (s *service) AuthBySignature(ctx context.Context, address common.Address, s
 			if err != nil && !strings.Contains(err.Error(), "users_pkey") {
 				log.Printf("failed to insert user: %v", err)
 			}
-			err = s.repository.InsertUserProfile(ctx, tx, domain.GetDefaultUserProfile(signedAddress))
+			err = s.repository.InsertUserProfile(ctx, tx, &domain.UserProfile{Address: signedAddress})
 			if err != nil && !errors.Is(err, repository.ErrProfileNotUniqueProfile) {
 				log.Printf("failed to insert profile: %v", err)
 			}

@@ -65,6 +65,7 @@ func (s *service) UpdateCollectionProfile(
 			Twitter:    res.Twitter,
 			Telegram:   res.Telegram,
 			WebsiteURL: res.WebsiteURL,
+			BannerURL:  res.BannerUrl,
 		}, nil
 	}
 
@@ -76,6 +77,7 @@ func (s *service) UpdateCollectionProfile(
 		Twitter:    req.Twitter,
 		Telegram:   req.Telegram,
 		Discord:    req.Discord,
+		BannerUrl:  req.BannerURL,
 	}
 	if err := s.repository.InsertCollectionProfile(ctx, tx, profile); err != nil {
 		logger.Error("failed to insert collection profile", err, nil)
@@ -89,6 +91,7 @@ func (s *service) UpdateCollectionProfile(
 		Twitter:    profile.Twitter,
 		Telegram:   profile.Telegram,
 		WebsiteURL: profile.WebsiteURL,
+		BannerURL:  profile.BannerUrl,
 	}, nil
 }
 
@@ -99,5 +102,9 @@ func updateCollectionProfileFields(profile *domain.CollectionProfile, req *model
 
 	if req.WebsiteURL != "" {
 		profile.WebsiteURL = req.WebsiteURL
+	}
+
+	if req.BannerURL != "" {
+		profile.BannerUrl = req.BannerURL
 	}
 }

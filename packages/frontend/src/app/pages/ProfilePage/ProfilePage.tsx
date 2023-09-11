@@ -8,6 +8,7 @@ import Banner from '../../components/ViewInfo/Banner/Banner'
 import ProfileImage from '../../components/ViewInfo/ProfileImage/ProfileImage'
 import SettingsButton from '../../components/ViewInfo/SettingsButton/SettingsButton'
 import { useCollectionAndTokenListStore, useStores } from '../../hooks'
+import { useAddress } from '../../hooks/useAddress'
 import { useProfileStore } from '../../hooks/useProfileStore'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
@@ -18,7 +19,6 @@ import { getHttpLinkFromIpfsString } from '../../utils/nfts'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router'
-import CopyImg from './img/CopyIcon.svg'
 import EthereumImg from './img/EthereumIcon.svg'
 import {
   AddressesButtonsContainer,
@@ -32,15 +32,29 @@ import {
 import Bio from './sections/Bio'
 import Links from './sections/Links'
 
+// По хорошему затянуть SVGR на проект, чтобы импортить SVG как компонент напрямую из assets
+const CopySVGIcon = () => (
+  <svg
+    width="21"
+    height="20"
+    viewBox="0 0 21 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M13.4961 18L18.4961 13M13.4961 18H8.49609V15M13.4961 18V13H18.4961M18.4961 13V5H12.4961M8.49609 15V5H12.4961M8.49609 15H2.49609V2H12.4961V5"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 const ProfilePage: React.FC = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { userStore } = useStores()
   const profileStore = useProfileStore(profileAddress)
-  const profileAddressMemo = useMemo(() => {
-    if (profileAddress?.[0] === '0' && profileAddress?.[1] === 'x') return profileAddress
-
-    return profileStore.user?.address
-  }, [profileAddress, profileStore.user])
+  const profileAddressMemo = useAddress()
 
   const { address: currentAddress } = useAccount()
   const transferHistoryStore = useTransfersHistoryStore(profileAddressMemo)
@@ -91,7 +105,7 @@ const ProfilePage: React.FC = observer(() => {
   }, [isOwner, profileStore.user, userStore.user])
 
   return (
-    <GrayOverlay>
+    <GrayOverlay style={{ width: '100%', overflow: 'hidden' }}>
       <PageLayout isHasSelectBlockChain>
         <Banner
           isOwner={isOwner}
@@ -116,7 +130,7 @@ const ProfilePage: React.FC = observer(() => {
           >
             <img src={EthereumImg} />
             <Txt primary2>{reduceAddress(profileAddressMemo ?? '')}</Txt>
-            <img src={CopyImg} />
+            <CopySVGIcon />
           </Button>
           {/* <Button settings> */}
           {/*  <Txt primary2>f4 address</Txt> */}
