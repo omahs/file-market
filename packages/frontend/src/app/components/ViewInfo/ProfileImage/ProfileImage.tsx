@@ -18,9 +18,10 @@ interface IProfileImageProps {
   src?: string
   isOwner?: boolean
   onSuccess?: () => void
+  isCollection?: boolean
 }
 
-const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
+const ProfileImage = ({ src, isOwner, onSuccess, isCollection }: IProfileImageProps) => {
   const [isShowEdit, setIsShowEdit] = useState<boolean>(false)
 
   const { dialogStore, userStore } = useStores()
@@ -80,7 +81,7 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            borderRadius: '50%',
+            borderRadius: isCollection ? '24px' : '50%',
           }}
           withHover={isOwner}
         >

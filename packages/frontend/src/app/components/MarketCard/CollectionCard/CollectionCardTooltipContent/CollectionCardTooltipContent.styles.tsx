@@ -24,6 +24,14 @@ export const CollectionCardSectionHeader = styled('span', {
   ...textVariant('primary2').true,
   color: '#6B6F76',
   marginBottom: '4px',
+
+  variants: {
+    isCollectionPage: {
+      true: {
+        marginBottom: '12px',
+      },
+    },
+  },
 },
 )
 
@@ -34,6 +42,17 @@ export const CollectionCardBaseTag = styled('div', {
   display: 'flex',
   padding: '2px 6px',
   alignItems: 'center',
+
+  variants: {
+    isCollectionPage: {
+      true: {
+        borderRadius: '20px',
+        border: '1px solid #C9CBCF',
+        background: '#FFF',
+        boxShadow: '2px 2px 0px 0px rgba(35, 37, 40, 0.25)',
+      },
+    },
+  },
 })
 
 export const CollectionCardSection = styled('div', {})
@@ -43,4 +62,12 @@ export const CollectionCardSectionContent = styled('div', {
   display: 'flex',
   gap: '4px',
   flexWrap: 'wrap',
+
+  variants: {
+    isCollectionPage: {
+      true: {
+        gap: '8px',
+      },
+    },
+  },
 })

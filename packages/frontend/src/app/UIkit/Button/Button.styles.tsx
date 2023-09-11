@@ -235,6 +235,14 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           background: 'white',
         },
       },
+      collectionCardMore: {
+        true: {
+          borderRadius: '20px',
+          border: '1px solid #C9CBCF',
+          background: '#FFF',
+          boxShadow: '2px 2px 0px 0px rgba(35, 37, 40, 0.25)',
+        },
+      },
       fakeNftRarity: {
         common: {
           background: 'linear-gradient(90deg, #ACCBEE 0%, #77AFFF 100%)',

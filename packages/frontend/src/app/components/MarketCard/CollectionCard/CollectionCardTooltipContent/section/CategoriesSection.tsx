@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 
 import { styled } from '../../../../../../styles'
 import {
@@ -12,15 +12,21 @@ const CategoriesCard = styled(CollectionCardBaseTag, {
   borderRadius: '12px',
 })
 
-const CategoriesSection = ({ categories }: { categories?: string[] }) => {
+const CategoriesSection = ({ categories, isCollectionPage }: { categories?: string[], isCollectionPage?: boolean }) => {
+  const [isFullView, setIsFullView] = useState<boolean>(false)
+
+  const categoriesCardsCountRender = useMemo(() => {
+    return isFullView ? categories?.length : 4
+  }, [isFullView])
+
   return (
     <CollectionCardSection>
-      <CollectionCardSectionHeader>
+      <CollectionCardSectionHeader isCollectionPage>
         Categories
       </CollectionCardSectionHeader>
-      <CollectionCardSectionContent>
+      <CollectionCardSectionContent isCollectionPage>
         {categories?.map((item, index) => {
-          return <CategoriesCard key={index}>{item}</CategoriesCard>
+          return <CategoriesCard key={index} isCollectionPage>{item}</CategoriesCard>
         })}
       </CollectionCardSectionContent>
     </CollectionCardSection>
