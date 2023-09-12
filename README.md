@@ -1,33 +1,13 @@
-Filemarket is online shops/storefronts constructor with focusing on store, sell, buy or send any files as NFT 2.0 with new Encrypted FileToken standart on FVM
+FileMarket is a next-gen file-sharing platform with on-chain programmable access and incentives, turning digital wallets into 'My Documents' folder, ensuring privacy, lifelong storage via decentralization, and total control over monetizable content through tokenized paywalls.
 
 Here is our tech article about EFT on Medium and we need your claps (may the force be with you): 
-https://medium.com/mark3d-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34
+[Tech article](https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34)
 
 > Project Description
 
-We are building a network of online shops of NFT files stored and encrypted on Filecoin using Lighthouse storage to upload content to storage providers, with accumulation of all files on a common large FileMarket Hub.
+FileMarket pioneers a new generation of file-sharing - redefining it with web3 technology. Decentralization for privacy and lifelong storage, tokenized paywalls for total user control of monetizable content. 
 
-To store encrypted and protected from unauthorized copying files within NFT, we have developed our Encrypted FileToken standard. It is designed to solve NFT's "right-click-save" problem.
-
-There is currently no way to swap encrypted files for crypto securely in the market for downloadable digital content. Having a web3 marketplace with a focus on trading files rather than digital art will solve this problem.
-
-However, digital content creators often don't want to share their traffic with general storefronts to avoid switching it to other creators. Authors want their own branded online file store. But own Web3 online shop for files is too expensive and takes too much time.
-
-That is why we offer authors to make their own online store for digital content. In the first stage by ordering it from our team, and later using our own constructor and FileMarket SDK.
-
-Based on the mechanics of encrypted file tokenization, we are taking an evolutionary step in the market for sold digital content, especially in the segments:
-
-Monetization of AI-generated content
-3D models and Metaverse spaces
-sale of exclusive content from bloggers and Influencers
-templates and stock content
-selling software and code repositories
-Business model includes:
-
-White label Web3 Online shops sales
-Commission from every trade transaction
-Inner catalog, ads and promotion for online shops
-Primary audience: Individual creators and creative studios
+As a tokenized paywall file-sharing solution, it empowers users to transform their digital wallets into a "My Documents" folder, merging the convenience of cloud storage with the innovative potential of blockchain.
 
 > How it's Made
 
