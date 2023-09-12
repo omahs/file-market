@@ -106,7 +106,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     this.request()
   }
 
-  convertTransferToTransferCards = (target: 'incoming' | 'outgoing', chain: Chain | undefined) => {
+  convertTransferToTransferCards(target: 'incoming' | 'outgoing', chain: Chain | undefined) {
     const eventOptions =
       target === 'incoming' ? ['Receiving', 'Buying'] : ['Sending', 'Selling']
 
@@ -127,7 +127,6 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
       price: transfer.order?.price ? formatCurrency(transfer.order?.price, chain) : undefined,
     })
   }
-
 
   get hasMoreData() {
     const { incoming = [], incomingTotal = 0, outgoing = [], outgoingTotal = 0 } = this.data
