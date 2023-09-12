@@ -1,11 +1,20 @@
 import React, { useState } from 'react'
 
-import { Txt } from '../../../UIkit'
+import { styled } from '../../../../styles'
+import { textVariant, Txt } from '../../../UIkit'
 import { StyledSection, StyledSectionContent, StyledSectionTitle } from '../ProfilePage.styles'
 
 interface IBioProps {
   text?: string
 }
+
+const Pre = styled('pre', {
+  ...textVariant('primary1').true,
+  fontWeight: 400,
+  overflowWrap: 'anywhere',
+  whiteSpace: 'pre-wrap',
+  wordWrap: 'break-word',
+})
 
 const Bio = ({ text }: IBioProps) => {
   const [isShowFullText, setIsShowFullText] = useState<boolean>(false)
@@ -16,7 +25,7 @@ const Bio = ({ text }: IBioProps) => {
         <StyledSection style={{ maxWidth: '600px', width: 'inherit' }}>
           <StyledSectionTitle>Bio</StyledSectionTitle>
           <StyledSectionContent>
-            <Txt primary1 style={{ fontWeight: 400, overflowWrap: 'anywhere' }}>
+            <Pre>
               {
                 isShowFullText
                   ? (
@@ -35,7 +44,7 @@ const Bio = ({ text }: IBioProps) => {
                     </>
                   )
               }
-            </Txt>
+            </Pre>
           </StyledSectionContent>
         </StyledSection>
       )
