@@ -143,8 +143,10 @@ const ProfilePage: React.FC = observer(() => {
             url: (() => {
               const index = user?.websiteUrl?.indexOf('://')
               if (index !== undefined && index > -1) {
-                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length - 1)
+                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length)
               }
+
+              return user?.websiteUrl
             })(),
             twitter: user?.twitter,
             discord: user?.discord,
