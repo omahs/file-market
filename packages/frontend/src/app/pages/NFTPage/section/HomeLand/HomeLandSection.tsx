@@ -49,7 +49,7 @@ const HomeLandSection = () => {
           lgFullWidth
           to={
             collection?.address
-              ? `/collection/${collection?.address}`
+              ? `/collection/${chainName}/${collection?.address}`
               : location.pathname
           }
         >

@@ -51,7 +51,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
       {multiChainStore.data && (
         <Dropdown
           isDisabled={isLoading && !error}
-          placement={'bottom'}
+          placement={'bottom-left'}
           borderWeight={'black'}
         >
           {

@@ -33,6 +33,12 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore
+    const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
+    const data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
+    console.log(data)
+    const defaultChain = data?.find(item => (item.isDefault === true))
+    console.log(defaultChain)
+    this.chainId = defaultChain ? defaultChain.chain.id : data?.[0].chain.id
     makeAutoObservable(this, {
       errorStore: false,
       multiChainStore: false,
