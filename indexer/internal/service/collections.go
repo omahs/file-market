@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
@@ -13,7 +14,7 @@ import (
 func (s *service) GetCollection(
 	ctx context.Context,
 	address common.Address,
-) (*models.Collection, *models.ErrorResponse) {
+) (*models.CollectionResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -54,7 +55,28 @@ func (s *service) GetCollection(
 		}
 	}
 
-	return c, nil
+	res := models.CollectionResponse{
+		Collection: c,
+		Discord:    "",
+		Slug:       "",
+		Twitter:    "",
+		WebsiteURL: "",
+	}
+
+	profile, err := s.repository.GetCollectionProfile(ctx, tx, address)
+	if err != nil {
+		if !errors.Is(err, pgx.ErrNoRows) {
+			logger.Error("failed to get collection profile", err, nil)
+		}
+	} else {
+		res.Slug = profile.Slug
+		res.WebsiteURL = profile.WebsiteURL
+		res.Twitter = profile.Twitter
+		res.Discord = profile.Discord
+		res.BannerURL = profile.BannerUrl
+	}
+
+	return &res, nil
 }
 
 func (s *service) GetCollections(

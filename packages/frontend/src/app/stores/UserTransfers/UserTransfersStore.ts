@@ -113,7 +113,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     return (transfer: TransferWithData): TransferCardProps => ({
       status: transfer.order?.id === 0 ? eventOptions[0] : eventOptions[1],
       button: {
-        link: `/collection/${this.currentBlockChainStore.chain?.name}/${transfer.collection?.address}/${transfer.token?.tokenId}`,
+        link: `/collection/${chain?.name}/${transfer.collection?.address}/${transfer.token?.tokenId}`,
         text: 'Go to page',
       },
       collectionName: transfer.collection?.name ?? '',

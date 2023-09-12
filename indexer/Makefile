@@ -73,6 +73,21 @@ build-models:
 	docker run --rm --user $(shell id -u):$(shell id -g) -e GOPATH=$(go env GOPATH):/go -v ${HOME}:${HOME} -w $(shell pwd) quay.io/goswagger/swagger generate model --spec=./swagger.yaml
 	go mod tidy
 
+proto:
+	@if [ `basename \`pwd\`` != "indexer" ]; then \
+		echo "cd to indexer dir first. `pwd`"; \
+	else \
+		rm -r proto 2> /dev/null || true && \
+		mkdir -p proto && \
+		cd ../proto/auth && \
+		protoc --go_out=`pwd`/../../indexer/proto \
+			--go_opt=paths=source_relative \
+			--go-grpc_out=`pwd`/../../indexer/proto \
+			--go-grpc_opt=paths=source_relative \
+			*.proto && \
+		cd ../../indexer; \
+  	fi
+
 postgres.start:
 	if [ ! "$(shell docker ps -q -f name=test-postgres)" ]; then \
         if [ "$(shell docker ps -aq -f status=exited -f name=test-postgres)" ]; then \
@@ -103,3 +118,5 @@ swagger.start:
 swagger.stop:
 	docker stop mark3d-indexer-swagger
 	docker rm mark3d-indexer-swagger
+
+.PHONY: proto

@@ -16,6 +16,7 @@ import { useCollectionAndTokenListStore, useStores } from '../../../../../hooks'
 import { useCurrentBlockChain } from '../../../../../hooks/useCurrentBlockChain'
 import { useAfterDidMountEffect } from '../../../../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../../../../hooks/useMediaMui'
+import { useModalProperties } from '../../../../../hooks/useModalProperties'
 import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollectionStore'
 import { useSubscribeToEft } from '../../../../../hooks/useSubscribeToEft'
 import {
@@ -26,9 +27,9 @@ import {
   Input,
   Link,
   PageLayout,
-  TextArea,
   Txt,
 } from '../../../../../UIkit'
+import { TextArea } from '../../../../../UIkit/Form/TextArea/TextArea'
 import TagsSection from '../../../../NFTPage/section/Tags/TagsSection'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
 import {
@@ -43,7 +44,6 @@ import {
   TitleGroup,
 } from '../../../helper/style/style'
 import { useCreateNft } from '../../../hooks/useCreateNft'
-import { useModalProperties } from '../../../hooks/useModalProperties'
 import PlusIcon from '../../../img/plus-icon.svg'
 import {
   AddCollectionButton,
@@ -106,6 +106,7 @@ export const CreateEFTSection: React.FC = observer(() => {
     control,
     formState: { isValid },
     resetField,
+    setValue,
     watch,
   } = useForm<CreateNFTForm>({
     defaultValues: {
@@ -274,6 +275,7 @@ export const CreateEFTSection: React.FC = observer(() => {
               controlledInputProps={{
                 name: 'name',
                 control,
+                setValue,
                 rules: {
                   required: true,
                 },
@@ -320,10 +322,14 @@ export const CreateEFTSection: React.FC = observer(() => {
               </LetterCounter>
             </LabelWithCounter>
 
-            <TextArea
+            <TextArea<CreateNFTForm>
               withoutDefaultBorder
+              controlledInputProps={{
+                control,
+                name: 'description',
+              }}
               placeholder='Description of your item'
-              {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
+              {...control.register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />
           </FormControl>
 
@@ -436,6 +442,7 @@ export const CreateEFTSection: React.FC = observer(() => {
                 placeholder='Amount of creator’s royalty'
                 controlledInputProps={{
                   name: 'royalty',
+                  setValue,
                   control,
                   rules: {
                     required: true,

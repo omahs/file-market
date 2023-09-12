@@ -26,7 +26,7 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     height: '48px',
     border: '1px solid #232528',
     filter: 'drop-shadow(0px 4px 20px rgba(35, 37, 40, 0.05))',
-    borderRadius: '16px',
+    borderRadius: '12px',
     padding: '8px 16px',
     color: '#232528',
     ...textVariant('primary1').true,

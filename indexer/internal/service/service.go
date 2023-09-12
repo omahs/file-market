@@ -8,9 +8,11 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/infrastructure/clients"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/mail"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
@@ -59,6 +61,7 @@ type Service interface {
 	Whitelist
 	Currency
 	Auth
+	Profiles
 	Moderation
 	Sub
 	ListenBlockchain() error
@@ -74,11 +77,12 @@ type EthClient interface {
 }
 
 type Collections interface {
-	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
+	GetCollection(ctx context.Context, address common.Address) (*models.CollectionResponse, *models.ErrorResponse)
 	GetCollections(ctx context.Context, lastCollectionAddress *common.Address, limit int) (*models.CollectionsResponse, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetPublicCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetFileBunniesCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
+	UpdateCollectionProfile(ctx context.Context, owner common.Address, req *models.UpdateCollectionProfileRequest) (*models.UpdateCollectionProfileResponse, *models.ErrorResponse)
 }
 
 type Tokens interface {
@@ -121,15 +125,26 @@ type Currency interface {
 type Auth interface {
 	GetAuthMessage(ctx context.Context, req models.AuthMessageRequest) (*models.AuthMessageResponse, *models.ErrorResponse)
 	AuthBySignature(ctx context.Context, req models.AuthBySignatureRequest) (*models.AuthResponse, *models.ErrorResponse)
-	RefreshJwtTokens(ctx context.Context, address common.Address, number int64) (*models.AuthResponse, *models.ErrorResponse)
+	RefreshJwtTokens(ctx context.Context) (*models.AuthResponse, *models.ErrorResponse)
 	GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, token string) (*domain.User, *models.ErrorResponse)
-	Logout(ctx context.Context, address common.Address, number int64) *models.ErrorResponse
-	FullLogout(ctx context.Context, address common.Address) *models.ErrorResponse
+	Logout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse)
+	FullLogout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse)
+	CheckAuth(ctx context.Context) (*models.UserProfile, *models.ErrorResponse)
+}
+
+type Profiles interface {
+	GetUserProfile(ctx context.Context, identification string, isPrincipal bool) (*models.UserProfile, *models.ErrorResponse)
+	EmailExists(ctx context.Context, email string) (*models.ProfileEmailExistsResponse, *models.ErrorResponse)
+	NameExists(ctx context.Context, name string) (*models.ProfileNameExistsResponse, *models.ErrorResponse)
+	UsernameExists(ctx context.Context, username string) (*models.ProfileUsernameExistsResponse, *models.ErrorResponse)
+	UpdateUserProfile(ctx context.Context, p *models.UserProfile) (*models.UserProfile, *models.ErrorResponse)
+	SetEmail(ctx context.Context, email string) *models.ErrorResponse
+	VerifyEmail(ctx context.Context, secretToken string) (string, *models.ErrorResponse)
 }
 
 type Moderation interface {
-	ReportCollection(ctx context.Context, userAddress common.Address, req *models.ReportCollectionRequest) *models.ErrorResponse
-	ReportToken(ctx context.Context, userAddress common.Address, req *models.ReportTokenRequest) *models.ErrorResponse
+	ReportCollection(ctx context.Context, user *domain.User, req *models.ReportCollectionRequest) *models.ErrorResponse
+	ReportToken(ctx context.Context, user *domain.User, req *models.ReportTokenRequest) *models.ErrorResponse
 }
 
 type Sub interface {
@@ -140,10 +155,10 @@ type Sub interface {
 type service struct {
 	repository          repository.Repository
 	wsPool              ws.Pool
+	emailSender         mail.EmailSender
 	healthNotifier      healthnotifier.HealthNotifier
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
-	jwtManager          jwt.TokenManager
 	sequencer           *sequencer.Sequencer
 	accessTokenAddress  common.Address
 	accessTokenInstance *access_token.Mark3dAccessTokenV2
@@ -152,19 +167,21 @@ type service struct {
 	currencyConverter   currencyconversion.Provider
 	commonSigner        *ethsigner.EthSigner
 	uncommonSigner      *ethsigner.EthSigner
+	authClient          *clients.AuthClient
 	closeCh             chan struct{}
 }
 
 func NewService(
 	repo repository.Repository,
 	wsPool ws.Pool,
+	emailSender mail.EmailSender,
 	ethClient ethclient2.EthClient,
 	sequencer *sequencer.Sequencer,
-	jwtManager jwt.TokenManager,
 	healthNotifier healthnotifier.HealthNotifier,
 	currencyConverter currencyconversion.Provider,
 	commonSigner *ethsigner.EthSigner,
 	uncommonSigner *ethsigner.EthSigner,
+	authClient *clients.AuthClient,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(cfg.AccessTokenAddress, nil)
@@ -180,6 +197,7 @@ func NewService(
 	s := &service{
 		ethClient:           ethClient,
 		wsPool:              wsPool,
+		emailSender:         emailSender,
 		repository:          repo,
 		healthNotifier:      healthNotifier,
 		sequencer:           sequencer,
@@ -188,10 +206,10 @@ func NewService(
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
-		jwtManager:          jwtManager,
 		currencyConverter:   currencyConverter,
 		commonSigner:        commonSigner,
 		uncommonSigner:      uncommonSigner,
+		authClient:          authClient,
 		closeCh:             make(chan struct{}),
 	}
 

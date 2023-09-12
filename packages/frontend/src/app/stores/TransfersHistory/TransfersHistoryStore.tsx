@@ -9,7 +9,7 @@ import {
   TransferWithData,
 } from '../../../swagger/Api'
 import { ITableRow } from '../../components/Table/TableBuilder'
-import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
+import ethIcon from '../../pages/ProfilePage/img/EthereumIcon.svg'
 import { Badge } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'

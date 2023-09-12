@@ -11,6 +11,8 @@ services:
     volumes:
       - ~/era-logs:/logs
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   era-oracle-service:
     image: file-market-era-oracle-service:latest
     depends_on:

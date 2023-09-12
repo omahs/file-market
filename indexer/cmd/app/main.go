@@ -5,10 +5,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/infrastructure/clients"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
-	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	log2 "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/mail"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ws"
 	"log"
@@ -98,17 +99,25 @@ func main() {
 		logger.Fatal("failed to create uncommonSigner", log2.Fields{"error": err})
 	}
 
+	logger.Info("connecting to auth service", nil)
+	authClient, err := clients.NewAuthClient(ctx, cfg.Infrastructure.AuthServerEndpoint)
+	if err != nil {
+		logger.Fatal("failed to dial auth server", log2.Fields{"error": err.Error()})
+	}
+
+	mailSender := mail.NewPostmarkSender(cfg.EmailSender)
 	wsPool := ws.NewWsPool()
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb, repositoryCfg),
 		wsPool,
+		mailSender,
 		client,
 		seq,
-		jwt.NewTokenManager(cfg.TokenManager.SigningKey),
 		healthNotifier,
 		currencyConverterCache,
 		commonSigner,
 		uncommonSigner,
+		authClient,
 		cfg.Service,
 	) // service who interact with main dependencies
 	if err != nil {
@@ -175,6 +184,7 @@ func main() {
 	}
 	indexService.Shutdown()
 	wsPool.Shutdown()
+	authClient.Close()
 
 	logger.Info("server shutdown", nil)
 

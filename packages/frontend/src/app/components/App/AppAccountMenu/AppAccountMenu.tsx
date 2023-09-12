@@ -1,9 +1,11 @@
 import { Warning } from '@mui/icons-material'
-import { FC, useCallback, useState } from 'react'
-import { useNetwork } from 'wagmi'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { useAccount, useNetwork } from 'wagmi'
 
 import { styled } from '../../../../styles'
+import { Api } from '../../../../swagger/Api'
 import { chains } from '../../../config/web3Modal'
+import { useStores } from '../../../hooks'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
 import { AddressIcon, DisconnectButton, SwitchNetworkButton } from '../../Web3'
 import { ViewMnemonicButton } from '../../Web3/ViewMnemonicButton/ViewMnemonicButton'
@@ -21,15 +23,26 @@ const IconWrapper = styled('div', {
   dflex: 'center',
 })
 
-export interface AppAccountMenuProps {
-  address: string
-}
-
-export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
+export const AppAccountMenu: FC<{}> = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { address } = useAccount()
   const close = useCallback(() => setIsOpen(false), [setIsOpen])
   const { chain } = useNetwork()
   const needToSwitchNetwork = chain && !(chains.find(item => item.id === chain.id))
+  const { userStore } = useStores()
+  const [username, setUserName] = useState<string>()
+  const profileService = new Api({ baseUrl: '/api' }).profile
+  useEffect(() => {
+    if (address) {
+      profileService.profileDetail(address).then((res) => {
+        setUserName(res.data.username)
+      })
+    }
+  }, [address])
+
+  const redirectAddress = useMemo(() => {
+    return (userStore.user?.username ?? username) ?? address
+  }, [address, userStore.user, username])
 
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
@@ -50,7 +63,7 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
               />
             ) : (
               <AddressIcon
-                address={address}
+                address={address ?? ''}
                 size={36}
               />
             )}
@@ -62,7 +75,7 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
           {needToSwitchNetwork && (
             <SwitchNetworkButton onPress={close} />
           )}
-          <AccountButton address={address} onPress={close} />
+          <AccountButton address={redirectAddress ?? ''} onPress={close} />
           <ViewMnemonicButton />
           <DisconnectButton onPress={close} />
         </Spacer>

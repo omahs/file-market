@@ -653,3 +653,23 @@ func (p *postgres) GetFileBunniesStats(
 		{Name: "payed.bought_amount", Value: float64(stats[5])},
 	}, nil
 }
+
+func (p *postgres) IsCollectionOwner(ctx context.Context, tx pgx.Tx, ownerAddress common.Address, collectionAddress common.Address) (bool, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT EXISTS(		
+			SELECT 1
+			FROM collections
+			WHERE owner=$1 AND address=$2
+		)
+	`
+	var isOwner bool
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(ownerAddress.String()),
+		strings.ToLower(collectionAddress.String()),
+	).Scan(&isOwner); err != nil {
+		return false, err
+	}
+
+	return isOwner, nil
+}

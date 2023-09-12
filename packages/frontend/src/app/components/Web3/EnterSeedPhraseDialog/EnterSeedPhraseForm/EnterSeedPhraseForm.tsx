@@ -34,7 +34,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isReset }) => {
-  const { handleSubmit, formState: { errors }, watch, control } = useForm<EnterSeedPhraseValue>()
+  const { handleSubmit, formState: { errors }, watch, control, setValue } = useForm<EnterSeedPhraseValue>()
   const [isAppliedWrongPhrase, setAppliesWrongPhrase] = useState<boolean>(false)
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
@@ -56,6 +56,7 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
           controlledInputProps={{
             name: 'seedPhrase',
             control,
+            setValue,
             rules: {
               required: true,
               validate: (p) => {
@@ -82,6 +83,7 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
           controlledInputProps={{
             name: 'password',
             control,
+            setValue,
             rules: {
               required: true,
               validate: validatePassword,
@@ -101,6 +103,7 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
           controlledInputProps={{
             name: 'repeatPassword',
             control,
+            setValue,
             rules: {
               required: true,
               validate: () => password === passwordRepeat ? undefined : 'Password are not matching',

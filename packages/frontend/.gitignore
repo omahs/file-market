@@ -37,3 +37,4 @@ src/abi
 !.yarn/sdks
 !.yarn/versions
 
+.timestamp*

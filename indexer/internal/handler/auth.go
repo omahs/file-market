@@ -3,11 +3,10 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
+	"google.golang.org/grpc/metadata"
 	"net/http"
 	"strings"
 )
@@ -20,6 +19,7 @@ const (
 )
 
 func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	var req models.AuthMessageRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -30,7 +30,6 @@ func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	defer r.Body.Close()
 
 	if err := req.Validate(strfmt.Default); err != nil {
 		logger.Error("failed to validate auth message request", err, nil)
@@ -55,6 +54,7 @@ func (h *handler) handleGetAuthMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	var req models.AuthBySignatureRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.Error("failed to parse authBySignature request", err, nil)
@@ -64,7 +64,6 @@ func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) 
 		})
 		return
 	}
-	defer r.Body.Close()
 
 	if err := req.Validate(strfmt.Default); err != nil {
 		logger.Error("failed to validate authBySignature request", err, nil)
@@ -89,37 +88,23 @@ func (h *handler) handleAuthBySignature(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *handler) handleRefresh(w http.ResponseWriter, r *http.Request) {
-	user, ok := r.Context().Value(CtxKeyUser).(*domain.User)
-	if !ok {
-		logger.Error("user address is missing in context", errors.New("address is missing"), nil)
-		sendResponse(w, http.StatusInternalServerError, "internal server error")
-		return
-	}
-
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	res, e := h.service.RefreshJwtTokens(ctx, user.Address, int64(user.Number))
+	res, e := h.service.RefreshJwtTokens(ctx)
 	if e != nil {
-		sendResponse(w, e.Code, e.Message)
+		sendResponse(w, e.Code, e)
 		return
 	}
 	sendResponse(w, 200, res)
 }
 
 func (h *handler) handleLogout(w http.ResponseWriter, r *http.Request) {
-	user, ok := r.Context().Value(CtxKeyUser).(*domain.User)
-	if !ok {
-		logger.Error("user is missing in context", errors.New("user is missing"), nil)
-		sendResponse(w, http.StatusInternalServerError, "internal server error")
-		return
-	}
-
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	if e := h.service.Logout(ctx, user.Address, int64(user.Number)); e != nil {
-		sendResponse(w, e.Code, e.Message)
+	if _, e := h.service.Logout(ctx); e != nil {
+		sendResponse(w, e.Code, e)
 		return
 	}
 
@@ -127,21 +112,27 @@ func (h *handler) handleLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) handleFullLogout(w http.ResponseWriter, r *http.Request) {
-	user, ok := r.Context().Value(CtxKeyUser).(*domain.User)
-	if !ok {
-		logger.Error("user is missing in context", errors.New("user is missing"), nil)
-		sendResponse(w, http.StatusInternalServerError, "internal server error")
-		return
-	}
-
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	if e := h.service.FullLogout(ctx, user.Address); e != nil {
-		sendResponse(w, e.Code, e.Message)
+	if _, e := h.service.FullLogout(ctx); e != nil {
+		sendResponse(w, e.Code, e)
 		return
 	}
 	sendSuccessResponse(w)
+}
+
+func (h *handler) handleCheckAuth(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	res, e := h.service.CheckAuth(ctx)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+
+	sendResponse(w, 200, res)
 }
 
 func (h *handler) headerAuthMiddleware(purpose jwt.Purpose) func(http.Handler) http.Handler {
@@ -159,11 +150,32 @@ func (h *handler) headerAuthMiddleware(purpose jwt.Purpose) func(http.Handler) h
 
 			user, e := h.service.GetUserByJwtToken(r.Context(), purpose, a[len(TokenStart):])
 			if e != nil {
-				sendResponse(w, e.Code, e.Message)
+				sendResponse(w, e.Code, e)
 				return
 			}
 
 			ctx := context.WithValue(r.Context(), CtxKeyUser, user)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+// headerAuthCtxMiddleware used for setting `authorization` value in ctx for grpc
+func (h *handler) headerAuthCtxMiddleware() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			a := r.Header.Get("Authorization")
+			isToken := strings.HasPrefix(a, TokenStart)
+			if !isToken {
+				sendResponse(w, 401, &models.ErrorResponse{
+					Code:    http.StatusUnauthorized,
+					Message: "wrong token",
+				})
+				return
+			}
+
+			ctx := metadata.AppendToOutgoingContext(r.Context(), "authorization", a)
+
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

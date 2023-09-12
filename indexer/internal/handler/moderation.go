@@ -45,7 +45,7 @@ func (h *handler) handleReportCollection(w http.ResponseWriter, r *http.Request)
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	if e := h.service.ReportCollection(ctx, user.Address, &req); e != nil {
+	if e := h.service.ReportCollection(ctx, user, &req); e != nil {
 		sendResponse(w, e.Code, e.Message)
 		return
 	}
@@ -88,7 +88,7 @@ func (h *handler) handleReportToken(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
 
-	if e := h.service.ReportToken(ctx, user.Address, &req); e != nil {
+	if e := h.service.ReportToken(ctx, user, &req); e != nil {
 		sendResponse(w, e.Code, e.Message)
 		return
 	}

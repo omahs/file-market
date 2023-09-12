@@ -7468,6 +7468,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-cookie@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@types/js-cookie@npm:3.0.3"
+  checksum: 927254ec37ce4fbe4d9d54f53a446b4351259799d9933db5808ddb7c430396aa2496bdd0a4e47e1b56048ffbec98645cbd4daa9e3ed9a6fff55e25eb640fcb15
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -13754,6 +13761,7 @@ __metadata:
     "@tanstack/react-query": ^4.29.15
     "@types/aes-js": ^3.1.1
     "@types/file-saver": ^2.0.5
+    "@types/js-cookie": ^3.0.3
     "@types/node-rsa": ^1.1.1
     "@types/react": ^18.0.17
     "@types/react-dom": ^18.0.6
@@ -13779,7 +13787,9 @@ __metadata:
     file-saver: ^2.0.5
     gsap: ^3.12.2
     jdenticon: ^3.2.0
+    js-cookie: ^3.0.5
     mobx: ^6.7.0
+    mobx-localstorage: ^1.2.0
     mobx-react-lite: ^3.4.0
     nft.storage: ^7.0.0
     npm: ^9.2.0
@@ -13799,6 +13809,7 @@ __metadata:
     swagger-typescript-api: ^12.0.2
     swiper: ^8.4.4
     typescript: "*"
+    use-debounce: ^9.0.4
     vite: ^3.1.0
     vite-plugin-eslint: ^1.8.1
     wagmi: ^0.12.1
@@ -16549,6 +16560,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-cookie@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "js-cookie@npm:3.0.5"
+  checksum: 2dbd2809c6180fbcf060c6957cb82dbb47edae0ead6bd71cbeedf448aa6b6923115003b995f7d3e3077bfe2cb76295ea6b584eb7196cca8ba0a09f389f64967a
+  languageName: node
+  linkType: hard
+
 "js-sdsl@npm:^4.1.4":
   version: 4.4.0
   resolution: "js-sdsl@npm:4.4.0"
@@ -18062,6 +18080,17 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: a96865108c6c3b1b8e1d5e9f11843de1e077e57737602de1b82030815f311be11f96f09cce59bd5b903d0b29834733e5313f9301e3ed6d6f6fba2eae0df4298f
+  languageName: node
+  linkType: hard
+
+"mobx-localstorage@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "mobx-localstorage@npm:1.2.0"
+  dependencies:
+    reactive-localstorage: ^0.0.2
+  peerDependencies:
+    mobx: ">=3"
+  checksum: 0a8ca334de938587ea65d2e06f79b39812302c61ff028d502f11f8fc37944b2f71e0ad25d6161e7e843d42b92c8b641686ea167e76a064834d15fb37e0f51933
   languageName: node
   linkType: hard
 
@@ -20787,6 +20816,13 @@ __metadata:
   dependencies:
     loose-envify: ^1.1.0
   checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
+  languageName: node
+  linkType: hard
+
+"reactive-localstorage@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "reactive-localstorage@npm:0.0.2"
+  checksum: e58ed5933a477b719be98d3acad0846172bec6987ecdbf2ac1748a55dd7cdbebf955dc7b46cdff56c2ea363c4ae8fd891310bdd847a48917e5632f531ca2479b
   languageName: node
   linkType: hard
 
@@ -23739,6 +23775,15 @@ __metadata:
     punycode: 1.3.2
     querystring: 0.2.0
   checksum: 50d100d3dd2d98b9fe3ada48cadb0b08aa6be6d3ac64112b867b56b19be4bfcba03c2a9a0d7922bfd7ac17d4834e88537749fe182430dfd9b68e520175900d90
+  languageName: node
+  linkType: hard
+
+"use-debounce@npm:^9.0.4":
+  version: 9.0.4
+  resolution: "use-debounce@npm:9.0.4"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 37da4ecbe4e10a6230580cac03a8cae1788ea3e417dfdd92fcf654325458cf1b4567fd57bebf888edab62701a6abe47059a585008fd04228784f223f94d66ce4
   languageName: node
   linkType: hard
 

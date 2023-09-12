@@ -43,6 +43,7 @@ const MarketPage = observer(() => {
         <TabsContainer>
           <Tabs
             tabs={tabs}
+            isSmall
           />
         </TabsContainer>
         <Outlet />

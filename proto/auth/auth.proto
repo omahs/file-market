@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/mark3d-xyz/mark3d/authserver-pb";
+
+import "profile.proto";
+import "user.proto";
+import "google/protobuf/empty.proto";
+
+service Auth {
+  rpc GetAuthMessage(AuthMessageRequest) returns (AuthMessageResponse);
+  rpc GetUserByJwtToken(GetUserByJwtTokenRequest) returns (User);
+  rpc AuthBySignature(AuthBySignatureRequest) returns (AuthResponse);
+  rpc RefreshTokens(google.protobuf.Empty) returns (AuthResponse);
+  rpc Logout(google.protobuf.Empty) returns (SuccessResponse);
+  rpc FullLogout(google.protobuf.Empty) returns (SuccessResponse);
+  rpc CheckAuth(google.protobuf.Empty) returns (UserProfile);
+
+  //  GetUserProfile exposes private fields. Make sure to clean them
+  rpc GetUserProfile(GetUserProfileRequest) returns (UserProfile);
+  rpc EmailExists(EmailExistsRequest) returns (EmailExistsResponse);
+  rpc NameExists(NameExistsRequest) returns (NameExistsResponse);
+  rpc UsernameExists(UsernameExistsRequest) returns (UsernameExistsResponse);
+  rpc UpdateUserProfile(UserProfile) returns (UserProfile);
+  rpc SetEmail(SetEmailRequest) returns (SetEmailResponse);
+  rpc VerifyEmail(VerifyEmailRequest) returns (VerifyEmailResponse);
+}
+
+message AuthMessageRequest {
+  string address = 1;
+}
+
+message AuthMessageResponse {
+  string message = 1;
+}
+
+message AuthBySignatureRequest {
+  string address = 1;
+  string signature = 2;
+}
+
+message AuthResponse {
+  JwtTokenInfo accessToken = 1;
+  JwtTokenInfo refreshToken = 2;
+  UserProfile profile = 3;
+}
+
+message JwtTokenInfo {
+  int64 expiresAt = 1;
+  string token = 2;
+}
+
+message SuccessResponse {
+  bool success = 1;
+}

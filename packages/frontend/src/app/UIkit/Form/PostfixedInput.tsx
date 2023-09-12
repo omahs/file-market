@@ -3,10 +3,10 @@ import * as React from 'react'
 
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
-import { inputStyles } from './Input'
+import { textFieldsStyles } from './TextFields.styles'
 
 const InputWithPrefix = styled('div', {
-  ...inputStyles,
+  ...textFieldsStyles,
   boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
   outline: '1px solid $gray300',
   width: '100%',
@@ -25,7 +25,7 @@ const InputPostfix = styled('div', {
 })
 
 const Input = styled('input', {
-  ...inputStyles,
+  ...textFieldsStyles,
   paddingLR: 0,
   borderRadius: 0,
   border: 'none',

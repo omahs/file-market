@@ -69,3 +69,13 @@ type CollectionStats struct {
 	Name  string
 	Value float64
 }
+
+type CollectionProfile struct {
+	Address    common.Address
+	Slug       string // unique name that will be used in url
+	WebsiteURL string
+	Twitter    string
+	Telegram   string
+	Discord    string
+	BannerUrl  string
+}

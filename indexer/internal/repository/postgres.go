@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -19,9 +18,8 @@ type Postgres interface {
 	Transfers
 	Orders
 	Whitelist
-	Auth
-	Users
 	Moderation
+	CollectionProfile
 }
 
 type Transactions interface {
@@ -42,6 +40,7 @@ type Collections interface {
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error
 	CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error)
+	IsCollectionOwner(ctx context.Context, tx pgx.Tx, owner common.Address, collectionAddress common.Address) (bool, error)
 }
 
 type Tokens interface {
@@ -90,21 +89,6 @@ type Orders interface {
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
 }
 
-type Auth interface {
-	GetAuthMessage(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.AuthMessage, error)
-	InsertAuthMessage(ctx context.Context, tx pgx.Tx, msg domain.AuthMessage) error
-	DeleteAuthMessage(ctx context.Context, tx pgx.Tx, address common.Address) error
-	GetJwtTokenNumber(ctx context.Context, tx pgx.Tx, address common.Address, purpose jwt.Purpose) (int, error)
-	InsertJwtToken(ctx context.Context, tx pgx.Tx, tokenData jwt.TokenData) error
-	DropJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address, number int) error
-	DropAllJwtTokens(ctx context.Context, tx pgx.Tx, address common.Address) error
-	GetJwtTokenSecret(ctx context.Context, tx pgx.Tx, address common.Address, number int, purpose jwt.Purpose) (string, error)
-}
-
-type Users interface {
-	IsAdmin(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error)
-}
-
 type Moderation interface {
 	ReportCollection(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, userAddress common.Address) error
 	ReportToken(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, tokenId *big.Int, userAddress common.Address) error
@@ -112,6 +96,13 @@ type Moderation interface {
 
 type Whitelist interface {
 	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) (string, error)
+}
+
+type CollectionProfile interface {
+	GetCollectionProfile(ctx context.Context, tx pgx.Tx, address common.Address) (*domain.CollectionProfile, error)
+	CollectionProfileExists(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error)
+	InsertCollectionProfile(ctx context.Context, tx pgx.Tx, profile *domain.CollectionProfile) error
+	UpdateCollectionProfile(ctx context.Context, tx pgx.Tx, profile *domain.CollectionProfile) (*domain.CollectionProfile, error)
 }
 
 type postgresConfig struct {

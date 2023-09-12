@@ -10,7 +10,6 @@ import { useCurrency } from '../../../../hooks/useCurrency'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
-import { useIsCreator } from '../../../../processing/nft-interaction/useIsCreator'
 import { TokenFullId } from '../../../../processing/types'
 import { ButtonGlowing, Flex, FormControl, Input, PriceBadge } from '../../../../UIkit'
 import { formatNumber } from '../../../../utils/number'
@@ -28,20 +27,17 @@ export interface OrderFormProps {
   defaultValues?: OrderFormValue
   onSubmit?: (value: OrderFormValue) => void
   tokenFullId: TokenFullId
-  isOwner?: boolean
 }
 
 export const OrderForm: FC<OrderFormProps> = observer(({
   defaultValues,
   onSubmit,
   tokenFullId,
-  isOwner,
 }) => {
   const { formatRoyalty, toCurrency, fromCurrency } = useCurrency()
   const currentBlockChainStore = useCurrentBlockChain()
-  const tokenStore = useTokenStore(tokenFullId.collectionAddress, tokenFullId.tokenId)
 
-  const { isCreator } = useIsCreator(tokenStore.data)
+  const tokenStore = useTokenStore(tokenFullId.collectionAddress, tokenFullId.tokenId)
 
   const importFormValue = useCallback((value?: OrderFormValue): OrderFormRawValue => ({
     price: value ? toCurrency(value.price) : '',
@@ -51,7 +47,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
     price: fromCurrency(+rawValue.price ?? 0),
   }), [fromCurrency])
 
-  const { handleSubmit, control, watch } = useForm<OrderFormRawValue>({
+  const { handleSubmit, control, watch, setValue } = useForm<OrderFormRawValue>({
     defaultValues: importFormValue(defaultValues),
   })
   const price = watch('price')
@@ -59,7 +55,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
     amountWillReceived,
     amountWillReceivedUsd,
     isLoading,
-  } = useSaleAmountWillReceived(tokenFullId, +price, isCreator)
+  } = useSaleAmountWillReceived(tokenFullId, +price)
 
   return (
     <form onSubmit={handleSubmit(values => {
@@ -68,16 +64,17 @@ export const OrderForm: FC<OrderFormProps> = observer(({
     >
       <FormControl>
         <Label css={{ textAlign: 'left' }}>Price</Label>
-        <Flex w100 flexDirection='column' gap='$3'>
+        <Flex w100 flexDirection='column' gap="$3">
           <Input<OrderFormRawValue>
-            type='number'
-            step='any'
+            type="number"
+            step="any"
             placeholder='Enter value'
             after={currentBlockChainStore.chain?.nativeCurrency.symbol}
             controlledInputProps={{
               control,
               name: 'price',
               rules: { required: true },
+              setValue,
             }}
           />
           {(!!fee || !!tokenStore.data?.royalty) && (
@@ -91,7 +88,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
                     (<span>{fee}%</span>)
                   </>
                 )}
-                {!!fee && !!tokenStore.data?.royalty && ' and ' && !isOwner}
+                {!!fee && !!tokenStore.data?.royalty && ' and '}
                 {!!tokenStore.data?.royalty && (
                   <>
                     the author&apos;s royalty (<span>{formatRoyalty(tokenStore.data.royalty)}%</span>)
@@ -101,7 +98,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
                 after the sale of an EFT, <span>you will receive:</span>
               </StyledPriceDescription>
               <PriceBadge
-                size='md'
+                size="md"
                 background='secondary'
                 right={`~${formatNumber(amountWillReceivedUsd, 2) || 0}$`}
                 left={formatNumber(amountWillReceived, 3) || 0}
@@ -114,7 +111,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
       <Flex w100 justifyContent='end'>
         <ButtonGlowing
           fullWidth
-          type='submit'
+          type="submit"
         >
           Place order
         </ButtonGlowing>
