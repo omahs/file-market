@@ -10,6 +10,7 @@ import { useCurrency } from '../../../../hooks/useCurrency'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
+import { useIsCreator } from '../../../../processing/nft-interaction/useIsCreator'
 import { TokenFullId } from '../../../../processing/types'
 import { ButtonGlowing, Flex, FormControl, Input, PriceBadge } from '../../../../UIkit'
 import { formatNumber } from '../../../../utils/number'
@@ -27,17 +28,20 @@ export interface OrderFormProps {
   defaultValues?: OrderFormValue
   onSubmit?: (value: OrderFormValue) => void
   tokenFullId: TokenFullId
+  isOwner?: boolean
 }
 
 export const OrderForm: FC<OrderFormProps> = observer(({
   defaultValues,
   onSubmit,
   tokenFullId,
+  isOwner,
 }) => {
   const { formatRoyalty, toCurrency, fromCurrency } = useCurrency()
   const currentBlockChainStore = useCurrentBlockChain()
-
   const tokenStore = useTokenStore(tokenFullId.collectionAddress, tokenFullId.tokenId)
+
+  const { isCreator } = useIsCreator(tokenStore.data)
 
   const importFormValue = useCallback((value?: OrderFormValue): OrderFormRawValue => ({
     price: value ? toCurrency(value.price) : '',
@@ -55,7 +59,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
     amountWillReceived,
     amountWillReceivedUsd,
     isLoading,
-  } = useSaleAmountWillReceived(tokenFullId, +price)
+  } = useSaleAmountWillReceived(tokenFullId, +price, isCreator)
 
   return (
     <form onSubmit={handleSubmit(values => {
@@ -88,7 +92,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
                     (<span>{fee}%</span>)
                   </>
                 )}
-                {!!fee && !!tokenStore.data?.royalty && ' and '}
+                {!!fee && !!tokenStore.data?.royalty && ' and ' && !isOwner}
                 {!!tokenStore.data?.royalty && (
                   <>
                     the author&apos;s royalty (<span>{formatRoyalty(tokenStore.data.royalty)}%</span>)
