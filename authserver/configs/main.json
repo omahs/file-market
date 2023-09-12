@@ -11,7 +11,7 @@
   },
   "service": {
     "authMessageTTL": "5m",
-    "accessTokenTTL": "1h",
+    "accessTokenTTL": "24h",
     "refreshTokenTTL": "2160h",
     "emailVerificationTokenTTL": "30m"
   }
