@@ -53,9 +53,13 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
       console.log('DEFAULT CHAIN FIND')
       console.log(item.chain)
       console.log(item.isDefault)
+      console.log(item.chain.testnet)
+      console.log(item.chain.testnet === !import.meta.env.VITE_IS_MAINNET)
 
       return item.chain.testnet === !import.meta.env.VITE_IS_MAINNET && item.isDefault
     }) as IMultiChainConfig
+    console.log('Default chain:')
+    console.log(defaultChain)
     if (chainId === undefined) return defaultChain
 
     return (multichainConfig as IMultiChainConfig[]).find(item => {
