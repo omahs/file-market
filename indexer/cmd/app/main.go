@@ -104,6 +104,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("failed to dial auth server", log2.Fields{"error": err.Error()})
 	}
+	logger.Info("auth service connected", nil)
 
 	mailSender := mail.NewPostmarkSender(cfg.EmailSender)
 	wsPool := ws.NewWsPool()
