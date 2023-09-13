@@ -104,6 +104,10 @@ const ProfilePage: React.FC = observer(() => {
     return profileStore.user
   }, [isOwner, profileStore.user, userStore.user])
 
+  const isAleshka = useMemo(() => {
+    return profileAddress === '0xf27619636047BCdBB8F8eAf9a7D4d2AA882bAf67' || profileAddress === 'filemarket'
+  }, [profileAddress])
+
   return (
     <GrayOverlay style={{ width: '100%', overflow: 'hidden' }}>
       <PageLayout isHasSelectBlockChain>
@@ -117,7 +121,7 @@ const ProfilePage: React.FC = observer(() => {
               src={user?.avatarUrl ? getHttpLinkFromIpfsString(user?.avatarUrl) : getProfileImageUrl(profileAddress ?? '')}
               isOwner={isOwner}
             />
-            <ProfileName>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
+            <ProfileName isAleshka={isAleshka}>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
           </ProfileHeader>
           {isOwner && <SettingsButton />}
         </Profile>

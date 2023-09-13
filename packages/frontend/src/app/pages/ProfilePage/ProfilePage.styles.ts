@@ -1,5 +1,11 @@
-import { styled } from '../../../styles'
+import { keyframes, styled } from '../../../styles'
 import { Container, textVariant, Txt } from '../../UIkit'
+
+const animationGlow = keyframes({
+  to: {
+    backgroundPosition: '200% center',
+  },
+})
 
 export const Profile = styled('div', {
   display: 'flex',
@@ -29,6 +35,20 @@ export const ProfileName = styled('h2', {
   fontWeight: '600',
   '@sm': {
     fontSize: 'calc(5vw + 10px)',
+  },
+  variants: {
+    isAleshka: {
+      true: {
+        animation: `${animationGlow} 2s linear infinite`,
+        background: '$gradients$button',
+        backgroundSize: '200% 200%',
+        backgroundClip: 'text',
+        textFillColor: 'transparent',
+        '-webkit-background-clip': 'text',
+        '-webkit-text-fill-color': 'transparent',
+        color: '#000',
+      },
+    },
   },
 })
 
