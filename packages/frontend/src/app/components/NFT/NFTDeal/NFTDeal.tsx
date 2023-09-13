@@ -113,7 +113,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
             )}
           </DealContainerInfo>
         )}
-        {isNetworkIncorrect ? (
+        {(isNetworkIncorrect || !isConnected) ? (
           <DealContainerInfo>
             <Button
               primary

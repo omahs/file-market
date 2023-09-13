@@ -152,7 +152,14 @@ const ProfilePage: React.FC = observer(() => {
 
               return user?.websiteUrl
             })(),
-            twitter: user?.twitter,
+            twitter: (() => {
+              const index = user?.twitter?.indexOf('twitter.com/')
+              if (index !== undefined && index > -1) {
+                return user?.twitter?.substring(index + 12, user?.twitter.length)
+              }
+
+              return user?.twitter
+            })(),
             discord: user?.discord,
             telegram: user?.telegram,
           }}
