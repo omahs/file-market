@@ -24,9 +24,6 @@
       "checkInterval": "5m",
       "switchTokenTimeout": "3m"
     },
-    "authMessageTTL": "5m",
-    "accessTokenTTL": "60h",
-    "refreshTokenTTL": "2160h",
     "currencyConversionCacheTTL": "1h",
     "mode": "era",
     "chainId": "324"

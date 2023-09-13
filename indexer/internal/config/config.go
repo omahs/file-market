@@ -67,9 +67,6 @@ type (
 		UncommonSignerKey            string
 		Mode                         string
 		ChainID                      string
-		AuthMessageTTL               time.Duration
-		AccessTokenTTL               time.Duration
-		RefreshTokenTTL              time.Duration
 		Host                         string
 	}
 
@@ -145,9 +142,6 @@ func Init(configPath string) (*Config, error) {
 			UncommonSignerKey:            envCfg.GetString("UNCOMMON_SIGNER_KEY"),
 			Mode:                         jsonCfg.GetString("service.mode"),
 			ChainID:                      jsonCfg.GetString("service.chainId"),
-			AccessTokenTTL:               jsonCfg.GetDuration("service.accessTokenTTL"),
-			RefreshTokenTTL:              jsonCfg.GetDuration("service.refreshTokenTTL"),
-			AuthMessageTTL:               jsonCfg.GetDuration("service.authMessageTTL"),
 			Host:                         envCfg.GetString("HOST"),
 		},
 		Redis: &RedisConfig{
