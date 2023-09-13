@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+var banwords = []string{"Protocol Labs", "Protocollabs", "Filecoin", "FIL", "FVM", "EVM", "FileMarket", "FileWallet", "EFT", "EncryptedFileToken", "FileBunnies", "ZKsync", "Ethereum", "Polygon", "Linea", "BNB", "Binance", "Optimism", "Eth", "Fmrt", "Web3", "Web3Jedis", "Jedis", "Jedi", "DAO", "DeFi", "FileFuel"}
+
 func (s *service) GetUserProfileByUsername(
 	ctx context.Context,
 	username string,
@@ -197,6 +199,20 @@ func (s *service) UpdateUserProfile(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
+	// check banwords
+	if isForbiddenWord(profile.Username, false) {
+		return nil, &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "forbidden username",
+		}
+	}
+	if isForbiddenWord(profile.Name, false) {
+		return nil, &domain.APIError{
+			Code:    http.StatusBadRequest,
+			Message: "forbidden name",
+		}
+	}
+
 	oldProfile, err := s.repository.GetUserProfile(ctx, tx, profile.Address)
 	if err != nil {
 		log.Printf("failed to update profile: %v", err)
@@ -228,6 +244,21 @@ func (s *service) UpdateUserProfile(
 	}
 
 	return res, nil
+}
+
+func isForbiddenWord(word string, caseSensitive bool) bool {
+	for _, w := range banwords {
+		if caseSensitive {
+			if w == word {
+				return true
+			}
+		} else {
+			if strings.ToLower(w) == strings.ToLower(word) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (s *service) SetEmail(
