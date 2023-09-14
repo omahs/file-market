@@ -149,6 +149,10 @@ func (s *service) EmailExist(ctx context.Context, email string) (bool, *domain.A
 }
 
 func (s *service) NameExist(ctx context.Context, name string) (bool, *domain.APIError) {
+	if isForbiddenWord(name, false) {
+		return true, nil
+	}
+
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -169,6 +173,10 @@ func (s *service) NameExist(ctx context.Context, name string) (bool, *domain.API
 }
 
 func (s *service) UsernameExist(ctx context.Context, username string) (bool, *domain.APIError) {
+	if isForbiddenWord(username, false) {
+		return true, nil
+	}
+
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
