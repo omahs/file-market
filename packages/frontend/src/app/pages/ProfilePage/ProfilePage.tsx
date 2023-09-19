@@ -105,7 +105,7 @@ const ProfilePage: React.FC = observer(() => {
   }, [isOwner, profileStore.user, userStore.user])
 
   const isAleshka = useMemo(() => {
-    return profileAddress === '0xf27619636047BCdBB8F8eAf9a7D4d2AA882bAf67' || profileAddress === 'filemarket' || profileAddress === 'psyarcus' || profileAddress === '0x5de89e63edb4492d1c6e141b29474f69ef8c4f08'
+    return profileAddress === 'lesopolosat' || profileAddress === 'lewinUp' || profileAddress === 'psyarcus' || profileAddress === '0x5de89e63edb4492d1c6e141b29474f69ef8c4f08'
   }, [profileAddress])
 
   return (
