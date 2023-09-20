@@ -1,15 +1,10 @@
-import { useContract, useSigner } from 'wagmi'
-
 import { useConfig } from '../../hooks/useConfig'
+import { useContract } from '../../hooks/useContract'
 
-export function useCollectionContract(address?: string) {
-  const { data: signer } = useSigner()
+export function useCollectionContract(address: `0x${string}`) {
   const config = useConfig()
-  const contract = useContract({
-    address,
-    abi: config?.collectionToken.abi,
-    signerOrProvider: signer,
-  })
 
-  return { contract, signer }
+  const contract = useContract({ address, abi: config?.collectionToken.abi })
+
+  return { contract }
 }

@@ -1,22 +1,25 @@
 import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
-import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
+import { Contract, ContractTransaction } from 'ethers'
+import { PublicClient, http, createPublicClient } from 'viem'
+import { mainnet } from 'wagmi'
+import { GetContractResult } from 'wagmi/dist/actions'
 
 import { wagmiClient } from '../../config/web3Modal'
 
 const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
 
-enum ProviderErrorMessages {
+export enum ProviderErrorMessages {
   InternalError = 'Internal JSON-RPC error.',
   InsufficientBalance = 'Actor balance less than needed.',
 }
 
-enum ErrorMessages {
+export enum ErrorMessages {
   InsufficientBalance = 'Balance too low for transaction.',
   RejectedByUser = 'Transaction rejected by user.',
 }
 
-const stringifyContractError = (error: any) => {
+export const stringifyContractError = (error: any) => {
   if (error?.code === 'ACTION_REJECTED') {
     return ErrorMessages.RejectedByUser
   }
@@ -70,23 +73,29 @@ export const callContractGetter = async <R = any>({
 export const callContract = async ({
   contract,
   method,
-  signer,
   ignoreTxFailture,
   minBalance,
+  publicClient,
+  address,
 }: {
-  contract: Contract
-  method: keyof Contract
-  signer?: Signer
+  contract: GetContractResult
+  method: keyof GetContractResult
+  publicClient?: PublicClient
+  address?: `0x${string}`
   ignoreTxFailture?: boolean
-  minBalance?: BigNumber
+  minBalance?: bigint
 },
 ...args: any[]
 ) => {
   try {
-    if (signer) {
-      const balance = await signer.getBalance()
+    const client = createPublicClient({
+      chain: mainnet,
+      transport: http()
+    })
+    if (publicClient && address) {
+      const balance = await client.g
       // equality anyway throws an error because of gas
-      if (balance.isZero() || minBalance?.gte(balance)) {
+      if (balance.isZero() || minBalance >= balance) {
         throw new JsonRpcError(402, ErrorMessages.InsufficientBalance)
       }
     }
@@ -126,7 +135,7 @@ const pingTx = async (txHash: string) => {
   return receipt
 }
 
-const getTxReceipt = async (tx: ContractTransaction) => {
+export const getTxReceipt = async (tx: ContractTransaction) => {
   const receipt = await Promise.race([
     tx.wait(),
     pingTx(tx.hash),

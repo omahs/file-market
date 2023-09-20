@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
+import { assertCollection, assertContract, assertTokenId, callContract } from '../utils'
 
 /**
  * Used to approve Mark3dExchange contract to manage user's NFT. Should be called prior to placeOrder.
@@ -21,12 +21,11 @@ interface IApproveExchange {
 }
 
 export function useApproveExchange({ collectionAddress }: IUseApproveExchange = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const config = useConfig()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveExchange>()
   const approveExchange = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, 'Mark3dCollection')
-    assertSigner(signer)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
 
@@ -37,7 +36,7 @@ export function useApproveExchange({ collectionAddress }: IUseApproveExchange = 
       BigNumber.from(tokenId),
       { gasPrice: config?.gasPrice },
     )
-  }), [wrapPromise, contract, signer])
+  }), [wrapPromise, contract])
 
   return {
     ...statuses,
