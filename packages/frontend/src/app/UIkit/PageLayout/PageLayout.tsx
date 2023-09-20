@@ -6,6 +6,7 @@ export const PageLayout = styled(Container, {
   paddingBottom: 48,
   backgroundColor: '$gray100',
   minHeight: '100%',
+  position: 'relative',
   variants: {
     nonePaddingTop: {
       true: {

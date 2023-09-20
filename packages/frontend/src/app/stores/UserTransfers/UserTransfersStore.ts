@@ -18,28 +18,6 @@ import { formatCurrency } from '../../utils/web3/currency'
 import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
-const convertTransferToTransferCards = (target: 'incoming' | 'outgoing', chain: Chain | undefined) => {
-  const eventOptions =
-    target === 'incoming' ? ['Receiving', 'Buying'] : ['Sending', 'Selling']
-
-  return (transfer: TransferWithData): TransferCardProps => ({
-    status: transfer.order?.id === 0 ? eventOptions[0] : eventOptions[1],
-    button: {
-      link: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`,
-      text: 'Go to page',
-    },
-    collectionName: transfer.collection?.name ?? '',
-    imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
-    title: transfer.token?.name ?? '',
-    hiddenFileMeta: transfer.token?.hiddenFileMeta,
-    user: {
-      address: reduceAddress(transfer.token?.owner ?? '—'),
-      img: getProfileImageUrl(transfer.token?.owner ?? ''),
-    },
-    price: transfer.order?.price ? formatCurrency(transfer.order?.price, chain) : undefined,
-  })
-}
-
 export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
   currentBlockChainStore: CurrentBlockChainStore
@@ -128,6 +106,28 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     this.request()
   }
 
+  convertTransferToTransferCards(target: 'incoming' | 'outgoing', chain: Chain | undefined) {
+    const eventOptions =
+      target === 'incoming' ? ['Receiving', 'Buying'] : ['Sending', 'Selling']
+
+    return (transfer: TransferWithData): TransferCardProps => ({
+      status: transfer.order?.id === 0 ? eventOptions[0] : eventOptions[1],
+      button: {
+        link: `/collection/${chain?.name}/${transfer.collection?.address}/${transfer.token?.tokenId}`,
+        text: 'Go to page',
+      },
+      collectionName: transfer.collection?.name ?? '',
+      imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
+      title: transfer.token?.name ?? '',
+      hiddenFileMeta: transfer.token?.hiddenFileMeta,
+      user: {
+        address: reduceAddress(transfer.token?.owner ?? '—'),
+        img: getProfileImageUrl(transfer.token?.owner ?? ''),
+      },
+      price: transfer.order?.price ? formatCurrency(transfer.order?.price, chain) : undefined,
+    })
+  }
+
   get hasMoreData() {
     const { incoming = [], incomingTotal = 0, outgoing = [], outgoingTotal = 0 } = this.data
 
@@ -144,10 +144,10 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     const { incoming = [], outgoing = [] } = this.data
 
     const incomingCards = incoming.map<TransferCardProps>(
-      convertTransferToTransferCards('incoming', this.currentBlockChainStore.chain),
+      this.convertTransferToTransferCards('incoming', this.currentBlockChainStore.chain),
     )
     const outgoingCards = outgoing.map<TransferCardProps>(
-      convertTransferToTransferCards('outgoing', this.currentBlockChainStore.chain),
+      this.convertTransferToTransferCards('outgoing', this.currentBlockChainStore.chain),
     )
 
     return incomingCards.concat(outgoingCards)

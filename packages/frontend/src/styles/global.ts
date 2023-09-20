@@ -105,6 +105,5 @@ export const globalStyles = globalCss({
     overflow: 'inherit !important',
     border: 'none !important',
     boxShadow: 'none !important',
-    marginRight: '20px',
   },
 })

@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, Collection } from '../../../swagger/Api'
+import { Api, Collection, CollectionResponse } from '../../../swagger/Api'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -39,11 +39,11 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
 
   private request(address: string, api?: Api<{}>) {
     if (!api) return
-    storeRequest<Collection>(
+    storeRequest<CollectionResponse>(
       this,
       api.collections.collectionsDetail(address),
       (resp) => {
-        this.collection = resp
+        this.collection = resp.collection
       },
     )
   }

@@ -1,5 +1,5 @@
-import { Chain } from '@web3modal/ethereum'
 import { BigNumberish, utils } from 'ethers'
+import { Chain } from 'wagmi'
 
 export const formatCurrency = (value: BigNumberish, chain: Chain | undefined) => {
   const decimals = chain?.nativeCurrency?.decimals ?? 18

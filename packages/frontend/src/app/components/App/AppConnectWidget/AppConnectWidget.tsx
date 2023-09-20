@@ -8,14 +8,14 @@ import { AppAccountMenu } from '../AppAccountMenu'
 import { AppPlusNav } from '../AppPlusNav'
 
 export const AppConnectWidget: FC = observer(() => {
-  const { isConnected, address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { connect } = useAuth()
 
   if (isConnected && address) {
     return (
       <>
         <AppPlusNav />
-        <AppAccountMenu address={address} />
+        <AppAccountMenu />
       </>
     )
   } else {

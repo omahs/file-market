@@ -27,7 +27,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
-  const { handleSubmit, formState: { errors }, control } = useForm<UnlockSectionForm>({
+  const { handleSubmit, formState: { errors }, control, setValue } = useForm<UnlockSectionForm>({
     defaultValues: {
       password: '',
     },
@@ -39,6 +39,7 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
   const [error, setError] = useState<string>()
 
   const onSubmit = useCallback((v: UnlockSectionForm) => {
+    console.log(v.password)
     if (seedProvider) {
       seedProvider
         .unlock(v.password)
@@ -66,6 +67,7 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
           }}
           controlledInputProps={{
             control,
+            setValue,
             name: 'password',
             rules: { required: true },
           }}

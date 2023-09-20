@@ -37,7 +37,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         true: {
           color: '$white',
           fill: '$white',
-          background: '$gradients$main',
+          background: '$gradients$mainNew',
           '&[data-focus-ring=true]': {
             focusRing: '$blue500',
           },
@@ -133,6 +133,32 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             color: 'white',
             background: '$gray600',
             cursor: 'not-allowed',
+          },
+        },
+      },
+      settings: {
+        true: {
+          borderRadius: '8px',
+          border: '1px solid #C9CBCF',
+          background: '#FFF',
+          boxShadow: '2px 2px 0px 0px rgba(35, 37, 40, 0.25)',
+          color: '#6B6F76',
+          display: 'flex',
+          gap: '8px',
+          padding: '8px 16px',
+          minWidth: '0',
+          height: '32px',
+          transition: 'all 0.25s ease-in-out',
+          svg: {
+            color: '#6B6F76',
+            transition: 'all 0.25s ease-in-out',
+          },
+          '&:hover': {
+            opacity: 1,
+            boxShadow: 'none',
+            svg: {
+              color: '$blue500',
+            },
           },
         },
       },
@@ -400,7 +426,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         css: {
           color: '$white',
           fill: '$white',
-          background: '$gradients$main',
+          background: '$gradients$mainNew',
         },
       },
       {

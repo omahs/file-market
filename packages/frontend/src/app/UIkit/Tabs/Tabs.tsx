@@ -13,9 +13,11 @@ export interface TabItem extends OptionSwitch {
 
 export interface TabsProps {
   tabs: TabItem[]
+  isSmall?: boolean
+  isTransparent?: boolean
 }
 
-export const Tabs: React.FC<TabsProps> = observer(({ tabs }) => {
+export const Tabs: React.FC<TabsProps> = observer(({ tabs, isSmall, isTransparent }) => {
   const [tab, setTab] = useState<TabItem | undefined>()
   const location = useLocation()
   const navigate = useNavigate()
@@ -42,7 +44,7 @@ export const Tabs: React.FC<TabsProps> = observer(({ tabs }) => {
 
   return (
     <>
-      <SwitchWrapperTabs>
+      <SwitchWrapperTabs small={isSmall} transparent={isTransparent}>
         {tabs.map((tabItem) => (
           <SwitchButton
             key={tabItem.value}
@@ -51,12 +53,15 @@ export const Tabs: React.FC<TabsProps> = observer(({ tabs }) => {
               navigate(tabItem.url)
             }}
             activate={tab?.value === tabItem.value}
+            small={isSmall}
           >
             {tabItem.label}
           </SwitchButton>
         ))}
       </SwitchWrapperTabs>
-      <StyledAmount>{`Total ${cutNumber(tab?.amount)}`}</StyledAmount>
+      <StyledAmount small={isSmall}>
+        <span>{`Total ${cutNumber(tab?.amount)}`}</span>
+      </StyledAmount>
     </>
   )
 })

@@ -15,7 +15,7 @@ export interface IStoreRequester {
   errorStore: ErrorStore
   requestCount: number
   currentRequest?: RequestContext // current request. Helps to prevent concurrent request
-  reset: () => void
+  reset?: () => void
   reload?: () => void
 }
 
@@ -32,8 +32,9 @@ export const storeRequestGeneric = <ResponseType>(
 ): void => {
   if (!target.currentRequest) {
     target.isLoading = true
+    target.requestCount++
     const context: RequestContext = {
-      id: target.requestCount++,
+      id: target.requestCount,
     }
     const finish = (resultHandler: () => void) => {
       // handle result only if request is not replaced by another and not cancelled
@@ -50,6 +51,7 @@ export const storeRequestGeneric = <ResponseType>(
         tap(
           action((data) => {
             finish(() => {
+              console.log(data)
               responseHandler(data)
             })
           }),
@@ -71,6 +73,7 @@ export const storeRequest = <Data>(
   target: IStoreRequester,
   requester: Promise<HttpResponse<Data, ErrorResponse>>,
   callback: (data: Data) => void,
+  errorCallback?: (error: any) => void,
 ): void => {
   storeRequestGeneric(
     target,
@@ -85,6 +88,7 @@ export const storeRequest = <Data>(
     },
     error => {
       target.errorStore.showError(stringifyError(error))
+      errorCallback?.(error)
     },
   )
 }

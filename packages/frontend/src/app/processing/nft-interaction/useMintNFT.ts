@@ -11,7 +11,7 @@ import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
 import { assertAccount, assertContract, assertSigner, callContract, callContractGetter } from '../utils'
-import { useUploadLighthouse } from './useUploadLighthouse'
+import { useUploadErc721Meta } from './useUploadErc721Meta'
 
 export interface MintNFTForm {
   name?: string // required, hook will return error if omitted
@@ -45,7 +45,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
-  const upload = useUploadLighthouse()
+  const upload = useUploadErc721Meta()
   const api = useApi()
   const config = useConfig()
 

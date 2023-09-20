@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Button, Container, LinkButton, textVariant } from '../../../UIkit'
+import { Button, Container, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
@@ -254,7 +254,7 @@ export default function WelcomeBlock() {
         <WelcomeInfo>
           <StorageImg src={bgStorage} />
           <Title>
-            Marketplace for tokenizing and monetizing your data
+            Tokenized File Sharing platform with programmable access & incentives
           </Title>
           <Description>
             Your access point to decentralized storage for impactful content, where data hunters, keepers, and providers connect.
@@ -275,21 +275,17 @@ export default function WelcomeBlock() {
               >
                 Upload file right here
               </Button>
-              <LinkButton
+              <Button
                 mediumMxWidth
                 whiteWithBlueBlindsMd
                 bigHg
-                href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
-                target={'_blank'}
-                style={{
-                  height: '64px',
-                  padding: '28px 59px',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
+                style={{ height: '64px', padding: '28px 59px', whiteSpace: 'nowrap' }}
+                onClick={() => {
+                  navigate('/market')
                 }}
               >
-                Apply for own shop
-              </LinkButton>
+                Explore files
+              </Button>
             </div>
           </NavigateBlock>
           <SupportedBy />

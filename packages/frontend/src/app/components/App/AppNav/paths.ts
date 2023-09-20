@@ -6,6 +6,10 @@ export const paths: NavBarItemData[] = [
     label: 'Explore',
   },
   {
+    to: '/market/collections',
+    label: 'Collections',
+  },
+  {
     to: 'https://medium.com/filemarket-xyz',
     label: 'Blogs',
     isLink: true,
@@ -15,12 +19,8 @@ export const paths: NavBarItemData[] = [
     label: 'How to get FIL',
     isLink: true,
   },
-  {
-    to: '/market/collections',
-    label: 'Collections',
-  },
 ]
 
 export const pathsWithoutCurrentBlockchain: string[] = [
-  'branding', 'successGetAccess', 'collection', 'checkCrypto',
+  'branding', 'successGetAccess', 'collection', 'checkCrypto', 'settings',
 ]

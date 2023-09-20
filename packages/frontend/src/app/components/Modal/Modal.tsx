@@ -7,13 +7,14 @@ import { ButtonGlowing, ButtonNavGlowing } from '../../UIkit'
 import { Modal, ModalBody, ModalButtonContainer, ModalP, ModalTitle } from '../../UIkit/Modal/Modal'
 import { stringifyError } from '../../utils/error'
 
-interface InProcessBodyProps {
+export interface InProcessBodyProps {
   text: ReactNode
   waitForSign?: boolean
 }
 
 const Loading = styled('img', {
   width: '130px',
+  margin: '0 auto',
   marginBottom: '20px',
 })
 
@@ -29,14 +30,15 @@ interface SuccessNavBodyProps {
   buttonText: string
   link: string
   onPress: () => void
-  underText?: string
+  underText?: ReactNode
   isSuccessImg?: boolean
+  mainText?: ReactNode
 }
-export const SuccessNavBody = ({ buttonText, link, onPress, underText, isSuccessImg = true }: SuccessNavBodyProps) => {
+export const SuccessNavBody = ({ buttonText, link, onPress, underText, mainText, isSuccessImg = true }: SuccessNavBodyProps) => {
   return (
     <>
       {isSuccessImg && <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>}
-      <ModalP style={{ marginBottom: '40px' }}>Success</ModalP>
+      <ModalP style={{ marginBottom: '40px' }}>{ mainText ?? 'Success'}</ModalP>
       {underText && <ModalP style={{ marginBottom: '40px', fontSize: '18px' }}>{underText}</ModalP>}
       <ModalButtonContainer style={{ justifyContent: 'center' }}>
         <ButtonNavGlowing
@@ -108,7 +110,7 @@ export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () 
   </>
 )
 
-interface MintModalProps {
+export interface MintModalProps {
   open: boolean
   handleClose: () => void
   body?: ReactNode
@@ -137,7 +139,9 @@ export default function BaseModal({
       style={{
         maxWidth: '690px',
       }}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose?.()
+      }}
       onOpen={onOpen}
     >
       {body && <ModalBody style={{ padding: 0 }}>{body}</ModalBody>}

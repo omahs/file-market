@@ -33,7 +33,7 @@ const CheckCryptoPage = observer(() => {
   const [isLoadingCycle, setIsLoadingCycle] = useState<boolean>(false)
   const [isVisibleCustom, setIsVisibleCustom] = useState<boolean>(false)
   const countIter = 6
-  const { handleSubmit, control, formState: { errors }, watch } = useForm<CheckCrypto>({})
+  const { handleSubmit, control, formState: { errors }, watch, setValue } = useForm<CheckCrypto>({})
   const randomSeed = () => {
     const newMnemonic = createMnemonic()
 
@@ -170,6 +170,7 @@ const CheckCryptoPage = observer(() => {
                 }}
                 controlledInputProps={{
                   name: 'inputSeed',
+                  setValue,
                   control,
                   rules: {
                     validate: (p) => {
@@ -185,6 +186,7 @@ const CheckCryptoPage = observer(() => {
                 placeholder={'Enter collection address'}
                 controlledInputProps={{
                   name: 'collectionAddress',
+                  setValue,
                   control,
                   rules: {
                     validate: (p) => {

@@ -2,337 +2,166 @@ package service
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"errors"
-	"fmt"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/jackc/pgx/v4"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/jwt"
-	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
-	"log"
-	"math/rand"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
-)
-
-const (
-	alphabet    = "abcdefghijklmnopqrstuvwxyz1234567890"
-	authMessage = "Hello, %s! Please, sign this message with random param %s to sign in into FileMarket"
+	authserver_pb "github.com/mark3d-xyz/mark3d/indexer/proto"
 )
 
 func (s *service) AuthBySignature(ctx context.Context, req models.AuthBySignatureRequest) (*models.AuthResponse, *models.ErrorResponse) {
-	address := common.HexToAddress(*req.Address)
-
-	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	res, err := s.authClient.AuthBySignature(ctx, &authserver_pb.AuthBySignatureRequest{
+		Address:   *req.Address,
+		Signature: *req.Signature,
+	})
 	if err != nil {
-		log.Println("begin tx failed: ", err)
-		return nil, internalError
-	}
-	defer s.repository.RollbackTransaction(ctx, tx)
-
-	msg, err := s.repository.GetAuthMessage(ctx, tx, address)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, &models.ErrorResponse{
-				Code:    http.StatusBadRequest,
-				Message: "message for the address is not found",
-			}
-		}
-		logger.Error("failed to get auth message", err, nil)
-		return nil, internalError
+		logger.Error("failed to auth by signature", err, nil)
+		return nil, grpcErrToHTTP(err)
 	}
 
-	if time.Since(msg.CreatedAt) >= s.cfg.AuthMessageTTL {
-		return nil, &models.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "message expired",
-		}
+	accessToken := models.JwtTokenInfo{
+		ExpiresAt: &res.AccessToken.ExpiresAt,
+		Token:     &res.AccessToken.Token,
 	}
-
-	hash := crypto.Keccak256([]byte(fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(msg.Message), msg.Message)))
-	sig := common.FromHex(*req.Signature)
-	if sig[len(sig)-1] > 4 {
-		sig[len(sig)-1] -= 27
+	refreshToken := models.JwtTokenInfo{
+		ExpiresAt: &res.RefreshToken.ExpiresAt,
+		Token:     &res.RefreshToken.Token,
 	}
-	pubKey, err := crypto.Ecrecover(hash, sig)
-	if err != nil {
-		return nil, &models.ErrorResponse{
-			Code:    http.StatusUnauthorized,
-			Message: "wrong signature",
-		}
-	}
-	pkey, err := crypto.UnmarshalPubkey(pubKey)
-	if err != nil {
-		return nil, &models.ErrorResponse{
-			Code:    http.StatusUnauthorized,
-			Message: "wrong signature",
-		}
-	}
-	signedAddress := crypto.PubkeyToAddress(*pkey)
-	if strings.ToLower(signedAddress.Hex()) != strings.ToLower(address.String()) {
-		return nil, &models.ErrorResponse{
-			Code:    http.StatusUnauthorized,
-			Message: "wrong signature",
-		}
-	}
-
-	accessToken, refreshToken, err := s.generateTokens(ctx, tx, signedAddress)
-	if err != nil {
-		logger.Error("failed to generate jwt tokens", err, nil)
-		return nil, internalError
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		logger.Error("failed to commit tx", err, nil)
-		return nil, internalError
+	profile := models.UserProfile{
+		Address:                    res.Profile.Address,
+		AvatarURL:                  res.Profile.AvatarURL,
+		BannerURL:                  res.Profile.BannerURL,
+		Bio:                        res.Profile.Bio,
+		Discord:                    res.Profile.Discord,
+		Email:                      res.Profile.Email,
+		IsEmailConfirmed:           res.Profile.IsEmailConfirmed,
+		IsEmailNotificationEnabled: res.Profile.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.Profile.IsPushNotificationEnabled,
+		Name:                       res.Profile.Name,
+		Telegram:                   res.Profile.Telegram,
+		Twitter:                    res.Profile.Twitter,
+		Username:                   res.Profile.Username,
+		WebsiteURL:                 res.Profile.WebsiteURL,
 	}
 
 	return &models.AuthResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		Profile:      &models.UserProfile{Name: "temp"},
+		AccessToken:  &accessToken,
+		RefreshToken: &refreshToken,
+		Profile:      &profile,
 	}, nil
 }
 
 func (s *service) GetAuthMessage(ctx context.Context, req models.AuthMessageRequest) (*models.AuthMessageResponse, *models.ErrorResponse) {
-	address := common.HexToAddress(*req.Address)
-
-	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	res, err := s.authClient.GetAuthMessage(ctx, &authserver_pb.AuthMessageRequest{
+		Address: *req.Address,
+	})
 	if err != nil {
-		log.Println("begin tx failed: ", err)
-		return nil, internalError
-	}
-	defer s.repository.RollbackTransaction(ctx, tx)
-
-	msg, err := s.repository.GetAuthMessage(ctx, tx, address)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		logger.Error("failed to get auth message", err, nil)
-		return nil, internalError
-	}
-	if msg != nil {
-		if time.Since(msg.CreatedAt) < s.cfg.AuthMessageTTL {
-			return &models.AuthMessageResponse{Message: &msg.Message}, nil
-		}
+		return nil, grpcErrToHTTP(err)
 	}
 
-	// msg not found or expired
-	if err := s.repository.DeleteAuthMessage(ctx, tx, address); err != nil {
-		logger.Error("failed to delete auth message", err, nil)
-		return nil, internalError
-	}
-
-	newMsg := generateAuthMessage(address)
-	if err := s.repository.InsertAuthMessage(ctx, tx, domain.AuthMessage{
-		Address:   address,
-		Message:   newMsg,
-		CreatedAt: time.Now(),
-	}); err != nil {
-		logger.Error("failed to insert new auth message", err, nil)
-		return nil, internalError
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		logger.Error("failed to commit tx", err, nil)
-		return nil, internalError
-	}
-
-	return &models.AuthMessageResponse{Message: &newMsg}, nil
+	return &models.AuthMessageResponse{Message: &res.Message}, nil
 }
 
-func (s *service) RefreshJwtTokens(ctx context.Context, address common.Address, number int64) (*models.AuthResponse, *models.ErrorResponse) {
-	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+func (s *service) RefreshJwtTokens(ctx context.Context) (*models.AuthResponse, *models.ErrorResponse) {
+	res, err := s.authClient.RefreshTokens(ctx, &empty.Empty{})
 	if err != nil {
-		log.Println("begin tx failed: ", err)
-		return nil, internalError
-	}
-	defer s.repository.RollbackTransaction(ctx, tx)
-
-	if err := s.repository.DropJwtTokens(ctx, tx, address, int(number)); err != nil {
-		logger.Error("failed to drop jwt tokens", err, nil)
-		return nil, internalError
+		logger.Error("failed to refresh jwt", err, nil)
+		return nil, grpcErrToHTTP(err)
 	}
 
-	accessToken, refreshToken, err := s.generateTokensWithNumber(ctx, tx, address, int(number))
-	if err != nil {
-		logger.Error("failed to generate jwt tokens", err, nil)
-		return nil, internalError
+	accessToken := models.JwtTokenInfo{
+		ExpiresAt: &res.AccessToken.ExpiresAt,
+		Token:     &res.AccessToken.Token,
 	}
-
-	if err := tx.Commit(ctx); err != nil {
-		logger.Error("failed to commit tx", err, nil)
-		return nil, internalError
+	refreshToken := models.JwtTokenInfo{
+		ExpiresAt: &res.RefreshToken.ExpiresAt,
+		Token:     &res.RefreshToken.Token,
+	}
+	profile := models.UserProfile{
+		Address:                    res.Profile.Address,
+		AvatarURL:                  res.Profile.AvatarURL,
+		BannerURL:                  res.Profile.BannerURL,
+		Bio:                        res.Profile.Bio,
+		Discord:                    res.Profile.Discord,
+		Email:                      res.Profile.Email,
+		IsEmailNotificationEnabled: res.Profile.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.Profile.IsPushNotificationEnabled,
+		Name:                       res.Profile.Name,
+		Telegram:                   res.Profile.Telegram,
+		Twitter:                    res.Profile.Twitter,
+		Username:                   res.Profile.Username,
+		WebsiteURL:                 res.Profile.WebsiteURL,
 	}
 
 	return &models.AuthResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken:  &accessToken,
+		RefreshToken: &refreshToken,
+		Profile:      &profile,
 	}, nil
-}
 
-func (s *service) generateTokens(ctx context.Context, tx pgx.Tx, address common.Address) (*models.JwtTokenInfo, *models.JwtTokenInfo, error) {
-	number, err := s.repository.GetJwtTokenNumber(ctx, tx, address, jwt.PurposeAccess)
-	if err != nil {
-		return nil, nil, fmt.Errorf("generateTokens/GetJwtTokenNumber: %w", err)
-	}
-
-	return s.generateTokensWithNumber(ctx, tx, address, number)
-}
-
-func (s *service) generateTokensWithNumber(ctx context.Context, tx pgx.Tx, address common.Address, number int) (*models.JwtTokenInfo, *models.JwtTokenInfo, error) {
-	accessExpiresAt := now.Now().Add(s.cfg.AccessTokenTTL)
-	accessTokenData := &jwt.TokenData{
-		Purpose:   jwt.PurposeAccess,
-		Address:   strings.ToLower(address.String()),
-		Number:    number,
-		ExpiresAt: accessExpiresAt,
-		Secret:    generateSecret(0, address, number, jwt.PurposeAccess),
-	}
-	accessToken, err := s.jwtManager.GenerateJwtToken(accessTokenData)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to generate jwt access token: %w", err)
-	}
-
-	refreshExpiresAt := now.Now().Add(s.cfg.RefreshTokenTTL)
-	refreshTokenData := &jwt.TokenData{
-		Purpose:   jwt.PurposeRefresh,
-		Address:   strings.ToLower(address.String()),
-		Number:    number,
-		ExpiresAt: refreshExpiresAt,
-		Secret:    generateSecret(0, address, number, jwt.PurposeRefresh),
-	}
-	refreshToken, err := s.jwtManager.GenerateJwtToken(refreshTokenData)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to generate refresh token: %w", err)
-	}
-
-	if err := s.repository.InsertJwtToken(ctx, tx, *accessTokenData); err != nil {
-		return nil, nil, fmt.Errorf("generateTokensWithNumber/InsertJwtTokenAccess: %w", err)
-	}
-	if err := s.repository.InsertJwtToken(ctx, tx, *refreshTokenData); err != nil {
-		return nil, nil, fmt.Errorf("generateTokensWithNumber/InsertJwtTokenRefresh: %w", err)
-	}
-	accessMilli := accessExpiresAt.UnixMilli()
-	refreshMilli := refreshExpiresAt.UnixMilli()
-	return &models.JwtTokenInfo{
-			Token:     &accessToken,
-			ExpiresAt: &accessMilli,
-		}, &models.JwtTokenInfo{
-			Token:     &refreshToken,
-			ExpiresAt: &refreshMilli,
-		}, nil
 }
 
 func (s *service) GetUserByJwtToken(ctx context.Context, purpose jwt.Purpose, token string) (*domain.User, *models.ErrorResponse) {
-	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	res, err := s.authClient.GetUserByJwtToken(ctx, &authserver_pb.GetUserByJwtTokenRequest{
+		Purpose: int32(purpose),
+		Token:   token,
+	})
 	if err != nil {
-		log.Println("begin tx failed: ", err)
-		return nil, internalError
-	}
-	defer s.repository.RollbackTransaction(ctx, tx)
-
-	tokenData, err := s.jwtManager.ParseJwtToken(token)
-	if err != nil {
-		logger.Error("failed to parse jwt token", err, nil)
-		return nil, &models.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "failed to parse token",
-		}
-	}
-
-	address := common.HexToAddress(tokenData.Address)
-	secret, err := s.repository.GetJwtTokenSecret(ctx, tx, address, tokenData.Number, purpose)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, &models.ErrorResponse{
-				Code:    http.StatusUnauthorized,
-				Message: "failed to parse token",
-			}
-		}
-		logger.Error("failed to get jwt token secret", err, nil)
-		return nil, internalError
-	}
-
-	if tokenData.Secret != secret {
-		return nil, &models.ErrorResponse{
-			Code:    http.StatusUnauthorized,
-			Message: "wrong token secret",
-		}
+		logger.Error("failed to get uset by jwt", err, nil)
+		return nil, grpcErrToHTTP(err)
 	}
 
 	return &domain.User{
-		Address: address,
-		Number:  tokenData.Number,
+		Address: common.HexToAddress(res.Address),
+		Role:    domain.UserRole(res.Role),
 	}, nil
 }
 
-func (s *service) Logout(ctx context.Context, address common.Address, number int64) *models.ErrorResponse {
-	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+func (s *service) Logout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse) {
+	res, err := s.authClient.Logout(ctx, &empty.Empty{})
 	if err != nil {
-		log.Println("begin tx failed: ", err)
-		return internalError
-	}
-	defer s.repository.RollbackTransaction(ctx, tx)
-
-	if err := s.repository.DropJwtTokens(ctx, tx, address, int(number)); err != nil {
-		logger.Error("failed to drop jwt tokens", err, nil)
-		return internalError
-	}
-	if err := tx.Commit(ctx); err != nil {
-		return internalError
+		logger.Error("failed to logout", err, nil)
+		return nil, grpcErrToHTTP(err)
 	}
 
-	return nil
+	return &models.SuccessResponse{Success: &res.Success}, nil
 }
 
-func (s *service) FullLogout(ctx context.Context, address common.Address) *models.ErrorResponse {
-	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+func (s *service) FullLogout(ctx context.Context) (*models.SuccessResponse, *models.ErrorResponse) {
+	res, err := s.authClient.FullLogout(ctx, &empty.Empty{})
 	if err != nil {
-		log.Println("begin tx failed: ", err)
-		return internalError
-	}
-	defer s.repository.RollbackTransaction(ctx, tx)
-
-	if err := s.repository.DropAllJwtTokens(ctx, tx, address); err != nil {
-		logger.Error("failed to drop all tokens", err, nil)
+		logger.Error("failed to full logout", err, nil)
+		return nil, grpcErrToHTTP(err)
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		return internalError
-	}
-
-	return nil
+	return &models.SuccessResponse{Success: &res.Success}, nil
 }
 
-func generateSecret(role int, address common.Address, number int, purpose jwt.Purpose) string {
-	toHashElems := []string{
-		strconv.Itoa(role),
-		strings.ToLower(address.String()),
-		strconv.Itoa(number),
-		strconv.Itoa(int(purpose)),
-		randomString(20),
+func (s *service) CheckAuth(ctx context.Context) (*models.UserProfile, *models.ErrorResponse) {
+	res, err := s.authClient.CheckAuth(ctx, &empty.Empty{})
+	if err != nil {
+		logger.Error("failed to check auth", err, nil)
+		return nil, grpcErrToHTTP(err)
 	}
 
-	toHash := strings.Join(toHashElems, "_")
-	hash := sha256.Sum256([]byte(toHash))
-
-	return hex.EncodeToString(hash[:])
-}
-
-func generateAuthMessage(address common.Address) string {
-	return fmt.Sprintf(authMessage, strings.ToLower(address.String()), randomString(64))
-}
-
-func randomString(l int) string {
-	res := make([]byte, l)
-	for i := 0; i < l; i++ {
-		res[i] = alphabet[rand.Intn(len(alphabet))]
+	profile := models.UserProfile{
+		Address:                    res.Address,
+		AvatarURL:                  res.AvatarURL,
+		BannerURL:                  res.BannerURL,
+		Bio:                        res.Bio,
+		Discord:                    res.Discord,
+		Email:                      res.Email,
+		IsEmailConfirmed:           res.IsEmailConfirmed,
+		IsEmailNotificationEnabled: res.IsEmailNotificationEnabled,
+		IsPushNotificationEnabled:  res.IsPushNotificationEnabled,
+		Name:                       res.Name,
+		Telegram:                   res.Telegram,
+		Twitter:                    res.Twitter,
+		Username:                   res.Username,
+		WebsiteURL:                 res.WebsiteURL,
 	}
 
-	return string(res)
+	return &profile, nil
 }

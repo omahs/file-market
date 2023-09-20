@@ -11,6 +11,8 @@ services:
     volumes:
       - ~/logs:/logs
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   oracle-service:
     image: file-market-oracle-service:latest
     depends_on:
