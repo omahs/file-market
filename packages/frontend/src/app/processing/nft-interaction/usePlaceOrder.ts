@@ -6,7 +6,8 @@ import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
 import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
-import { callContract } from '../utils/error'
+
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IPlaceOrder {
   collectionAddress?: string
@@ -23,13 +24,13 @@ interface IPlaceOrder {
  */
 
 export function usePlaceOrder() {
-  const { contract, signer } = useExchangeContract()
+  const { contract } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt | undefined, IPlaceOrder>()
   const config = useConfig()
+  const { callContract } = useCallContract()
 
   const placeOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price }: IPlaceOrder) => {
     assertContract(contract, config?.exchangeToken.name ?? '')
-    assertSigner(signer)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     assert(price, 'price is not provided')
@@ -42,7 +43,7 @@ export function usePlaceOrder() {
       constants.AddressZero,
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }), [contract, wrapPromise])
 
   return {
     ...statuses,

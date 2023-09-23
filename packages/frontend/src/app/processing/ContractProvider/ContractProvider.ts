@@ -1,11 +1,12 @@
 import { getContract } from '@wagmi/core'
 import { makeAutoObservable } from 'mobx'
 
-import { wagmiClient } from '../../config/web3Modal'
+import { wagmiConfig } from '../../config/web3Modal'
 import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
 import { MultiChainStore } from '../../stores/MultiChain/MultiChainStore'
 import { rootStore } from '../../stores/RootStore'
 import { assertConfig } from '../utils'
+import { getWalletClient } from '@wagmi/core'
 
 export class ContractProvider {
   currentBlockChainStore: CurrentBlockChainStore
@@ -25,14 +26,14 @@ export class ContractProvider {
     return this.multiChainStore.getConfigById(this.currentBlockChainStore.configByChainName?.chain.id ?? this.currentBlockChainStore.chainId)
   }
 
-  getCollectionContract(address: string) {
+  getCollectionContract(address: `0x${string}`) {
     const config = this.getConfig()
     assertConfig(config)
 
     return getContract({
       address,
       abi: config.collectionToken.abi,
-      signerOrProvider: wagmiClient.provider,
+      walletClient: getWalletClient(),
     })
   }
 
@@ -43,7 +44,7 @@ export class ContractProvider {
     return getContract({
       address: config.accessToken.address,
       abi: config.accessToken.abi,
-      signerOrProvider: wagmiClient.provider,
+      walletClient: getWalletClient(),
     })
   }
 
@@ -54,7 +55,7 @@ export class ContractProvider {
     return getContract({
       address: config.exchangeToken.address,
       abi: config.exchangeToken.abi,
-      signerOrProvider: wagmiClient.provider,
+      walletClient: getWalletClient(),
     })
   }
 }

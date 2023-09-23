@@ -4,7 +4,8 @@ import { useCallback } from 'react'
 import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertTokenId, callContract } from '../utils'
+import { assertCollection, assertContract, assertTokenId } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 /**
  * Used to approve Mark3dExchange contract to manage user's NFT. Should be called prior to placeOrder.
@@ -23,6 +24,7 @@ interface IApproveExchange {
 export function useApproveExchange({ collectionAddress }: IUseApproveExchange = {}) {
   const { contract } = useCollectionContract(collectionAddress)
   const config = useConfig()
+  const { callContract } = useCallContract()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveExchange>()
   const approveExchange = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, 'Mark3dCollection')

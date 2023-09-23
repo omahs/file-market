@@ -6,7 +6,7 @@ import { WagmiConfig } from 'wagmi'
 import { DialogManager } from './app/components/DialogManager/DialogManager'
 import { BlockNumberWatcher } from './app/components/Web3/BlockNumberWatcher/BlockNumberWatcher'
 import { FileWalletConnectWatcher } from './app/components/Web3/FileWalletConnectWatcher'
-import { wagmiClient, Web3ModalConfigured } from './app/config/web3Modal'
+import { wagmiConfig, Web3ModalConfigured } from './app/config/web3Modal'
 import { StoreProvider } from './app/hooks'
 import { StitchesProvider } from './styles'
 
@@ -15,7 +15,7 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiConfig client={wagmiClient}>
+      <WagmiConfig config={wagmiConfig}>
         <StitchesProvider>
           <NextUIProvider disableBaseline>
             <StoreProvider>

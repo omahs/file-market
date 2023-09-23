@@ -9,6 +9,7 @@ import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 import { callContract } from '../utils/error'
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseApproveTransfer {
   collectionAddress?: string
@@ -20,16 +21,15 @@ interface IApproveTransfer {
 }
 
 export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
-
+  const { callContract } = useCallContract()
   const config = useConfig()
 
   const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey }) => {
     assertContract(contract, config?.collectionToken.name)
-    assertSigner(signer)
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -47,7 +47,7 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
       bufferToEtherHex(encryptedFilePassword),
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, address, wrapPromise])
+  }), [contract, address, wrapPromise])
 
   return {
     ...statuses,

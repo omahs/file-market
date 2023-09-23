@@ -1,7 +1,7 @@
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { FC } from 'react'
-import { configureChains, createClient } from 'wagmi'
+import { configureChains, createConfig } from 'wagmi'
 
 import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
@@ -19,18 +19,15 @@ if (!projectId) {
   throw new Error('You need to provide VITE_WEB3_MODAL_PROJECT_ID env variable')
 }
 
-const { provider, webSocketProvider } = configureChains(chains, [
-  w3mProvider({ projectId }),
-])
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
 
-export const wagmiClient = createClient({
+export const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ projectId, version: 1, chains }),
-  provider,
-  webSocketProvider,
+  connectors: w3mConnectors({ projectId, chains }),
+  publicClient
 })
 
-const ethereumClient = new EthereumClient(wagmiClient, chains)
+const ethereumClient = new EthereumClient(wagmiConfig, chains)
 
 // Montserrat, sans-serif
 export const Web3ModalConfigured: FC = () => (

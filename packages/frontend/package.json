@@ -39,12 +39,13 @@
     "@types/file-saver": "^2.0.5",
     "@types/js-cookie": "^3.0.3",
     "@types/node-rsa": "^1.1.1",
-    "@web3modal/ethereum": "2.3.7",
-    "@web3modal/react": "2.3.7",
+    "@web3modal/ethereum": "^2.7.1",
+    "@web3modal/react": "^2.7.1",
     "bip39": "^3.1.0",
     "buffer": "^6.0.3",
     "convertkit-react": "^1.5.5",
     "dayjs": "^1.11.7",
+    "ethers": "^5",
     "file-saver": "^2.0.5",
     "gsap": "^3.12.2",
     "jdenticon": "^3.2.0",
@@ -68,8 +69,9 @@
     "screenfull": "^6.0.2",
     "swagger-typescript-api": "^12.0.2",
     "swiper": "^8.4.4",
-    "wagmi": "^1.4.2",
     "use-debounce": "^9.0.4",
+    "viem": "^1.12.1",
+    "wagmi": "1.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
@@ -95,7 +97,7 @@
     "eslint-plugin-storybook": "^0.6.6",
     "eslint-plugin-unused-imports": "^2.0.0",
     "prettier": "2.7.1",
-    "typescript": "^5.2.0",
+    "typescript": "^5.2.2",
     "vite": "^3.1.0",
     "vite-plugin-eslint": "^1.8.1"
   }
