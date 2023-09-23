@@ -1,10 +1,11 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
+import { assertCollection, assertContract, assertTokenId } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 /**
  * Calls Mark3dExchange contract to cancel an order
@@ -18,22 +19,22 @@ interface ICancelOrder {
 }
 
 export function useCancelOrder() {
-  const { contract, signer } = useExchangeContract()
+  const { contract } = useExchangeContract()
+  const { callContract } = useCallContract()
   const config = useConfig()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, ICancelOrder>()
   const cancelOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     assertContract(contract, config?.exchangeToken.name ?? '')
-    assertSigner(signer)
     console.log('cancel order', { collectionAddress, tokenId })
 
     return callContract({ contract, method: 'cancelOrder' },
       collectionAddress,
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }), [contract, wrapPromise])
 
   return {
     ...statuses,

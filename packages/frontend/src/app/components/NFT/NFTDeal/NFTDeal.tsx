@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC, PropsWithChildren, useMemo } from 'react'
 import { useParams } from 'react-router'
@@ -105,7 +104,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
             {transfer && (
               <PriceBadge
                 title="Price"
-                left={formatCurrency(BigNumber.from(order?.price ?? 0))}
+                left={formatCurrency(BigInt(order?.price ?? 0))}
                 right={`~${formatUsd(order?.priceUsd ?? '')}`}
                 size='lg'
                 background='secondary'

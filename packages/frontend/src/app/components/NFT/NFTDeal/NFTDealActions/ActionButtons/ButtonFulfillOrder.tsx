@@ -1,5 +1,4 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
@@ -59,8 +58,8 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     })
     const publicKeyHexRes = await publicKeyHex
     if (receipt?.blockNumber && publicKeyHexRes) {
-      transferStore.onTransferPublicKeySet(BigNumber.from(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
-      transferStore.onTransferDraftCompletion(BigNumber.from(tokenFullId.tokenId), receipt?.to, receipt?.blockNumber)
+      transferStore.onTransferPublicKeySet(BigInt(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
+      transferStore.onTransferDraftCompletion(BigInt(tokenFullId.tokenId), receipt?.to, receipt?.blockNumber)
     }
   })
 

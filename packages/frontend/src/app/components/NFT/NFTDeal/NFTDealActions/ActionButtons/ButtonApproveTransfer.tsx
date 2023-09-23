@@ -1,5 +1,4 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
 import { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -62,7 +61,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
           })
           const encryptedPasswordRes = await encryptedPassword
           if (receipt?.blockNumber && encryptedPasswordRes) {
-            transferStore.onTransferPasswordSet(BigNumber.from(tokenFullId.tokenId), encryptedPasswordRes, receipt?.blockNumber)
+            transferStore.onTransferPasswordSet(BigInt(tokenFullId.tokenId), encryptedPasswordRes, receipt?.blockNumber)
           }
         })}
       >

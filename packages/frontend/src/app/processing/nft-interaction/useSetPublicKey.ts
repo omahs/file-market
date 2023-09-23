@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -7,7 +7,8 @@ import { useConfig } from '../../hooks/useConfig'
 import { useBlockchainDataProvider } from '../BlockchainDataProvider'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract, hexToBuffer } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseSetPublicKey {
   collectionAddress?: string
@@ -18,16 +19,17 @@ interface ISetPublicKey {
 }
 
 export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const config = useConfig()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, ISetPublicKey>()
   const factory = useHiddenFileProcessorFactory()
   const blockchainDataProvider = useBlockchainDataProvider()
 
+  const { callContract } = useCallContract()
+
   const setPublicKey = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, config?.exchangeToken.name ?? '')
-    assertSigner(signer)
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -38,12 +40,12 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
     return callContract({ contract, method: 'setTransferPublicKey' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       bufferToEtherHex(publicKey),
-      BigNumber.from(dealNumber),
+      BigInt(dealNumber),
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, address, wrapPromise])
+  }), [contract, address, wrapPromise])
 
   return { ...statuses, setPublicKey }
 }

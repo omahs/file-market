@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { BigNumber, BigNumberish, constants, ContractReceipt } from 'ethers'
+import { constants, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
@@ -12,7 +12,7 @@ import { useCallContract } from '../../hooks/useCallContract'
 interface IPlaceOrder {
   collectionAddress?: string
   tokenId?: string
-  price?: BigNumberish
+  price?: BigInt
   callBack?: () => void
 }
 
@@ -38,8 +38,8 @@ export function usePlaceOrder() {
 
     return callContract({ contract, method: 'placeOrder' },
       collectionAddress,
-      BigNumber.from(tokenId),
-      BigNumber.from(price),
+      BigInt(tokenId),
+      BigInt(price),
       constants.AddressZero,
       { gasPrice: config?.gasPrice },
     )

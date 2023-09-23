@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { useBlockNumber } from 'wagmi'
 
 import { useStores } from './useStores'
@@ -8,7 +7,7 @@ export const useBlockNumberListener = () => {
   useBlockNumber({
     watch: true,
     onBlock(data) {
-      if (data) blockStore.setCurrentBlock(BigNumber.from(data))
+      if (data) blockStore.setCurrentBlock(data)
     },
   })
 }

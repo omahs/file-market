@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
 import { Api, Transfer, TransferStatus } from '../../../swagger/Api'
@@ -74,7 +73,7 @@ export class TransferStore implements IStoreRequester,
       resp => {
         this.data = resp ?? undefined
         if (resp?.block?.number) {
-          this.blockStore.setReceiptBlock(BigNumber.from(resp?.block?.number))
+          this.blockStore.setReceiptBlock(BigInt(resp?.block?.number))
         }
         onSuccess?.()
       })
@@ -104,13 +103,13 @@ export class TransferStore implements IStoreRequester,
     console.log('Reload')
   }
 
-  private checkData(tokenId: BigNumber, ifDataOk: (data: Transfer) => void) {
+  private checkData(tokenId: bigint, ifDataOk: (data: Transfer) => void) {
     if (this.data?.tokenId && normalizeCounterId(this.data?.tokenId) === normalizeCounterId(tokenId)) {
       ifDataOk(this.data)
     }
   }
 
-  private checkActivation(tokenId: BigNumber, ifActivationOk: (tokenFullId: TokenFullId) => void) {
+  private checkActivation(tokenId: bigint, ifActivationOk: (tokenFullId: TokenFullId) => void) {
     if (
       this.isActivated &&
       this.tokenFullId &&
@@ -155,7 +154,7 @@ export class TransferStore implements IStoreRequester,
   setBlockTransfer = (blockNumber?: number) => {
     if (this.data?.block) {
       this.data.block.number = blockNumber
-      this.blockStore.setReceiptBlock(BigNumber.from(blockNumber))
+      this.blockStore.setReceiptBlock(BigInt(blockNumber))
     }
   }
 
@@ -172,7 +171,7 @@ export class TransferStore implements IStoreRequester,
   // We listen to only events related to transfer change, not transfer initialization
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 
-  onTransferInit(tokenId: BigNumber, from: string, to: string, blockNumber: number) {
+  onTransferInit(tokenId: bigint, from: string, to: string, blockNumber: number) {
     console.log('onTransferInit')
     if (this.checkExistStatus(TransferStatus.Created)) return
     this.checkActivation(tokenId, (tokenFullId) => {
@@ -191,7 +190,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferDraft(tokenId: BigNumber, from: string, blockNumber: number) {
+  onTransferDraft(tokenId: bigint, from: string, blockNumber: number) {
     console.log('onTransferDraft')
     if (this.checkExistStatus(TransferStatus.Drafted)) return
     this.checkActivation(tokenId, (tokenFullId) => {
@@ -210,7 +209,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferDraftCompletion(tokenId: BigNumber, to: string, blockNumber: number) {
+  onTransferDraftCompletion(tokenId: bigint, to: string, blockNumber: number) {
     console.log('onTransferCompletion')
     this.checkData(tokenId, data => {
       data.to = to
@@ -219,7 +218,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string, blockNumber: number) {
+  onTransferPublicKeySet(tokenId: bigint, publicKeyHex: string, blockNumber: number) {
     console.log('onTransferPublicKeySet')
     if (this.checkExistStatus(TransferStatus.PublicKeySet)) return
     this.checkData(tokenId, data => {
@@ -234,7 +233,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string, blockNumber: number) {
+  onTransferPasswordSet(tokenId: bigint, encryptedPasswordHex: string, blockNumber: number) {
     console.log('onTransferPasswordSet')
     if (this.checkExistStatus(TransferStatus.PasswordSet)) return
     this.checkData(tokenId, data => {
@@ -248,7 +247,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferFinished(tokenId: BigNumber) {
+  onTransferFinished(tokenId: bigint) {
     console.log('onTransferFinished')
     if (!this.data) return
     this.checkActivation(tokenId, () => {
@@ -259,7 +258,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferFraudReported(tokenId: BigNumber, blockNumber: number) {
+  onTransferFraudReported(tokenId: bigint, blockNumber: number) {
     console.log('onTransferFraud')
     if (this.checkExistStatus(TransferStatus.FraudReported)) return
     this.checkData(tokenId, data => {
@@ -272,7 +271,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferFraudDecided(tokenId: BigNumber, approved: boolean, blockNumber: number) {
+  onTransferFraudDecided(tokenId: bigint, approved: boolean, blockNumber: number) {
     if (this.checkExistStatus(TransferStatus.Finished)) return
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
@@ -285,7 +284,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferCancellation(tokenId: BigNumber, blockNumber: number) {
+  onTransferCancellation(tokenId: bigint, blockNumber: number) {
     console.log('onTransferCancel')
     this.checkActivation(tokenId, () => {
       this.data = undefined

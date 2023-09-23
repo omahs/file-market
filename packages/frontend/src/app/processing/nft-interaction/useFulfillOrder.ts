@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { BigNumber, BigNumberish, ContractReceipt, utils } from 'ethers'
+import { ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -13,8 +13,8 @@ import {
   assertSigner,
   assertTokenId,
   bufferToEtherHex,
-  callContract,
 } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 /**
  * Fulfills an existing order.
@@ -24,23 +24,24 @@ import {
  */
 
 interface IFulFillOrder {
-  price?: BigNumberish
+  price?: bigint
   collectionAddress?: string
   tokenId?: string
   signature?: string
 }
 
 export function useFulfillOrder() {
-  const { contract, signer } = useExchangeContract()
+  const { contract } = useExchangeContract()
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
   const config = useConfig()
 
+  const { callContract } = useCallContract()
+
   const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price, signature }) => {
     assertCollection(collectionAddress)
     assertContract(contract, config?.exchangeToken.name ?? '')
-    assertSigner(signer)
     assertTokenId(tokenId)
     assertAccount(address)
     assert(price, 'price is not provided')
@@ -50,17 +51,17 @@ export function useFulfillOrder() {
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
     return callContract(
-      { contract, signer, method: 'fulfillOrder', minBalance: BigNumber.from(price) },
+      { contract, method: 'fulfillOrder', minBalance: BigInt(price) },
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       signature ? `0x${signature}` : '0x00',
       {
-        value: BigNumber.from(price),
+        value: BigInt(price),
         gasPrice: config?.gasPrice,
       },
     )
-  }), [contract, address, wrapPromise, signer])
+  }), [contract, address, wrapPromise])
 
   return { ...statuses, fulfillOrder }
 }

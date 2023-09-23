@@ -1,7 +1,6 @@
 import { getContract } from '@wagmi/core'
 import { makeAutoObservable } from 'mobx'
 
-import { wagmiConfig } from '../../config/web3Modal'
 import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
 import { MultiChainStore } from '../../stores/MultiChain/MultiChainStore'
 import { rootStore } from '../../stores/RootStore'

@@ -1,5 +1,4 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
@@ -37,7 +36,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, isD
         onPress={wrapAction(async () => {
           const receipt = await cancelOrder(tokenFullId)
           if (receipt?.blockNumber) {
-            transferStore.onTransferCancellation(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
+            transferStore.onTransferCancellation(BigInt(tokenFullId.tokenId), receipt?.blockNumber)
           }
         })
         }

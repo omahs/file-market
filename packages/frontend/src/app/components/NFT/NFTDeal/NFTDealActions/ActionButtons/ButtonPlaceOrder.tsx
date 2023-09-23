@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import React from 'react'
 
 import { useStores } from '../../../../../hooks'
@@ -38,7 +37,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
       price,
     })
     if (receipt?.blockNumber) {
-      transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
+      transferStore.onTransferDraft(BigInt(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
     }
   })
 

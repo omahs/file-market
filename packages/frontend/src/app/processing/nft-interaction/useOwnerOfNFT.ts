@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { useContractRead } from 'wagmi'
 
 import { useConfig } from '../../hooks/useConfig'
@@ -12,7 +11,7 @@ export function useOwnerOfNFT({ collectionAddress, tokenId, isDisable }: Partial
     address: ensureAddress(collectionAddress),
     abi: config?.collectionToken.abi,
     functionName: !isDisable ? 'ownerOf' : undefined,
-    args: [BigNumber.from(tokenId)],
+    args: [BigInt(tokenId)],
     suspense: !tokenId,
     enabled: !isDisable,
   })

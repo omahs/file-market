@@ -1,5 +1,4 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
@@ -40,7 +39,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
         onPress={wrapAction(async () => {
           const receipt = await reportFraud(tokenFullId)
           if (receipt?.blockNumber) {
-            transferStore.onTransferFraudReported(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
+            transferStore.onTransferFraudReported(BigInt(tokenFullId.tokenId), receipt?.blockNumber)
           }
         })}
       >

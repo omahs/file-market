@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -139,7 +138,7 @@ export const useFileBunniesMint = () => {
       await fulfillOrder({
         collectionAddress,
         tokenId,
-        price: BigNumber.from(1),
+        price: BigInt(1),
         signature: sign,
       })
       setIsLoadingReq(false)

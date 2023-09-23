@@ -1,10 +1,11 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import {ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId, callContract, nullAddress } from '../utils'
+import { assertCollection, assertContract, assertSigner, assertTokenId, nullAddress } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IDraftTransfer {
   collectionAddress?: string
@@ -12,23 +13,22 @@ interface IDraftTransfer {
 }
 
 export function useDraftTransfer() {
-  const { contract, signer } = useCollectionContract()
+  const { contract } = useCollectionContract()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IDraftTransfer>()
   const config = useConfig()
-
+  const { callContract } = useCallContract()
   const draftTransfer = useCallback(wrapPromise(async ({ collectionAddress, tokenId }: IDraftTransfer) => {
     assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     console.log('draft transfer', { tokenId, callbackReceiver: nullAddress })
 
     return callContract({ contract, method: 'draftTransfer' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       nullAddress,
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }), [contract, wrapPromise])
 
   return {
     ...statuses,

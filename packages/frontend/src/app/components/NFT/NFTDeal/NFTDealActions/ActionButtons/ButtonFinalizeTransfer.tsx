@@ -1,5 +1,4 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
 import { Order } from '../../../../../../swagger/Api'
@@ -42,10 +41,10 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
           await finalizeTransfer(tokenFullId)
-          transferStore.onTransferFinished(BigNumber.from(tokenFullId.tokenId))
+          transferStore.onTransferFinished(BigInt(tokenFullId.tokenId))
         })}
       >
-        {toCurrency(BigNumber.from(order?.price ?? '0')) > 0.000001 ? 'Send payment' : 'Finalize the deal'}
+        {toCurrency(BigInt(order?.price ?? '0')) > 0.000001 ? 'Send payment' : 'Finalize the deal'}
       </Button>
     </>
   )

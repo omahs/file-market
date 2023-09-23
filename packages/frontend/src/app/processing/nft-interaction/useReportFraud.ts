@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -6,7 +6,8 @@ import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseReportFraud {
   collectionAddress?: string
@@ -17,16 +18,17 @@ interface IReportFraud {
 }
 
 export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IReportFraud>()
   const config = useConfig()
+
+  const { callContract } = useCallContract()
 
   const factory = useHiddenFileProcessorFactory()
 
   const reportFraud = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -36,11 +38,11 @@ export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
     console.log('report fraud', { tokenId, privateKey })
 
     return callContract({ contract, method: 'reportFraud' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       bufferToEtherHex(privateKey),
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, address, wrapPromise])
+  }), [contract, address, wrapPromise])
 
   return {
     ...statuses,

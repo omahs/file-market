@@ -1,12 +1,13 @@
 import assert from 'assert'
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
-import { callContract, nullAddress } from '../utils'
+import { nullAddress } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseInitTransfer {
   collectionAddress?: string
@@ -18,9 +19,10 @@ interface IInitTransfer {
 }
 
 export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IInitTransfer>()
   const config = useConfig()
+  const { callContract } = useCallContract()
 
   const initTransfer = useCallback(wrapPromise(async ({ tokenId, to }: IInitTransfer) => {
     assertContract(contract, config?.collectionToken.name ?? '')
@@ -29,13 +31,13 @@ export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
     console.log('init transfer', { tokenId, to, callbackReceiver: nullAddress })
 
     return callContract({ contract, method: 'initTransfer' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId ?? 0),
       to,
       '0x00',
       nullAddress,
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }), [contract, wrapPromise])
 
   return {
     ...statuses,

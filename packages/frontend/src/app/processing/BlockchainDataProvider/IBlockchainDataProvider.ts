@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers'
-
 export interface IBlockchainDataProvider {
 
   /**
@@ -27,7 +25,7 @@ export interface IBlockchainDataProvider {
   /**
    * @returns The platform fee
    */
-  getFee: () => Promise<BigNumber>
+  getFee: () => Promise<bigint>
 
   /**
    * @param collectionAddress
@@ -42,5 +40,5 @@ export interface IBlockchainDataProvider {
    * @param price Current token price
    * @returns Calculated royalty amount
    */
-  getRoyaltyAmount: (collectionAddress: ArrayBuffer, tokenId: number, price: BigNumber) => Promise<BigNumber>
+  getRoyaltyAmount: (collectionAddress: ArrayBuffer, tokenId: number, price: bigint) => Promise<bigint>
 }

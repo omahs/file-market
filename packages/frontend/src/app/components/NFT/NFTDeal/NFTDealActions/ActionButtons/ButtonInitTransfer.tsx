@@ -1,7 +1,5 @@
 import { Modal } from '@nextui-org/react'
-import { BigNumber } from 'ethers'
 import { FC } from 'react'
-
 import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -49,7 +47,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
                 to: form.address,
               })
               if (receipt?.blockNumber) {
-                transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
+                transferStore.onTransferDraft(BigInt(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
               }
             })}
           />

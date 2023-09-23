@@ -1,5 +1,4 @@
 import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
 import { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -51,7 +50,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
     const receipt = await setPublicKey(tokenFullId)
     const publicKeyHexRes = await publicKeyHex
     if (receipt?.blockNumber && publicKeyHexRes) {
-      transferStore.onTransferPublicKeySet(BigNumber.from(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
+      transferStore.onTransferPublicKeySet(BigInt(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
     }
   })
 

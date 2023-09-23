@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
@@ -35,7 +35,7 @@ export function useApproveExchange({ collectionAddress }: IUseApproveExchange = 
 
     return callContract({ contract, method: 'approve' },
       config?.exchangeToken.address,
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       { gasPrice: config?.gasPrice },
     )
   }), [wrapPromise, contract])

@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
@@ -10,8 +10,9 @@ import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
-import { assertAccount, assertContract, assertSigner, callContract, callContractGetter } from '../utils'
+import { assertAccount, assertContract, assertSigner, callContractGetter } from '../utils'
 import { useUploadErc721Meta } from './useUploadErc721Meta'
+import { useCallContract } from '../../hooks/useCallContract'
 
 export interface MintNFTForm {
   name?: string // required, hook will return error if omitted
@@ -41,7 +42,7 @@ interface MintNFTResult {
 }
 
 export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
@@ -49,9 +50,10 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const api = useApi()
   const config = useConfig()
 
+  const { callContract } = useCallContract()
+
   const mintNFT = useCallback(wrapPromise(async (form) => {
     assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
     assertAccount(address)
 
     const { name, description = '', image, hiddenFile, collectionAddress, license, tags, subcategories, categories, royalty, isPublicCollection } = form
@@ -59,12 +61,12 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       throw Error('CreateCollection form is not filled')
     }
 
-    let tokenIdBN: BigNumber
+    let tokenIdBN: bigint
     if (isPublicCollection) {
       const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
-      tokenIdBN = BigNumber.from(data.tokenId)
+      tokenIdBN = BigInt(data.tokenId ?? 0)
     } else {
-      tokenIdBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })
+      tokenIdBN = await callContractGetter<bigint>({ contract, method: 'tokensCount' })
     }
     const owner = await factory.getOwner(address, collectionAddress, tokenIdBN.toNumber())
 
@@ -88,7 +90,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
     })
     console.log('mint metadata', metadata)
 
-    const receipt = await callContract({ contract, signer, method: 'mint' },
+    const receipt = await callContract({ contract, method: 'mint' },
       address,
       tokenIdBN,
       metadata.url,
@@ -102,7 +104,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       tokenId: tokenIdBN.toString(),
       receipt,
     }
-  }), [contract, signer, address, factory, wrapPromise])
+  }), [contract, address, factory, wrapPromise])
 
   return { ...statuses, mintNFT }
 }

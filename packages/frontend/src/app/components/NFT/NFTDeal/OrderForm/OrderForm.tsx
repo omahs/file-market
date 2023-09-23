@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,7 +15,7 @@ import { formatNumber } from '../../../../utils/number'
 import { StyledFlex, StyledPriceDescription } from './OrderForm.styles'
 
 export interface OrderFormValue {
-  price: BigNumber
+  price: bigint
 }
 
 interface OrderFormRawValue {

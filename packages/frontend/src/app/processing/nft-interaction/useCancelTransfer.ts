@@ -1,10 +1,11 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
+import { assertCollection, assertContract, assertTokenId } from '../utils'
+import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseCancelTransfer {
   collectionAddress?: string
@@ -15,22 +16,22 @@ interface ICancelTransfer {
 }
 
 export function useCancelTransfer({ collectionAddress }: IUseCancelTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress)
   const config = useConfig()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, ICancelTransfer>()
+  const { callContract } = useCallContract()
 
   const cancelTransfer = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     console.log('cancel transfer', { tokenId })
 
     return callContract({ contract, method: 'cancelTransfer' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       { gasPrice: config?.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }), [contract, wrapPromise])
 
   return {
     ...statuses,

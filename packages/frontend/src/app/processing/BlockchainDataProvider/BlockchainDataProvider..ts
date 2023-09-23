@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
 import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
@@ -65,26 +64,26 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await callContractGetter<BigNumber>(
+    const transferCountBN = await callContractGetter<bigint>(
       { contract, method: 'transferCounts' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
     )
 
-    return transferCountBN.toNumber()
+    return transferCountBN
   }
 
   async getFee() {
     const contract = this.contractProvider.getExchangeContract()
 
-    return callContractGetter<BigNumber>({ contract, method: 'fee' })
+    return callContractGetter<bigint>({ contract, method: 'fee' })
   }
 
-  async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: BigNumber) {
+  async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: bigint) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const { royaltyAmount } = await callContractGetter<{ royaltyAmount: BigNumber }>(
+    const { royaltyAmount } = await callContractGetter<{ royaltyAmount: bigint }>(
       { contract, method: 'royaltyInfo' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       price,
     )
 

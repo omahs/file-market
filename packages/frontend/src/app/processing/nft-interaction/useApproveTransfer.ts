@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -8,7 +8,6 @@ import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
-import { callContract } from '../utils/error'
 import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseApproveTransfer {
@@ -43,7 +42,7 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     console.log('approve transfer', { tokenId, encryptedFilePassword })
 
     return callContract({ contract, method: 'approveTransfer' },
-      BigNumber.from(tokenId),
+      BigInt(tokenId),
       bufferToEtherHex(encryptedFilePassword),
       { gasPrice: config?.gasPrice },
     )
