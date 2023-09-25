@@ -1,15 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, Transfer, TransferStatus } from '../../../swagger/Api'
-import { IHiddenFilesTokenEventsListener } from '../../processing'
-import { TokenFullId } from '../../processing/types'
+import { type Api, type Transfer, TransferStatus } from '../../../swagger/Api'
+import { type IHiddenFilesTokenEventsListener } from '../../processing'
+import { type TokenFullId } from '../../processing/types'
 import { normalizeCounterId } from '../../processing/utils/id'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { BlockStore } from '../BlockStore/BlockStore'
-import { ErrorStore } from '../Error/ErrorStore'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
-import { OrderStore } from '../Order/OrderStore'
-import { TokenStore } from '../Token/TokenStore'
+import { type IActivateDeactivate, type IStoreRequester, type RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { type BlockStore } from '../BlockStore/BlockStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type OrderStore } from '../Order/OrderStore'
+import { type TokenStore } from '../Token/TokenStore'
 
 /**
  * Stores only ACTIVE (i.e. created and not finished/cancelled) transfer state

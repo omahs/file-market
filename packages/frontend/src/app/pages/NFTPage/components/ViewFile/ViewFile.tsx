@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 
 import { styled } from '../../../../../styles'
-import { typeFiles } from '../../../../components/MarketCard/helper/data'
+import { type typeFiles } from '../../../../components/MarketCard/helper/data'
 import { Txt } from '../../../../UIkit'
 import { ViewFilesImage, ViewFilesText } from '../../helper/ViewFilesData/ViewFilesData'
 import PreviewImg from '../../img/Preview.svg'

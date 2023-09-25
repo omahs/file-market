@@ -1,5 +1,5 @@
 import { Tooltip } from '@nextui-org/react'
-import React, { FC, PropsWithChildren } from 'react'
+import React, { type FC, type PropsWithChildren } from 'react'
 
 import Protected from '../../../../assets/img/Protected.svg'
 import QuestionMark from '../../../../assets/img/QuestionMark.svg'

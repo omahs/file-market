@@ -1,4 +1,4 @@
-import { TokenFullId } from '../types'
+import { type TokenFullId } from '../types'
 
 /**
  * Receives hex string or any kind of numberish value and returns it in as a decimal, with no leading zeros integer

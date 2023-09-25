@@ -1,6 +1,5 @@
-
-import { CSS } from '@stitches/react'
-import React, { ReactNode, useCallback, useMemo, useRef } from 'react'
+import { type CSS } from '@stitches/react'
+import React, { type ReactNode, useCallback, useMemo, useRef } from 'react'
 import useVirtual, { type Item } from 'react-cool-virtual'
 
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
@@ -42,7 +41,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
 
     observer.observe(loadingTriggerRef.current)
 
-    return () => observer.disconnect()
+    return () => { observer.disconnect() }
   }, [loadingTriggerRef.current, observer])
 
   return (

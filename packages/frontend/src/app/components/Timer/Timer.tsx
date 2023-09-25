@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { styled } from '../../../styles'
 import { Txt } from '../../UIkit'
@@ -25,7 +25,8 @@ export const Timer: FC<TimerProps> = ({ time }) => {
   return (
     <TimerStyle>
       <Txt className={'content'} primary1>
-        {`${timeGenerate(Math.trunc(timeConvertToMinuteFromMillSec(time)))}:${timeGenerate(Math.trunc(timeConvertToSecondsFromMillSec(time) % 60))}`}
+        {`${timeGenerate(Math.trunc(timeConvertToMinuteFromMillSec(time)))}
+        :${timeGenerate(Math.trunc(timeConvertToSecondsFromMillSec(time) % 60))}`}
       </Txt>
     </TimerStyle>
   )

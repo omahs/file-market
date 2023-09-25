@@ -1,22 +1,22 @@
 import { makeAutoObservable } from 'mobx'
-import { Chain } from 'wagmi'
+import { type Chain } from 'wagmi'
 
-import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
-import { TransferCardProps } from '../../components/MarketCard/TransferCard'
+import { type TransfersResponseV2, type TransferWithData } from '../../../swagger/Api'
+import { type TransferCardProps } from '../../components/MarketCard/TransferCard'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequest,
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -67,7 +67,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     storeRequest<TransfersResponseV2>(
       this,
       this.currentBlockChainStore.api.v2.transfersDetail(this.address, { outgoingLimit: 10, incomingLimit: 10 }),
-      (data) => this.setData(data),
+      (data) => { this.setData(data) },
     )
   }
 
@@ -83,7 +83,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
         outgoingLimit: 10,
         incomingLimit: 10,
       }),
-      (data) => this.addData(data),
+      (data) => { this.addData(data) },
     )
   }
 

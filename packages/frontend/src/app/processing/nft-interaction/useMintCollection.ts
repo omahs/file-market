@@ -1,18 +1,17 @@
 import assert from 'assert'
-import { ContractReceipt } from 'ethers'
 import { randomBytes } from 'ethers/lib/utils'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
+import { wagmiConfig } from '../../config/web3Modal'
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
-import { assertAccount, assertContract, assertSigner } from '../utils/assert'
+import { assertAccount, assertContract } from '../utils/assert'
 import { useUploadErc721Meta } from './useUploadErc721Meta'
-import { useCallContract } from '../../hooks/useCallContract'
-import { wagmiConfig } from '../../config/web3Modal'
 
 export interface CreateCollectionForm {
   name?: string // required, hook will return error if omitted
@@ -61,10 +60,10 @@ export function useMintCollection() {
 
     const createCollectionEvent = await wagmiConfig.getPublicClient().getContractEvents({
       ...contract,
-      eventName: 'CollectionCreation'
+      eventName: 'CollectionCreation',
     })
 
-    console.log(`event`)
+    console.log('event')
     console.log(createCollectionEvent)
 
     console.log(receipt.logs)

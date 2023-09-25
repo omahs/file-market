@@ -1,17 +1,17 @@
 import assert from 'assert'
-import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
-import { useCallContract } from '../../hooks/useCallContract'
+import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 interface IUseApproveTransfer {
-  collectionAddress?: string
+  collectionAddress?: `0x${string}`
 }
 
 interface IApproveTransfer {
@@ -22,7 +22,7 @@ interface IApproveTransfer {
 export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = {}) {
   const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveTransfer>()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
   const { callContract } = useCallContract()
   const config = useConfig()
@@ -41,10 +41,9 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
     console.log('approve transfer', { tokenId, encryptedFilePassword })
 
-    return callContract({ contract, method: 'approveTransfer' },
+    return callContract({ contract, method: 'approveTransfer', params: { gasPrice: config?.gasPrice } },
       BigInt(tokenId),
       bufferToEtherHex(encryptedFilePassword),
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, address, wrapPromise])
 

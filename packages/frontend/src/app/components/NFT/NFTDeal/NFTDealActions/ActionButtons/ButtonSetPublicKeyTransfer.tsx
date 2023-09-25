@@ -1,5 +1,5 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { FC, useMemo } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useStores } from '../../../../../hooks'
@@ -10,11 +10,11 @@ import {
   useSeedProvider,
   useSetPublicKey,
 } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonSetPublicKeyTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId

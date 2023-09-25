@@ -32,7 +32,7 @@ export interface IBlockchainDataProvider {
    * @param tokenId
    * @returns Transfer count of token with provided tokenId
    */
-  getTransferCount: (collectionAddress: ArrayBuffer, tokenId: number) => Promise<number>
+  getTransferCount: (collectionAddress: ArrayBuffer, tokenId: number) => Promise<bigint>
 
   /**
    * @param collectionAddress

@@ -1,17 +1,17 @@
 import { makeAutoObservable } from 'mobx'
-import { Chain } from 'wagmi'
+import { type Chain } from 'wagmi'
 
 import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import { Api } from '../../../swagger/Api'
-import { IMultiChainConfig } from '../../config/multiChainConfigType'
+import { type IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeReset,
 } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
 
 /**
  * Stores only ACTIVE order state.

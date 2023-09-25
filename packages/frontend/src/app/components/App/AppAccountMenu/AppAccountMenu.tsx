@@ -1,5 +1,5 @@
 import { Warning } from '@mui/icons-material'
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { styled } from '../../../../styles'
@@ -23,10 +23,10 @@ const IconWrapper = styled('div', {
   dflex: 'center',
 })
 
-export const AppAccountMenu: FC<{}> = () => {
+export const AppAccountMenu: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { address } = useAccount()
-  const close = useCallback(() => setIsOpen(false), [setIsOpen])
+  const close = useCallback(() => { setIsOpen(false) }, [setIsOpen])
   const { chain } = useNetwork()
   const needToSwitchNetwork = chain && !(chains.find(item => item.id === chain.id))
   const { userStore } = useStores()

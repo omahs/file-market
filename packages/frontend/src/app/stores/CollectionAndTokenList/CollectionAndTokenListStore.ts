@@ -1,17 +1,17 @@
 import { utils } from 'ethers/lib.esm'
 import { makeAutoObservable } from 'mobx'
 
-import { TokensResponse } from '../../../swagger/Api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
+import { type TokensResponse } from '../../../swagger/Api'
+import { type NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
 import { gradientPlaceholderImg } from '../../UIkit'
-import { ComboBoxOption } from '../../UIkit/Form/Combobox'
+import { type ComboBoxOption } from '../../UIkit/Form/Combobox'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { type IActivateDeactivate, type IStoreRequester, type RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -63,7 +63,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       this.currentBlockChainStore.api.tokens.tokensDetail(this.address, {
         tokenLimit: 10,
       }),
-      data => this.setData(data),
+      data => { this.setData(data) },
     )
   }
 
@@ -76,7 +76,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
         lastTokenCollectionAddress: token?.collectionAddress,
         tokenLimit: 10,
       }),
-      (data) => this.addData(data),
+      (data) => { this.addData(data) },
     )
   }
 

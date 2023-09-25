@@ -140,11 +140,11 @@ export const ExplorerSlider = ({ slides }: ExplorerSliderProps) => {
       <ExplorerInfo>
         <ExplorerTitle>{slides[slideIndex].title}</ExplorerTitle>
         <ExploreControls>
-          <ArrowButton onClick={() => changeSlide('left')} />
+          <ArrowButton onClick={() => { changeSlide('left') }} />
           <ExplorerDescription>
             {slides[slideIndex].description}
           </ExplorerDescription>
-          <ArrowButton rightArrow onClick={() => changeSlide('right')} />
+          <ArrowButton rightArrow onClick={() => { changeSlide('right') }} />
         </ExploreControls>
         <ButtonContainer>
           <Button primary css={{ marginLeft: 'auto', marginRight: 'auto' }}>

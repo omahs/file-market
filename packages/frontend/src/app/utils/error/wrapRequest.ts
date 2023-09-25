@@ -1,5 +1,4 @@
-
-import { ErrorResponse, HttpResponse } from '../../../swagger/Api'
+import { type ErrorResponse, type HttpResponse } from '../../../swagger/Api'
 import { errorResponseToMessage, stringifyError } from './stringifyError'
 
 export const wrapRequest = <T>(func: () => Promise<HttpResponse<T, ErrorResponse>>): Promise<T> => {

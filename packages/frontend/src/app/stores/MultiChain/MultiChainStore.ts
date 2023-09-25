@@ -1,5 +1,5 @@
-import { utils } from 'ethers'
 import { makeAutoObservable } from 'mobx'
+import { parseUnits } from 'viem'
 
 import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import fileBunniesCollection from '../../../abi/FileBunniesCollection'
@@ -7,14 +7,14 @@ import collectionToken from '../../../abi/FilemarketCollectionV2'
 import exchangeToken from '../../../abi/FilemarketExchangeV2'
 import accessToken from '../../../abi/Mark3dAccessTokenV2'
 import { Api } from '../../../swagger/Api'
-import { IMultiChainConfig } from '../../config/multiChainConfigType'
+import { type IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeReset,
 } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 /**
  * Stores only ACTIVE order state.
@@ -97,7 +97,7 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
     return {
       chain: chain.chain,
       // Hardcode high gas price in testnet to prevent "transaction underpriced" error
-      gasPrice: !import.meta.env.VITE_IS_MAINNET ? utils.parseUnits('30', 'gwei') : undefined,
+      gasPrice: !import.meta.env.VITE_IS_MAINNET ? parseUnits('30', 9) : undefined,
       accessToken: {
         address: chain.accessTokenAddress,
         abi: accessToken.abi,

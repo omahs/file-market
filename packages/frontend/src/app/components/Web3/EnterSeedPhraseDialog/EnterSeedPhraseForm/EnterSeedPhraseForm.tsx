@@ -1,6 +1,6 @@
 import { mnemonicToEntropy } from 'bip39'
 import { sha256 } from 'ethers/lib/utils'
-import React, { FC, useState } from 'react'
+import React, { type FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 

@@ -1,10 +1,10 @@
 import { Checkbox as CheckBoxDefault } from '@mui/material'
-import React, { ComponentProps, ReactNode } from 'react'
+import React, { type ComponentProps, type ReactNode } from 'react'
 import {
-  Control,
-  Controller, FieldValues, Path,
+  type Control,
+  Controller, type FieldValues, type Path,
 } from 'react-hook-form'
-import { RegisterOptions } from 'react-hook-form/dist/types/validator'
+import { type RegisterOptions } from 'react-hook-form/dist/types/validator'
 
 export interface ControlledCheckBoxProps<T extends FieldValues> {
   control: Control<T, any>

@@ -1,15 +1,15 @@
 /* eslint-disable multiline-ternary */
 import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
-import { AutocompleteChangeReason } from '@mui/material'
+import { type AutocompleteChangeReason } from '@mui/material'
 import { Loading } from '@nextui-org/react'
 import * as React from 'react'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import {
-  Control,
+  type Control,
   Controller,
-  ControllerRenderProps,
-  FieldValues,
-  Path,
+  type ControllerRenderProps,
+  type FieldValues,
+  type Path,
 } from 'react-hook-form'
 
 import { styled } from '../../../styles'
@@ -170,6 +170,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
       event.preventDefault()
       if (inputValue && inputValue.length <= 35) {
         props.onEnter?.(inputValue as string)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         event.target.blur()
 
@@ -188,6 +189,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
 
   const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
     props.onClickRightContent?.(inputValue as string)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     event.target.focus()
 
@@ -255,7 +257,7 @@ export const ControlledComboBox = <T extends FieldValues>(
         isDisabled={props.isDisabled}
         rightContent={props.rightContent}
         size={props.size}
-        onChange={(_, data) => p.field.onChange(data)}
+        onChange={(_, data) => { p.field.onChange(data) }}
         onEnter={props.onEnter}
         onClickRightContent={props.onClickRightContent}
         onFocus={props.onFocus}

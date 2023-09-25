@@ -9,14 +9,14 @@ import {
   ModalButtonContainer,
   ModalTitle,
 } from '../../../../UIkit/Modal/Modal'
-import { AppDialogProps } from '../../../../utils/dialog'
+import { type AppDialogProps } from '../../../../utils/dialog'
 import ImageLoader from '../../../Uploaders/ImageLoader/ImageLoader'
 
 export interface IEditProfileImageDialogForm {
   image: File[]
 }
 
-type IEditProfileImageDialog = AppDialogProps<{}> & {
+type IEditProfileImageDialog = AppDialogProps<unknown> & {
   onSubmit: (item: IEditProfileImageDialogForm) => Promise<string>
 }
 

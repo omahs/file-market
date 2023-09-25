@@ -1,5 +1,5 @@
 import { Skeleton } from '@mui/material'
-import React, { PropsWithChildren } from 'react'
+import React, { type PropsWithChildren } from 'react'
 
 interface CardsSkeletonLoadingProps extends PropsWithChildren {
   count: number

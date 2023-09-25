@@ -1,13 +1,12 @@
 import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
-import { Contract, ContractTransaction } from 'ethers'
-import { PublicClient, http, createPublicClient, createWalletClient } from 'viem'
-import { mainnet } from 'wagmi'
-import { GetContractResult } from 'wagmi/dist/actions'
+import { getWalletClient } from '@wagmi/core'
+import { type AbiFunction } from 'abitype/src/abi'
+import assert from 'assert'
+import { type Abi } from 'viem'
+import { type GetContractResult } from 'wagmi/dist/actions'
 
 import { wagmiConfig } from '../../config/web3Modal'
-import { WriteContractParameters } from 'viem/actions/wallet/writeContract'
-import { getWalletClient } from '@wagmi/core'
-import assert from 'assert'
+import { rootStore } from '../../stores/RootStore'
 
 const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
@@ -53,84 +52,59 @@ export const stringifyContractError = (error: any) => {
   return `${message} Please try again.`
 }
 
-export const callContractGetter = async <R = any>({
-                                                    contract,
-                                                    method
-                                                  }: {
-                                                    contract: Contract
-                                                    method: keyof Contract
-                                                  },
-                                                  ...args: any[]
+export const callContractGetter = async <T extends Abi, R = any>({
+  contract,
+  method,
+}: {
+  contract: GetContractResult<T>
+  method: Extract<GetContractResult<T>['abi'][number], AbiFunction>['name']
+},
+  ...args: any[]
 ): Promise<R> => {
-  try {
-    await contract.callStatic[method](...args)
-
-    return contract[method](...args)
-  } catch (error: any) {
-    console.error(error)
-
-    throw new Error(stringifyContractError(error))
-  }
-}
-
-export const callContract = async ({
-                                     contract,
-                                     method,
-                                     ignoreTxFailture,
-                                     minBalance
-                                   }: {
-                                     contract: GetContractResult
-                                     method: keyof GetContractResult
-                                     publicClient?: PublicClient
-                                     ignoreTxFailture?: boolean
-                                     minBalance?: bigint
-                                   }, ...args: any[]
-) => {
   try {
     const client = wagmiConfig.getPublicClient()
 
     const walletClient = await getWalletClient()
 
+    const address = walletClient?.account
+    const chainId = await client?.getChainId()
+
+    const chain = rootStore.multiChainStore.getChainById(chainId)?.chain
+
+    console.log(chain)
+
     assert(walletClient)
 
-    const address = await walletClient.getAddresses()
-
-    const value = await client.getBalance({
-      address: address[0]
-    })
-
-    if (minBalance) {
-      // equality anyway throws an error because of gas
-      if (value == 0n || minBalance >= value) {
-        throw new JsonRpcError(402, ErrorMessages.InsufficientBalance)
-      }
-    }
-
-    const { request } = await client?.simulateContract({
-      account: address[0],
+    // @ts-expect-error
+    await client?.simulateContract({
+      account: address,
       functionName: method,
       abi: contract.abi,
-      address: contract.address
+      address: contract.address,
+      chain,
+      args,
     })
 
-    const hash = await walletClient.writeContract(request)
+    // @ts-expect-error
+    const data = (await client?.readContract({
+      address: contract.address,
+      functionName: method,
+      abi: contract.abi,
+      args,
+    })) as R
 
-    if (ignoreTxFailture) {
-      return await client?.waitForTransactionReceipt({
-        hash: hash
-      })
-    }
+    console.log('CONTRACT GETTER')
+    console.log(data)
 
-    return await getTxReceipt(hash)
+    return data
   } catch (error: any) {
     console.error(error)
 
     throw new Error(stringifyContractError(error))
   }
 }
-
 export const wait = (miliseconds: number) => new Promise<void>((resolve) => {
-  setTimeout(() => resolve(), miliseconds)
+  setTimeout(() => { resolve() }, miliseconds)
 })
 
 const pingTx = async (txHash: `0x${string}`) => {
@@ -150,17 +124,18 @@ const pingTx = async (txHash: `0x${string}`) => {
 }
 
 export const getTxReceipt = async (hash: `0x${string}`) => {
-
   const client = wagmiConfig.getPublicClient()
+
+  console.log(hash)
 
   const receipt = await Promise.race([
     await client?.waitForTransactionReceipt({
-      hash
+      hash,
     }),
-    pingTx(hash)
+    pingTx(hash),
   ])
 
-  if (!receipt || !receipt.status) {
+  if (!receipt?.status) {
     throw new JsonRpcError(503, `The transaction ${hash} is failed`)
   }
 

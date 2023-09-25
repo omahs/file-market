@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx'
 
-import { WhitelistResponse } from '../../../swagger/Api'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type WhitelistResponse } from '../../../swagger/Api'
+import { type IActivateDeactivate, type IStoreRequester, type RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 /**
  * Stores whitelist state

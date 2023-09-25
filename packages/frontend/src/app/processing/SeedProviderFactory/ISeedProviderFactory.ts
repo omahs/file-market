@@ -1,4 +1,4 @@
-import { ISeedProvider } from '../SeedProvider'
+import { type ISeedProvider } from '../SeedProvider'
 
 /**
  * Is responsible for creation of SeedProvider for every account

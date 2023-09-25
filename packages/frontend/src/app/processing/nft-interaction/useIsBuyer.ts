@@ -1,7 +1,7 @@
 import { utils } from 'ethers'
 import { useAccount } from 'wagmi'
 
-import { Transfer } from '../../../swagger/Api'
+import { type Transfer } from '../../../swagger/Api'
 
 export function useIsBuyer(transfer: Transfer | undefined): boolean {
   const { address } = useAccount()

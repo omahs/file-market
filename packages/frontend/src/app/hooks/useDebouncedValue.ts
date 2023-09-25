@@ -4,9 +4,9 @@ export const useDebouncedValue = <T = any>(value: T, delay: number, initialValue
   const [state, setState] = useState<T | undefined>(initialValue)
 
   useEffect(() => {
-    const timeout = setTimeout(() => setState(value), delay)
+    const timeout = setTimeout(() => { setState(value) }, delay)
 
-    return () => clearTimeout(timeout)
+    return () => { clearTimeout(timeout) }
   }, [value, delay])
 
   return state

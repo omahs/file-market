@@ -3,8 +3,8 @@ import { entropyToMnemonic } from 'bip39'
 import { utils } from 'ethers'
 
 import { fileMarketCrypto } from '../FileMarketCrypto'
-import { IStorageProvider } from '../StorageProvider'
-import { ISeedProvider } from './ISeedProvider'
+import { type IStorageProvider } from '../StorageProvider'
+import { type ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
 const hashSeedStorageKey = 'hashSeed'
@@ -34,7 +34,7 @@ export class SeedProvider implements ISeedProvider {
 
   private setSeed(seed: ArrayBuffer | undefined) {
     this.seed = seed
-    this.onChangeListeners.forEach(fn => fn(seed))
+    this.onChangeListeners.forEach(fn => { fn(seed) })
   }
 
   async unlock(password: string): Promise<void> {

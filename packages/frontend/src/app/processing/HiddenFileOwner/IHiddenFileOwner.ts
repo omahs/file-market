@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
-import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
-import { IHiddenFileBase } from '../HiddenFileBase'
-import { DecryptResult, FileMeta } from '../types'
+import { type RsaPublicKey } from '../../../../../crypto/src/lib/types'
+import { type IHiddenFileBase } from '../HiddenFileBase'
+import { type DecryptResult, type FileMeta } from '../types'
 
 /**
  * Used to mint and sell NFT

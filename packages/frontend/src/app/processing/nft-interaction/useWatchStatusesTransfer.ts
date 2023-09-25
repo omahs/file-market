@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react'
 
-import { Transfer } from '../../../swagger/Api'
+import { type Transfer } from '../../../swagger/Api'
 import { useStores } from '../../hooks'
 import useIntervalAsync from '../../hooks/useIntervalAsync'
-import { TokenFullId } from '../types'
+import { type TokenFullId } from '../types'
 import { useIsApprovedExchange } from './useIsApprovedExchange'
 import { useIsBuyer } from './useIsBuyer'
 import { useIsOwner } from './useIsOwner'

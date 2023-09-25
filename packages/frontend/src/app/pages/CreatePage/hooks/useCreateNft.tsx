@@ -2,10 +2,10 @@ import { useState } from 'react'
 
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
-  MintNFTForm as FormToTransfer,
+  type MintNFTForm as FormToTransfer,
   useMintNFT,
 } from '../../../processing/nft-interaction'
-import { CreateNFTForm } from '../EFT/sections/CreateEFT/CreateEFTSection'
+import { type CreateNFTForm } from '../EFT/sections/CreateEFT/CreateEFTSection'
 
 const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {
   return {

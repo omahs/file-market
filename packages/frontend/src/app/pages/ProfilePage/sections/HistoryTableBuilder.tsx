@@ -1,12 +1,12 @@
-import { ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 
 import { styled } from '../../../../styles'
 import { RowBody, RowWrapper } from '../../../components/Table'
 import {
-  ITableBuilder,
-  ITableColumn,
-  ITableRowCell,
-  ITransformedRow,
+  type ITableBuilder,
+  type ITableColumn,
+  type ITableRowCell,
+  type ITransformedRow,
   TableBuilder,
 } from '../../../components/Table/TableBuilder'
 import { NavButton } from '../../../UIkit'
@@ -25,7 +25,7 @@ export const ItemShareButton = styled(NavButton, {
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   borderRadius: 0,
-  margin: '$3'
+  margin: '$3',
 })
 
 export const RowCellStyled = styled(RowCell, {
@@ -35,10 +35,10 @@ export const RowCellStyled = styled(RowCell, {
   variants: {
     title: {
       true: {
-        fontSize: '$primary3'
-      }
-    }
-  }
+        fontSize: '$primary3',
+      },
+    },
+  },
 })
 export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
   renderRows() {

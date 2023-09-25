@@ -2,7 +2,7 @@ import { utils } from 'ethers'
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Token } from '../../../swagger/Api'
+import { type Token } from '../../../swagger/Api'
 
 export function useIsOwner(tokenData: Token | undefined) {
   const { address } = useAccount()

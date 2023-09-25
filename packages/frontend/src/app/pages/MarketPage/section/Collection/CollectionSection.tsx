@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Collection } from '../../../../../swagger/Api'
+import { type Collection } from '../../../../../swagger/Api'
 import CollectionCard from '../../../../components/MarketCard/CollectionCard/CollectionCard'
 import Plug from '../../../../components/Plug/Plug'
 import { useCollectionsListStore } from '../../../../hooks/useCollectionsListStore'
@@ -27,8 +27,13 @@ const CollectionSection = observer(() => {
           hasMore={collectionListStore.hasMoreData}
           isLoading={collectionListStore.isLoading}
           currentItemCount={collectionListStore.data.collections?.length ?? 0}
-          fetchMore={() => collectionListStore.requestMore()}
-          render={({ index }) => <CollectionCard {...collectionListStore.data.collections?.[index] as Collection} key={index} />}
+          fetchMore={() => { collectionListStore.requestMore() }}
+          render={({ index }) => (
+            <CollectionCard
+              {...collectionListStore.data.collections?.[index] as Collection}
+              key={index}
+            />
+          )}
           listCss={collectionListCss}
         />
         {!collectionListStore.data.collections?.length && !collectionListStore.isLoading && (

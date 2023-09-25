@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 import {
-  ITableBuilder,
-  ITableRowCell,
-  ITransformedRow,
+  type ITableBuilder,
+  type ITableRowCell,
+  type ITransformedRow,
   TableBuilder,
 } from '../../../../components/Table/TableBuilder'
 import { CheckIcon, CrossIcon, RowCell, TableRow } from '../TableRow/TableRow'

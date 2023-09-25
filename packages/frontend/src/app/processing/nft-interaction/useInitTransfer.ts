@@ -1,16 +1,16 @@
 import assert from 'assert'
-import { ContractReceipt } from 'ethers'
+import { type ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { nullAddress } from '../utils'
-import { assertContract, assertSigner } from '../utils/assert'
-import { useCallContract } from '../../hooks/useCallContract'
+import { assertContract } from '../utils/assert'
 
 interface IUseInitTransfer {
-  collectionAddress?: string
+  collectionAddress?: `0x${string}`
 }
 
 interface IInitTransfer {
@@ -26,16 +26,14 @@ export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
 
   const initTransfer = useCallback(wrapPromise(async ({ tokenId, to }: IInitTransfer) => {
     assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
     assert(to, 'receiver address ("to") is undefined')
     console.log('init transfer', { tokenId, to, callbackReceiver: nullAddress })
 
-    return callContract({ contract, method: 'initTransfer' },
+    return callContract({ contract, method: 'initTransfer', params: { gasPrice: config?.gasPrice } },
       BigInt(tokenId ?? 0),
       to,
       '0x00',
       nullAddress,
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, wrapPromise])
 

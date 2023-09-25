@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useAccount, useWalletClient } from 'wagmi'
 
-import { ERC721TokenMetaInput } from '../types'
+import { type ERC721TokenMetaInput } from '../types'
 import { assertAccount, assertSigner } from '../utils'
 import { useUploadLighthouse } from './useUploadLighthouse'
 

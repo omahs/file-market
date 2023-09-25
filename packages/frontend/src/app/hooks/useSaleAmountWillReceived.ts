@@ -1,11 +1,10 @@
-
-import { formatEther, parseEther } from 'ethers/lib.esm/utils'
+import { formatEther } from 'ethers/lib.esm/utils'
 import { useEffect, useMemo, useState } from 'react'
 
 import { fee } from '../config/mark3d'
 import { hexToBuffer } from '../processing'
 import { useBlockchainDataProvider } from '../processing/BlockchainDataProvider'
-import { TokenFullId } from '../processing/types'
+import { type TokenFullId } from '../processing/types'
 import { useConversionRateStore } from './useConversionRateStore'
 import { useDebouncedValue } from './useDebouncedValue'
 
@@ -33,7 +32,7 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
     const royaltyAmountBN = await blockchainDataProvider.getRoyaltyAmount(
       hexToBuffer(collectionAddress),
       +tokenId,
-      parseEther(salePriceWithFee.toString()),
+      BigInt(salePriceWithFee),
     )
 
     return +formatEther(royaltyAmountBN)

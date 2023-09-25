@@ -1,6 +1,6 @@
 import { NextUIProvider } from '@nextui-org/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { FC, PropsWithChildren } from 'react'
+import { type FC, type PropsWithChildren } from 'react'
 import { WagmiConfig } from 'wagmi'
 
 import { DialogManager } from './app/components/DialogManager/DialogManager'

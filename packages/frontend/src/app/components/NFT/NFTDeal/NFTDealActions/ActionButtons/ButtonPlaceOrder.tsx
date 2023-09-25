@@ -4,13 +4,13 @@ import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import { BaseModal } from '../../../../Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { OrderForm, OrderFormValue } from '../../OrderForm'
-import { ActionButtonProps } from './types/types'
+import { OrderForm, type OrderFormValue } from '../../OrderForm'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonPlaceOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId

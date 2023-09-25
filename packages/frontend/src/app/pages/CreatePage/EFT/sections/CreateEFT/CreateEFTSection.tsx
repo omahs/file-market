@@ -1,7 +1,7 @@
 import { Tooltip } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useMemo, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
@@ -21,7 +21,7 @@ import { usePublicCollectionStore } from '../../../../../hooks/usePublicCollecti
 import { useSubscribeToEft } from '../../../../../hooks/useSubscribeToEft'
 import {
   Button,
-  ComboBoxOption,
+  type ComboBoxOption,
   ControlledComboBox,
   FormControl,
   Input,
@@ -31,7 +31,7 @@ import {
 } from '../../../../../UIkit'
 import { TextArea } from '../../../../../UIkit/Form/TextArea/TextArea'
 import TagsSection from '../../../../NFTPage/section/Tags/TagsSection'
-import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
+import { type category, categoryOptions, type license, licenseInfo, licenseOptions, subcategory, tags } from '../../../helper/data/data'
 import {
   ButtonContainer,
   Description,
@@ -148,12 +148,15 @@ export const CreateEFTSection: React.FC = observer(() => {
         <ErrorBody
           message={extractMessageFromError(nftError)}
           onClose={() => {
-            void setModalOpen(false)
+            setModalOpen(false)
           }}
         />,
       )
     } else if (nftResult) {
-      subscribe({ collectionAddress: nftResult?.receipt.to, tokenId: nftResult?.tokenId }, currentBlockChainStore.chain?.name)
+      subscribe({
+        collectionAddress: nftResult?.receipt.to,
+        tokenId: nftResult?.tokenId,
+      }, currentBlockChainStore.chain?.name)
     }
   }, [nftError, isNftLoading])
 

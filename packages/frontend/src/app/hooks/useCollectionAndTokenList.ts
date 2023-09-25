@@ -1,4 +1,4 @@
-import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
+import { type CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
 import { useActivateDeactivateRequireParams } from './useActivateDeactivateStore'
 import { useStores } from './useStores'
 

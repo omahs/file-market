@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { Button, LinkButton, Txt } from '../../../../UIkit'
 import { copyToClipboard } from '../../../../utils/clipboard/clipboard'
 import { baseUrls, imgs } from '../../helper/linkCard/data'
-import { typesCard } from '../../helper/linkCard/types'
+import { type typesCard } from '../../helper/linkCard/types'
 
 interface ILinkCardProps {
   text: string

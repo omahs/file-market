@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect } from 'react'
+import { type ReactNode, useCallback, useEffect } from 'react'
 
 import {
   ErrorBody,
@@ -8,7 +8,7 @@ import {
   SuccessOkBody,
 } from '../components/Modal/Modal'
 import { useModalProperties } from './useModalProperties'
-import { useStatusState } from './useStatusState'
+import { type useStatusState } from './useStatusState'
 
 type StatusStateType = ReturnType<typeof useStatusState>
 

@@ -1,4 +1,4 @@
-import { CSS } from '@stitches/react'
+import { type CSS } from '@stitches/react'
 
 import { styled } from '../../../../../styles'
 import { StyledCollectionGrid } from '../../../../components/MarketCard/CollectionCard/CollectionCard.styles'

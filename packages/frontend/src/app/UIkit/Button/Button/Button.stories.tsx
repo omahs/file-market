@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 
 import Plus from '../../../../assets/icons/Plus.svg'
 import BearJedi from '../../../../assets/img/BearJedi.jpg'

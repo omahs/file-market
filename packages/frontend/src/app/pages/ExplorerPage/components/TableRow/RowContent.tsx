@@ -1,10 +1,10 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 import { styled } from '../../../../../styles'
 import Carousel from '../../../../components/Swiper/Swiper'
 import { Button, textVariant, Txt } from '../../../../UIkit'
 import { Hr } from '../../../../UIkit/Hr/Hr'
-import { IRowContent } from './TableRow'
+import { type IRowContent } from './TableRow'
 
 const ContentWrapper = styled('div', {
   backgroundColor: '$white',

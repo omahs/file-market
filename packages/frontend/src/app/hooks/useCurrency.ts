@@ -2,10 +2,10 @@ import { utils } from 'ethers'
 import { formatUnits } from 'ethers/lib.esm/utils'
 import { useCallback, useMemo } from 'react'
 import { useParams } from 'react-router'
-import { Chain } from 'wagmi'
+import { type Chain } from 'wagmi'
 
 import { formatNumber } from '../utils/number'
-import { Params } from '../utils/router'
+import { type Params } from '../utils/router'
 import { formatCurrency as formatCurrencyProps } from '../utils/web3'
 import { useConfig } from './useConfig'
 import { useMultiChainStore } from './useMultiChainStore'
@@ -33,8 +33,8 @@ export const useCurrency = () => {
     const decimals = chain.nativeCurrency?.decimals ?? 18
     const meaningfulDecimals = 9
 
-    return (BigInt(Math.round(value * Math.pow(10, meaningfulDecimals))))
-      * (BigInt(Math.pow(10, decimals - meaningfulDecimals)))
+    return (BigInt(Math.round(value * Math.pow(10, meaningfulDecimals)))) *
+      (BigInt(Math.pow(10, decimals - meaningfulDecimals)))
   }, [chain])
 
   const formatUsd = useCallback((value: string | number) => {

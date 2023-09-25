@@ -1,10 +1,9 @@
-
-import { FileMarketCrypto } from '../../../../../crypto/src'
-import { IBlockchainDataProvider } from '../BlockchainDataProvider'
-import { ISeedProvider } from '../SeedProvider'
-import { PersistentDerivationArgs } from '../types'
+import { type FileMarketCrypto } from '../../../../../crypto/src'
+import { type IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { type ISeedProvider } from '../SeedProvider'
+import { type PersistentDerivationArgs } from '../types'
 import { assertSeed } from '../utils'
-import { IHiddenFileBuyer } from './IHiddenFileBuyer'
+import { type IHiddenFileBuyer } from './IHiddenFileBuyer'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
   #tokenFullIdArgs: [ArrayBuffer, number]

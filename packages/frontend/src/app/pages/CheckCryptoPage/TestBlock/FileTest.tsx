@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { assertCollection, assertSeed } from '../../../processing'
 import { data, globalSalt } from '../helper/data/data'
-import { ICheckCrypto, ICheckCryptoFile, ITestProps } from '../helper/types/types'
+import { type ICheckCrypto, type ICheckCryptoFile, type ITestProps } from '../helper/types/types'
 import { setNextFieldToFalseAfterTrue } from '../helper/utils/checkSuccessFunc'
 import StateDisplay from '../StateDisplay/StateDisplay'
 
@@ -23,7 +23,10 @@ const FileTest = (props: ITestProps) => {
       console.log('Start file')
       assertSeed(seed)
       assertCollection(collectionAddress)
-      const keyAndIv = await eftAesDerivationNative(window.crypto)(seed, globalSalt, Buffer.from(collectionAddress), iter)
+      const keyAndIv = await eftAesDerivationNative(window.crypto)(seed,
+        globalSalt,
+        Buffer.from(collectionAddress),
+        iter)
       setCheckCryptoFileState((prevState) => (
         {
           ...prevState,

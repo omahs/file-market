@@ -1,5 +1,5 @@
 import { Modal as ModalBase } from '@nextui-org/react'
-import React, { ComponentProps } from 'react'
+import React, { type ComponentProps } from 'react'
 
 import CloseButtonImg from '../../../assets/img/CloseButton.svg'
 import FWIconImg from '../../../assets/img/FWicon.svg'

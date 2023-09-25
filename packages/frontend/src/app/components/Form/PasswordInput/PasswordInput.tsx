@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import * as React from 'react'
-import { FieldValues } from 'react-hook-form'
+import { type FieldValues } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
 import { useStores } from '../../../hooks'
-import { ControlledInputProps, Input, InputProps, textVariant, Txt } from '../../../UIkit'
+import { type ControlledInputProps, Input, type InputProps, textVariant, Txt } from '../../../UIkit'
 import { EnterSeedPhraseDialog } from '../../Web3/EnterSeedPhraseDialog'
 import EyeImg from '../img/Eye.svg'
 import EyeCloseImg from '../img/EyeClose.svg'
@@ -68,7 +68,7 @@ export const PasswordInput = <T extends FieldValues>(props: PasswordInputProps<T
           <Txt primary1 style={{ color: '#0090FF' }} onClick={() => { openDialog() }}>Reset password</Txt>
         </div>
       )}
-      <img src={isPasswordVisible ? EyeCloseImg : EyeImg} onClick={() => setIsPasswordVisible((value) => !value)} />
+      <img src={isPasswordVisible ? EyeCloseImg : EyeImg} onClick={() => { setIsPasswordVisible((value) => !value) }} />
     </PasswordInputStyle>
   )
 }

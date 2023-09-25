@@ -26,6 +26,7 @@ module.exports = {
     'unused-imports/no-unused-imports': 'error',
 
     // typescript
+    "@typescript-eslint/no-parameter-properties": "off",
     '@typescript-eslint/no-use-before-define': ['error'],
     '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',

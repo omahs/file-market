@@ -1,12 +1,12 @@
 import { utils } from 'ethers'
 
-import { FileMarketCrypto } from '../../../../../crypto/src'
-import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
-import { IBlockchainDataProvider } from '../BlockchainDataProvider'
-import { ISeedProvider } from '../SeedProvider'
-import { DecryptResult, FileMeta, PersistentDerivationArgs } from '../types'
+import { type FileMarketCrypto } from '../../../../../crypto/src'
+import { type RsaPublicKey } from '../../../../../crypto/src/lib/types'
+import { type IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { type ISeedProvider } from '../SeedProvider'
+import { type DecryptResult, type FileMeta, type PersistentDerivationArgs } from '../types'
 import { assertSeed, hexToBuffer } from '../utils'
-import { IHiddenFileOwner } from './IHiddenFileOwner'
+import { type IHiddenFileOwner } from './IHiddenFileOwner'
 
 export class HiddenFileOwner implements IHiddenFileOwner {
   #persistentArgs: PersistentDerivationArgs

@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react'
-import { FieldValues } from 'react-hook-form'
+import { type FieldValues } from 'react-hook-form'
 
 import { BaseModal } from '../../../../components'
 import { Timer } from '../../../../components/Timer'
 import { useStores } from '../../../../hooks'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
-import { ControlledInputProps, Input, Txt } from '../../../../UIkit'
+import { type ControlledInputProps, Input, Txt } from '../../../../UIkit'
 import {
   CheckBox,
-  ControlledCheckBoxProps,
+  type ControlledCheckBoxProps,
 } from '../../../../UIkit/Form/CheckBox/CheckBox'
 import {
   SettingCheckBoxActiveIcon,

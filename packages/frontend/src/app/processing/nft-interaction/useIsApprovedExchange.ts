@@ -1,7 +1,7 @@
 import { utils } from 'ethers'
 
 import { useConfig } from '../../hooks/useConfig'
-import { TokenFullId } from '../types'
+import { type TokenFullId } from '../types'
 import { useGetApproved } from './useGetApproved'
 
 export function useIsApprovedExchange(tokenFullId: Partial<TokenFullId> & { isDisable?: boolean }) {

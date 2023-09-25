@@ -1,20 +1,20 @@
 import assert from 'assert'
-import { ContractReceipt, utils } from 'ethers'
+import { utils } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import {
   assertAccount, assertCollection,
   assertContract,
-  assertSigner,
   assertTokenId,
   bufferToEtherHex,
 } from '../utils'
-import { useCallContract } from '../../hooks/useCallContract'
 
 /**
  * Fulfills an existing order.
@@ -33,7 +33,7 @@ interface IFulFillOrder {
 export function useFulfillOrder() {
   const { contract } = useExchangeContract()
   const { address } = useAccount()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IFulFillOrder>()
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt, IFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
   const config = useConfig()
 
@@ -51,15 +51,19 @@ export function useFulfillOrder() {
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
     return callContract(
-      { contract, method: 'fulfillOrder', minBalance: BigInt(price) },
+      {
+        contract,
+        method: 'fulfillOrder',
+        minBalance: BigInt(price),
+        params: {
+          value: BigInt(price),
+          gasPrice: config?.gasPrice,
+        },
+      },
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigInt(tokenId),
       signature ? `0x${signature}` : '0x00',
-      {
-        value: BigInt(price),
-        gasPrice: config?.gasPrice,
-      },
     )
   }), [contract, address, wrapPromise])
 

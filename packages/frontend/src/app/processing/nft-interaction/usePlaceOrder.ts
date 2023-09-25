@@ -1,18 +1,18 @@
 import assert from 'assert'
-import { constants, ContractReceipt } from 'ethers'
+import { constants } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
-
-import { useCallContract } from '../../hooks/useCallContract'
+import { assertCollection, assertContract, assertTokenId } from '../utils'
 
 interface IPlaceOrder {
   collectionAddress?: string
   tokenId?: string
-  price?: BigInt
+  price?: string
   callBack?: () => void
 }
 
@@ -25,7 +25,7 @@ interface IPlaceOrder {
 
 export function usePlaceOrder() {
   const { contract } = useExchangeContract()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt | undefined, IPlaceOrder>()
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt | undefined, IPlaceOrder>()
   const config = useConfig()
   const { callContract } = useCallContract()
 
@@ -36,12 +36,11 @@ export function usePlaceOrder() {
     assert(price, 'price is not provided')
     console.log('place order', { collectionAddress, tokenId, price })
 
-    return callContract({ contract, method: 'placeOrder' },
+    return callContract({ contract, method: 'placeOrder', params: { gasPrice: config?.gasPrice } },
       collectionAddress,
       BigInt(tokenId),
       BigInt(price),
       constants.AddressZero,
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, wrapPromise])
 

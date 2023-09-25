@@ -7,6 +7,5 @@ export function useAccessTokenContract() {
 
   const contract = useContract({ address: config?.accessToken.address, abi: config?.accessToken.abi })
 
-
   return { contract }
 }

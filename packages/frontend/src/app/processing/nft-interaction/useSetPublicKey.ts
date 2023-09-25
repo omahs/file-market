@@ -1,17 +1,17 @@
-import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useBlockchainDataProvider } from '../BlockchainDataProvider'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
-import { useCallContract } from '../../hooks/useCallContract'
+import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 interface IUseSetPublicKey {
-  collectionAddress?: string
+  collectionAddress?: `0x${string}`
 }
 
 interface ISetPublicKey {
@@ -22,7 +22,7 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
   const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const config = useConfig()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, ISetPublicKey>()
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt, ISetPublicKey>()
   const factory = useHiddenFileProcessorFactory()
   const blockchainDataProvider = useBlockchainDataProvider()
 
@@ -39,11 +39,10 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
     const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
-    return callContract({ contract, method: 'setTransferPublicKey' },
+    return callContract({ contract, method: 'setTransferPublicKey', params: { gasPrice: config?.gasPrice } },
       BigInt(tokenId),
       bufferToEtherHex(publicKey),
       BigInt(dealNumber),
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, address, wrapPromise])
 

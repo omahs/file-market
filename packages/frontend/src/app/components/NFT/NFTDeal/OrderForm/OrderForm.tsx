@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { observer } from 'mobx-react-lite'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { fee } from '../../../../config/mark3d'
@@ -9,7 +9,7 @@ import { useCurrency } from '../../../../hooks/useCurrency'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
-import { TokenFullId } from '../../../../processing/types'
+import { type TokenFullId } from '../../../../processing/types'
 import { ButtonGlowing, Flex, FormControl, Input, PriceBadge } from '../../../../UIkit'
 import { formatNumber } from '../../../../utils/number'
 import { StyledFlex, StyledPriceDescription } from './OrderForm.styles'

@@ -88,23 +88,6 @@ const Description = styled('p', {
   },
 })
 
-const EFTLinkWrapper = styled('span', {
-  '& > a': {
-    ...textVariant('body1').true,
-    borderBottom: '1px solid #028FFF',
-    fontWeight: '400',
-    '@md': {
-      fontSize: '18px',
-    },
-    '@sm': {
-      fontSize: '16px',
-    },
-    '@xs': {
-      fontSize: '14px',
-    },
-  },
-})
-
 export const ToolCardContent = styled('div', {
   gap: '$2',
   padding: '$4',
@@ -257,11 +240,13 @@ export default function WelcomeBlock() {
             Tokenized File Sharing platform with programmable access & incentives
           </Title>
           <Description>
-            Your access point to decentralized storage for impactful content, where data hunters, keepers, and providers connect.
+            Your access point to decentralized storage for impactful
+            content, where data hunters, keepers, and providers connect.
           </Description>
           <NavigateBlock>
             <NavigateTitle>
-              Upload and protect your data in a perpetual decentralized storage and start earning by selling access to it!
+              Upload and protect your data in a perpetual decentralized
+              storage and start earning by selling access to it!
             </NavigateTitle>
             <div className='buttonContainer'>
               <Button

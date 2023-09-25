@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useSignMessage } from 'wagmi'
 
 import { LoadingModal } from '../components/Modal/LoadingModal'
-import { InProcessBodyProps } from '../components/Modal/Modal'
-import { DialogProps } from '../utils/dialog'
+import { type InProcessBodyProps } from '../components/Modal/Modal'
+import { type DialogProps } from '../utils/dialog'
 import { useStores } from './useStores'
 
 export interface IUseAppAuthAndConnect {

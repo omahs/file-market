@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 
 import { assertAccount, assertCollection, assertSeed } from '../../../processing'
 import { globalSalt } from '../helper/data/data'
-import { ICheckCrypto, ICheckCryptoCycle, ITestProps } from '../helper/types/types'
+import { type ICheckCrypto, type ICheckCryptoCycle, type ITestProps } from '../helper/types/types'
 import { setNextFieldToFalseAfterTrue } from '../helper/utils/checkSuccessFunc'
 import StateDisplay from '../StateDisplay/StateDisplay'
 
@@ -27,7 +27,10 @@ const CycleTest = (props: ITestProps) => {
       assertCollection(collectionAddress)
       console.log('Start cycle')
       const fc = new FileMarketCrypto(window.crypto)
-      const { key: generatedPassword } = await fc.eftAesDerivation(seed, globalSalt, Buffer.from(collectionAddress), iter)
+      const { key: generatedPassword } = await fc.eftAesDerivation(seed,
+        globalSalt,
+        Buffer.from(collectionAddress),
+        iter)
       setCheckCryptoCycleState((prevState) => ({
         ...prevState,
         aesDerivation: 'success',

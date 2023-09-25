@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, Token } from '../../../swagger/Api'
-import { TokenFullId } from '../../processing/types'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type Api, type Token } from '../../../swagger/Api'
+import { type TokenFullId } from '../../processing/types'
+import { type IActivateDeactivate, type IStoreRequester, type RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
 
 /**
  * Stores token state, referenced by the TokenFullId

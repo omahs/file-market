@@ -1,5 +1,5 @@
-import { HiddenFileMetaData } from '../../../../swagger/Api'
-import { typeFiles, typeOptions } from './data'
+import { type HiddenFileMetaData } from '../../../../swagger/Api'
+import { type typeFiles, typeOptions } from './data'
 
 export const fileToExtension = (file: HiddenFileMetaData): string | undefined => {
   return file.name?.split('.')[file.name?.split('.').length - 1]

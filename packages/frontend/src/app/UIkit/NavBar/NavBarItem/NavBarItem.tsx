@@ -1,8 +1,8 @@
-import { ComponentProps, forwardRef, PropsWithChildren } from 'react'
+import { type ComponentProps, forwardRef, type PropsWithChildren } from 'react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 
 import { cssShowHideIn, styled } from '../../../../styles'
-import { LinkProps, NavLinkProps, useLink } from '../../Link'
+import { type LinkProps, type NavLinkProps, useLink } from '../../Link'
 import { Txt } from '../../Txt'
 
 const itemHeight = 30

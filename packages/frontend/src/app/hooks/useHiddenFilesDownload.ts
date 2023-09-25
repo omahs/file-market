@@ -4,11 +4,11 @@ import { saveAs } from 'file-saver'
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Token } from '../../swagger/Api'
+import { type Token } from '../../swagger/Api'
 import { useHiddenFileProcessorFactory } from '../processing'
-import { DecryptResult } from '../processing/types'
+import { type DecryptResult } from '../processing/types'
 import { ipfsService } from '../services/IPFSService'
-import { TokenMetaStore } from '../stores/Token/TokenMetaStore'
+import { type TokenMetaStore } from '../stores/Token/TokenMetaStore'
 import { getIpfsCidWithFilePath } from '../utils/nfts/getHttpLinkFromIpfsString'
 
 export interface HiddenFileDownload {
@@ -28,7 +28,7 @@ export function useHiddenFileDownload(
   const { meta } = tokenMetaStore
 
   return useMemo(() => {
-    if (!factory || !token || !token.collectionAddress || !token.tokenId || !address || !meta?.hidden_file) {
+    if (!factory || !token?.collectionAddress || !token.tokenId || !address || !meta?.hidden_file) {
       return []
     }
 

@@ -56,7 +56,9 @@ export const useFileBunniesMint = () => {
   }
   const sequencerReq = async ({ suffix, collectionAddress }: ISequencerReq) => {
     if (!(collectionAddress && suffix && address)) return
-    const tokenResp = await wrapRequest(async () => api.sequencer.acquireDetail(collectionAddress, { wallet: address, suffix }))
+    const tokenResp = await wrapRequest(
+      async () => api.sequencer.acquireDetail(collectionAddress,
+        { wallet: address, suffix }))
 
     if (tokenResp.isSetEmpty) return
 

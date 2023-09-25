@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { OptionSwitch, SwitchButton } from '../../components/Switch/Switch'
+import { type OptionSwitch, SwitchButton } from '../../components/Switch/Switch'
 import { cutNumber } from '../../utils/number'
 import { StyledAmount, SwitchWrapperTabs } from './Tabs.styles'
 

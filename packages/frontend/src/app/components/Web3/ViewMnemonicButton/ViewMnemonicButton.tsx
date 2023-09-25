@@ -1,6 +1,6 @@
-import { PressEvent } from '@react-types/shared/src/events'
+import { type PressEvent } from '@react-types/shared/src/events'
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { type FC } from 'react'
 
 import { useStores } from '../../../hooks'
 import { Link } from '../../../UIkit'

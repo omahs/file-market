@@ -295,7 +295,15 @@ const TopSection = () => {
         <SecondContent>
           {MarketPlaceItems.map((item, index) => {
             return (
-              item.isMock ? <TextLinkMock key={index} to={item.url} onClick={() => { item.onClick?.() }}>{item.text}</TextLinkMock>
+              item.isMock ? (
+                <TextLinkMock
+                  key={index}
+                  to={item.url}
+                  onClick={() => { item.onClick?.() }}
+                >
+                  {item.text}
+                </TextLinkMock>
+              )
                 : (
                   <TextLink
                     key={index}
@@ -316,7 +324,15 @@ const TopSection = () => {
         <SecondContent>
           {Links.map((item, index) => {
             return (
-              item.isMock ? <TextLinkMock key={index} to={item.url} onClick={() => { item.onClick?.() }}>{item.text}</TextLinkMock>
+              item.isMock ? (
+                <TextLinkMock
+                  key={index}
+                  to={item.url}
+                  onClick={() => { item.onClick?.() }}
+                >
+                  {item.text}
+                </TextLinkMock>
+              )
                 : (
                   <TextLink
                     key={index}
@@ -336,7 +352,15 @@ const TopSection = () => {
         <SecondContent>
           {Company.map((item, index) => {
             return (
-              item.isMock ? <TextLinkMock key={index} to={item.url} onClick={() => { item.onClick?.() }}>{item.text}</TextLinkMock>
+              item.isMock ? (
+                <TextLinkMock
+                  key={index}
+                  to={item.url}
+                  onClick={() => { item.onClick?.() }}
+                >
+                  {item.text}
+                </TextLinkMock>
+              )
                 : (
                   <TextLink
                     key={index}

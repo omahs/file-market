@@ -1,11 +1,11 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, UserProfile } from '../../../swagger/Api'
+import { Api, type UserProfile } from '../../../swagger/Api'
 import { requestJwtAccess } from '../../utils/jwt/function'
-import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store'
-import { DateStore } from '../Date/DateStore'
-import { ErrorStore } from '../Error/ErrorStore'
-import { RootStore } from '../RootStore'
+import { type IStoreRequester, type RequestContext, storeRequest } from '../../utils/store'
+import { type DateStore } from '../Date/DateStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type RootStore } from '../RootStore'
 
 const TIMER_EMAIL_KEY = 'TimerEmail'
 const TIME_DISABLE_RESEND = 60000

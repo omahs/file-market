@@ -1,15 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, Collection, CollectionResponse } from '../../../swagger/Api'
+import { type Api, type Collection, type CollectionResponse } from '../../../swagger/Api'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequest,
   storeReset,
 } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
 
 export class CollectionStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore

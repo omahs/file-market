@@ -1,6 +1,6 @@
 import React from 'react'
 
-import CreatorCard, { CreatorCardProps } from '../../../../components/MarketCard/CreatorCard'
+import CreatorCard, { type CreatorCardProps } from '../../../../components/MarketCard/CreatorCard'
 import bg from '../../img/bg.jpg'
 import userImg from '../../img/largerUserImg.jpg'
 import { CardsContainer } from '../Nft'

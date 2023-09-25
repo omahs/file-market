@@ -1,4 +1,4 @@
-import { ErrorResponse } from '../../../swagger/Api'
+import { type ErrorResponse } from '../../../swagger/Api'
 
 export function stringifyError(error: any): string {
   console.log(error)

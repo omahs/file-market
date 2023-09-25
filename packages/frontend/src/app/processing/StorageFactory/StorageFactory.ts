@@ -1,9 +1,9 @@
 import { utils } from 'ethers/lib.esm'
 
-import { ISecureStorage, SecureStorage } from '../SecureStorage'
-import { IStorageProvider, LocalStorageProvider } from '../StorageProvider'
+import { type ISecureStorage, SecureStorage } from '../SecureStorage'
+import { type IStorageProvider, LocalStorageProvider } from '../StorageProvider'
 import { NoopStorageSecurityProvider } from '../StorageSecurityProvider'
-import { AllStorages, IStorageFactory } from './IStorageFactory'
+import { type AllStorages, type IStorageFactory } from './IStorageFactory'
 
 export class StorageFactory implements IStorageFactory {
   readonly storageProviders: Record<string, IStorageProvider> = Object.create(null)

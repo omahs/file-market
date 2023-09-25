@@ -6,7 +6,7 @@ import { useCurrency } from '../../../../hooks/useCurrency'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Flex, Link, textVariant } from '../../../../UIkit'
-import { Params } from '../../../../utils/router'
+import { type Params } from '../../../../utils/router'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const NftName = styled('h1', {

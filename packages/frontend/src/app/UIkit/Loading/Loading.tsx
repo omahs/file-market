@@ -1,5 +1,5 @@
 import { Loading as LoadingNextUI } from '@nextui-org/react'
-import React, { PropsWithChildren } from 'react'
+import React, { type PropsWithChildren } from 'react'
 
 import { Flex } from '../Flex'
 

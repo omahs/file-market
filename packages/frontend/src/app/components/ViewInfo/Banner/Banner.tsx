@@ -8,7 +8,7 @@ import { useUploadLighthouse } from '../../../processing'
 import { Txt } from '../../../UIkit'
 import { BaseModal } from '../../Modal'
 import {
-  IEditProfileImageDialogForm,
+  type IEditProfileImageDialogForm,
 } from '../ProfileImage/EditProfileImageDialog/EditProfileImageDialog'
 import { StyledBanner, StyledBannerContent, StyledBannerEditCard } from './Banner.styles'
 import { EditProfileBannerDialog } from './EditProfileBannerDialog/EditProfileBannerDialog'
@@ -67,8 +67,8 @@ const Banner = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         {...modalProps}
       />
       <StyledBanner
-        onMouseEnter={() => setIsShowEdit(true)}
-        onMouseLeave={() => setIsShowEdit(false)}
+        onMouseEnter={() => { setIsShowEdit(true) }}
+        onMouseLeave={() => { setIsShowEdit(false) }}
       >
         <StyledBannerContent
           style={{

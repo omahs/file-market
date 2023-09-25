@@ -8,7 +8,7 @@ import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
 import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router'
+import { type Params } from '../../../utils/router'
 
 const NoNftContainer = styled('div', {
   gridColumn: '1/-1',
@@ -30,7 +30,7 @@ export const OwnedSection: React.FC = observer(() => {
     <>
       <InfiniteScroll
         hasMore={collectionAndTokenListStore.hasMoreData}
-        fetchMore={() => collectionAndTokenListStore.requestMoreTokens()}
+        fetchMore={() => { collectionAndTokenListStore.requestMoreTokens() }}
         isLoading={collectionAndTokenListStore.isLoading}
         currentItemCount={collectionAndTokenListStore.nftCards.length}
         render={({ index }) => <NFTCard {...collectionAndTokenListStore.nftCards[index]} key={index} />}
@@ -46,10 +46,10 @@ export const OwnedSection: React.FC = observer(() => {
               mainText={'Create your own EFT or go to the market to find something amazing'}
               buttonsBlock={(
                 <>
-                  <Button primary onClick={() => navigate('/market')}>
+                  <Button primary onClick={() => { navigate('/market') }}>
                     <Txt primary1>Explore</Txt>
                   </Button>
-                  <Button primary onClick={() => navigate('/create')}>
+                  <Button primary onClick={() => { navigate('/create') }}>
                     <Txt primary1>Create</Txt>
                   </Button>
                 </>

@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { styled } from '../../../../../styles'
-import { MetadataProperty } from '../../../../../swagger/Api'
+import { type MetadataProperty } from '../../../../../swagger/Api'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 import PropertiesCard from './PropertiesCard/PropertiesCard'
 

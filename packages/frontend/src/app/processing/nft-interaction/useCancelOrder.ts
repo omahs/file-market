@@ -1,11 +1,11 @@
-import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
 import { assertCollection, assertContract, assertTokenId } from '../utils'
-import { useCallContract } from '../../hooks/useCallContract'
 
 /**
  * Calls Mark3dExchange contract to cancel an order
@@ -22,17 +22,16 @@ export function useCancelOrder() {
   const { contract } = useExchangeContract()
   const { callContract } = useCallContract()
   const config = useConfig()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, ICancelOrder>()
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt, ICancelOrder>()
   const cancelOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     assertContract(contract, config?.exchangeToken.name ?? '')
     console.log('cancel order', { collectionAddress, tokenId })
 
-    return callContract({ contract, method: 'cancelOrder' },
+    return callContract({ contract, method: 'cancelOrder', params: { gasPrice: config?.gasPrice } },
       collectionAddress,
       BigInt(tokenId),
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, wrapPromise])
 

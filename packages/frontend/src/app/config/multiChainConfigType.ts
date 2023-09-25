@@ -1,4 +1,4 @@
-import { Chain } from 'wagmi'
+import { type Chain } from 'wagmi'
 
 export interface IMultiChainConfig {
   chain: Chain

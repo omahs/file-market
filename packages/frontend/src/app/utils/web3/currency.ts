@@ -1,5 +1,5 @@
-import { Chain } from 'wagmi'
 import { formatUnits } from 'viem'
+import { type Chain } from 'wagmi'
 
 export const formatCurrency = (value: bigint, chain: Chain | undefined) => {
   const decimals = chain?.nativeCurrency?.decimals ?? 18

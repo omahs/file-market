@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Params } from '../utils/router'
+import { type Params } from '../utils/router'
 import { useProfileStore } from './useProfileStore'
 
 export const useAddress = () => {

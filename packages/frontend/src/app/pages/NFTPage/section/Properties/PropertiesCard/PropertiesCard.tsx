@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { styled } from '../../../../../../styles'
 import { textVariant } from '../../../../../UIkit'
@@ -46,7 +46,9 @@ const PropertiesCard: FC<PropertiesCardProps> = ({ type, rare, chance, maxValue,
       {type && <TopText>{type}</TopText>}
       <RareText>{rare}</RareText>
       <ChanceText>
-        {(minValue && maxValue) && `${parseFloat(((minValue / maxValue) * 100).toFixed(2)).toString()}% have this property`}
+        {(minValue && maxValue) &&
+          `${parseFloat(((minValue / maxValue) * 100).toFixed(2)).toString()}
+          % have this property`}
       </ChanceText>
     </PropertiesCardStyle>
   )

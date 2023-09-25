@@ -1,11 +1,10 @@
 import lighthouse from '@lighthouse-web3/sdk'
-import { Signer } from 'ethers'
 import { useCallback } from 'react'
+import { type WalletClient } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { lighthouseService } from '../../services/LighthouseService'
 import { assertAccount, assertSigner } from '../utils/assert'
-import { WalletClient } from 'viem'
 
 export function useUploadLighthouse() {
   const { address } = useAccount()
@@ -15,7 +14,7 @@ export function useUploadLighthouse() {
     const message = await lighthouseService.getMessage(address)
     const signedMessage = await walletClient.signMessage({
       account: address,
-      message: message
+      message,
     }) // Sign message
 
     return lighthouseService.getAccessToken(address, signedMessage)

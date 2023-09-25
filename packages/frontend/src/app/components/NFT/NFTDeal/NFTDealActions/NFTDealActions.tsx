@@ -1,14 +1,13 @@
 import { Tooltip } from '@nextui-org/react'
 import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { type FC, useEffect, useMemo, useState } from 'react'
 
 import { styled } from '../../../../../styles'
-import { Api, Order, Transfer } from '../../../../../swagger/Api'
+import { Api, type Order, type Transfer } from '../../../../../swagger/Api'
 import { useStores } from '../../../../hooks'
 import { useConfig } from '../../../../hooks/useConfig'
-import { TokenFullId } from '../../../../processing/types'
-import { transferPermissions } from '../../../../utils/transfer/status'
+import { type TokenFullId } from '../../../../processing/types'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -35,8 +34,6 @@ export interface NFTDealActionsProps {
   isApprovedExchange?: boolean
   runIsApprovedRefetch: () => void
 }
-
-const permissions = transferPermissions.buyer
 
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,

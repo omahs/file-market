@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { type SubmitHandler, useForm } from 'react-hook-form'
 
 import BaseModal, { ErrorBody, extractMessageFromError, InProgressBody, SuccessNavBody } from '../../../../../components/Modal/Modal'
 import ImageLoader from '../../../../../components/Uploaders/ImageLoader/ImageLoader'
@@ -57,21 +57,21 @@ export default function CreateCollectionSection() {
   useAfterDidMountEffect(() => {
     if (isLoading) {
       setModalOpen(true)
-      void setModalBody(<InProgressBody text='Collection is being minted' />)
+      setModalBody(<InProgressBody text='Collection is being minted' />)
     } else if (error) {
       setModalOpen(true)
-      void setModalBody(
+      setModalBody(
         <ErrorBody
           message={extractMessageFromError(error)}
           onClose={() => {
-            void setModalOpen(false)
+            setModalOpen(false)
           }
           }
         />,
       )
     } else if (result) {
-      void setModalOpen(true)
-      void setModalBody(
+      setModalOpen(true)
+      setModalBody(
         <SuccessNavBody
           buttonText='View collection'
           link={`/collection/${currentBlockChainStore.chain?.name}/${result.collectionAddress}`}

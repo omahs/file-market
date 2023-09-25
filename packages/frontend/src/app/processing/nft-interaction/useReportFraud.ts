@@ -1,16 +1,16 @@
-import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
-import { useCallContract } from '../../hooks/useCallContract'
+import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex } from '../utils'
 
 interface IUseReportFraud {
-  collectionAddress?: string
+  collectionAddress?: `0x${string}`
 }
 
 interface IReportFraud {
@@ -20,7 +20,7 @@ interface IReportFraud {
 export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
   const { contract } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IReportFraud>()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IReportFraud>()
   const config = useConfig()
 
   const { callContract } = useCallContract()
@@ -37,10 +37,9 @@ export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
     const privateKey = await buyer.revealRsaPrivateKey()
     console.log('report fraud', { tokenId, privateKey })
 
-    return callContract({ contract, method: 'reportFraud' },
+    return callContract({ contract, method: 'reportFraud', params: { gasPrice: config?.gasPrice } },
       BigInt(tokenId),
       bufferToEtherHex(privateKey),
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, address, wrapPromise])
 

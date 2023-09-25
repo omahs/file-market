@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
+import { createBrowserRouter, Navigate, type RouteObject } from 'react-router-dom'
 
 import { AppLayout } from '../components/App'
 import PrivateRouteJwt from '../HOC/PrivateRoute'

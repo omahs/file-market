@@ -6,6 +6,5 @@ export function useExchangeContract() {
 
   const contract = useContract({ address: config?.exchangeToken.address, abi: config?.exchangeToken.abi })
 
-
   return { contract }
 }

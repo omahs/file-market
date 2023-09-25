@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react'
+import { type FC, useCallback, useState } from 'react'
 import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -46,7 +46,7 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
         .then(() => {
           onSuccess?.()
         })
-        .catch((err) => {
+        .catch(() => {
           setError('Incorrect password')
         })
     }

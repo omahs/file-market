@@ -1,4 +1,4 @@
-import React, { memo, MouseEvent, useEffect, useRef } from 'react'
+import React, { memo, type MouseEvent, useEffect, useRef } from 'react'
 
 import { keyframes, styled } from '../../../styles'
 

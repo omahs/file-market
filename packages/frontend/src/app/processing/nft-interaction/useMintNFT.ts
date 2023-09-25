@@ -1,18 +1,18 @@
-import { ContractReceipt } from 'ethers'
 import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useApi } from '../../hooks/useApi'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { FileMeta } from '../types'
-import { assertAccount, assertContract, assertSigner, callContractGetter } from '../utils'
+import { type FileMeta } from '../types'
+import { assertAccount, assertContract, callContractGetter } from '../utils'
 import { useUploadErc721Meta } from './useUploadErc721Meta'
-import { useCallContract } from '../../hooks/useCallContract'
 
 export interface MintNFTForm {
   name?: string // required, hook will return error if omitted
@@ -33,12 +33,12 @@ type IMintNft = MintNFTForm & {
 }
 
 interface IUseMintNft {
-  collectionAddress?: string
+  collectionAddress?: `0x${string}`
 }
 
 interface MintNFTResult {
   tokenId: string
-  receipt: ContractReceipt // вся инфа о транзе
+  receipt: TransactionReceipt // вся инфа о транзе
 }
 
 export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
@@ -66,9 +66,9 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
       tokenIdBN = BigInt(data.tokenId ?? 0)
     } else {
-      tokenIdBN = await callContractGetter<bigint>({ contract, method: 'tokensCount' })
+      tokenIdBN = await callContractGetter<typeof contract.abi, bigint>({ contract, method: 'tokensCount' })
     }
-    const owner = await factory.getOwner(address, collectionAddress, tokenIdBN.toNumber())
+    const owner = await factory.getOwner(address, collectionAddress, Number(tokenIdBN))
 
     const hiddenFileEncrypted = await owner.encryptFile(hiddenFile)
     const hiddenFileMeta: FileMeta = {

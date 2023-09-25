@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export type selectBlockchainType = 'collection' | 'eft'
 
@@ -8,7 +8,7 @@ export const selectBlockchainTitle: Record<selectBlockchainType, ReactNode> = {
     <br />
     {' '}
     for your EFT Collection
-              </>,
+  </>,
   eft: 'Choose Blockchain for your EFT',
 }
 

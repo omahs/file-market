@@ -1,9 +1,7 @@
-import React from 'react'
+import type React from 'react'
 
 declare module '*.module.css' {
-  interface IClassNames {
-    [className: string]: string
-  }
+  type IClassNames = Record<string, string>
   const classNames: IClassNames
   export = classNames
 }

@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
 import { ConnectFileWalletDialog } from '../components/Web3/ConnectFileWalletDialog'
-import useAppAuthAndConnect, { IUseAppAuthAndConnect } from './useAppAuthAndConnect'
+import useAppAuthAndConnect, { type IUseAppAuthAndConnect } from './useAppAuthAndConnect'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
 import { useStores } from './useStores'
 

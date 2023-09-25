@@ -1,6 +1,6 @@
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { utils } from 'ethers'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { styled } from '../../../../../styles'
 import { useConfig } from '../../../../hooks/useConfig'

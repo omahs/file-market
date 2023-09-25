@@ -1,11 +1,11 @@
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
-import { FC } from 'react'
+import { type FC } from 'react'
 import { configureChains, createConfig } from 'wagmi'
 
 import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
-import { IMultiChainConfig } from './multiChainConfigType'
+import { type IMultiChainConfig } from './multiChainConfigType'
 
 export const chains = (JSON.parse(JSON.stringify(multichainConfig)) as IMultiChainConfig[])
   .map(item => item.chain)
@@ -24,7 +24,7 @@ const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ projectId, chains }),
-  publicClient
+  publicClient,
 })
 
 const ethereumClient = new EthereumClient(wagmiConfig, chains)

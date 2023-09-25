@@ -1,4 +1,4 @@
-import { TabsProps } from '@mui/material'
+import { type TabsProps } from '@mui/material'
 import React from 'react'
 
 import { StyledMuiTabs } from './MuiTabs.styles'

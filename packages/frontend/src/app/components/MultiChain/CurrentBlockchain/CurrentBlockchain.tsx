@@ -1,10 +1,9 @@
-
 import gsap from 'gsap'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef } from 'react'
 
 import { useMediaMui } from '../../../hooks/useMediaMui'
-import { ICurrentBlockchain } from '../helper/types/currentBlockChainTypes'
+import { type ICurrentBlockchain } from '../helper/types/currentBlockChainTypes'
 import CurrentBlockchainBigScreen from './BigScreen/CurrentBlockchainBigScreen'
 import { CurrentBlockchainContainer } from './CurrentBlockchain.styles'
 import CurrentBlockchainMobile from './Mobile/CurrentBlockChainModile'

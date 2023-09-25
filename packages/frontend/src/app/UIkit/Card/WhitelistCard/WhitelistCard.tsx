@@ -3,11 +3,11 @@ import React, { Fragment, useMemo } from 'react'
 
 import BunnyGreen from '../../../../assets/img/WhitelistCard/BunnyGreen.png'
 import BunnyPurple from '../../../../assets/img/WhitelistCard/BunnyPurple.png'
-import { ButtonProps } from '../../Button'
+import { type ButtonProps } from '../../Button'
 import { Flex } from '../../Flex'
 import { Txt } from '../../Txt'
 import { CardImg } from '../CardImg'
-import { WhitelistCardButton, WhitelistCardButtonProps } from './Button'
+import { WhitelistCardButton, type WhitelistCardButtonProps } from './Button'
 import { StyledCard, StyledCardBackground, StyledCardInfo, StyledCardInner, StyledDescription, StyledRarity, StyledRarityButton, StyledText, StyledValueList } from './WhitelistCard.styles'
 
 const rarityList = ['common', 'uncommon', 'rare', 'legendary', 'mythical'] as const

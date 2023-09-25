@@ -1,20 +1,20 @@
 import { makeAutoObservable } from 'mobx'
 
-import { OrdersAllActiveResponse, OrderStatus } from '../../../swagger/Api'
+import { type OrdersAllActiveResponse, OrderStatus } from '../../../swagger/Api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequest,
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 /**
  * Stores only ACTIVE order state.
@@ -60,7 +60,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     storeRequest(
       this,
       this.currentBlockChainStore.api.orders.allActiveList({ limit: 10 }),
-      (data) => this.setData(data),
+      (data) => { this.setData(data) },
     )
   }
 
@@ -69,7 +69,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     storeRequest(
       this,
       this.currentBlockChainStore.api.orders.allActiveList({ lastOrderId, limit: 10 }),
-      (data) => this.addData(data),
+      (data) => { this.addData(data) },
     )
   }
 

@@ -10,13 +10,13 @@ import { Swiper, SwiperSlide as SwiperSlideUnstyled } from 'swiper/react'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../styles'
-import { HiddenFileMetaData } from '../../../../swagger/Api'
-import { typeFiles } from '../../../components/MarketCard/helper/data'
+import { type HiddenFileMetaData } from '../../../../swagger/Api'
+import { type typeFiles } from '../../../components/MarketCard/helper/data'
 import { fileToExtension, fileToType } from '../../../components/MarketCard/helper/fileToType'
 import { useStores } from '../../../hooks'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeed } from '../../../processing/SeedProvider/useSeed'
-import { DecryptResult } from '../../../processing/types'
+import { type DecryptResult } from '../../../processing/types'
 import { gradientPlaceholderImg, textVariant } from '../../../UIkit'
 import css from './styles.module.css'
 import ViewFile from './ViewFile/ViewFile'
@@ -154,32 +154,38 @@ export const PreviewNFTFlow = ({
     try {
       model = await getFile()
     } catch (error) {
-      return setPreviewState({
+      setPreviewState({
         state: PreviewState.LOADING_ERROR,
         data: `${error}`,
       })
+
+      return
     }
 
     if (!model.ok) {
-      return setPreviewState({
+      setPreviewState({
         state: PreviewState.LOADING_ERROR,
         data: `Unable to decrypt. ${model.error}`,
       })
+
+      return
     }
 
     const fr = new FileReader()
 
-    fr.onload = (e) =>
+    fr.onload = (e) => {
       setPreviewState({
         state: PreviewState.LOADED,
         data: String(e.target?.result ?? ''),
       })
+    }
 
-    fr.onerror = () =>
+    fr.onerror = () => {
       setPreviewState({
         state: PreviewState.LOADING_ERROR,
         data: 'Unable to download, try again later',
       })
+    }
 
     if (isCanView) {
       fr.readAsDataURL(model.result)

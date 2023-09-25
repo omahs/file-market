@@ -1,7 +1,7 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { type ReactNode, useEffect, useState } from 'react'
 
 import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
-import { selectBlockchainType } from '../../helper/data/SelectBlockchainData'
+import { type selectBlockchainType } from '../../helper/data/SelectBlockchainData'
 import SelectBlockchain from '../../SelectBlockchain/SelectBlockchain'
 
 interface IMultiChainController {

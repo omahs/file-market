@@ -1,6 +1,6 @@
 import CoinTelegraphLogo from '../../../../../assets/img/MainPage/publications/cointelegraph-logo.svg'
 import FileCoinLogo from '../../../../../assets/img/MainPage/publications/filecoin-logo.svg'
-import { SlideProps } from '../../Blocks/Publications/Publications'
+import { type SlideProps } from '../../Blocks/Publications/Publications'
 
 export const PublicationsData: SlideProps[] = [
   {

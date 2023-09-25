@@ -1,7 +1,7 @@
 import { action } from 'mobx'
 
-import { ErrorResponse, HttpResponse } from '../../../swagger/Api'
-import { ErrorStore } from '../../stores/Error/ErrorStore'
+import { type ErrorResponse, type HttpResponse } from '../../../swagger/Api'
+import { type ErrorStore } from '../../stores/Error/ErrorStore'
 import { errorResponseToMessage, stringifyError } from '../error'
 import { tap } from '../structs'
 

@@ -1,9 +1,9 @@
-import { PressEvent } from '@react-types/shared/src/events'
+import { type PressEvent } from '@react-types/shared/src/events'
 import { observer } from 'mobx-react-lite'
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Order } from '../../../../../../swagger/Api'
+import { type Order } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import {
@@ -12,11 +12,11 @@ import {
   useHiddenFileProcessorFactory,
   useSeedProvider,
 } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonFulfillOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId

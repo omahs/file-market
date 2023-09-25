@@ -1,14 +1,14 @@
-import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useCollectionContract } from '../contracts'
 import { assertCollection, assertContract, assertTokenId } from '../utils'
-import { useCallContract } from '../../hooks/useCallContract'
 
 interface IUseFinalizeTransfer {
-  collectionAddress?: string
+  collectionAddress?: `0x${string}`
 }
 
 interface IFinalizeTransfer {
@@ -18,7 +18,7 @@ interface IFinalizeTransfer {
 export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer = {}) {
   const { contract } = useCollectionContract(collectionAddress)
   const { callContract } = useCallContract()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IFinalizeTransfer>()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IFinalizeTransfer>()
   const config = useConfig()
 
   const finalizeTransfer = useCallback(wrapPromise(async ({ tokenId }: IFinalizeTransfer) => {
@@ -27,9 +27,8 @@ export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer 
     assertTokenId(tokenId)
     console.log('finalize transfer', { tokenId })
 
-    return callContract({ contract, method: 'finalizeTransfer' },
+    return callContract({ contract, method: 'finalizeTransfer', params: { gasPrice: config?.gasPrice } },
       BigInt(tokenId),
-      { gasPrice: config?.gasPrice },
     )
   }), [contract, wrapPromise])
 

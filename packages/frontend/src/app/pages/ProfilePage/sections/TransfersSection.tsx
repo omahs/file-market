@@ -29,7 +29,7 @@ const TransfersSection: React.FC = observer(() => {
     <>
       <InfiniteScroll
         hasMore={userTransferStore.hasMoreData}
-        fetchMore={() => userTransferStore.requestMore()}
+        fetchMore={() => { userTransferStore.requestMore() }}
         isLoading={userTransferStore.isLoading}
         currentItemCount={userTransferStore.transferCards.length}
         render={({ index }) => <TransferCard {...userTransferStore.transferCards[index]} key={index} />}
@@ -41,10 +41,10 @@ const TransfersSection: React.FC = observer(() => {
           mainText={'Get started by creating your own EFT or go to the market to find something amazing'}
           buttonsBlock={(
             <>
-              <Button primary onClick={() => navigate('/market') }>
+              <Button primary onClick={() => { navigate('/market') } }>
                 <Txt primary1>3D Market</Txt>
               </Button>
-              <Button onClick={() => navigate('/create') }>
+              <Button onClick={() => { navigate('/create') } }>
                 <Txt primary1>Create</Txt>
               </Button>
             </>

@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 
-import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
+import { type CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
 import { rootStore } from '../../stores/RootStore'
-import { ContractProvider, contractProvider } from '../ContractProvider'
+import { type ContractProvider, contractProvider } from '../ContractProvider'
 import { bufferToEtherHex, callContractGetter, hexToBuffer } from '../utils'
-import { IBlockchainDataProvider } from './IBlockchainDataProvider'
+import { type IBlockchainDataProvider } from './IBlockchainDataProvider'
 
 export class BlockchainDataProvider implements IBlockchainDataProvider {
   currentBlockChainStore: CurrentBlockChainStore
@@ -45,7 +45,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
     console.log(contract)
     console.log()
 
-    const globalSalt = await callContractGetter<`0x${string}`>({ contract, method: 'globalSalt' })
+    const globalSalt = await callContractGetter<typeof contract.abi, `0x${string}`>({ contract, method: 'globalSalt' })
 
     return hexToBuffer(globalSalt)
   }
@@ -64,7 +64,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await callContractGetter<bigint>(
+    const transferCountBN = await callContractGetter<typeof contract.abi, bigint>(
       { contract, method: 'transferCounts' },
       BigInt(tokenId),
     )
@@ -75,13 +75,13 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getFee() {
     const contract = this.contractProvider.getExchangeContract()
 
-    return callContractGetter<bigint>({ contract, method: 'fee' })
+    return callContractGetter<typeof contract.abi, bigint>({ contract, method: 'fee' })
   }
 
   async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: bigint) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const { royaltyAmount } = await callContractGetter<{ royaltyAmount: bigint }>(
+    const { royaltyAmount } = await callContractGetter<typeof contract.abi, { royaltyAmount: bigint }>(
       { contract, method: 'royaltyInfo' },
       BigInt(tokenId),
       price,

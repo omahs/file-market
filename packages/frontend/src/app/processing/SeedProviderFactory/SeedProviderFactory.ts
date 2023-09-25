@@ -1,8 +1,8 @@
 import { utils } from 'ethers/lib.esm'
 
 import { SeedProvider } from '../SeedProvider'
-import { IStorageFactory, storageFactory } from '../StorageFactory'
-import { ISeedProviderFactory } from './ISeedProviderFactory'
+import { type IStorageFactory, storageFactory } from '../StorageFactory'
+import { type ISeedProviderFactory } from './ISeedProviderFactory'
 
 export class SeedProviderFactory implements ISeedProviderFactory {
   private readonly seedProviders: Record<string, SeedProvider> = Object.create(null)

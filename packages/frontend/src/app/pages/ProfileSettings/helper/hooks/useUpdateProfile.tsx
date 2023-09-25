@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 import { useStatusState, useStores } from '../../../../hooks'
 import { useAfterDidMountEffect } from '../../../../hooks/useDidMountEffect'
-import { IProfileSettings } from '../types/formType'
+import { type IProfileSettings } from '../types/formType'
 
 export const useUpdateProfile = (onSuccess?: () => void) => {
   const { userStore } = useStores()

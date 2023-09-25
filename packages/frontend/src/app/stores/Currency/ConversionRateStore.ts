@@ -1,15 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 
-import { ConversionRateResponse } from '../../../swagger/Api'
+import { type ConversionRateResponse } from '../../../swagger/Api'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequest,
   storeReset,
 } from '../../utils/store'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 export class ConversionRateStore implements IActivateDeactivate, IStoreRequester {
   errorStore: ErrorStore
@@ -40,7 +40,7 @@ export class ConversionRateStore implements IActivateDeactivate, IStoreRequester
     storeRequest(
       this,
       this.currentBlockChainStore.api.currency.conversionRateList(),
-      (data) => this.setData(data),
+      (data) => { this.setData(data) },
     )
   }
 

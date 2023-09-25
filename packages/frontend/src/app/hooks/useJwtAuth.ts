@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { IUseAppAuthAndConnect } from './useAppAuthAndConnect'
+import { type IUseAppAuthAndConnect } from './useAppAuthAndConnect'
 import { useAuth } from './useAuth'
 import { useIsConnected } from './useIsConnected'
 
