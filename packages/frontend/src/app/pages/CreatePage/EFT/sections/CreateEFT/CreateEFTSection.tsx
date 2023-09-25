@@ -324,6 +324,7 @@ export const CreateEFTSection: React.FC = observer(() => {
 
             <TextArea<CreateNFTForm>
               withoutDefaultBorder
+              mint
               controlledInputProps={{
                 control,
                 name: 'description',

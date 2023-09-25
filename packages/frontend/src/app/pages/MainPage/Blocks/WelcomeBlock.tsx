@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { styled } from '../../../../styles'
 import { Button, Container, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
-import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/BgStorageNew.svg'
 import sunGreen from '../img/SunGreen.svg'
@@ -26,7 +25,7 @@ const WelcomeScreenWrapper = styled('section', {
   '& .greenSun': {
     zIndex: '1',
     position: 'absolute',
-    top: '52px',
+    top: '90px',
     left: '7px',
     '@media (max-width: 1750px)': {
       left: '-45px',
@@ -36,7 +35,7 @@ const WelcomeScreenWrapper = styled('section', {
     },
   },
   '@xl': {
-    backgroundPosition: 'top $$topPad right 2.5%, top 188px right 0, top -68px left -10px',
+    backgroundPosition: 'top $$topPad right 4.5%, top 188px right 0, top -68px left -10px',
   },
   '@lg': {
     background: 'none',
@@ -206,16 +205,10 @@ const NavigateTitle = styled('h4', {
 })
 
 const WelcomeInfo = styled(Container, {
-  paddingTop: 'calc($layout$navBarHeight + 44px)',
+  paddingTop: 'calc($layout$navBarHeight + 44px + 58px)',
   paddingBottom: '140px',
   zIndex: '2',
   position: 'relative',
-  '@lg': {
-    paddingTop: 'calc($layout$navBarHeight - 44px)',
-  },
-  '@md': {
-    paddingTop: 'calc($layout$navBarHeight - 60px)',
-  },
   '@sm': {
     paddingBottom: '100px',
   },
@@ -223,18 +216,15 @@ const WelcomeInfo = styled(Container, {
 
 const StorageImg = styled('img', {
   position: 'absolute',
-  top: '2.5%',
+  top: '102px',
   left: '55%',
   '@xl': {
-    top: '2%',
     left: '65%',
   },
   '@lg': {
-    top: '2.5%',
     left: '75%',
   },
   '@md': {
-    top: '5%',
     width: '600px',
     left: '80%',
   },
@@ -248,7 +238,6 @@ export default function WelcomeBlock() {
 
   return (
     <BackgroundContainer>
-      <FileBunniesBanner />
       <WelcomeScreenWrapper>
         <img src={sunGreen} className={'greenSun'} />
         <WelcomeInfo>

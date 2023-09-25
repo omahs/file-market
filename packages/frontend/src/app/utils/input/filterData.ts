@@ -14,7 +14,7 @@ export const filterData = ({ value, pattern, isLowerCase, isDisableEnglishPriori
     result = result.split('').filter(item => {
       console.log(item)
 
-      return patternEnglish?.test(item)
+      return patternEnglish?.test(item) || item === ' '
     }).join('')
     console.log(result)
   }
