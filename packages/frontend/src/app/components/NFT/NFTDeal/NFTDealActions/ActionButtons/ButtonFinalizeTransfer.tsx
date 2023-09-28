@@ -44,7 +44,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
           transferStore.onTransferFinished(BigInt(tokenFullId.tokenId))
         })}
       >
-        {toCurrency(BigInt(order?.price ?? '0')) > 0.000001 ? 'Send payment' : 'Finalize the deal'}
+        {toCurrency(order?.price ?? '0') > 0.000001 ? 'Send payment' : 'Finalize the deal'}
       </Button>
     </>
   )

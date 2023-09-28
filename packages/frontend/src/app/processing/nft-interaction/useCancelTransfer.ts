@@ -8,7 +8,7 @@ import { useCollectionContract } from '../contracts'
 import { assertCollection, assertContract, assertTokenId } from '../utils'
 
 interface IUseCancelTransfer {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface ICancelTransfer {
@@ -16,7 +16,7 @@ interface ICancelTransfer {
 }
 
 export function useCancelTransfer({ collectionAddress }: IUseCancelTransfer = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const config = useConfig()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, ICancelTransfer>()
   const { callContract } = useCallContract()
@@ -27,8 +27,16 @@ export function useCancelTransfer({ collectionAddress }: IUseCancelTransfer = {}
     assertTokenId(tokenId)
     console.log('cancel transfer', { tokenId })
 
-    return callContract({ contract, method: 'cancelTransfer', params: { gasPrice: config?.gasPrice } },
-      BigInt(tokenId),
+    return callContract(
+      {
+        callContractConfig: {
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'cancelTransfer',
+          gasPrice: config?.gasPrice,
+          args: [BigInt(tokenId)],
+        },
+      },
     )
   }), [contract, wrapPromise])
 

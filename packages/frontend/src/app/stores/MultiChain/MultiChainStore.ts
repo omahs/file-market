@@ -85,7 +85,7 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
     return this.data?.find(item => item.chain?.name === chainName)
   }
 
-  getApiByName(chainName: string | undefined): Api<{}> | undefined {
+  getApiByName(chainName: string | undefined): Api<unknown> | undefined {
     if (chainName === undefined) return
 
     return new Api({ baseUrl: this.getChainByName(chainName)?.baseUrl })

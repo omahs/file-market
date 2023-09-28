@@ -1,5 +1,6 @@
 import { mnemonicToEntropy } from 'bip39'
-import { sha256 } from 'ethers/lib/utils'
+import { sha256 } from 'ethereum-cryptography/sha256.js'
+import { toHex } from 'ethereum-cryptography/utils'
 import React, { type FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -61,7 +62,7 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
               required: true,
               validate: (p) => {
                 if (!!validateImportMnemonic(p)) return validateImportMnemonic(p)
-                if (isReset && seedProvider?.hashSeed !== sha256(Buffer.from(mnemonicToEntropy((p)), 'hex')) && !isAppliedWrongPhrase) {
+                if (isReset && seedProvider?.hashSeed !== toHex(sha256(Buffer.from(mnemonicToEntropy((p))))) && !isAppliedWrongPhrase) {
                   setAppliesWrongPhrase(true)
 
                   return 'You probably made a mistake. This phrase is not suitable for your eft. Click the Connect button again to ignore'

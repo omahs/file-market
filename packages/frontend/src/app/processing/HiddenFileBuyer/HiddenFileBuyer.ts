@@ -30,7 +30,7 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     const { pub } = await this.crypto.eftRsaDerivation(
       this.seedProvider.seed,
       ...this.#persistentArgs,
-      dealNumber,
+      Number(dealNumber),
       { disableWorker: this.#isFirefox },
     )
 
@@ -44,7 +44,7 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     const { priv } = await this.crypto.eftRsaDerivation(
       this.seedProvider.seed,
       ...this.#persistentArgs,
-      dealNumber,
+      Number(dealNumber),
       { disableWorker: this.#isFirefox },
     )
 

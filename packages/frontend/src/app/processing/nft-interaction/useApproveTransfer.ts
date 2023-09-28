@@ -11,7 +11,7 @@ import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 interface IUseApproveTransfer {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface IApproveTransfer {
@@ -20,7 +20,7 @@ interface IApproveTransfer {
 }
 
 export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
@@ -41,9 +41,16 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
     console.log('approve transfer', { tokenId, encryptedFilePassword })
 
-    return callContract({ contract, method: 'approveTransfer', params: { gasPrice: config?.gasPrice } },
-      BigInt(tokenId),
-      bufferToEtherHex(encryptedFilePassword),
+    return callContract<typeof contract.abi, 'approveTransfer'>(
+      {
+        callContractConfig: {
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'approveTransfer',
+          gasPrice: config?.gasPrice,
+          args: [BigInt(tokenId), bufferToEtherHex(encryptedFilePassword)],
+        },
+      },
     )
   }), [contract, address, wrapPromise])
 

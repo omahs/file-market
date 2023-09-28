@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { constants } from 'ethers'
 import { useCallback } from 'react'
 import { type TransactionReceipt } from 'viem'
 
@@ -36,12 +35,19 @@ export function usePlaceOrder() {
     assert(price, 'price is not provided')
     console.log('place order', { collectionAddress, tokenId, price })
 
-    return callContract({ contract, method: 'placeOrder', params: { gasPrice: config?.gasPrice } },
-      collectionAddress,
-      BigInt(tokenId),
-      BigInt(price),
-      constants.AddressZero,
-    )
+    return callContract(
+      {
+        callContractConfig: {
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'placeOrder',
+          gasPrice: config?.gasPrice,
+          args: [collectionAddress,
+            BigInt(tokenId),
+            BigInt(price),
+            '0x0000000000000000000000000000000000000000'],
+        },
+      })
   }), [contract, wrapPromise])
 
   return {

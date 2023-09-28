@@ -1,7 +1,7 @@
 import { Tooltip } from '@nextui-org/react'
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { type FC, useEffect, useMemo, useState } from 'react'
+import { getAddress } from 'viem'
 
 import { styled } from '../../../../../styles'
 import { Api, type Order, type Transfer } from '../../../../../swagger/Api'
@@ -49,8 +49,8 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
   const config = useConfig()
   const timeService = new Api({ baseUrl: '/api' }).serverTime
-  const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
-  const fileBunniesAddressNormalized = utils.getAddress(config?.fileBunniesCollectionToken.address ?? '')
+  const collectionAddressNormalized = tokenFullId?.collectionAddress && getAddress(tokenFullId?.collectionAddress)
+  const fileBunniesAddressNormalized = getAddress(config?.fileBunniesCollectionToken.address ?? '')
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
 
   const fileBunniesText = useMemo(() => {

@@ -97,7 +97,7 @@ export const useFileBunniesMint = () => {
     await fulfillOrder({
       collectionAddress,
       tokenId,
-      price: mark3dConfig.fileBunniesPrice,
+      price: mark3dConfig.fileBunniesPrice.toString(),
     })
     setIsLoadingReq(false)
     setModalBody(<SuccessNavBody
@@ -140,7 +140,7 @@ export const useFileBunniesMint = () => {
       await fulfillOrder({
         collectionAddress,
         tokenId,
-        price: BigInt(1),
+        price: '1',
         signature: sign,
       })
       setIsLoadingReq(false)

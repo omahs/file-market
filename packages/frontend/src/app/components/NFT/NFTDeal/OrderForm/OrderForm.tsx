@@ -15,7 +15,7 @@ import { formatNumber } from '../../../../utils/number'
 import { StyledFlex, StyledPriceDescription } from './OrderForm.styles'
 
 export interface OrderFormValue {
-  price: bigint
+  price: string
 }
 
 interface OrderFormRawValue {
@@ -43,7 +43,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
   }), [toCurrency])
 
   const exportFormValue = useCallback((rawValue: OrderFormRawValue): OrderFormValue => ({
-    price: fromCurrency(+rawValue.price ?? 0),
+    price: fromCurrency(+rawValue.price ?? 0).toString(),
   }), [fromCurrency])
 
   const { handleSubmit, control, watch, setValue } = useForm<OrderFormRawValue>({
@@ -90,7 +90,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
                 {!!fee && !!tokenStore.data?.royalty && ' and '}
                 {!!tokenStore.data?.royalty && (
                   <>
-                    the author&apos;s royalty (<span>{formatRoyalty(tokenStore.data.royalty)}%</span>)
+                    the author&apos;s royalty (<span>{formatRoyalty(BigInt(tokenStore.data.royalty ?? 0))}%</span>)
                   </>
                 )}
                 {' '}

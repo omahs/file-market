@@ -1,15 +1,31 @@
-import { type GetContractArgs } from '@wagmi/core'
+import assert from 'assert'
 import { useMemo } from 'react'
+import { type Abi, getAddress } from 'viem'
+import { useNetwork, useWalletClient } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
-export const useContract = (props: Omit<GetContractArgs, 'address'> & { address?: `0x${string}` }) => {
-  const contract = useMemo(() => {
-    if (!props.address) return undefined
+import { assertAccount } from '../processing'
 
-    if (typeof props.address !== 'undefined') {
-      return getContract({ ...props, address: props.address })
+export const useContract = <A extends Abi>(address: string | undefined, abi: A | undefined) => {
+  const { chain } = useNetwork()
+  const { data: walletClient } = useWalletClient()
+
+  return useMemo(() => {
+    try {
+      assertAccount(walletClient)
+      assert(address, 'address not found')
+      assert(abi, 'abi not found')
+      assert(chain, 'chain not found')
+
+      return getContract({
+        abi,
+        address: getAddress(address),
+        walletClient,
+      })
+    } catch (error) {
+      console.error('Failed to get contract', error)
+
+      return null
     }
-  }, [props])
-
-  return contract
+  }, [address, abi, chain, walletClient])
 }

@@ -1,12 +1,12 @@
-import { formatEther } from 'ethers/lib.esm/utils'
 import { useEffect, useMemo, useState } from 'react'
+import { useDebounce } from 'use-debounce'
+import { formatEther } from 'viem'
 
 import { fee } from '../config/mark3d'
 import { hexToBuffer } from '../processing'
 import { useBlockchainDataProvider } from '../processing/BlockchainDataProvider'
 import { type TokenFullId } from '../processing/types'
 import { useConversionRateStore } from './useConversionRateStore'
-import { useDebouncedValue } from './useDebouncedValue'
 
 export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenFullId, price: number) => {
   const [amountWillReceived, setAmountWillReceived] = useState(0)
@@ -14,7 +14,7 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
 
   const conversionRateStore = useConversionRateStore()
   const blockchainDataProvider = useBlockchainDataProvider()
-  const debouncedPrice = useDebouncedValue(price, 400)
+  const debouncedPrice = useDebounce(price, 400)
 
   const amountWillReceivedUsd = useMemo(() => {
     if (!amountWillReceived || !conversionRateStore.data?.rate) return 0

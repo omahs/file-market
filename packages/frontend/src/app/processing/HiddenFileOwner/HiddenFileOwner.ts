@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { getAddress } from 'viem'
 
 import { type FileMarketCrypto } from '../../../../../crypto/src'
 import { type RsaPublicKey } from '../../../../../crypto/src/lib/types'
@@ -38,7 +38,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
     console.log('If')
 
-    if (this.address === utils.getAddress(creator)) {
+    if (this.address === getAddress(creator)) {
       const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)
 
       console.log('If success')

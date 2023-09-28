@@ -1,6 +1,6 @@
 import assert from 'assert'
-import { type ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 
 import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
@@ -10,7 +10,7 @@ import { nullAddress } from '../utils'
 import { assertContract } from '../utils/assert'
 
 interface IUseInitTransfer {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface IInitTransfer {
@@ -19,8 +19,8 @@ interface IInitTransfer {
 }
 
 export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IInitTransfer>()
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt, IInitTransfer>()
   const config = useConfig()
   const { callContract } = useCallContract()
 
@@ -29,11 +29,18 @@ export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
     assert(to, 'receiver address ("to") is undefined')
     console.log('init transfer', { tokenId, to, callbackReceiver: nullAddress })
 
-    return callContract({ contract, method: 'initTransfer', params: { gasPrice: config?.gasPrice } },
-      BigInt(tokenId ?? 0),
-      to,
-      '0x00',
-      nullAddress,
+    return callContract({
+      callContractConfig: {
+        address: contract.address,
+        abi: contract.abi,
+        functionName: '',
+        gasPrice: config?.gasPrice,
+        args: [BigInt(tokenId ?? 0),
+          to,
+          '0x00',
+          nullAddress],
+      },
+    },
     )
   }), [contract, wrapPromise])
 

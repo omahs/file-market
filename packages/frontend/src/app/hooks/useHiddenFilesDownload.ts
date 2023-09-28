@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { utils } from 'ethers'
 import { saveAs } from 'file-saver'
 import { useMemo } from 'react'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { type Token } from '../../swagger/Api'
@@ -34,7 +34,7 @@ export function useHiddenFileDownload(
 
     const hiddenFileURI = meta.hidden_file
     const hiddenMeta = meta.hidden_file_meta
-    const collectionAddress = utils.getAddress(token.collectionAddress)
+    const collectionAddress = getAddress(token.collectionAddress)
     const tokenId = +token.tokenId
 
     return [{

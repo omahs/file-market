@@ -1,7 +1,6 @@
 import assert from 'assert'
-import { utils } from 'ethers'
 import { useCallback } from 'react'
-import { type TransactionReceipt } from 'viem'
+import { getAddress, type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
@@ -24,7 +23,7 @@ import {
  */
 
 interface IFulFillOrder {
-  price?: bigint
+  price?: string
   collectionAddress?: string
   tokenId?: string
   signature?: string
@@ -52,18 +51,19 @@ export function useFulfillOrder() {
 
     return callContract(
       {
-        contract,
-        method: 'fulfillOrder',
-        minBalance: BigInt(price),
-        params: {
+        callContractConfig: {
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'fulfillOrder',
           value: BigInt(price),
           gasPrice: config?.gasPrice,
+          args: [getAddress(collectionAddress),
+            bufferToEtherHex(publicKey),
+            BigInt(tokenId),
+            signature ? `0x${signature}` : '0x00'],
         },
+        minBalance: BigInt(price),
       },
-      utils.getAddress(collectionAddress),
-      bufferToEtherHex(publicKey),
-      BigInt(tokenId),
-      signature ? `0x${signature}` : '0x00',
     )
   }), [contract, address, wrapPromise])
 

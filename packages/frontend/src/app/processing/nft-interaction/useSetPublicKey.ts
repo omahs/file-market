@@ -11,7 +11,7 @@ import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 interface IUseSetPublicKey {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface ISetPublicKey {
@@ -19,7 +19,7 @@ interface ISetPublicKey {
 }
 
 export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const { address } = useAccount()
   const config = useConfig()
   const { wrapPromise, statuses } = useStatusState<TransactionReceipt, ISetPublicKey>()
@@ -39,11 +39,17 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
     const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
-    return callContract({ contract, method: 'setTransferPublicKey', params: { gasPrice: config?.gasPrice } },
-      BigInt(tokenId),
-      bufferToEtherHex(publicKey),
-      BigInt(dealNumber),
-    )
+    return callContract({
+      callContractConfig: {
+        address: contract.address,
+        abi: contract.abi,
+        functionName: 'setTransferPublicKey',
+        gasPrice: config?.gasPrice,
+        args: [BigInt(tokenId),
+          bufferToEtherHex(publicKey),
+          BigInt(dealNumber)],
+      },
+    })
   }), [contract, address, wrapPromise])
 
   return { ...statuses, setPublicKey }

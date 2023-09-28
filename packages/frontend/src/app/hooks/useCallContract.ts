@@ -1,17 +1,15 @@
 import { JsonRpcError } from '@metamask/rpc-errors'
-import { getWalletClient } from '@wagmi/core'
-import { type AbiFunction } from 'abitype/src/abi'
+import { getWalletClient, writeContract } from '@wagmi/core'
 import assert from 'assert'
 import { type Abi, type PublicClient } from 'viem'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
-import { type GetContractResult } from 'wagmi/actions'
+import { type WriteContractPreparedArgs, type WriteContractUnpreparedArgs } from 'wagmi/actions'
 
 import { wagmiConfig } from '../config/web3Modal'
 import { ErrorMessages, getTxReceipt, stringifyContractError } from '../processing'
 
-interface ICallContract<T extends Abi> {
-  contract: GetContractResult<T>
-  method: Extract<GetContractResult<T>['abi'][number], AbiFunction>['name']
+interface ICallContract<TAbi extends Abi | readonly unknown[], TFunctionName extends string> {
+  callContractConfig: WriteContractUnpreparedArgs<TAbi, TFunctionName> | WriteContractPreparedArgs<TAbi, TFunctionName>
   publicClient?: PublicClient
   ignoreTxFailture?: boolean
   minBalance?: bigint
@@ -24,13 +22,11 @@ export const useCallContract = () => {
   const { data } = useBalance({
     address,
   })
-  const callContract = async <T extends Abi> ({
-    contract,
-    method,
+  const callContract = async <TAbi extends Abi | readonly unknown[], TFunctionName extends string> ({
+    callContractConfig,
     ignoreTxFailture,
     minBalance,
-    params,
-  }: ICallContract<T>, ...args: any[]
+  }: ICallContract<TAbi, TFunctionName>,
   ) => {
     try {
       const client = wagmiConfig.getPublicClient()
@@ -41,30 +37,15 @@ export const useCallContract = () => {
 
       if (data && minBalance) {
         // equality anyway throws an error because of gas
-        if (data.value === 0n || minBalance >== data.value) {
+        if (data.value === 0n || minBalance >= data.value) {
           throw new JsonRpcError(402, ErrorMessages.InsufficientBalance)
         }
       }
 
-      console.log(contract)
-      console.log(address)
-      console.log(method)
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const { request } = await client?.simulateContract({
-        account: address,
-        functionName: method,
-        abi: contract.abi,
-        address: contract.address,
-        chain,
-        args,
-        ...params,
+      const { hash } = await writeContract({
+        chainId: chain?.id,
+        ...callContractConfig,
       })
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const hash = await walletClient?.writeContract(request)
 
       if (ignoreTxFailture) {
         return await client?.waitForTransactionReceipt({

@@ -24,7 +24,7 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   collection?: Collection
   address: string = ''
 
-  api?: Api<{}>
+  api?: Api<unknown>
 
   isCustomApi: boolean = true
 
@@ -37,7 +37,7 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
     })
   }
 
-  private request(address: string, api?: Api<{}>) {
+  private request(address: string, api?: Api<unknown>) {
     if (!api) return
     storeRequest<CollectionResponse>(
       this,

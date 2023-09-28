@@ -8,7 +8,7 @@ import { useCollectionContract } from '../contracts'
 import { assertCollection, assertContract, assertTokenId } from '../utils'
 
 interface IUseFinalizeTransfer {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface IFinalizeTransfer {
@@ -16,7 +16,7 @@ interface IFinalizeTransfer {
 }
 
 export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const { callContract } = useCallContract()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IFinalizeTransfer>()
   const config = useConfig()
@@ -27,8 +27,16 @@ export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer 
     assertTokenId(tokenId)
     console.log('finalize transfer', { tokenId })
 
-    return callContract({ contract, method: 'finalizeTransfer', params: { gasPrice: config?.gasPrice } },
-      BigInt(tokenId),
+    return callContract(
+      {
+        callContractConfig: {
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'finalizeTransfer',
+          gasPrice: config?.gasPrice,
+          args: [BigInt(tokenId)],
+        },
+      },
     )
   }), [contract, wrapPromise])
 

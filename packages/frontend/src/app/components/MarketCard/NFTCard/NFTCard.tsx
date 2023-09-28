@@ -55,7 +55,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({
       <NftCardUserInfo img={user.img} address={user.address} />
       {price && (
         <PriceBadge
-          left={formatCurrency(price ?? 0)}
+          left={formatCurrency(price ?? '0')}
           right={priceUsd && `~${formatUsd(priceUsd ?? 0)}`}
         />
       )}

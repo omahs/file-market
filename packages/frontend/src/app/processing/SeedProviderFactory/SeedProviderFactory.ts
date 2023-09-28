@@ -1,4 +1,4 @@
-import { utils } from 'ethers/lib.esm'
+import { getAddress } from 'viem'
 
 import { SeedProvider } from '../SeedProvider'
 import { type IStorageFactory, storageFactory } from '../StorageFactory'
@@ -21,7 +21,7 @@ export class SeedProviderFactory implements ISeedProviderFactory {
   }
 
   async getSeedProvider(account: string): Promise<SeedProvider> {
-    account = utils.getAddress(account)
+    account = getAddress(account)
     const seedProvider = this.seedProviders[account]
     if (seedProvider) {
       return seedProvider

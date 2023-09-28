@@ -73,7 +73,7 @@ const BaseInfoSection = () => {
           <PropertyTitle style={{ fontSize: '14px', lineHeight: '20px', marginBottom: 0 }}>
             Creator’s royalty:
             {' '}
-            {formatRoyalty(token.royalty)}
+            {formatRoyalty(BigInt(token.royalty ?? 0))}
             %
           </PropertyTitle>
         )}

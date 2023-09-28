@@ -32,7 +32,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string, st
     total: 0,
   }
 
-  api?: Api<{}>
+  api?: Api<unknown>
 
   collectionAddress = ''
 
@@ -64,7 +64,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string, st
     this.data.total = data.total
   }
 
-  private request(api?: Api<{}>) {
+  private request(api?: Api<unknown>) {
     if (!api) return
     storeRequest(
       this,

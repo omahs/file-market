@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { type Transfer } from '../../../swagger/Api'
@@ -6,5 +6,5 @@ import { type Transfer } from '../../../swagger/Api'
 export function useIsBuyer(transfer: Transfer | undefined): boolean {
   const { address } = useAccount()
 
-  return Boolean(address && transfer?.to && utils.getAddress(address) === utils.getAddress(transfer.to))
+  return Boolean(address && transfer?.to && getAddress(address) === getAddress(transfer.to))
 }

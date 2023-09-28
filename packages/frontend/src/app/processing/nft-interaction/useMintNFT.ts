@@ -1,6 +1,5 @@
-import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
-import { type TransactionReceipt } from 'viem'
+import { parseUnits, type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
@@ -33,7 +32,7 @@ type IMintNft = MintNFTForm & {
 }
 
 interface IUseMintNft {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface MintNFTResult {
@@ -42,7 +41,7 @@ interface MintNFTResult {
 }
 
 export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
@@ -90,12 +89,18 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
     })
     console.log('mint metadata', metadata)
 
-    const receipt = await callContract({ contract, method: 'mint' },
-      address,
-      tokenIdBN,
-      metadata.url,
-      parseUnits(royalty.toString(), 2),
-      '0x00',
+    const receipt = await callContract({
+      callContractConfig: {
+        address: contract.address,
+        abi: contract.abi,
+        functionName: 'mint',
+        args: [address,
+          tokenIdBN,
+          metadata.url,
+          parseUnits(royalty.toString(), 2),
+          '0x00'],
+      },
+    },
     )
 
     console.log(receipt)

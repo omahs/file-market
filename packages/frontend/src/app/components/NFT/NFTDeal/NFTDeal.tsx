@@ -112,8 +112,8 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
             {transfer && (
               <PriceBadge
                 title="Price"
-                left={formatCurrency(BigInt(order?.price ?? 0))}
-                right={`~${formatUsd(order?.priceUsd ?? '')}`}
+                left={formatCurrency(order?.price ?? '0')}
+                right={`~${formatUsd(order?.priceUsd ?? '0')}`}
                 size='lg'
                 background='secondary'
               />

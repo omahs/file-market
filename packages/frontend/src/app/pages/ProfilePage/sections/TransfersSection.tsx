@@ -1,7 +1,7 @@
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { TransferCard } from '../../../components/MarketCard/TransferCard'
@@ -18,9 +18,7 @@ const TransfersSection: React.FC = observer(() => {
 
   useEffect(() => {
     if (!currentAddress || !userAddress) navigate('/')
-    if (utils.getAddress(currentAddress ?? '') !== utils.getAddress(userAddress ?? '')) {
-      console.log(utils.getAddress(currentAddress ?? ''))
-      console.log(utils.getAddress(userAddress ?? ''))
+    if (getAddress(currentAddress ?? '') !== getAddress(userAddress ?? '')) {
       navigate('/')
     }
   }, [userAddress, currentAddress])

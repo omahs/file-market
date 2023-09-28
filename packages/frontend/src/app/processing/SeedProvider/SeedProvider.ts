@@ -1,6 +1,6 @@
 import * as passworder from '@metamask/browser-passworder'
 import { entropyToMnemonic } from 'bip39'
-import { utils } from 'ethers'
+import { getAddress } from 'viem'
 
 import { fileMarketCrypto } from '../FileMarketCrypto'
 import { type IStorageProvider } from '../StorageProvider'
@@ -75,7 +75,7 @@ export class SeedProvider implements ISeedProvider {
   }
 
   isForAccount(account: string) {
-    return utils.getAddress(account) === utils.getAddress(this.account)
+    return getAddress(account) === getAddress(this.account)
   }
 
   addOnSeedChangeListener(callback: (seed: ArrayBuffer | undefined) => void) {

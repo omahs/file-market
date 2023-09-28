@@ -66,7 +66,6 @@ export const callContractGetter = async <T extends Abi, R = any>({
 
     const walletClient = await getWalletClient()
 
-    const address = walletClient?.account
     const chainId = await client?.getChainId()
 
     const chain = rootStore.multiChainStore.getChainById(chainId)?.chain
@@ -75,16 +74,7 @@ export const callContractGetter = async <T extends Abi, R = any>({
 
     assert(walletClient)
 
-    // @ts-expect-error
-    await client?.simulateContract({
-      account: address,
-      functionName: method,
-      abi: contract.abi,
-      address: contract.address,
-      chain,
-      args,
-    })
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const data = (await client?.readContract({
       address: contract.address,

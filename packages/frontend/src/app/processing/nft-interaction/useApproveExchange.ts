@@ -14,7 +14,7 @@ import { assertCollection, assertContract, assertTokenId } from '../utils'
  */
 
 interface IUseApproveExchange {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface IApproveExchange {
@@ -22,7 +22,7 @@ interface IApproveExchange {
 }
 
 export function useApproveExchange({ collectionAddress }: IUseApproveExchange = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const config = useConfig()
   const { callContract } = useCallContract()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IApproveExchange>()
@@ -33,9 +33,16 @@ export function useApproveExchange({ collectionAddress }: IUseApproveExchange = 
 
     console.log('approve exchange', 'exchange contract address', config?.exchangeToken.address, 'tokenId', tokenId)
 
-    return callContract<typeof contract.abi>({ contract, method: 'approve', params: { gasPrice: config?.gasPrice } },
-      config?.exchangeToken.address,
-      BigInt(tokenId),
+    return callContract({
+      callContractConfig: {
+        address: contract.address,
+        abi: contract.abi,
+        functionName: 'approve',
+        gasPrice: config?.gasPrice,
+        args: [config?.exchangeToken.address,
+          BigInt(tokenId)],
+      },
+    },
     )
   }), [wrapPromise, contract])
 

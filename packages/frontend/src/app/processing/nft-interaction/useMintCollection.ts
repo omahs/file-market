@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { randomBytes } from 'ethers/lib/utils'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -46,17 +45,26 @@ export function useMintCollection() {
 
     const { callContract } = useCallContract()
 
-    const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
+    const hex = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+      .map(b => b.toString(16).padStart(2, '0')).join('')
+
+    const salt = `0x${hex}` as const
     const receipt = await callContract(
-      { contract, method: 'createCollection', ignoreTxFailture: true },
-      salt,
-      name,
-      symbol,
-      metadata.url,
-      metadata.url,
-      address,
-      '0x00',
-    )
+      {
+        callContractConfig: {
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'createCollection',
+          args: [salt,
+            name,
+            symbol,
+            metadata.url,
+            metadata.url,
+            address,
+            '0x00'],
+        },
+        ignoreTxFailture: true,
+      })
 
     const createCollectionEvent = await wagmiConfig.getPublicClient().getContractEvents({
       ...contract,
@@ -71,14 +79,6 @@ export function useMintCollection() {
     if (!createCollectionEvent) {
       throw Error(`receipt does not contain ${Mark3dAccessTokenEventNames.CollectionCreation} event`)
     }
-
-    const collectionAddressArgIndex = 1
-    // const getArg = (index: number): any => {
-    //   const arg = createCollectionEvent.args?.[index]
-    //   assert(arg, `${Mark3dAccessTokenEventNames.CollectionCreation} does not have an arg with index ${index}`)
-    //
-    //   return arg
-    // }
 
     return { collectionAddress: '' }
   }), [contract, wrapPromise, upload])

@@ -1,5 +1,5 @@
-import { utils } from 'ethers/lib.esm'
 import { makeAutoObservable } from 'mobx'
+import { getAddress } from 'viem'
 
 import { type TokensResponse } from '../../../swagger/Api'
 import { type NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
@@ -129,7 +129,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
 
     return this.data.collections
       // user is only allowed to mint into owned collections
-      .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))
+      .filter(collection => collection.owner && getAddress(collection.owner) === getAddress(this.address))
       .map(collection => ({
         title: collection.name ?? '',
         id: collection.address ?? '',

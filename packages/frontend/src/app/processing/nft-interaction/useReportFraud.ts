@@ -10,7 +10,7 @@ import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex } from '../utils'
 
 interface IUseReportFraud {
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
 }
 
 interface IReportFraud {
@@ -18,7 +18,7 @@ interface IReportFraud {
 }
 
 export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
-  const { contract } = useCollectionContract(collectionAddress)
+  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IReportFraud>()
   const config = useConfig()
@@ -37,10 +37,16 @@ export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
     const privateKey = await buyer.revealRsaPrivateKey()
     console.log('report fraud', { tokenId, privateKey })
 
-    return callContract({ contract, method: 'reportFraud', params: { gasPrice: config?.gasPrice } },
-      BigInt(tokenId),
-      bufferToEtherHex(privateKey),
-    )
+    return callContract({
+      callContractConfig: {
+        address: contract.address,
+        abi: contract.abi,
+        functionName: 'reportFraud',
+        gasPrice: config?.gasPrice,
+        args: [BigInt(tokenId),
+          bufferToEtherHex(privateKey)],
+      },
+    })
   }), [contract, address, wrapPromise])
 
   return {

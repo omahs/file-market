@@ -1,7 +1,7 @@
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import Banner from '../../components/ViewInfo/Banner/Banner'
@@ -67,7 +67,7 @@ const ProfilePage: React.FC = observer(() => {
 
     if (!currentAddress || !profileAddressMemo) return false
 
-    return utils.getAddress(currentAddress ?? '') === utils.getAddress(profileAddressMemo ?? '')
+    return getAddress(currentAddress ?? '') === getAddress(profileAddressMemo ?? '')
   }, [profileAddressMemo, currentAddress])
 
   const tabs = useMemo(() => {

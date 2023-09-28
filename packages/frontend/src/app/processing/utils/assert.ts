@@ -10,7 +10,7 @@ export function assertSigner<Signer>(signer: Signer): asserts signer {
   }
 }
 
-export function assertAccount(account?: string): asserts account {
+export function assertAccount(account?: GetWalletClientResult): asserts account {
   if (!account) {
     throw new Error('Wallet is not connected. If it is connected, try to reconnect')
   }

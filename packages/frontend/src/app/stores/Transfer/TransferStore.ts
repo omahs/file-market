@@ -30,7 +30,7 @@ export class TransferStore implements IStoreRequester,
 
   data?: Transfer = undefined
   tokenFullId?: TokenFullId = undefined
-  api?: Api<{}>
+  api?: Api<unknown>
   blockStore: BlockStore
   tokenStore: TokenStore
   orderStore: OrderStore
@@ -64,7 +64,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  private request(tokenFullId: TokenFullId, api?: Api<{}>, onSuccess?: () => void) {
+  private request(tokenFullId: TokenFullId, api?: Api<unknown>, onSuccess?: () => void) {
     if (!api) return
     console.log('REQUESTT')
     storeRequest<Transfer | null>(
@@ -151,10 +151,10 @@ export class TransferStore implements IStoreRequester,
     this.isWaitingForReciept = isWaiting
   }
 
-  setBlockTransfer = (blockNumber?: number) => {
+  setBlockTransfer = (blockNumber?: bigint) => {
     if (this.data?.block) {
-      this.data.block.number = blockNumber
-      this.blockStore.setReceiptBlock(BigInt(blockNumber))
+      this.data.block.number = Number(blockNumber)
+      this.blockStore.setReceiptBlock(BigInt(blockNumber ?? 0))
     }
   }
 
@@ -165,7 +165,7 @@ export class TransferStore implements IStoreRequester,
   setData = (transfer?: Transfer) => {
     this.data = transfer
     this.setIsWaitingForEvent(false)
-    this.setBlockTransfer(transfer?.block?.number)
+    this.setBlockTransfer(BigInt(transfer?.block?.number ?? 0))
   }
 
   // We listen to only events related to transfer change, not transfer initialization
@@ -186,11 +186,11 @@ export class TransferStore implements IStoreRequester,
         }],
       }
       this.setIsWaitingForEvent(false)
-      this.setBlockTransfer(blockNumber)
+      this.setBlockTransfer(BigInt(blockNumber ?? 0))
     })
   }
 
-  onTransferDraft(tokenId: bigint, from: string, blockNumber: number) {
+  onTransferDraft(tokenId: bigint, from: string, blockNumber: bigint) {
     console.log('onTransferDraft')
     if (this.checkExistStatus(TransferStatus.Drafted)) return
     this.checkActivation(tokenId, (tokenFullId) => {
@@ -209,16 +209,16 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferDraftCompletion(tokenId: bigint, to: string, blockNumber: number) {
+  onTransferDraftCompletion(tokenId: bigint, to: string | null, blockNumber: bigint) {
     console.log('onTransferCompletion')
     this.checkData(tokenId, data => {
-      data.to = to
+      data.to = to === null ? undefined : to
       this.setIsWaitingForEvent(false)
       this.setBlockTransfer(blockNumber)
     })
   }
 
-  onTransferPublicKeySet(tokenId: bigint, publicKeyHex: string, blockNumber: number) {
+  onTransferPublicKeySet(tokenId: bigint, publicKeyHex: string, blockNumber: bigint) {
     console.log('onTransferPublicKeySet')
     if (this.checkExistStatus(TransferStatus.PublicKeySet)) return
     this.checkData(tokenId, data => {
@@ -233,7 +233,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferPasswordSet(tokenId: bigint, encryptedPasswordHex: string, blockNumber: number) {
+  onTransferPasswordSet(tokenId: bigint, encryptedPasswordHex: string, blockNumber: bigint) {
     console.log('onTransferPasswordSet')
     if (this.checkExistStatus(TransferStatus.PasswordSet)) return
     this.checkData(tokenId, data => {
@@ -258,7 +258,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferFraudReported(tokenId: bigint, blockNumber: number) {
+  onTransferFraudReported(tokenId: bigint, blockNumber: bigint) {
     console.log('onTransferFraud')
     if (this.checkExistStatus(TransferStatus.FraudReported)) return
     this.checkData(tokenId, data => {
@@ -271,7 +271,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferFraudDecided(tokenId: bigint, approved: boolean, blockNumber: number) {
+  onTransferFraudDecided(tokenId: bigint, approved: boolean, blockNumber: bigint) {
     if (this.checkExistStatus(TransferStatus.Finished)) return
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
@@ -284,7 +284,7 @@ export class TransferStore implements IStoreRequester,
     })
   }
 
-  onTransferCancellation(tokenId: bigint, blockNumber: number) {
+  onTransferCancellation(tokenId: bigint, blockNumber: bigint) {
     console.log('onTransferCancel')
     this.checkActivation(tokenId, () => {
       this.data = undefined

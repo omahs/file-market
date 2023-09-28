@@ -21,7 +21,7 @@ export class OrderStore implements IStoreRequester,
   isLoading = false
   isActivated = false
 
-  api?: Api<{}>
+  api?: Api<unknown>
 
   data?: Order = undefined
   tokenFullId?: TokenFullId = undefined
@@ -37,7 +37,7 @@ export class OrderStore implements IStoreRequester,
     })
   }
 
-  private request(tokenFullId: TokenFullId, api?: Api<{}>) {
+  private request(tokenFullId: TokenFullId, api?: Api<unknown>) {
     console.log(api)
     if (!api) return
 

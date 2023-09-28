@@ -2,8 +2,8 @@ import React, { type FC } from 'react'
 
 import { styled } from '../../../styles'
 import { Txt } from '../../UIkit'
+import { formatTime } from '../../utils/time/formatTime'
 import { timeConvertToMinuteFromMillSec, timeConvertToSecondsFromMillSec } from '../../utils/time/timeConvert'
-import { timeGenerate } from '../../utils/time/timeGenerate'
 
 const TimerStyle = styled('div', {
   width: '100%',
@@ -25,8 +25,8 @@ export const Timer: FC<TimerProps> = ({ time }) => {
   return (
     <TimerStyle>
       <Txt className={'content'} primary1>
-        {`${timeGenerate(Math.trunc(timeConvertToMinuteFromMillSec(time)))}
-        :${timeGenerate(Math.trunc(timeConvertToSecondsFromMillSec(time) % 60))}`}
+        {`${formatTime(Math.trunc(timeConvertToMinuteFromMillSec(time)))}
+        :${formatTime(Math.trunc(timeConvertToSecondsFromMillSec(time) % 60))}`}
       </Txt>
     </TimerStyle>
   )

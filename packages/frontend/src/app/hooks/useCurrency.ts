@@ -1,7 +1,6 @@
-import { utils } from 'ethers'
-import { formatUnits } from 'ethers/lib.esm/utils'
 import { useCallback, useMemo } from 'react'
 import { useParams } from 'react-router'
+import { formatUnits } from 'viem'
 import { type Chain } from 'wagmi'
 
 import { formatNumber } from '../utils/number'
@@ -19,14 +18,14 @@ export const useCurrency = () => {
     return multiChainStore.getChainByName(chainName)?.chain ?? configHook.chain
   }, [configHook, chainName])
 
-  const formatCurrency = useCallback((value: bigint) => {
+  const formatCurrency = useCallback((value: string) => {
     return formatCurrencyProps(value, chain)
   }, [chain])
 
-  const toCurrency = useCallback((value: bigint): number => {
+  const toCurrency = useCallback((value: string): number => {
     const decimals = chain.nativeCurrency?.decimals ?? 18
 
-    return Number(utils.formatUnits(value, decimals))
+    return Number(formatUnits(BigInt(value), decimals))
   }, [chain])
 
   const fromCurrency = useCallback((value: number): bigint => {

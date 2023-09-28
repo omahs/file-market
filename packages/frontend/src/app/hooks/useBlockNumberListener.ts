@@ -1,13 +1,14 @@
-import { useBlockNumber } from 'wagmi'
-
+import { wagmiConfig } from '../config/web3Modal'
 import { useStores } from './useStores'
 
 export const useBlockNumberListener = () => {
   const { blockStore } = useStores()
-  useBlockNumber({
-    watch: true,
-    onBlock(data) {
-      if (data) blockStore.setCurrentBlock(data)
+  wagmiConfig.publicClient.watchBlockNumber(
+    {
+      onBlockNumber: blockNumber => {
+        blockStore.setCurrentBlock(blockNumber)
+      },
+      pollingInterval: 5000,
     },
-  })
+  )
 }

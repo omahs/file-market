@@ -29,10 +29,16 @@ export function useCancelOrder() {
     assertContract(contract, config?.exchangeToken.name ?? '')
     console.log('cancel order', { collectionAddress, tokenId })
 
-    return callContract({ contract, method: 'cancelOrder', params: { gasPrice: config?.gasPrice } },
-      collectionAddress,
-      BigInt(tokenId),
-    )
+    return callContract({
+      callContractConfig: {
+        address: contract.address,
+        abi: contract.abi,
+        functionName: 'cancelOrder',
+        gasPrice: config?.gasPrice,
+        args: [collectionAddress,
+          BigInt(tokenId)],
+      },
+    })
   }), [contract, wrapPromise])
 
   return {

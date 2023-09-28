@@ -23,7 +23,7 @@ export class TokenStore implements IStoreRequester,
 
   data?: Token = undefined
   tokenFullId?: TokenFullId = undefined
-  api?: Api<{}>
+  api?: Api<unknown>
 
   isCustomApi: boolean = true
 
@@ -39,7 +39,7 @@ export class TokenStore implements IStoreRequester,
     })
   }
 
-  private request(tokenFullId: TokenFullId, api?: Api<{}>) {
+  private request(tokenFullId: TokenFullId, api?: Api<unknown>) {
     if (!api) return
     storeRequest<Token>(
       this,
