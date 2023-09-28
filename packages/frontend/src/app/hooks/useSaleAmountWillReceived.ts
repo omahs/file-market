@@ -8,7 +8,7 @@ import { useBlockchainDataProvider } from '../processing/BlockchainDataProvider'
 import { type TokenFullId } from '../processing/types'
 import { useConversionRateStore } from './useConversionRateStore'
 
-export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenFullId, price: number) => {
+export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenFullId, price: number, isCreator?: boolean) => {
   const [amountWillReceived, setAmountWillReceived] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -44,13 +44,13 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
     const saleAmountWithFee = await getSaleAmountWithoutFee()
     const royaltyAmount = await getRoyaltyAmount(saleAmountWithFee)
 
-    setAmountWillReceived(saleAmountWithFee - royaltyAmount)
+    setAmountWillReceived(isCreator ? saleAmountWithFee : saleAmountWithFee - royaltyAmount)
     setIsLoading(false)
   }
 
   useEffect(() => {
     calcSaleAmountWillReceived()
-  }, [debouncedPrice])
+  }, [debouncedPrice, isCreator])
 
   return useMemo(() => ({
     amountWillReceived,

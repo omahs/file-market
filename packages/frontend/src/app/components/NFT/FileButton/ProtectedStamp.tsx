@@ -69,7 +69,7 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
         rounded
         placement={'bottom'}
         trigger={'hover'}
-        content={<div>{'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}</div>}
+        content={<div>{'Allows users to mint NFTs with attached encrypted files stored on decentralized storage, which can only be accessed exclusively by the owner of the NFT.'}</div>}
         color="primary"
         className={'tooltip'}
         css={{

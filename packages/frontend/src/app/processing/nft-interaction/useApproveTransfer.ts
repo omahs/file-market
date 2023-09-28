@@ -39,7 +39,6 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     }
     const owner = await factory.getOwner(address, collectionAddress, +tokenId)
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
-    console.log('approve transfer', { tokenId, encryptedFilePassword })
 
     return callContract<typeof contract.abi, 'approveTransfer'>(
       {

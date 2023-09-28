@@ -20,7 +20,6 @@ const FileTest = (props: ITestProps) => {
   const checkCryptoFile = useCallback(async ({ seed, collectionAddress }: ICheckCrypto, iter: number) => {
     if (!props.play) return
     try {
-      console.log('Start file')
       assertSeed(seed)
       assertCollection(collectionAddress)
       const keyAndIv = await eftAesDerivationNative(window.crypto)(seed,
@@ -56,10 +55,9 @@ const FileTest = (props: ITestProps) => {
           res: 'success',
         }
       ))
-      console.log('End file')
+
       props.onTestEnd?.()
     } catch (error) {
-      console.log(error)
       setCheckCryptoFileState((prevState) => (
         setNextFieldToFalseAfterTrue<ICheckCryptoFile>(prevState)
       ))
@@ -69,7 +67,6 @@ const FileTest = (props: ITestProps) => {
 
   useEffect(() => {
     props.play && checkCryptoFile({ seed: props.seed, collectionAddress: props.collectionAddress }, props.iterNumber)
-    console.log(props)
   }, [props.play])
 
   return (

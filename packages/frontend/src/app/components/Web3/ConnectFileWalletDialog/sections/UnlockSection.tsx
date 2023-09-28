@@ -39,7 +39,6 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
   const [error, setError] = useState<string>()
 
   const onSubmit = useCallback((v: UnlockSectionForm) => {
-    console.log(v.password)
     if (seedProvider) {
       seedProvider
         .unlock(v.password)

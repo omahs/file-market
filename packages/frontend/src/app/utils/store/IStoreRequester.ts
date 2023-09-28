@@ -51,7 +51,6 @@ export const storeRequestGeneric = <ResponseType>(
         tap(
           action((data) => {
             finish(() => {
-              console.log(data)
               responseHandler(data)
             })
           }),

@@ -168,7 +168,6 @@ export default observer(function ProfileSettings() {
               name: 'username',
               rules: {
                 validate: async (value) => {
-                  console.log(value)
                   if (!value) return
 
                   urlExistCheck(value)
@@ -230,9 +229,8 @@ export default observer(function ProfileSettings() {
               rules: {
                 validate: (value) => {
                   if (!value) return
-                  if (value.length > 50) return 'The url less than 50 characters'
 
-                  return value?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                  return value?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,40}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid site'
                 },
               },
             }}

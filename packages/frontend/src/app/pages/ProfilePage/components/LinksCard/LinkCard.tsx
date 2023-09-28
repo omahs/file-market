@@ -19,6 +19,14 @@ const LinkCard = ({ text, type }: ILinkCardProps) => {
     return baseUrls[type]
   }, [type])
 
+  const showText = useMemo(() => {
+    if (type === 'url') {
+      return text.substring(0, (text.includes('/') ? text.indexOf('/') : text.length))
+    }
+
+    return text
+  }, [text, type])
+
   return (
     <>
       {type !== 'discord' && (
@@ -30,7 +38,7 @@ const LinkCard = ({ text, type }: ILinkCardProps) => {
               color: '#2F3134',
             }}
           >
-            {text}
+            {showText}
           </Txt>
         </LinkButton>
       )}

@@ -85,11 +85,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string, st
   activate(collectionAddress: string, chainName: string): void {
     this.isActivated = true
     this.collectionAddress = collectionAddress
-    console.log(collectionAddress)
-    console.log(chainName)
-    console.log(this.multiChainStore)
     this.api = this.multiChainStore.getApiByName(chainName)
-    console.log(this.api)
     this.request(this.api)
   }
 

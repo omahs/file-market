@@ -62,9 +62,6 @@ const ProfilePage: React.FC = observer(() => {
   const userTransferStore = useUserTransferStore(profileAddressMemo)
 
   const isOwner = useMemo(() => {
-    console.log(profileAddressMemo)
-    console.log(currentAddress)
-
     if (!currentAddress || !profileAddressMemo) return false
 
     return getAddress(currentAddress ?? '') === getAddress(profileAddressMemo ?? '')
@@ -104,6 +101,10 @@ const ProfilePage: React.FC = observer(() => {
     return profileStore.user
   }, [isOwner, profileStore.user, userStore.user])
 
+  const isAleshka = useMemo(() => {
+    return profileAddress === 'lesopolosat' || profileAddress === 'lewinUp' || profileAddress === 'psyarcus' || profileAddress === '0x5de89e63edb4492d1c6e141b29474f69ef8c4f08'
+  }, [profileAddress])
+
   return (
     <GrayOverlay style={{ width: '100%', overflow: 'hidden' }}>
       <PageLayout isHasSelectBlockChain>
@@ -117,7 +118,7 @@ const ProfilePage: React.FC = observer(() => {
               src={user?.avatarUrl ? getHttpLinkFromIpfsString(user?.avatarUrl) : getProfileImageUrl(profileAddress ?? '')}
               isOwner={isOwner}
             />
-            <ProfileName>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
+            <ProfileName isAleshka={isAleshka}>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
           </ProfileHeader>
           {isOwner && <SettingsButton />}
         </Profile>
@@ -143,10 +144,19 @@ const ProfilePage: React.FC = observer(() => {
             url: (() => {
               const index = user?.websiteUrl?.indexOf('://')
               if (index !== undefined && index > -1) {
-                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length - 1)
+                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length)
               }
+
+              return user?.websiteUrl
             })(),
-            twitter: user?.twitter,
+            twitter: (() => {
+              const index = user?.twitter?.indexOf('twitter.com/')
+              if (index !== undefined && index > -1) {
+                return user?.twitter?.substring(index + 12, user?.twitter.length)
+              }
+
+              return user?.twitter
+            })(),
             discord: user?.discord,
             telegram: user?.telegram,
           }}

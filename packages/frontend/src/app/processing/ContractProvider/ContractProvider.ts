@@ -20,8 +20,6 @@ export class ContractProvider {
   }
 
   private getConfig() {
-    console.log(this.currentBlockChainStore.configByChainName?.chain.id)
-
     return this.multiChainStore.getConfigById(
       this.currentBlockChainStore.configByChainName?.chain.id ??
       this.currentBlockChainStore.chainId)

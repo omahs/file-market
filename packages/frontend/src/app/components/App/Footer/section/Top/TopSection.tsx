@@ -204,7 +204,6 @@ export const Cards: Array<{ img: string, blackImg: string, text: string, url: st
 const TopSection = () => {
   const { smValue, mdValue, xlValue, lgValue } = useMediaMui()
   const collectionPosition = useMemo(() => {
-    console.log(scrollY)
     if (smValue) return 1900
     if (mdValue) return 1400
     if (lgValue) return 1400
@@ -226,7 +225,6 @@ const TopSection = () => {
       url: '/market/collections',
       isMock: true,
       onClick: () => {
-        console.log('Opa')
         window.scrollTo(0, collectionPosition)
       },
     },

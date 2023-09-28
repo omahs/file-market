@@ -38,10 +38,6 @@ export const Tabs: React.FC<TabsProps> = observer(({ tabs, isSmall, isTransparen
     setTab(tabIndex)
   }, [location, tabs])
 
-  useEffect(() => {
-    console.log(tab)
-  }, [tab?.value])
-
   return (
     <>
       <SwitchWrapperTabs small={isSmall} transparent={isTransparent}>

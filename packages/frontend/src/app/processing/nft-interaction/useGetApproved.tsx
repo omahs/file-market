@@ -7,7 +7,7 @@ import { ensureAddress } from '../utils/address'
 export function useGetApproved({ collectionAddress, tokenId, isDisable }: Partial<TokenFullId> & { isDisable?: boolean }) {
   const config = useConfig()
 
-  console.log(config?.collectionToken.abi)
+  console.log(`isDisable: ${isDisable}`)
 
   return useContractRead({
     address: ensureAddress(collectionAddress),

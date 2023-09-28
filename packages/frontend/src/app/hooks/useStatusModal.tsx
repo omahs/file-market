@@ -54,7 +54,6 @@ export function useStatusModal({
         />,
       )
     } else if (result) {
-      console.log('RESULT TIT')
       if (successNavTo) {
         setModalBody(
           <SuccessNavBody

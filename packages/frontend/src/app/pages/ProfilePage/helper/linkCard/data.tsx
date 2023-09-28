@@ -12,7 +12,7 @@ export const imgs: Record<typesCard, string> = {
 }
 
 export const baseUrls: Record<typesCard, string> = {
-  url: '',
+  url: 'https://',
   discord: '',
   telegram: 'https://t.me/',
   twitter: 'https://twitter.com/',

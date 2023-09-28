@@ -29,14 +29,9 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   }
 
   async #getFilePassword(): Promise<ArrayBuffer> {
-    console.log('Start assert')
     assertSeed(this.seedProvider.seed)
 
-    console.log('Creator')
-
     const creator = await this.blockchainDataProvider.getTokenCreator(...this.#tokenFullIdArgs)
-
-    console.log('If')
 
     if (this.address === getAddress(creator)) {
       const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)

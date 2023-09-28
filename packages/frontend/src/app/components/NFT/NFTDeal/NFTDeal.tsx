@@ -7,7 +7,6 @@ import { styled } from '../../../../styles'
 import { type Order } from '../../../../swagger/Api'
 import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
 import { useCurrency } from '../../../hooks/useCurrency'
-import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useWatchStatusesTransfer } from '../../../processing/nft-interaction/useWatchStatusesTransfer'
@@ -76,13 +75,12 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   children,
 }) => {
   const { isConnected } = useAccount()
-  const { changeNetwork } = useChangeNetwork()
-  const currentBlockChain = useCurrentBlockChain()
+  const { changeNetwork, chain } = useChangeNetwork()
   const { chainName } = useParams<Params>()
   const multiChainStore = useMultiChainStore()
   const isNetworkIncorrect = useMemo(() => {
-    return currentBlockChain.chain?.name !== chainName
-  }, [currentBlockChain.chain?.name, chainName])
+    return chain?.name !== chainName
+  }, [chain, chainName])
   const {
     isOwner,
     isApprovedExchange,
@@ -120,7 +118,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
             )}
           </DealContainerInfo>
         )}
-        {isNetworkIncorrect ? (
+        {(isNetworkIncorrect || !isConnected) ? (
           <DealContainerInfo>
             <Button
               primary

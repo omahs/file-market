@@ -260,7 +260,6 @@ export default function ImageLoader(props: ImageLoaderProps) {
 
       return
     }
-    console.log(target.files)
     setFile(target.files[0])
   }
 

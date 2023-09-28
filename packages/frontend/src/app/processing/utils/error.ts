@@ -70,8 +70,6 @@ export const callContractGetter = async <T extends Abi, R = any>({
 
     const chain = rootStore.multiChainStore.getChainById(chainId)?.chain
 
-    console.log(chain)
-
     assert(walletClient)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

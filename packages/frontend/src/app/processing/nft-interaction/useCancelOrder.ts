@@ -27,7 +27,6 @@ export function useCancelOrder() {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     assertContract(contract, config?.exchangeToken.name ?? '')
-    console.log('cancel order', { collectionAddress, tokenId })
 
     return callContract({
       callContractConfig: {

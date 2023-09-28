@@ -25,7 +25,7 @@ const CycleTest = (props: ITestProps) => {
       assertAccount(address)
       assertSeed(seed)
       assertCollection(collectionAddress)
-      console.log('Start cycle')
+
       const fc = new FileMarketCrypto(window.crypto)
       const { key: generatedPassword } = await fc.eftAesDerivation(seed,
         globalSalt,
@@ -54,7 +54,7 @@ const CycleTest = (props: ITestProps) => {
         rsaDecrypt: 'success',
       }),
       )
-      console.log('End cycle')
+
       if (bufferToHex(decryptedPassword) !== bufferToHex(generatedPassword)) throw new Error()
       setCheckCryptoCycleState((prevState) => ({
         ...prevState,
@@ -64,7 +64,7 @@ const CycleTest = (props: ITestProps) => {
       props.onTestEnd?.()
     } catch (error) {
       props.onTestEnd?.()
-      console.log(error)
+
       setCheckCryptoCycleState((prevState) => (
         setNextFieldToFalseAfterTrue<ICheckCryptoCycle>(prevState)
       ))

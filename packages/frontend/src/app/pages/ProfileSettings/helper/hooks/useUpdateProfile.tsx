@@ -25,7 +25,6 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
   }
 
   const updateProfile = useCallback(wrapPromise(async (props: IProfileSettings) => {
-    console.log('update')
     if (props.email !== userStore.user?.email) {
       await updateEmail(props.email)
       setIsEmailUpdated(true)
@@ -46,7 +45,6 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     statuses,
     isEmailUpdated,
     updateProfile: (form: IProfileSettings) => {
-      console.log('Update2')
       setFormToTransfer(form)
     },
     updateEmail,

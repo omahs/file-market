@@ -38,7 +38,6 @@ export class OrderStore implements IStoreRequester,
   }
 
   private request(tokenFullId: TokenFullId, api?: Api<unknown>) {
-    console.log(api)
     if (!api) return
 
     storeRequest<Order | null>(
@@ -53,7 +52,6 @@ export class OrderStore implements IStoreRequester,
   activate(collectionAddress: string, tokenId: string, chainName: string): void {
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
-    console.log(this.multiChainStore.getApiByName(chainName))
     this.api = this.multiChainStore.getApiByName(chainName)
     this.request(this.tokenFullId, this.api)
   }
@@ -75,6 +73,5 @@ export class OrderStore implements IStoreRequester,
 
   setData(data: Order | undefined) {
     this.data = data
-    console.log(data)
   }
 }

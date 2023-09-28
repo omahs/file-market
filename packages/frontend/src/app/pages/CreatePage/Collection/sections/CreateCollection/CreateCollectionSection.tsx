@@ -163,6 +163,7 @@ export default function CreateCollectionSection() {
 
             <TextArea<CreateCollectionForm>
               withoutDefaultBorder
+              mint
               controlledInputProps={{
                 control,
                 name: 'description',

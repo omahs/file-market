@@ -43,7 +43,6 @@ export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
     if (isConnected && isACanAuthEffect && props?.isWithSign) {
       assert(address, 'address is undefined')
       setAddressState(address)
-      console.log('SIGN')
       setIsLoading(true)
       authStore.getMessageForAuth(address).then((res) => {
         signMessage({ message: res.data.message })
@@ -57,10 +56,7 @@ export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
   // useErrorWindow(errorSign?.message)
 
   const connect = useCallback(async () => {
-    console.log(props?.isWithSign)
     if (isConnected && address && props?.isWithSign) {
-      console.log(connector)
-      console.log('Connector')
       setAddressState(address)
       setIsLoading(true)
       await authStore.getMessageForAuth(address).then((res) => {
@@ -80,9 +76,7 @@ export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
   }, [isConnected, address, connector, props?.isWithSign, setIsLoading])
 
   useEffect(() => {
-    console.log(isLoading)
     if (isLoading) {
-      console.log('Open')
       if (dialogStore.isDialogOpenByName('LoadingSign')) return
       dialogStore.openDialog<InProccess>({
         component: LoadingModal,

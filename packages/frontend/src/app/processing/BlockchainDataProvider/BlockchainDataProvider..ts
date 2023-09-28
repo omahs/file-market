@@ -42,7 +42,6 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
 
-    console.log(contract)
     console.log()
 
     const globalSalt = await callContractGetter<typeof contract.abi, `0x${string}`>({ contract, method: 'globalSalt' })

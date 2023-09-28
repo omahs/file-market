@@ -46,7 +46,7 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
   }
 
   private readonly getChainFromConfigById = (chainId: number | undefined): IMultiChainConfig => {
-    const defaultChain = (multichainConfig as IMultiChainConfig[]).find(item => item.chain.testnet === !import.meta.env.VITE_IS_MAINNET && item.isDefault) as IMultiChainConfig
+    const defaultChain = (multichainConfig as IMultiChainConfig[]).find(item => !!item.chain.testnet === !import.meta.env.VITE_IS_MAINNET && item.isDefault) as IMultiChainConfig
     if (chainId === undefined) return defaultChain
 
     return (multichainConfig as IMultiChainConfig[]).find(item => item.chain.id === chainId) ?? defaultChain
@@ -78,9 +78,6 @@ export class MultiChainStore implements IStoreRequester, IActivateDeactivate {
 
   getChainByName(chainName: string | undefined): IMultiChainConfig | undefined {
     if (chainName === undefined) return
-
-    console.log(chainName)
-    console.log(this.data)
 
     return this.data?.find(item => item.chain?.name === chainName)
   }

@@ -31,8 +31,6 @@ export function useApproveExchange({ collectionAddress }: IUseApproveExchange = 
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
 
-    console.log('approve exchange', 'exchange contract address', config?.exchangeToken.address, 'tokenId', tokenId)
-
     return callContract({
       callContractConfig: {
         address: contract.address,

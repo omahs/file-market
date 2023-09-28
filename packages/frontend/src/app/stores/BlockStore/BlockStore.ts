@@ -24,7 +24,6 @@ export class BlockStore {
   }
 
   setCurrentBlock = (currentBlock: bigint) => {
-    console.log(currentBlock)
     this.currentBlockNumber = currentBlock
   }
 
