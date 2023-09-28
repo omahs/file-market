@@ -78,7 +78,7 @@ const pingTx = async (txHash: `0x${string}`) => {
 
   while (receipt === null) {
     if (Date.now() - start > FIVE_MINUTES) break
-    await wait(1000)
+    await wait(5000)
 
     receipt = await wagmiConfig.getPublicClient().getTransactionReceipt({ hash: txHash })
 
