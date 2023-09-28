@@ -263,9 +263,9 @@ export default function WelcomeBlock() {
             </div>
           </NavigateBlock>
           <SupportedBy />
+          <HowToGetStart />
           <Achievements />
           <Publications />
-          <HowToGetStart />
           <KeepTouchBlock />
         </WelcomeInfo>
       </WelcomeScreenWrapper>
