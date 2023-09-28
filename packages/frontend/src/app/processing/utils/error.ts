@@ -1,12 +1,8 @@
 import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
-import { getWalletClient } from '@wagmi/core'
-import { type AbiFunction } from 'abitype/src/abi'
-import assert from 'assert'
+import { readContract, type ReadContractConfig, waitForTransaction } from '@wagmi/core'
 import { type Abi } from 'viem'
-import { type GetContractResult } from 'wagmi/dist/actions'
 
 import { wagmiConfig } from '../../config/web3Modal'
-import { rootStore } from '../../stores/RootStore'
 
 const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
@@ -52,34 +48,15 @@ export const stringifyContractError = (error: any) => {
   return `${message} Please try again.`
 }
 
-export const callContractGetter = async <T extends Abi, R = any>({
-  contract,
-  method,
+export const callContractGetter = async <T extends Abi, B extends string, R = any>({
+  callContractConfig,
 }: {
-  contract: GetContractResult<T>
-  method: Extract<GetContractResult<T>['abi'][number], AbiFunction>['name']
+  callContractConfig: ReadContractConfig<T, B>
 },
   ...args: any[]
 ): Promise<R> => {
   try {
-    const client = wagmiConfig.getPublicClient()
-
-    const walletClient = await getWalletClient()
-
-    const chainId = await client?.getChainId()
-
-    const chain = rootStore.multiChainStore.getChainById(chainId)?.chain
-
-    assert(walletClient)
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const data = (await client?.readContract({
-      address: contract.address,
-      functionName: method,
-      abi: contract.abi,
-      args,
-    })) as R
+    const data = (await readContract<T, B>(callContractConfig)) as R
 
     console.log('CONTRACT GETTER')
     console.log(data)
@@ -112,12 +89,10 @@ const pingTx = async (txHash: `0x${string}`) => {
 }
 
 export const getTxReceipt = async (hash: `0x${string}`) => {
-  const client = wagmiConfig.getPublicClient()
-
   console.log(hash)
 
   const receipt = await Promise.race([
-    await client?.waitForTransactionReceipt({
+    await waitForTransaction({
       hash,
     }),
     pingTx(hash),

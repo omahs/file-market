@@ -12,8 +12,8 @@ export const useContract = <A extends Abi>(address: string | undefined, abi: A |
 
   return useMemo(() => {
     try {
-      assertAccount(walletClient)
-      assert(address, 'address not found')
+      assertAccount(address)
+      assert(walletClient, 'wallet client not found')
       assert(abi, 'abi not found')
       assert(chain, 'chain not found')
 

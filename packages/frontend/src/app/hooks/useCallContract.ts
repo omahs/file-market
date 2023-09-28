@@ -1,5 +1,5 @@
 import { JsonRpcError } from '@metamask/rpc-errors'
-import { getWalletClient, writeContract } from '@wagmi/core'
+import { getWalletClient, waitForTransaction, writeContract } from '@wagmi/core'
 import assert from 'assert'
 import { type Abi, type PublicClient } from 'viem'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
@@ -48,7 +48,7 @@ export const useCallContract = () => {
       })
 
       if (ignoreTxFailture) {
-        return await client?.waitForTransactionReceipt({
+        return await waitForTransaction({
           hash,
         })
       }
@@ -64,4 +64,7 @@ export const useCallContract = () => {
   return {
     callContract,
   }
+}
+function waitForTransactionReceipt(arg0: { hash: `0x${string}` }) {
+  throw new Error('Function not implemented.')
 }

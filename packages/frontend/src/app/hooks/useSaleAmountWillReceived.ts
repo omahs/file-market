@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'use-debounce'
-import { formatEther } from 'viem'
+import { formatEther, parseEther } from 'viem'
 
 import { fee } from '../config/mark3d'
 import { hexToBuffer } from '../processing'
@@ -14,7 +14,7 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
 
   const conversionRateStore = useConversionRateStore()
   const blockchainDataProvider = useBlockchainDataProvider()
-  const debouncedPrice = useDebounce(price, 400)
+  const [debouncedPrice] = useDebounce(price, 400)
 
   const amountWillReceivedUsd = useMemo(() => {
     if (!amountWillReceived || !conversionRateStore.data?.rate) return 0
@@ -32,7 +32,7 @@ export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenF
     const royaltyAmountBN = await blockchainDataProvider.getRoyaltyAmount(
       hexToBuffer(collectionAddress),
       +tokenId,
-      BigInt(salePriceWithFee),
+      parseEther(salePriceWithFee.toString()),
     )
 
     return +formatEther(royaltyAmountBN)

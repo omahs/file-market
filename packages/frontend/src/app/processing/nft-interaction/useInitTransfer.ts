@@ -33,10 +33,10 @@ export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
       callContractConfig: {
         address: contract.address,
         abi: contract.abi,
-        functionName: '',
+        functionName: 'initTransfer',
         gasPrice: config?.gasPrice,
         args: [BigInt(tokenId ?? 0),
-          to,
+          to as `0x${string}`,
           '0x00',
           nullAddress],
       },

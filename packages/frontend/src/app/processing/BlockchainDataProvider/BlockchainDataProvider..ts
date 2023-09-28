@@ -44,7 +44,13 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
     console.log()
 
-    const globalSalt = await callContractGetter<typeof contract.abi, `0x${string}`>({ contract, method: 'globalSalt' })
+    const globalSalt = await callContractGetter<typeof contract.abi, 'globalSalt', `0x${string}`>({
+      callContractConfig: {
+        address: contract.address,
+        functionName: 'globalSalt',
+        abi: contract.abi,
+      },
+    })
 
     return hexToBuffer(globalSalt)
   }
@@ -63,30 +69,53 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await callContractGetter<typeof contract.abi, bigint>(
-      { contract, method: 'transferCounts' },
-      BigInt(tokenId),
+    const transferCountBN = await callContractGetter<typeof contract.abi, 'trasnferCounts'>(
+      {
+        callContractConfig: {
+          address: contract.address,
+          functionName: 'transferCounts',
+          abi: contract.abi,
+          args: [BigInt(tokenId)],
+        },
+      },
+
     )
 
-    return transferCountBN
+    return transferCountBN[1]
   }
 
   async getFee() {
     const contract = this.contractProvider.getExchangeContract()
 
-    return callContractGetter<typeof contract.abi, bigint>({ contract, method: 'fee' })
+    const data = await callContractGetter<typeof contract.abi, 'fee'>({
+      callContractConfig: {
+        address: contract.address,
+        functionName: 'fee',
+        abi: contract.abi,
+      },
+    })
+
+    return data[1]
   }
 
   async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: bigint) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const { royaltyAmount } = await callContractGetter<typeof contract.abi, { royaltyAmount: bigint }>(
-      { contract, method: 'royaltyInfo' },
-      BigInt(tokenId),
-      price,
+    const data = await callContractGetter<typeof contract.abi, 'royaltyInfo'>(
+      {
+        callContractConfig: {
+          address: contract.address,
+          functionName: 'royaltyInfo',
+          abi: contract.abi,
+          args: [BigInt(tokenId),
+            price],
+        },
+      },
     )
 
-    return royaltyAmount
+    console.log(data[1])
+
+    return data[1]
   }
 }
 

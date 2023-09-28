@@ -29,6 +29,8 @@ if (!window.Buffer) {
   window.Buffer = Buffer
 }
 
+(window as any).global = window
+
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 
 if (!projectId) {

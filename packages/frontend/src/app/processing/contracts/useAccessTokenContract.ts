@@ -5,7 +5,7 @@ import { useContract } from '../../hooks/useContract'
 export function useAccessTokenContract() {
   const config = useConfig()
 
-  const contract = useContract({ address: config?.accessToken.address, abi: config?.accessToken.abi })
+  const contract = useContract(config?.accessToken.address, config?.accessToken.abi)
 
   return { contract }
 }

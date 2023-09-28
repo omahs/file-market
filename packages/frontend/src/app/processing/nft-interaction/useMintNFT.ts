@@ -65,7 +65,13 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
       tokenIdBN = BigInt(data.tokenId ?? 0)
     } else {
-      tokenIdBN = await callContractGetter<typeof contract.abi, bigint>({ contract, method: 'tokensCount' })
+      tokenIdBN = await callContractGetter<typeof contract.abi, 'tokensCount', bigint>({
+        callContractConfig: {
+          address: contract.address,
+          functionName: 'tokensCount',
+          abi: contract.abi,
+        },
+      })
     }
     const owner = await factory.getOwner(address, collectionAddress, Number(tokenIdBN))
 

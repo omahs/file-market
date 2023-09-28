@@ -42,7 +42,7 @@ export function usePlaceOrder() {
           abi: contract.abi,
           functionName: 'placeOrder',
           gasPrice: config?.gasPrice,
-          args: [collectionAddress,
+          args: [collectionAddress as `0x${string}`,
             BigInt(tokenId),
             BigInt(price),
             '0x0000000000000000000000000000000000000000'],

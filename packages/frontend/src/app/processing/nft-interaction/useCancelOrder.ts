@@ -34,7 +34,7 @@ export function useCancelOrder() {
         abi: contract.abi,
         functionName: 'cancelOrder',
         gasPrice: config?.gasPrice,
-        args: [collectionAddress,
+        args: [collectionAddress as `0x${string}`,
           BigInt(tokenId)],
       },
     })
