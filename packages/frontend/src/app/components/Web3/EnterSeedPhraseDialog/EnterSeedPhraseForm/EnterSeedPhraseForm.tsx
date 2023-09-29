@@ -1,12 +1,12 @@
 import { mnemonicToEntropy } from 'bip39'
-import { sha256 } from 'ethereum-cryptography/sha256.js'
-import { toHex } from 'ethereum-cryptography/utils'
 import React, { type FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toHex } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
 import { useSeedProvider } from '../../../../processing'
+import { fileMarketCrypto } from '../../../../processing/FileMarketCrypto'
 import { ButtonGlowing, Txt } from '../../../../UIkit'
 import { InputModalTitleText, ModalBanner } from '../../../../UIkit/Modal/Modal'
 import { PasswordInput } from '../../../Form/PasswordInput/PasswordInput'
@@ -60,9 +60,11 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
             setValue,
             rules: {
               required: true,
-              validate: (p) => {
+              validate: async (p) => {
                 if (!!validateImportMnemonic(p)) return validateImportMnemonic(p)
-                if (isReset && seedProvider?.hashSeed !== toHex(sha256(Buffer.from(mnemonicToEntropy((p))))) && !isAppliedWrongPhrase) {
+                const sha512Value = await fileMarketCrypto.sha512(Buffer.from(mnemonicToEntropy((p)), 'hex'))
+
+                if (isReset && seedProvider?.hashSeed !== toHex(new Uint8Array(sha512Value)).substring(2) && !isAppliedWrongPhrase) {
                   setAppliesWrongPhrase(true)
 
                   return 'You probably made a mistake. This phrase is not suitable for your eft. Click the Connect button again to ignore'

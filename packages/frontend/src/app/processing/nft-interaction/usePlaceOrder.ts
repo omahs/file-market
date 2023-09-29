@@ -5,6 +5,7 @@ import { type TransactionReceipt } from 'viem'
 import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
+import { ZeroAddress } from '../../utils/constants'
 import { useExchangeContract } from '../contracts'
 import { assertCollection, assertContract, assertTokenId } from '../utils'
 
@@ -45,7 +46,7 @@ export function usePlaceOrder() {
           args: [collectionAddress as `0x${string}`,
             BigInt(tokenId),
             BigInt(price),
-            '0x0000000000000000000000000000000000000000'],
+            ZeroAddress],
         },
       })
   }), [contract, wrapPromise])
