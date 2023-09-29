@@ -43,7 +43,7 @@
   {
     "chain": {
       "id": 314159,
-      "name": "Filecoin",
+      "name": "FilecoinTestnet",
       "network": "Filecoin - Calibration testnet",
       "nativeCurrency": {
         "name": "TFIL",
@@ -119,7 +119,7 @@
   {
     "chain": {
       "id": 280,
-      "name": "ZkSync",
+      "name": "ZkSyncTestnet",
       "network": "zkSync Era Testnet",
       "nativeCurrency": {
         "name": "TETH",
