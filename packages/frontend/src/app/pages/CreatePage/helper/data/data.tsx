@@ -1,4 +1,4 @@
-import { ComboBoxOption } from '../../../../UIkit/Form/Combobox'
+import { type ComboBoxOption } from '../../../../UIkit/Form/Combobox'
 
 export type category = 'Graphics' | 'Photos' | 'Videos' | '3D models' | 'Music' | 'Sounds' | 'Docs' | 'Promocodes' | 'Archives'
 export type license = 'CC0 “No Rights Reserved”' | 'CC BY “Attribution”' | 'CC BY-ND “Attribution-NoDerivs”' | 'CC BY-SA “Attribution-ShareAlike”' | 'CC BY-NC “Attribution-NonCommercial”' | 'CC BY-NC-SA “Attribution-NonCommercial-ShareAlike”' | 'CC BY-NC-ND “Attribution-NonCommercial-NoDerivs”'

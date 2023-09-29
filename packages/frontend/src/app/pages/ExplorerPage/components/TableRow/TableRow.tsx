@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, { type FC, type ReactNode, useState } from 'react'
 
 import { styled } from '../../../../../styles'
 import { RowBody, RowWrapper } from '../../../../components/Table'
@@ -104,7 +104,7 @@ interface Props {
 export const TableRow: FC<Props> = ({ children, content, contentTitle }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const toggleRow = () => setIsOpen((isOpen) => !isOpen)
+  const toggleRow = () => { setIsOpen((isOpen) => !isOpen) }
 
   return (
     <ItemWithContent>

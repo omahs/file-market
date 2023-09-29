@@ -1,9 +1,9 @@
-import { getContract } from '@wagmi/core'
+import { getWalletClient } from '@wagmi/core'
 import { makeAutoObservable } from 'mobx'
+import { getContract } from 'wagmi/actions'
 
-import { wagmiClient } from '../../config/web3Modal'
-import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
-import { MultiChainStore } from '../../stores/MultiChain/MultiChainStore'
+import { type CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
+import { type MultiChainStore } from '../../stores/MultiChain/MultiChainStore'
 import { rootStore } from '../../stores/RootStore'
 import { assertConfig } from '../utils'
 
@@ -20,19 +20,21 @@ export class ContractProvider {
   }
 
   private getConfig() {
-    console.log(this.currentBlockChainStore.configByChainName?.chain.id)
-
-    return this.multiChainStore.getConfigById(this.currentBlockChainStore.configByChainName?.chain.id ?? this.currentBlockChainStore.chainId)
+    return this.multiChainStore.getConfigById(
+      this.currentBlockChainStore.configByChainName?.chain.id ??
+      this.currentBlockChainStore.chainId)
   }
 
-  getCollectionContract(address: string) {
+  getCollectionContract(address: `0x${string}`) {
     const config = this.getConfig()
     assertConfig(config)
 
-    return getContract({
+    const walletClient = getWalletClient()
+
+    return getContract<typeof config.collectionToken.abi, typeof walletClient>({
       address,
       abi: config.collectionToken.abi,
-      signerOrProvider: wagmiClient.provider,
+      walletClient: getWalletClient(),
     })
   }
 
@@ -43,7 +45,7 @@ export class ContractProvider {
     return getContract({
       address: config.accessToken.address,
       abi: config.accessToken.abi,
-      signerOrProvider: wagmiClient.provider,
+      walletClient: getWalletClient(),
     })
   }
 
@@ -54,7 +56,7 @@ export class ContractProvider {
     return getContract({
       address: config.exchangeToken.address,
       abi: config.exchangeToken.abi,
-      signerOrProvider: wagmiClient.provider,
+      walletClient: getWalletClient(),
     })
   }
 }

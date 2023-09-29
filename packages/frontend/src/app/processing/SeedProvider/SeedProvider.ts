@@ -1,10 +1,10 @@
 import * as passworder from '@metamask/browser-passworder'
 import { entropyToMnemonic } from 'bip39'
-import { utils } from 'ethers'
+import { getAddress } from 'viem'
 
 import { fileMarketCrypto } from '../FileMarketCrypto'
-import { IStorageProvider } from '../StorageProvider'
-import { ISeedProvider } from './ISeedProvider'
+import { type IStorageProvider } from '../StorageProvider'
+import { type ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
 const hashSeedStorageKey = 'hashSeed'
@@ -34,7 +34,7 @@ export class SeedProvider implements ISeedProvider {
 
   private setSeed(seed: ArrayBuffer | undefined) {
     this.seed = seed
-    this.onChangeListeners.forEach(fn => fn(seed))
+    this.onChangeListeners.forEach(fn => { fn(seed) })
   }
 
   async unlock(password: string): Promise<void> {
@@ -75,7 +75,7 @@ export class SeedProvider implements ISeedProvider {
   }
 
   isForAccount(account: string) {
-    return utils.getAddress(account) === utils.getAddress(this.account)
+    return getAddress(account) === getAddress(this.account)
   }
 
   addOnSeedChangeListener(callback: (seed: ArrayBuffer | undefined) => void) {

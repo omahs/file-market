@@ -1,4 +1,4 @@
-import { ITableColumn, ITableRow } from '../../components/Table/TableBuilder'
+import { type ITableColumn, type ITableRow } from '../../components/Table/TableBuilder'
 // 3XR imgs
 import xr1 from './images/3XR/1.jpg'
 import xr2 from './images/3XR/2.jpg'

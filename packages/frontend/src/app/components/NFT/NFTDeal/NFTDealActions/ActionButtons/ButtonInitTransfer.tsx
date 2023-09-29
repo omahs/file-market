@@ -1,18 +1,17 @@
 import { Modal } from '@nextui-org/react'
-import { BigNumber } from 'ethers'
-import { FC } from 'react'
+import { type FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useInitTransfer } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { TransferForm, TransferFormValue } from '../../TransferForm'
-import { ActionButtonProps } from './types/types'
+import { TransferForm, type TransferFormValue } from '../../TransferForm'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonInitTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
@@ -22,7 +21,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
   tokenFullId, isDisabled,
 }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
-  const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
+  const { initTransfer, ...statuses } = useInitTransfer()
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<TransferFormValue>()
@@ -45,11 +44,11 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
             onSubmit={wrapAction(async (form) => {
               closeModal()
               const receipt = await initTransfer({
-                tokenId: tokenFullId.tokenId,
+                ...tokenFullId,
                 to: form.address,
               })
               if (receipt?.blockNumber) {
-                transferStore.onTransferDraft(BigNumber.from(tokenFullId.tokenId), receipt.from, receipt?.blockNumber)
+                transferStore.onTransferDraft(BigInt(tokenFullId.tokenId), receipt.from, BigInt(receipt?.blockNumber ?? 0))
               }
             })}
           />

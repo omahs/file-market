@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import GreenCheckBoxIcon from '../../../../../assets/img/CheckBoxGreenIcon.svg'
@@ -121,7 +121,14 @@ const CheckBox = styled('div', {
   },
 })
 
-export const CreateOrImportSection: FC<{ onSuccess?: () => void, connectFunc?: () => void, onDisconnect: () => void }> = observer(({ onSuccess, connectFunc, onDisconnect }) => {
+export const CreateOrImportSection: FC<{ onSuccess?: () => void
+  connectFunc?: () => void
+  onDisconnect: () => void
+}> = observer(({
+  onSuccess,
+  connectFunc,
+  onDisconnect,
+}) => {
   const { dialogStore } = useStores()
   const { isConnected } = useAccount()
   const { disconnect } = useDisconnect()

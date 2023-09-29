@@ -1,22 +1,23 @@
 import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
-import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
+import { readContract, type ReadContractConfig, waitForTransaction } from '@wagmi/core'
+import { type Abi } from 'viem'
 
-import { wagmiClient } from '../../config/web3Modal'
+import { wagmiConfig } from '../../config/web3Modal'
 
 const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
 
-enum ProviderErrorMessages {
+export enum ProviderErrorMessages {
   InternalError = 'Internal JSON-RPC error.',
   InsufficientBalance = 'Actor balance less than needed.',
 }
 
-enum ErrorMessages {
+export enum ErrorMessages {
   InsufficientBalance = 'Balance too low for transaction.',
   RejectedByUser = 'Transaction rejected by user.',
 }
 
-const stringifyContractError = (error: any) => {
+export const stringifyContractError = (error: any) => {
   if (error?.code === 'ACTION_REJECTED') {
     return ErrorMessages.RejectedByUser
   }
@@ -47,78 +48,39 @@ const stringifyContractError = (error: any) => {
   return `${message} Please try again.`
 }
 
-export const callContractGetter = async <R = any>({
-  contract,
-  method,
+export const callContractGetter = async <T extends Abi, B extends string, R = any>({
+  callContractConfig,
 }: {
-  contract: Contract
-  method: keyof Contract
+  callContractConfig: ReadContractConfig<T, B>
 },
   ...args: any[]
 ): Promise<R> => {
   try {
-    await contract.callStatic[method](...args)
+    const data = (await readContract<T, B>(callContractConfig)) as R
 
-    return contract[method](...args)
+    console.log('CONTRACT GETTER')
+    console.log(data)
+
+    return data
   } catch (error: any) {
     console.error(error)
 
     throw new Error(stringifyContractError(error))
   }
 }
-
-export const callContract = async ({
-  contract,
-  method,
-  signer,
-  ignoreTxFailture,
-  minBalance,
-}: {
-  contract: Contract
-  method: keyof Contract
-  signer?: Signer
-  ignoreTxFailture?: boolean
-  minBalance?: BigNumber
-},
-...args: any[]
-) => {
-  try {
-    if (signer) {
-      const balance = await signer.getBalance()
-      // equality anyway throws an error because of gas
-      if (balance.isZero() || minBalance?.gte(balance)) {
-        throw new JsonRpcError(402, ErrorMessages.InsufficientBalance)
-      }
-    }
-
-    await contract.callStatic[method](...args)
-    const tx: ContractTransaction = await contract[method](...args)
-
-    if (ignoreTxFailture) {
-      return await tx.wait()
-    }
-
-    return await getTxReceipt(tx)
-  } catch (error: any) {
-    console.error(error)
-
-    throw new Error(stringifyContractError(error))
-  }
-}
-
 export const wait = (miliseconds: number) => new Promise<void>((resolve) => {
-  setTimeout(() => resolve(), miliseconds)
+  setTimeout(() => { resolve() }, miliseconds)
 })
 
-const pingTx = async (txHash: string) => {
+const pingTx = async (txHash: `0x${string}`) => {
   let receipt = null
   const start = Date.now()
 
   while (receipt === null) {
     if (Date.now() - start > FIVE_MINUTES) break
-    await wait(1000)
+    await wait(5000)
 
-    receipt = await wagmiClient.provider.getTransactionReceipt(txHash)
+    receipt = await wagmiConfig.getPublicClient().getTransactionReceipt({ hash: txHash })
 
     if (receipt === null) continue
   }
@@ -126,14 +88,18 @@ const pingTx = async (txHash: string) => {
   return receipt
 }
 
-const getTxReceipt = async (tx: ContractTransaction) => {
+export const getTxReceipt = async (hash: `0x${string}`) => {
+  console.log(hash)
+
   const receipt = await Promise.race([
-    tx.wait(),
-    pingTx(tx.hash),
+    await waitForTransaction({
+      hash,
+    }),
+    pingTx(hash),
   ])
 
-  if (!receipt || !receipt.status) {
-    throw new JsonRpcError(503, `The transaction ${tx.hash} is failed`)
+  if (!receipt?.status) {
+    throw new JsonRpcError(503, `The transaction ${hash} is failed`)
   }
 
   return receipt

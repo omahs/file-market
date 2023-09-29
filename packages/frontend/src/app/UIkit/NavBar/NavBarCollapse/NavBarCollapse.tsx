@@ -1,4 +1,4 @@
-import { ComponentProps, FC } from 'react'
+import { type ComponentProps, type FC } from 'react'
 
 import { styled } from '../../../../styles'
 import { Container } from '../../Container'

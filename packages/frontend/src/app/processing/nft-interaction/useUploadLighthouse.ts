@@ -1,24 +1,27 @@
 import lighthouse from '@lighthouse-web3/sdk'
-import { Signer } from 'ethers'
 import { useCallback } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { type WalletClient } from 'viem'
+import { useAccount, useWalletClient } from 'wagmi'
 
 import { lighthouseService } from '../../services/LighthouseService'
 import { assertAccount, assertSigner } from '../utils/assert'
 
 export function useUploadLighthouse() {
-  const { data: signer } = useSigner()
   const { address } = useAccount()
+  const { data: walletClient } = useWalletClient()
 
-  const getAccessToken = async (address: string, signer: Signer) => {
+  const getAccessToken = async (address: `0x${string}`, walletClient: WalletClient) => {
     const message = await lighthouseService.getMessage(address)
-    const signedMessage = await signer.signMessage(message) // Sign message
+    const signedMessage = await walletClient.signMessage({
+      account: address,
+      message,
+    }) // Sign message
 
     return lighthouseService.getAccessToken(address, signedMessage)
   }
 
   const upload = useCallback(async (file: File | Blob, accessToken: string) => {
-    assertSigner(signer)
+    assertSigner(walletClient)
     assertAccount(address)
 
     const uploadFile = async (fileOrBlob: File | Blob) => {
@@ -40,15 +43,15 @@ export function useUploadLighthouse() {
     }
 
     return uploadFile(file)
-  }, [signer, address])
+  }, [walletClient, address])
 
   const uploadWithoutToken = useCallback(async (file: File | Blob) => {
-    assertSigner(signer)
+    assertSigner(walletClient)
     assertAccount(address)
-    const accessToken = await getAccessToken(address, signer)
+    const accessToken = await getAccessToken(address, walletClient)
 
     return upload(file, accessToken)
-  }, [signer, address])
+  }, [walletClient, address])
 
   return { upload, getAccessToken, uploadWithoutToken }
 }

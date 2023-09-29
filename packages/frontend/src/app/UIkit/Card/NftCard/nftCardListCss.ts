@@ -1,4 +1,4 @@
-import { CSS } from '@stitches/react'
+import { type CSS } from '@stitches/react'
 
 export const nftCardListCss: CSS = {
   display: 'grid',

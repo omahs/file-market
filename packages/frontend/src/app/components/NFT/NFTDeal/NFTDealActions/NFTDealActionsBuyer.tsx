@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
-import { Order, Transfer } from '../../../../../swagger/Api'
-import { TokenFullId } from '../../../../processing/types'
+import { type Order, type Transfer } from '../../../../../swagger/Api'
+import { type TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
 import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'

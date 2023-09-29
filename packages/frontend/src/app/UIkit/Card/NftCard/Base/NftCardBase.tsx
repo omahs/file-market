@@ -1,6 +1,5 @@
-
 import { Tooltip } from '@nextui-org/react'
-import React, { MouseEventHandler, PropsWithChildren, ReactNode, useState } from 'react'
+import React, { type MouseEventHandler, type PropsWithChildren, type ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Flex } from '../../../Flex'

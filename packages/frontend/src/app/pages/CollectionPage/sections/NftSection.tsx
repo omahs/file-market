@@ -8,7 +8,7 @@ import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router'
+import { type Params } from '../../../utils/router'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -46,7 +46,7 @@ const NftSection = observer(() => {
         hasMore={collectionTokenListStore.hasMoreData}
         isLoading={collectionTokenListStore.isLoading}
         currentItemCount={collectionTokenListStore.nftCards.length}
-        fetchMore={() => collectionTokenListStore.requestMore()}
+        fetchMore={() => { collectionTokenListStore.requestMore() }}
         render={({ index }) => {
           return <NFTCard {...collectionTokenListStore.nftCards[index]} key={index} />
         }}
@@ -58,7 +58,7 @@ const NftSection = observer(() => {
             header={'There\'s not one thing'}
             mainText={'Be the first and create your first EFT'}
             buttonsBlock={(
-              <Button primary onClick={() => navigate('/create/eft')}>
+              <Button primary onClick={() => { navigate('/create/eft') }}>
                 <Txt primary1>Create</Txt>
               </Button>
             )}

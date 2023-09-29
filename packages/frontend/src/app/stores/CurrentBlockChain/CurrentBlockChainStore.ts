@@ -1,17 +1,17 @@
 import { makeAutoObservable } from 'mobx'
-import { Chain } from 'wagmi'
+import { type Chain } from 'wagmi'
 
 import multichainConfig from '../../../../../../config/multiChainConfig.json'
 import { Api } from '../../../swagger/Api'
-import { IMultiChainConfig } from '../../config/multiChainConfigType'
+import { type IMultiChainConfig } from '../../config/multiChainConfigType'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeReset,
 } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
 
 /**
  * Stores only ACTIVE order state.
@@ -33,6 +33,10 @@ export class CurrentBlockChainStore implements IStoreRequester, IActivateDeactiv
   constructor({ errorStore, multiChainStore }: { errorStore: ErrorStore, multiChainStore: MultiChainStore }) {
     this.errorStore = errorStore
     this.multiChainStore = multiChainStore
+    const multiChains: IMultiChainConfig[] = multichainConfig as IMultiChainConfig[]
+    const data = multiChains?.filter((item) => (item.chain.testnet === true) === !import.meta.env.VITE_IS_MAINNET)
+    const defaultChain = data?.find(item => (item.isDefault === true))
+    this.chainId = defaultChain ? defaultChain.chain.id : data?.[0].chain.id
     makeAutoObservable(this, {
       errorStore: false,
       multiChainStore: false,

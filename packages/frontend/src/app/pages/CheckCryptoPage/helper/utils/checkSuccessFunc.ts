@@ -1,4 +1,4 @@
-import { checkCryptoField, checkCryptoObject } from '../types/types'
+import { type checkCryptoField, type checkCryptoObject } from '../types/types'
 
 export function setNextFieldToFalseAfterTrue<T extends checkCryptoObject>(obj: T): T {
   const newObject = { ...obj }

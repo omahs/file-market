@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { RefObject, useEffect, useRef, useState } from 'react'
-import { FieldValues } from 'react-hook-form'
+import { type RefObject, useEffect, useRef, useState } from 'react'
+import { type FieldValues } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { ControlledInputProps, Input, InputProps, Txt } from '../../../UIkit'
+import { type ControlledInputProps, Input, type InputProps, Txt } from '../../../UIkit'
 
 const TextStartInputStyle = styled('div', {
   width: '100%',

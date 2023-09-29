@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { type ComponentMeta, type ComponentStory } from '@storybook/react'
 import { BrowserRouter } from 'react-router-dom'
 
 import { AppLogoButton } from './AppLogoButton'

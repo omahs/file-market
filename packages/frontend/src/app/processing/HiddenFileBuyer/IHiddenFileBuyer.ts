@@ -1,4 +1,4 @@
-import { IHiddenFileBase } from '../HiddenFileBase'
+import { type IHiddenFileBase } from '../HiddenFileBase'
 
 export interface IHiddenFileBuyer extends IHiddenFileBase {
 

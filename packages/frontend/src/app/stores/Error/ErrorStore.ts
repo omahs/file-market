@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
-import { DialogStore } from '../Dialog/DialogStore'
+import { type DialogStore } from '../Dialog/DialogStore'
 
 export class ErrorStore {
   dialogStore: DialogStore

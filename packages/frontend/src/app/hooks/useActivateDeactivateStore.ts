@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { IActivateDeactivate } from '../utils/store'
+import { type IActivateDeactivate } from '../utils/store'
 
 export function useActivateDeactivateRequireParams<Args extends any[]>(
   store: IActivateDeactivate<Args>, ...args: Partial<Args>

@@ -1,14 +1,13 @@
 import { Tooltip } from '@nextui-org/react'
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { type FC, useEffect, useMemo, useState } from 'react'
+import { getAddress } from 'viem'
 
 import { styled } from '../../../../../styles'
-import { Api, Order, Transfer } from '../../../../../swagger/Api'
+import { Api, type Order, type Transfer } from '../../../../../swagger/Api'
 import { useStores } from '../../../../hooks'
 import { useConfig } from '../../../../hooks/useConfig'
-import { TokenFullId } from '../../../../processing/types'
-import { transferPermissions } from '../../../../utils/transfer/status'
+import { type TokenFullId } from '../../../../processing/types'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -36,8 +35,6 @@ export interface NFTDealActionsProps {
   runIsApprovedRefetch: () => void
 }
 
-const permissions = transferPermissions.buyer
-
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
   order,
@@ -52,8 +49,8 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForContinue
   const config = useConfig()
   const timeService = new Api({ baseUrl: '/api' }).serverTime
-  const collectionAddressNormalized = tokenFullId?.collectionAddress && utils.getAddress(tokenFullId?.collectionAddress)
-  const fileBunniesAddressNormalized = utils.getAddress(config?.fileBunniesCollectionToken.address ?? '')
+  const collectionAddressNormalized = tokenFullId?.collectionAddress && getAddress(tokenFullId?.collectionAddress)
+  const fileBunniesAddressNormalized = getAddress(config?.fileBunniesCollectionToken.address ?? '')
   const isFileBunnies = collectionAddressNormalized === fileBunniesAddressNormalized
 
   const fileBunniesText = useMemo(() => {

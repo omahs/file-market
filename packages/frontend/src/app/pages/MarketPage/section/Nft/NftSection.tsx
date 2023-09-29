@@ -17,7 +17,7 @@ const NftSection: React.FC = observer(() => {
         hasMore={openOrderListStore.hasMoreData}
         isLoading={openOrderListStore.isLoading}
         currentItemCount={openOrderListStore.nftCards.length}
-        fetchMore={() => openOrderListStore.requestMore()}
+        fetchMore={() => { openOrderListStore.requestMore() }}
         render={({ index }) => {
           return <NFTCard {...openOrderListStore.nftCards[index]} key={index} />
         }}
@@ -28,7 +28,7 @@ const NftSection: React.FC = observer(() => {
           header={'There\'s not one thing'}
           mainText={'Be the first and create your first EFT'}
           buttonsBlock={(
-            <Button primary onClick={() => navigate('/create')}>
+            <Button primary onClick={() => { navigate('/create') }}>
               <Txt primary1>Create</Txt>
             </Button>
           )}

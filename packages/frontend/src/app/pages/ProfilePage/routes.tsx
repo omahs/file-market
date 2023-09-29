@@ -1,4 +1,4 @@
-import { Navigate, RouteObject } from 'react-router-dom'
+import { Navigate, type RouteObject } from 'react-router-dom'
 
 import { HistorySection } from './sections/HistorySection'
 import OwnedSection from './sections/OwnedSection'

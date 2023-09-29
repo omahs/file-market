@@ -1,5 +1,5 @@
-import React, { ComponentProps, forwardRef } from 'react'
-import { PressHookProps } from 'react-aria'
+import React, { type ComponentProps, forwardRef } from 'react'
+import { type PressHookProps } from 'react-aria'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 
 import { linkStyled } from '../Link.styles'

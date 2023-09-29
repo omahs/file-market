@@ -6,7 +6,7 @@ import { useCurrency } from '../../../../hooks/useCurrency'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Flex, Link, textVariant } from '../../../../UIkit'
-import { Params } from '../../../../utils/router'
+import { type Params } from '../../../../utils/router'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const NftName = styled('h1', {
@@ -73,7 +73,7 @@ const BaseInfoSection = () => {
           <PropertyTitle style={{ fontSize: '14px', lineHeight: '20px', marginBottom: 0 }}>
             Creator’s royalty:
             {' '}
-            {formatRoyalty(token.royalty)}
+            {formatRoyalty(BigInt(token.royalty ?? 0))}
             %
           </PropertyTitle>
         )}

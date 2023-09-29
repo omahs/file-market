@@ -1,5 +1,5 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import React, { ComponentProps, forwardRef } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import React, { type ComponentProps, forwardRef } from 'react'
 
 import { linkStyled } from '../Link.styles'
 import { useLink } from '../useLink'

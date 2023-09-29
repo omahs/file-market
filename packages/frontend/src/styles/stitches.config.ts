@@ -1,4 +1,4 @@
-import { createStitches, PropertyValue } from '@stitches/react'
+import { createStitches, type PropertyValue } from '@stitches/react'
 
 export const {
   styled,

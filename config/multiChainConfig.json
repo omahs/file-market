@@ -36,14 +36,14 @@
     "imgGray": "https://svgshare.com/i/vuR.svg",
     "accessTokenAddress": "0xdcbF452fEA133e28759F050C9BDD827C805B3030",
     "exchangeTokenAddress": "0x2f255f048c1510485bd3F7D65520EDFB9EbC9362",
-    "baseUrl": "filemarket.xyz/api",
+        "baseUrl": "https://filemarket.xyz/api",
     "explorer": "https://filfox.info/en/message/",
     "wsUrl": "wss://filemarket.xyz"
   },
   {
     "chain": {
       "id": 314159,
-      "name": "Filecoin",
+      "name": "FilecoinTestnet",
       "network": "Filecoin - Calibration testnet",
       "nativeCurrency": {
         "name": "TFIL",
@@ -119,7 +119,7 @@
   {
     "chain": {
       "id": 280,
-      "name": "ZkSync",
+      "name": "ZkSyncTestnet",
       "network": "zkSync Era Testnet",
       "nativeCurrency": {
         "name": "TETH",

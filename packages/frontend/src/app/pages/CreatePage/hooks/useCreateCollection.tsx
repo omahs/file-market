@@ -2,10 +2,10 @@ import { useState } from 'react'
 
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
-  CreateCollectionForm as FormDataToTransfer,
+  type CreateCollectionForm as FormDataToTransfer,
   useMintCollection,
 } from '../../../processing/nft-interaction'
-import { CreateCollectionForm } from '../Collection/sections/CreateCollection/CreateCollectionSection'
+import { type CreateCollectionForm } from '../Collection/sections/CreateCollection/CreateCollectionSection'
 
 const convertFormDataToCollectionDTO = (
   form: CreateCollectionForm,

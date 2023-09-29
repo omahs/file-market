@@ -1,6 +1,6 @@
-import { ComponentProps, ReactNode } from 'react'
+import { type ComponentProps, type ReactNode } from 'react'
 
-import { RowCell } from '../../pages/ExplorerPage/components/TableRow/TableRow'
+import { type RowCell } from '../../pages/ExplorerPage/components/TableRow/TableRow'
 
 // TODO also need to implement 'column attributes: to apply css not on one cell but on full column'
 /** Describes column in table */
@@ -10,13 +10,13 @@ export interface ITableColumn {
 }
 
 /** Describes row in table */
-export interface ITableRow<AdditionalDataCellType = {}, AdditionalDataRowType = {}> {
+export interface ITableRow<AdditionalDataCellType = unknown, AdditionalDataRowType = unknown> {
   cells: Array<ITableRowCell<AdditionalDataCellType>>
   additionalData?: AdditionalDataRowType
 }
 
 /** Describes cell in row in table */
-export interface ITableRowCell<AdditionalDataType = {}> {
+export interface ITableRowCell<AdditionalDataType = unknown> {
   value: ReactNode
   columnName: string
   cellAttributes?: ComponentProps<typeof RowCell>

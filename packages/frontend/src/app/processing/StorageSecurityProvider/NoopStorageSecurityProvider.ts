@@ -1,4 +1,4 @@
-import { IStorageSecurityProvider } from './IStorageSecurityProvider'
+import { type IStorageSecurityProvider } from './IStorageSecurityProvider'
 
 /**
  * For now no encryption, but in the future it will be included.

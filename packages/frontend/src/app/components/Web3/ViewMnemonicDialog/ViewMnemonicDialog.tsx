@@ -5,11 +5,11 @@ import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProvider } from '../../../processing'
 import { ButtonGlowing, Txt } from '../../../UIkit'
 import { Modal, ModalBanner, ModalBody, ModalButtonContainer, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
-import { AppDialogProps } from '../../../utils/dialog'
+import { type AppDialogProps } from '../../../utils/dialog'
 import { UnlockSection } from '../ConnectFileWalletDialog/sections/UnlockSection'
 import ViewMnemonicSection from './ViewMnemonicSection/ViewMnemonicSection'
 
-export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
+export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<unknown>): JSX.Element {
   const { adaptive } = useMediaMui()
   const { address } = useAccount()
   const [canWatch, setCanWatch] = useState<boolean>(false)

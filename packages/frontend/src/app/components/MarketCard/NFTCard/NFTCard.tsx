@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { HiddenFileMetaData } from '../../../../swagger/Api'
+import { type HiddenFileMetaData } from '../../../../swagger/Api'
 import { useCurrency } from '../../../hooks/useCurrency'
 import { NftCardBase, NftCardUserInfo, PriceBadge } from '../../../UIkit'
 import { FileType } from '../FileType/FileType'
@@ -55,7 +55,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({
       <NftCardUserInfo img={user.img} address={user.address} />
       {price && (
         <PriceBadge
-          left={formatCurrency(price ?? 0)}
+          left={formatCurrency(price ?? '0')}
           right={priceUsd && `~${formatUsd(priceUsd ?? 0)}`}
         />
       )}

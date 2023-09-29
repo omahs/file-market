@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { type FC } from 'react'
 
 import { styled } from '../../../../../styles'
-import Tag, { BlueText, TagOptions } from '../../../../UIkit/Tag/Tag'
+import Tag, { BlueText, type TagOptions } from '../../../../UIkit/Tag/Tag'
 import { GridBlock } from '../../helper/styles/style'
 
 const Categories = styled('div', {

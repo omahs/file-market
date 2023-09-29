@@ -1,5 +1,5 @@
 import { Tooltip } from '@nextui-org/react'
-import React, { FC, PropsWithChildren } from 'react'
+import React, { type FC, type PropsWithChildren } from 'react'
 
 import Protected from '../../../../assets/img/Protected.svg'
 import QuestionMark from '../../../../assets/img/QuestionMark.svg'
@@ -69,7 +69,7 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
         rounded
         placement={'bottom'}
         trigger={'hover'}
-        content={<div>{'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}</div>}
+        content={<div>{'Allows users to mint NFTs with attached encrypted files stored on decentralized storage, which can only be accessed exclusively by the owner of the NFT.'}</div>}
         color="primary"
         className={'tooltip'}
         css={{

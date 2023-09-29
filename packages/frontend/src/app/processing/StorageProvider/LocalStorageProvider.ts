@@ -1,4 +1,4 @@
-import { IStorageProvider } from './IStorageProvider'
+import { type IStorageProvider } from './IStorageProvider'
 
 export type StorageData = Record<string, string>
 

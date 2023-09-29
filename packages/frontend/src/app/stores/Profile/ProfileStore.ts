@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, UserProfile } from '../../../swagger/Api'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { RootStore } from '../RootStore'
+import { Api, type UserProfile } from '../../../swagger/Api'
+import { type IActivateDeactivate, type IStoreRequester, type RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type RootStore } from '../RootStore'
 
 export class ProfileStore implements IStoreRequester,
   IActivateDeactivate<[string]> {

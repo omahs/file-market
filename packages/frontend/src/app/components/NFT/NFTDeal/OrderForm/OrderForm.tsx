@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { fee } from '../../../../config/mark3d'
@@ -10,13 +9,14 @@ import { useCurrency } from '../../../../hooks/useCurrency'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
-import { TokenFullId } from '../../../../processing/types'
+import { useIsCreator } from '../../../../processing/nft-interaction/useIsCreator'
+import { type TokenFullId } from '../../../../processing/types'
 import { ButtonGlowing, Flex, FormControl, Input, PriceBadge } from '../../../../UIkit'
 import { formatNumber } from '../../../../utils/number'
 import { StyledFlex, StyledPriceDescription } from './OrderForm.styles'
 
 export interface OrderFormValue {
-  price: BigNumber
+  price: string
 }
 
 interface OrderFormRawValue {
@@ -27,24 +27,27 @@ export interface OrderFormProps {
   defaultValues?: OrderFormValue
   onSubmit?: (value: OrderFormValue) => void
   tokenFullId: TokenFullId
+  isOwner?: boolean
 }
 
 export const OrderForm: FC<OrderFormProps> = observer(({
   defaultValues,
   onSubmit,
   tokenFullId,
+  isOwner,
 }) => {
   const { formatRoyalty, toCurrency, fromCurrency } = useCurrency()
   const currentBlockChainStore = useCurrentBlockChain()
-
   const tokenStore = useTokenStore(tokenFullId.collectionAddress, tokenFullId.tokenId)
+
+  const { isCreator } = useIsCreator(tokenStore.data)
 
   const importFormValue = useCallback((value?: OrderFormValue): OrderFormRawValue => ({
     price: value ? toCurrency(value.price) : '',
   }), [toCurrency])
 
   const exportFormValue = useCallback((rawValue: OrderFormRawValue): OrderFormValue => ({
-    price: fromCurrency(+rawValue.price ?? 0),
+    price: fromCurrency(+rawValue.price ?? 0).toString(),
   }), [fromCurrency])
 
   const { handleSubmit, control, watch, setValue } = useForm<OrderFormRawValue>({
@@ -55,7 +58,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
     amountWillReceived,
     amountWillReceivedUsd,
     isLoading,
-  } = useSaleAmountWillReceived(tokenFullId, +price)
+  } = useSaleAmountWillReceived(tokenFullId, +price, isCreator)
 
   return (
     <form onSubmit={handleSubmit(values => {
@@ -88,10 +91,10 @@ export const OrderForm: FC<OrderFormProps> = observer(({
                     (<span>{fee}%</span>)
                   </>
                 )}
-                {!!fee && !!tokenStore.data?.royalty && ' and '}
+                {!!fee && !!tokenStore.data?.royalty && ' and ' && !isOwner}
                 {!!tokenStore.data?.royalty && (
                   <>
-                    the author&apos;s royalty (<span>{formatRoyalty(tokenStore.data.royalty)}%</span>)
+                    the author&apos;s royalty (<span>{formatRoyalty(BigInt(tokenStore.data.royalty ?? 0))}%</span>)
                   </>
                 )}
                 {' '}

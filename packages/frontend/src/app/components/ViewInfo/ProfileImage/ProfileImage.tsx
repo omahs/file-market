@@ -9,7 +9,7 @@ import { gradientPlaceholderImg } from '../../../UIkit'
 import { BaseModal } from '../../Modal'
 import {
   EditProfileImageDialog,
-  IEditProfileImageDialogForm,
+  type IEditProfileImageDialogForm,
 } from './EditProfileImageDialog/EditProfileImageDialog'
 import ChangeLogoImg from './img/ChangeLogo.png'
 import { StyledProfileCameraImage, StyledProfileImage, StyledProfileImageContent } from './ProfileImage.styles'
@@ -70,8 +70,8 @@ const ProfileImage = ({ src, isOwner, onSuccess }: IProfileImageProps) => {
         {...modalProps}
       />
       <StyledProfileImage
-        onMouseEnter={() => setIsShowEdit(true)}
-        onMouseLeave={() => setIsShowEdit(false)}
+        onMouseEnter={() => { setIsShowEdit(true) }}
+        onMouseLeave={() => { setIsShowEdit(false) }}
       >
 
         <StyledProfileImageContent

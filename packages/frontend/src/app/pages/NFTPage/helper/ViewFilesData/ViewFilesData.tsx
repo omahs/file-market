@@ -1,4 +1,4 @@
-import { typeFiles } from '../../../../components/MarketCard/helper/data'
+import { type typeFiles } from '../../../../components/MarketCard/helper/data'
 import ThirdDView from '../../img/3DView.svg'
 import ImgView from '../../img/ImageView.svg'
 

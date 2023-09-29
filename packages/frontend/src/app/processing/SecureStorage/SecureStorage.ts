@@ -1,8 +1,8 @@
 import { ensureCall } from '../../utils/error'
-import { IStorageProvider } from '../StorageProvider'
-import { IStorageSecurityProvider } from '../StorageSecurityProvider'
+import { type IStorageProvider } from '../StorageProvider'
+import { type IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { CallbacksChangingError } from './errors'
-import { ISecureStorage } from './ISecureStorage'
+import { type ISecureStorage } from './ISecureStorage'
 
 const encrypt = async (provider: IStorageSecurityProvider | undefined, data: string): Promise<string> => {
   return ensureCall('StorageSecurityProvider.encrypt', provider?.encrypt, data)

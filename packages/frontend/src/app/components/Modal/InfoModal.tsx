@@ -1,10 +1,10 @@
 import { Modal } from '@nextui-org/react'
-import React, { ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 
 import { styled } from '../../../styles'
 import { useMediaMui } from '../../hooks/useMediaMui'
 import { ModalTitle } from '../../UIkit/Modal/Modal'
-import { AppDialogProps } from '../../utils/dialog'
+import { type AppDialogProps } from '../../utils/dialog'
 
 const InfoModalStyle = styled('div', {
   width: '85%',

@@ -1,12 +1,12 @@
-import { utils } from 'ethers'
+import { getAddress } from 'viem'
 
-import { FileMarketCrypto } from '../../../../../crypto/src'
-import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
-import { IBlockchainDataProvider } from '../BlockchainDataProvider'
-import { ISeedProvider } from '../SeedProvider'
-import { DecryptResult, FileMeta, PersistentDerivationArgs } from '../types'
+import { type FileMarketCrypto } from '../../../../../crypto/src'
+import { type RsaPublicKey } from '../../../../../crypto/src/lib/types'
+import { type IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { type ISeedProvider } from '../SeedProvider'
+import { type DecryptResult, type FileMeta, type PersistentDerivationArgs } from '../types'
 import { assertSeed, hexToBuffer } from '../utils'
-import { IHiddenFileOwner } from './IHiddenFileOwner'
+import { type IHiddenFileOwner } from './IHiddenFileOwner'
 
 export class HiddenFileOwner implements IHiddenFileOwner {
   #persistentArgs: PersistentDerivationArgs
@@ -29,16 +29,11 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   }
 
   async #getFilePassword(): Promise<ArrayBuffer> {
-    console.log('Start assert')
     assertSeed(this.seedProvider.seed)
-
-    console.log('Creator')
 
     const creator = await this.blockchainDataProvider.getTokenCreator(...this.#tokenFullIdArgs)
 
-    console.log('If')
-
-    if (this.address === utils.getAddress(creator)) {
+    if (this.address === getAddress(creator)) {
       const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)
 
       console.log('If success')

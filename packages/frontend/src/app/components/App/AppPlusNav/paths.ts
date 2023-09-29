@@ -1,4 +1,4 @@
-import { NavBarItemData } from '../../../UIkit'
+import { type NavBarItemData } from '../../../UIkit'
 
 export const paths: NavBarItemData[] = [
   {

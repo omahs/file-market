@@ -1,15 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 
-import { ERC721TokenMeta } from '../../processing/types'
+import { type ERC721TokenMeta } from '../../processing/types'
 import { ipfsService } from '../../services/IPFSService'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequestFetch,
   storeReset,
 } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 export class TokenMetaStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore

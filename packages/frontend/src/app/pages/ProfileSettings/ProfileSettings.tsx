@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import React, { useMemo, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useDebouncedCallback } from 'use-debounce'
 import { useAccount } from 'wagmi'
 
-import { Api, ProfileEmailExistsResponse } from '../../../swagger/Api'
+import { Api, type ProfileEmailExistsResponse } from '../../../swagger/Api'
 import { BaseModal } from '../../components'
 import { useStores } from '../../hooks'
 import { useStatusModal } from '../../hooks/useStatusModal'
@@ -14,7 +14,7 @@ import { requestJwtAccess } from '../../utils/jwt/function'
 import { reduceAddress } from '../../utils/nfts'
 import ReturnButton from './components/ReturnButton/ReturnButton'
 import { useUpdateProfile } from './helper/hooks/useUpdateProfile'
-import { IProfileSettings } from './helper/types/formType'
+import { type IProfileSettings } from './helper/types/formType'
 import { Form, GrayBgText, StyledTitle, WalletName, WalletNameMobile } from './ProfileSettings.styles'
 import AppearanceSection from './sections/Appereance/Appereance'
 import Links from './sections/Links/Links'
@@ -168,7 +168,6 @@ export default observer(function ProfileSettings() {
               name: 'username',
               rules: {
                 validate: async (value) => {
-                  console.log(value)
                   if (!value) return
 
                   urlExistCheck(value)
@@ -216,7 +215,9 @@ export default observer(function ProfileSettings() {
               control,
               name: 'isEmailNotificationEnabled',
             }}
-            isEmailConfirmed={userStore.user?.isEmailConfirmed || !userStore.user?.email || userStore.user?.email !== email}
+            isEmailConfirmed={userStore.user?.isEmailConfirmed ||
+              !userStore.user?.email ||
+              userStore.user?.email !== email}
             isEmailChanged={userStore.user?.email !== email}
             leftTime={userStore.timeToCanResend}
           />
@@ -228,9 +229,8 @@ export default observer(function ProfileSettings() {
               rules: {
                 validate: (value) => {
                   if (!value) return
-                  if (value.length > 50) return 'The url less than 50 characters'
 
-                  return value?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid email'
+                  return value?.match(/^(https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,40}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&/=]*$/) ? undefined : 'Please enter valid site'
                 },
               },
             }}

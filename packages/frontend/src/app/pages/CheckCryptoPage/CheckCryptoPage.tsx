@@ -1,7 +1,7 @@
 import { mnemonicToEntropy } from 'bip39'
 import { observer } from 'mobx-react-lite'
 import React, { useCallback, useMemo, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { PasswordInput } from '../../components/Form/PasswordInput/PasswordInput'
@@ -14,7 +14,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { Button, Input, PageLayout } from '../../UIkit'
 import { Form } from '../CreatePage/helper/style/style'
 import { TestContainer } from './CheckCryptoPage.styled'
-import { ITestProps } from './helper/types/types'
+import { type ITestProps } from './helper/types/types'
 import CycleSection from './section/CycleSection/CycleSection'
 import FileSection from './section/FileSection/FileSection'
 
@@ -142,7 +142,9 @@ const CheckCryptoPage = observer(() => {
   const collectionAddressInput = watch('collectionAddress')
 
   const isError = useMemo(() => {
-    return ((!!(errors.inputSeed) && !!inputSeed) || (!!(errors.collectionAddress) && !!collectionAddressInput)) && isVisibleCustom
+    return ((!!(errors.inputSeed) && !!inputSeed) ||
+      (!!(errors.collectionAddress) &&
+        !!collectionAddressInput)) && isVisibleCustom
   }, [inputSeed, errors, collectionAddressInput, isVisibleCustom])
 
   return (

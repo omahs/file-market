@@ -1,13 +1,13 @@
-import { ComponentProps } from '@stitches/react'
-import React, { ReactNode, useState } from 'react'
+import { type ComponentProps } from '@stitches/react'
+import React, { type ReactNode, useState } from 'react'
 import {
-  Control,
-  Controller, FieldValues, Path,
+  type Control,
+  Controller, type FieldValues, type Path,
 } from 'react-hook-form'
-import { UseFormSetValue } from 'react-hook-form/dist/types/form'
-import { RegisterOptions } from 'react-hook-form/dist/types/validator'
+import { type UseFormSetValue } from 'react-hook-form/dist/types/form'
+import { type RegisterOptions } from 'react-hook-form/dist/types/validator'
 
-import { filterData, IFilterData } from '../../../utils/input/filterData'
+import { filterData, type IFilterData } from '../../../utils/input/filterData'
 import { Txt } from '../../Txt'
 import {
   StyledAfterContainer,
@@ -48,7 +48,9 @@ export const Input = <T extends FieldValues>({
   rightInputContent,
   ...inputProps
 }: InputControlProps<T>) => {
-  const [state, setState] = useState<string | undefined>(controlledInputProps.control._defaultValues[controlledInputProps.name])
+  const [state, setState] = useState<string | undefined>(
+    controlledInputProps.control._defaultValues[controlledInputProps.name],
+  )
 
   return (
     <Controller

@@ -1,4 +1,4 @@
-import { ErrorResponse, HttpResponse, RequestParams } from '../../../swagger/Api'
+import { type ErrorResponse, type HttpResponse, type RequestParams } from '../../../swagger/Api'
 import { createToken } from './createToken'
 import { getAccessToken } from './get'
 

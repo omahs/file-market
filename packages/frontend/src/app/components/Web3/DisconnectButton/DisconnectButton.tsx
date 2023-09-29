@@ -1,5 +1,5 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { FC } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type FC } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import { useSeedProvider } from '../../../processing'

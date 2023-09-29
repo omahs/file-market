@@ -9,7 +9,7 @@ import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useSeedProvider } from '../../../processing'
 import { Modal, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
-import { AppDialogProps } from '../../../utils/dialog'
+import { type AppDialogProps } from '../../../utils/dialog'
 import BaseModal from '../../Modal/Modal'
 import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
 

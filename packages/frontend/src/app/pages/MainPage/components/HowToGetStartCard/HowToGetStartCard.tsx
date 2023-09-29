@@ -1,4 +1,4 @@
-import React, { ComponentProps, FC, ReactNode } from 'react'
+import React, { type ComponentProps, type FC, type ReactNode } from 'react'
 
 import { styled } from '../../../../../styles'
 import { Txt } from '../../../../UIkit'

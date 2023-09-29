@@ -1,21 +1,19 @@
-import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import React, { FC, PropsWithChildren, useMemo } from 'react'
+import React, { type FC, type PropsWithChildren, useMemo } from 'react'
 import { useParams } from 'react-router'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../styles'
-import { Order } from '../../../../swagger/Api'
+import { type Order } from '../../../../swagger/Api'
 import { useChangeNetwork } from '../../../hooks/useChangeNetwork'
 import { useCurrency } from '../../../hooks/useCurrency'
-import { useCurrentBlockChain } from '../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useWatchStatusesTransfer } from '../../../processing/nft-interaction/useWatchStatusesTransfer'
-import { TokenFullId } from '../../../processing/types'
+import { type TokenFullId } from '../../../processing/types'
 import { Button, PriceBadge, Txt } from '../../../UIkit'
 import { LoadingOpacity } from '../../../UIkit/Loading/LoadingOpacity'
-import { Params } from '../../../utils/router'
+import { type Params } from '../../../utils/router'
 import BaseModal from '../../Modal/Modal'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
 
@@ -77,14 +75,21 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   children,
 }) => {
   const { isConnected } = useAccount()
-  const { changeNetwork } = useChangeNetwork()
-  const currentBlockChain = useCurrentBlockChain()
+  const { changeNetwork, chain } = useChangeNetwork()
   const { chainName } = useParams<Params>()
   const multiChainStore = useMultiChainStore()
   const isNetworkIncorrect = useMemo(() => {
-    return currentBlockChain.chain?.name !== chainName
-  }, [currentBlockChain.chain?.name, chainName])
-  const { isOwner, isApprovedExchange, isLoading, error, transfer, isBuyer, runIsApprovedRefetch } = useWatchStatusesTransfer({ tokenFullId, isNetworkIncorrect })
+    return chain?.name !== chainName
+  }, [chain, chainName])
+  const {
+    isOwner,
+    isApprovedExchange,
+    isLoading,
+    error,
+    transfer,
+    isBuyer,
+    runIsApprovedRefetch,
+  } = useWatchStatusesTransfer({ tokenFullId, isNetworkIncorrect })
   const { formatCurrency, formatUsd } = useCurrency()
   const { modalProps } = useStatusModal({
     statuses: { result: undefined, isLoading: false, error: error as unknown as string },
@@ -105,15 +110,15 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
             {transfer && (
               <PriceBadge
                 title="Price"
-                left={formatCurrency(BigNumber.from(order?.price ?? 0))}
-                right={`~${formatUsd(order?.priceUsd ?? '')}`}
+                left={formatCurrency(order?.price ?? '0')}
+                right={`~${formatUsd(order?.priceUsd ?? '0')}`}
                 size='lg'
                 background='secondary'
               />
             )}
           </DealContainerInfo>
         )}
-        {isNetworkIncorrect ? (
+        {(isNetworkIncorrect || !isConnected) ? (
           <DealContainerInfo>
             <Button
               primary

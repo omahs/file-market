@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { Button, LinkButton, Txt } from '../../../../UIkit'
 import { copyToClipboard } from '../../../../utils/clipboard/clipboard'
 import { baseUrls, imgs } from '../../helper/linkCard/data'
-import { typesCard } from '../../helper/linkCard/types'
+import { type typesCard } from '../../helper/linkCard/types'
 
 interface ILinkCardProps {
   text: string
@@ -19,6 +19,14 @@ const LinkCard = ({ text, type }: ILinkCardProps) => {
     return baseUrls[type]
   }, [type])
 
+  const showText = useMemo(() => {
+    if (type === 'url') {
+      return text.substring(0, (text.includes('/') ? text.indexOf('/') : text.length))
+    }
+
+    return text
+  }, [text, type])
+
   return (
     <>
       {type !== 'discord' && (
@@ -30,7 +38,7 @@ const LinkCard = ({ text, type }: ILinkCardProps) => {
               color: '#2F3134',
             }}
           >
-            {text}
+            {showText}
           </Txt>
         </LinkButton>
       )}

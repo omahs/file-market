@@ -1,7 +1,7 @@
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import Banner from '../../components/ViewInfo/Banner/Banner'
@@ -12,13 +12,13 @@ import { useAddress } from '../../hooks/useAddress'
 import { useProfileStore } from '../../hooks/useProfileStore'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { Button, PageLayout, TabItem, Tabs, Txt } from '../../UIkit'
+import { Button, PageLayout, type TabItem, Tabs, Txt } from '../../UIkit'
 import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { copyToClipboard } from '../../utils/clipboard/clipboard'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router'
+import { type Params } from '../../utils/router'
 import EthereumImg from './img/EthereumIcon.svg'
 import {
   AddressesButtonsContainer,
@@ -62,12 +62,9 @@ const ProfilePage: React.FC = observer(() => {
   const userTransferStore = useUserTransferStore(profileAddressMemo)
 
   const isOwner = useMemo(() => {
-    console.log(profileAddressMemo)
-    console.log(currentAddress)
-
     if (!currentAddress || !profileAddressMemo) return false
 
-    return utils.getAddress(currentAddress ?? '') === utils.getAddress(profileAddressMemo ?? '')
+    return getAddress(currentAddress ?? '') === getAddress(profileAddressMemo ?? '')
   }, [profileAddressMemo, currentAddress])
 
   const tabs = useMemo(() => {
@@ -104,6 +101,10 @@ const ProfilePage: React.FC = observer(() => {
     return profileStore.user
   }, [isOwner, profileStore.user, userStore.user])
 
+  const isAleshka = useMemo(() => {
+    return profileAddress === 'lesopolosat' || profileAddress === 'lewinUp' || profileAddress === 'psyarcus' || profileAddress === '0x5de89e63edb4492d1c6e141b29474f69ef8c4f08'
+  }, [profileAddress])
+
   return (
     <GrayOverlay style={{ width: '100%', overflow: 'hidden' }}>
       <PageLayout isHasSelectBlockChain>
@@ -117,7 +118,7 @@ const ProfilePage: React.FC = observer(() => {
               src={user?.avatarUrl ? getHttpLinkFromIpfsString(user?.avatarUrl) : getProfileImageUrl(profileAddress ?? '')}
               isOwner={isOwner}
             />
-            <ProfileName>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
+            <ProfileName isAleshka={isAleshka}>{user?.name ?? reduceAddress(profileAddressMemo ?? '')}</ProfileName>
           </ProfileHeader>
           {isOwner && <SettingsButton />}
         </Profile>
@@ -143,10 +144,19 @@ const ProfilePage: React.FC = observer(() => {
             url: (() => {
               const index = user?.websiteUrl?.indexOf('://')
               if (index !== undefined && index > -1) {
-                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length - 1)
+                return user?.websiteUrl?.substring(index + 3, user?.websiteUrl.length)
               }
+
+              return user?.websiteUrl
             })(),
-            twitter: user?.twitter,
+            twitter: (() => {
+              const index = user?.twitter?.indexOf('twitter.com/')
+              if (index !== undefined && index > -1) {
+                return user?.twitter?.substring(index + 12, user?.twitter.length)
+              }
+
+              return user?.twitter
+            })(),
             discord: user?.discord,
             telegram: user?.telegram,
           }}

@@ -1,5 +1,5 @@
 import { Loading as LoadingNextUI } from '@nextui-org/react'
-import React, { PropsWithChildren, useMemo } from 'react'
+import React, { type PropsWithChildren, useMemo } from 'react'
 
 import { styled } from '../../../styles'
 import { Flex } from '../Flex'

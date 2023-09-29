@@ -1,10 +1,10 @@
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import React from 'react'
 import {
-  Control,
-  Controller, FieldValues, Path,
+  type Control,
+  Controller, type FieldValues, type Path,
 } from 'react-hook-form'
-import { RegisterOptions } from 'react-hook-form/dist/types/validator'
+import { type RegisterOptions } from 'react-hook-form/dist/types/validator'
 
 import { Txt } from '../../Txt'
 import { StyledErrorMessage, StyledTextFieldsContainer } from '../TextFields.styles'

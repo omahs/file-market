@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect } from 'react'
+import { type FC, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useStores } from '../../../hooks'

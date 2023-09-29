@@ -1,5 +1,5 @@
-import * as Util from '@stitches/react/types/util'
-import React from 'react'
+import type * as Util from '@stitches/react/types/util'
+import type React from 'react'
 
 import RedirectImg from '../../../assets/img/Redirect.svg'
 import { styled } from '../../../styles'

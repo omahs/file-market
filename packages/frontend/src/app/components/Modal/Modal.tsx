@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 
 import LoadingIcon from '../../../assets/img/LoadingIconModal.svg'
 import SuccessfullImg from '../../../assets/img/SuccesfullIcon.svg'
@@ -34,7 +34,14 @@ interface SuccessNavBodyProps {
   isSuccessImg?: boolean
   mainText?: ReactNode
 }
-export const SuccessNavBody = ({ buttonText, link, onPress, underText, mainText, isSuccessImg = true }: SuccessNavBodyProps) => {
+export const SuccessNavBody = ({
+  buttonText,
+  link,
+  onPress,
+  underText,
+  mainText,
+  isSuccessImg = true,
+}: SuccessNavBodyProps) => {
   return (
     <>
       {isSuccessImg && <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>}
@@ -60,7 +67,12 @@ export interface SuccessOkBodyProps {
   buttonText?: string
 }
 
-export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose, isSuccessImg = true, buttonText }) => (
+export const SuccessOkBody: FC<SuccessOkBodyProps> = ({
+  description,
+  handleClose,
+  isSuccessImg = true,
+  buttonText,
+}) => (
   <>
     {isSuccessImg && <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>}
     <ModalP style={{ marginBottom: '40px' }}>{description}</ModalP>

@@ -1,35 +1,28 @@
 import assert from 'assert'
-import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
-import { callContract } from '../utils/error'
-
-interface IUseApproveTransfer {
-  collectionAddress?: string
-}
+import { assertAccount, assertCollection, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 interface IApproveTransfer {
   tokenId?: string
   publicKey?: string
+  collectionAddress?: string
 }
 
-export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+export function useApproveTransfer() {
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveTransfer>()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
-
+  const { callContract } = useCallContract()
   const config = useConfig()
 
-  const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey }) => {
-    assertContract(contract, config?.collectionToken.name)
-    assertSigner(signer)
+  const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey, collectionAddress }) => {
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -40,14 +33,19 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     }
     const owner = await factory.getOwner(address, collectionAddress, +tokenId)
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
-    console.log('approve transfer', { tokenId, encryptedFilePassword })
 
-    return callContract({ contract, method: 'approveTransfer' },
-      BigNumber.from(tokenId),
-      bufferToEtherHex(encryptedFilePassword),
-      { gasPrice: config?.gasPrice },
+    return callContract(
+      {
+        callContractConfig: {
+          address: collectionAddress as `0x${string}`,
+          abi: config.collectionToken.abi,
+          functionName: 'approveTransfer',
+          gasPrice: config?.gasPrice,
+          args: [BigInt(tokenId), bufferToEtherHex(encryptedFilePassword)],
+        },
+      },
     )
-  }), [contract, signer, address, wrapPromise])
+  }), [config, address, wrapPromise])
 
   return {
     ...statuses,

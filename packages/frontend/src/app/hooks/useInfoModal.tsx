@@ -1,7 +1,7 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useState } from 'react'
 
 import { InfoModal } from '../components/Modal/InfoModal'
-import { DialogRef } from '../stores/Dialog/DialogStore'
+import { type DialogRef } from '../stores/Dialog/DialogStore'
 import { useModalProperties } from './useModalProperties'
 import { useStores } from './useStores'
 

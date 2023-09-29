@@ -12,7 +12,7 @@ import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router'
+import { type Params } from '../../utils/router'
 
 const Background = styled('div', {
   background: '$gradients$background',
@@ -167,7 +167,7 @@ const CollectionPage = observer(() => {
                   href={`${config?.chain.blockExplorers?.default.url}` +
                       `/address/${collectionAndNfts.collection?.address}`}
                 >
-                  <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+                  <Badge content={{ title: config?.chain.blockExplorers?.default.name, value: 'VRG' }} />
                 </Link>
               )}
             </Badges>

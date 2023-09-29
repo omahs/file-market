@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 import { styled } from '../../../styles'
 
@@ -129,7 +129,7 @@ export default function Switch<T extends OptionSwitch> ({ options, onChange, ini
         <SwitchButton
           key={option.value}
           activate={currentOptionValue === option.value}
-          onClick={() => handleSwitch(option.value)}
+          onClick={() => { handleSwitch(option.value) }}
           small={isSmall}
         >
           {option.label}

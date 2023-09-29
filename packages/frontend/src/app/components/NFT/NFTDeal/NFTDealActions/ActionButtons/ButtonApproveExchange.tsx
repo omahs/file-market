@@ -1,13 +1,13 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { FC } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type FC } from 'react'
 
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveExchange } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
@@ -17,7 +17,7 @@ export type ButtonApproveExchangeProps = ActionButtonProps & {
 export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
   tokenFullId, isDisabled, onEnd,
 }) => {
-  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
+  const { approveExchange, ...statuses } = useApproveExchange()
   const { isLoading } = statuses
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({

@@ -3,7 +3,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import Plug from '../../../components/Plug/Plug'
-import { ITableColumn } from '../../../components/Table/TableBuilder'
+import { type ITableColumn } from '../../../components/Table/TableBuilder'
 import { useTransfersHistoryStore } from '../../../hooks/useTransfersHistory'
 import { Button, InfiniteScroll, Txt } from '../../../UIkit'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
@@ -26,7 +26,7 @@ export const HistorySection: React.FC = observer(() => {
     <>
       <InfiniteScroll
         hasMore={transferHistoryStore.hasMoreData}
-        fetchMore={() => transferHistoryStore.requestMore()}
+        fetchMore={() => { transferHistoryStore.requestMore() }}
         isLoading={transferHistoryStore.isLoading}
         currentItemCount={transferHistoryStore.tableRows.length}
         render={({ index }) => historyTableBuilder.renderRow(index, historyTableBuilder.table.rows[index])}

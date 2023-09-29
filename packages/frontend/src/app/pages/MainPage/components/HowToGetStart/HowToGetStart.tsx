@@ -1,5 +1,4 @@
 import { Collapse } from '@nextui-org/react'
-import { useWeb3Modal } from '@web3modal/react'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAccount } from 'wagmi'
@@ -20,6 +19,7 @@ import VerifiedCheck from '../../../../../assets/img/HowToGetStart/VerifiedCheck
 import Wallet from '../../../../../assets/img/HowToGetStart/Wallet.svg'
 import WatchSquareMinimalistic from '../../../../../assets/img/HowToGetStart/WatchSquareMinimalistic.svg'
 import { styled } from '../../../../../styles'
+import { useAuth } from '../../../../hooks/useAuth'
 import { Link, textVariant, Txt } from '../../../../UIkit'
 import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
 import HowToGetStartCard from '../HowToGetStartCard/HowToGetStartCard'
@@ -29,6 +29,19 @@ const Section = styled('section', {
     '.how-to-get-started-title': {
       color: '$blue500',
     },
+  },
+  marginBottom: '100px',
+  '@lg': {
+    marginBottom: '80px',
+  },
+  '@md': {
+    marginBottom: '70px',
+  },
+  '@sm': {
+    marginBottom: '60px',
+  },
+  '@xs': {
+    marginBottom: '50px',
   },
 })
 
@@ -200,7 +213,7 @@ const Video = styled('iframe', {
 })
 
 const HowToGetStart = () => {
-  const { open } = useWeb3Modal()
+  const { connect: open } = useAuth()
   const { isConnected } = useAccount()
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState<boolean | undefined>(false)
@@ -245,17 +258,9 @@ const HowToGetStart = () => {
                   img={Money}
                   size={'medium'}
                   content={(
-                    <Link
-                      iconRedirect
-                      howToGetStart
-                      target={'_blank'}
-                      href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
-                      style={{
-                        textDecoration: 'underline',
-                      }}
-                    >
-                      Top up your wallet with $FIL
-                    </Link>
+                    <Text >
+                      Top up your wallet
+                    </Text>
                   )}
                 />
                 <HowToGetStartCard

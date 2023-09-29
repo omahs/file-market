@@ -1,7 +1,7 @@
-import { utils } from 'ethers'
+import { getAddress } from 'viem'
 
 import { useConfig } from '../../hooks/useConfig'
-import { TokenFullId } from '../types'
+import { type TokenFullId } from '../types'
 import { useGetApproved } from './useGetApproved'
 
 export function useIsApprovedExchange(tokenFullId: Partial<TokenFullId> & { isDisable?: boolean }) {
@@ -10,6 +10,6 @@ export function useIsApprovedExchange(tokenFullId: Partial<TokenFullId> & { isDi
 
   return {
     ...statuses,
-    isApprovedExchange: data && utils.getAddress(data) === utils.getAddress(config.exchangeToken.address),
+    isApprovedExchange: data && getAddress(data) === getAddress(config.exchangeToken.address),
   }
 }

@@ -1,4 +1,4 @@
-import { BlockchainDataProvider, blockchainDataProvider } from './index'
+import { type BlockchainDataProvider, blockchainDataProvider } from './index'
 
 export function useBlockchainDataProvider(): BlockchainDataProvider {
   return blockchainDataProvider

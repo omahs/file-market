@@ -8,7 +8,7 @@ import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { Txt } from '../../../../UIkit'
 import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
-import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
+import { type ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
@@ -51,10 +51,11 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
       {multiChainStore.data && (
         <Dropdown
           isDisabled={isLoading && !error}
-          placement={'bottom'}
+          placement={'bottom-left'}
           borderWeight={'black'}
         >
           {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
             <Dropdown.Trigger style={{ width: 'max-content' }}>
               <CurrentBlockchainStyle isLight={isLight} style={{ width: 'max-content ' }}>
@@ -75,9 +76,11 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                 aria-label='Single selection actions'
                 disallowEmptySelection
                 selectionMode='single'
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
                 selectedKeys={selected}
                 onSelectionChange={(keys) => {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
                   setSelected(keys)
                   changeNetwork(+selectedValue(keys))

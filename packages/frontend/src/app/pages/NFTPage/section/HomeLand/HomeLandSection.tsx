@@ -9,7 +9,7 @@ import { Badge, gradientPlaceholderImg, NavLink } from '../../../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../../../utils/nfts/reduceAddress'
-import { Params } from '../../../../utils/router'
+import { type Params } from '../../../../utils/router'
 import { GridBlock } from '../../helper/styles/style'
 
 const BadgesContainer = styled('div', {
@@ -49,7 +49,7 @@ const HomeLandSection = () => {
           lgFullWidth
           to={
             collection?.address
-              ? `/collection/${collection?.address}`
+              ? `/collection/${chainName}/${collection?.address}`
               : location.pathname
           }
         >

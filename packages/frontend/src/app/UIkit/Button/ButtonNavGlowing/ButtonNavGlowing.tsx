@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Drip } from '../../Drip'
 import { buttonStyled } from '../Button.styles'
 import { StyledGlow, StyledWrapper } from '../ButtonGlowing/ButtonGlowing.styles'
-import { NavButtonProps } from '../NavButton'
+import { type NavButtonProps } from '../NavButton'
 import { useButton } from '../useButton'
 
 const NavButtonStyled = buttonStyled(Link)

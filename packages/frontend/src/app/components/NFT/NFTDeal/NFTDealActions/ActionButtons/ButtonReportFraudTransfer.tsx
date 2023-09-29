@@ -1,15 +1,14 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
-import { FC } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useReportFraud } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonReportFraudTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
@@ -19,7 +18,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
   tokenFullId,
   isDisabled,
 }) => {
-  const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId })
+  const { reportFraud, ...statuses } = useReportFraud()
   const { isLoading } = statuses
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { transferStore } = useStores()
@@ -40,7 +39,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
         onPress={wrapAction(async () => {
           const receipt = await reportFraud(tokenFullId)
           if (receipt?.blockNumber) {
-            transferStore.onTransferFraudReported(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
+            transferStore.onTransferFraudReported(BigInt(tokenFullId.tokenId), receipt?.blockNumber)
           }
         })}
       >

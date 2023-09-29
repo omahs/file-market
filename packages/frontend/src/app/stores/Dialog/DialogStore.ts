@@ -1,8 +1,8 @@
 import { action, makeAutoObservable } from 'mobx'
-import { ComponentType, ReactNode } from 'react'
+import { type ComponentType, type ReactNode } from 'react'
 
 import { AlertSnackbar } from '../../UIkit'
-import { DialogCall, DialogCallInstance, DialogProps } from '../../utils/dialog'
+import { type DialogCall, type DialogCallInstance, type DialogProps } from '../../utils/dialog'
 
 export class DialogRef {
   public closeListeners: Array<() => void> = []
@@ -44,7 +44,7 @@ export class DialogStore {
       id,
       open: true,
       onClosed: () => {
-        ref.closeListeners.forEach((fn) => fn())
+        ref.closeListeners.forEach((fn) => { fn() })
       },
     })
 

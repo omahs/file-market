@@ -1,7 +1,7 @@
-import { FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { BreakpointsOptions } from '../../../../styles'
+import { type BreakpointsOptions } from '../../../../styles'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useScrollWindow } from '../../../hooks/useScrollWindow'
 import { NavBar } from '../../../UIkit'

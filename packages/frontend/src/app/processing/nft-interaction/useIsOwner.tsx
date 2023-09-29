@@ -1,18 +1,15 @@
-import { utils } from 'ethers'
 import { useMemo } from 'react'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { Token } from '../../../swagger/Api'
+import { type Token } from '../../../swagger/Api'
 
 export function useIsOwner(tokenData: Token | undefined) {
   const { address } = useAccount()
   const isOwner = useMemo(() => {
     if (address && tokenData?.owner) {
-      console.log(utils.getAddress(tokenData?.owner) === utils.getAddress(address))
-
-      return utils.getAddress(tokenData?.owner) === utils.getAddress(address)
+      return getAddress(tokenData?.owner) === getAddress(address)
     }
-    console.log(false)
 
     return false
   }, [address, tokenData?.owner])

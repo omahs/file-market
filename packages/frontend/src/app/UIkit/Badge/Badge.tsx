@@ -1,4 +1,4 @@
-import React, { ComponentProps, FC } from 'react'
+import React, { type ComponentProps, type FC } from 'react'
 
 import { styled } from '../../../styles'
 import { gradientPlaceholderImg } from '../Placeholder'

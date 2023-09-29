@@ -5,7 +5,7 @@ import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { Txt } from '../../../../UIkit'
-import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
+import { type ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle, LinearText } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
@@ -35,7 +35,7 @@ const CurrentBlockchain = observer(({ isVisible, isLight }: ICurrentBlockchain) 
         })}
       </>
       <LinearText css={{ fontSize: '14px', fontWeight: 600, marginLeft: 20 }}>
-        Ethereum and Polygon is coming soon!
+        Ethereum and Polygon are coming soon!
       </LinearText>
     </CurrentBlockchainStyle>
   )

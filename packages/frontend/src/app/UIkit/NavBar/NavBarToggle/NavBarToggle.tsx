@@ -1,6 +1,6 @@
-import { ComponentProps, forwardRef } from 'react'
-import { AriaToggleButtonProps, mergeProps, useFocusRing, useToggleButton } from 'react-aria'
-import { ToggleProps, useToggleState } from 'react-stately'
+import { type ComponentProps, forwardRef } from 'react'
+import { type AriaToggleButtonProps, mergeProps, useFocusRing, useToggleButton } from 'react-aria'
+import { type ToggleProps, useToggleState } from 'react-stately'
 
 import { cssShowHideIn, styled } from '../../../../styles'
 import { useDOMRef } from '../../../hooks'

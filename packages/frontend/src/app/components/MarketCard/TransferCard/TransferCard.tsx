@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { HiddenFileMetaData } from '../../../../swagger/Api'
+import { type HiddenFileMetaData } from '../../../../swagger/Api'
 import { NftCardBase, NftCardUserInfo, PriceBadge } from '../../../UIkit'
 import { FileType } from '../FileType'
 import { StyledTxtName, StyledTxtValue } from './TransferCard.styles'

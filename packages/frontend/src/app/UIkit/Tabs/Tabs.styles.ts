@@ -1,4 +1,3 @@
-
 import { styled } from '../../../styles'
 import { SwitchButton, SwitchWrapper } from '../../components/Switch/Switch'
 

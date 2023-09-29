@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { type FC } from 'react'
 
 import { Button } from '../../../UIkit'
 
@@ -12,7 +12,7 @@ export const ConnectButton: FC<ConnectButtonProps> = ({ connectFunc }) => {
     <Button
       small
       secondaryWithBlinds
-      onClick={async () => connectFunc()}
+      onClick={async () => { connectFunc() }}
     >
       Connect
     </Button>

@@ -1,6 +1,6 @@
-import { ComponentProps } from '@stitches/react'
-import { utils } from 'ethers'
-import React, { FC } from 'react'
+import { type ComponentProps } from '@stitches/react'
+import React, { type FC } from 'react'
+import { formatUnits } from 'viem'
 
 import { styled } from '../../../../../styles'
 import { useConfig } from '../../../../hooks/useConfig'
@@ -252,7 +252,7 @@ const FakeMintNft: FC<FakeMintNftProps> = ({ rarity, imageURL, chance, price }) 
               <Txt h5>Gifts Bundle</Txt>
             </CardFakeNftText>
             <PriceFakeNft>
-              {utils.formatUnits(price ?? '0', config?.chain.nativeCurrency.decimals).split('.')[0]}
+              {formatUnits(BigInt(price ?? '0'), config?.chain.nativeCurrency.decimals).split('.')[0]}
               {' '}
               {config?.chain.nativeCurrency.symbol}
             </PriceFakeNft>
