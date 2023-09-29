@@ -7,10 +7,9 @@ import { useStatusState } from '../../hooks'
 import { useApi } from '../../hooks/useApi'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { type FileMeta } from '../types'
-import { assertAccount, assertContract, callContractGetter } from '../utils'
+import { assertAccount, assertConfig, callContractGetter } from '../utils'
 import { useUploadErc721Meta } from './useUploadErc721Meta'
 
 export interface MintNFTForm {
@@ -31,17 +30,12 @@ type IMintNft = MintNFTForm & {
   isPublicCollection?: boolean
 }
 
-interface IUseMintNft {
-  collectionAddress?: string
-}
-
 interface MintNFTResult {
   tokenId: string
   receipt: TransactionReceipt // вся инфа о транзе
 }
 
-export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
-  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
+export function useMintNFT() {
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
@@ -52,8 +46,8 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const { callContract } = useCallContract()
 
   const mintNFT = useCallback(wrapPromise(async (form) => {
-    assertContract(contract, config?.collectionToken.name ?? '')
     assertAccount(address)
+    assertConfig(config)
 
     const { name, description = '', image, hiddenFile, collectionAddress, license, tags, subcategories, categories, royalty, isPublicCollection } = form
     if (!name || !collectionAddress || !image || !hiddenFile || royalty === undefined) {
@@ -65,11 +59,11 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
       tokenIdBN = BigInt(data.tokenId ?? 0)
     } else {
-      tokenIdBN = await callContractGetter<typeof contract.abi, 'tokensCount', bigint>({
+      tokenIdBN = await callContractGetter<typeof config.collectionToken.abi, 'tokensCount', bigint>({
         callContractConfig: {
-          address: contract.address,
+          address: collectionAddress as `0x${string}`,
           functionName: 'tokensCount',
-          abi: contract.abi,
+          abi: config?.collectionToken.abi,
         },
       })
     }
@@ -97,8 +91,8 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
 
     const receipt = await callContract({
       callContractConfig: {
-        address: contract.address,
-        abi: contract.abi,
+        address: collectionAddress as `0x${string}`,
+        abi: config.collectionToken.abi,
         functionName: 'mint',
         args: [address,
           tokenIdBN,
@@ -115,7 +109,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       tokenId: tokenIdBN.toString(),
       receipt,
     }
-  }), [contract, address, factory, wrapPromise])
+  }), [config, address, factory, wrapPromise])
 
   return { ...statuses, mintNFT }
 }

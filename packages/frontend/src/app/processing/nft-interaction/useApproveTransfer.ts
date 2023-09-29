@@ -6,29 +6,23 @@ import { useAccount } from 'wagmi'
 import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
-
-interface IUseApproveTransfer {
-  collectionAddress?: string
-}
+import { assertAccount, assertCollection, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 interface IApproveTransfer {
   tokenId?: string
   publicKey?: string
+  collectionAddress?: string
 }
 
-export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = {}) {
-  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
+export function useApproveTransfer() {
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
   const { callContract } = useCallContract()
   const config = useConfig()
 
-  const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey }) => {
-    assertContract(contract, config?.collectionToken.name)
+  const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey, collectionAddress }) => {
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -40,18 +34,18 @@ export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = 
     const owner = await factory.getOwner(address, collectionAddress, +tokenId)
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
 
-    return callContract<typeof contract.abi, 'approveTransfer'>(
+    return callContract(
       {
         callContractConfig: {
-          address: contract.address,
-          abi: contract.abi,
+          address: collectionAddress as `0x${string}`,
+          abi: config.collectionToken.abi,
           functionName: 'approveTransfer',
           gasPrice: config?.gasPrice,
           args: [BigInt(tokenId), bufferToEtherHex(encryptedFilePassword)],
         },
       },
     )
-  }), [contract, address, wrapPromise])
+  }), [config, address, wrapPromise])
 
   return {
     ...statuses,

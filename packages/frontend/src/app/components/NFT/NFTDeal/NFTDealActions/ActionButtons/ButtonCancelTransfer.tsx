@@ -17,7 +17,7 @@ export type ButtonCancelTransferProps = ActionButtonProps & {
 export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
   tokenFullId, isDisabled,
 }) => {
-  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
+  const { cancelTransfer, ...statuses } = useCancelTransfer()
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()

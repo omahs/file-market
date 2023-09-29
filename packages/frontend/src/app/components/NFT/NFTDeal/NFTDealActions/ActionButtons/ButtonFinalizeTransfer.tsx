@@ -20,7 +20,7 @@ export type ButtonFinalizeTransferProps = ActionButtonProps & {
 export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
   tokenFullId, isDisabled, order,
 }) => {
-  const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId })
+  const { finalizeTransfer, ...statuses } = useFinalizeTransfer()
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()

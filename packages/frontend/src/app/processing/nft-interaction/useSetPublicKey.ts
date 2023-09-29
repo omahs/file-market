@@ -6,20 +6,22 @@ import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useBlockchainDataProvider } from '../BlockchainDataProvider'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
-
-interface IUseSetPublicKey {
-  collectionAddress?: string
-}
+import {
+  assertAccount,
+  assertCollection,
+  assertConfig,
+  assertTokenId,
+  bufferToEtherHex,
+  hexToBuffer,
+} from '../utils'
 
 interface ISetPublicKey {
   tokenId?: string
+  collectionAddress?: string
 }
 
-export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
-  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
+export function useSetPublicKey() {
   const { address } = useAccount()
   const config = useConfig()
   const { wrapPromise, statuses } = useStatusState<TransactionReceipt, ISetPublicKey>()
@@ -28,8 +30,8 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
 
   const { callContract } = useCallContract()
 
-  const setPublicKey = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, config?.exchangeToken.name ?? '')
+  const setPublicKey = useCallback(wrapPromise(async ({ tokenId, collectionAddress }) => {
+    assertConfig(config)
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -41,8 +43,8 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
 
     return callContract({
       callContractConfig: {
-        address: contract.address,
-        abi: contract.abi,
+        address: collectionAddress as `0x${string}`,
+        abi: config.collectionToken.abi,
         functionName: 'setTransferPublicKey',
         gasPrice: config?.gasPrice,
         args: [BigInt(tokenId),
@@ -50,7 +52,7 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
           BigInt(dealNumber)],
       },
     })
-  }), [contract, address, wrapPromise])
+  }), [config, address, wrapPromise])
 
   return { ...statuses, setPublicKey }
 }

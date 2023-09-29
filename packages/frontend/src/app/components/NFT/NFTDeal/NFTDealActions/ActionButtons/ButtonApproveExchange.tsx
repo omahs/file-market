@@ -17,7 +17,7 @@ export type ButtonApproveExchangeProps = ActionButtonProps & {
 export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
   tokenFullId, isDisabled, onEnd,
 }) => {
-  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
+  const { approveExchange, ...statuses } = useApproveExchange()
   const { isLoading } = statuses
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { modalProps } = useStatusModal({

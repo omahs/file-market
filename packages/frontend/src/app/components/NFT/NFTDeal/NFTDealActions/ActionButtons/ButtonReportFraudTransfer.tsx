@@ -18,7 +18,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
   tokenFullId,
   isDisabled,
 }) => {
-  const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId })
+  const { reportFraud, ...statuses } = useReportFraud()
   const { isLoading } = statuses
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()
   const { transferStore } = useStores()

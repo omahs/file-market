@@ -25,7 +25,7 @@ export type ButtonApproveTransferProps = ActionButtonProps & {
 export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
   tokenFullId, transfer, isDisabled,
 }) => {
-  const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
+  const { approveTransfer, ...statuses } = useApproveTransfer()
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const factory = useHiddenFileProcessorFactory()

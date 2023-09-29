@@ -21,7 +21,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
   tokenFullId, isDisabled,
 }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
-  const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
+  const { initTransfer, ...statuses } = useInitTransfer()
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const { wrapAction } = wrapButtonActionsFunction<TransferFormValue>()
@@ -44,7 +44,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
             onSubmit={wrapAction(async (form) => {
               closeModal()
               const receipt = await initTransfer({
-                tokenId: tokenFullId.tokenId,
+                ...tokenFullId,
                 to: form.address,
               })
               if (receipt?.blockNumber) {

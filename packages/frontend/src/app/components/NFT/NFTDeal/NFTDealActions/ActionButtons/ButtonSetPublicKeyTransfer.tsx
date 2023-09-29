@@ -24,7 +24,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   tokenFullId,
   isDisabled,
 }) => {
-  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId })
+  const { setPublicKey, ...statuses } = useSetPublicKey()
   const { isLoading } = statuses
   const { address } = useAccount()
   const { wrapAction } = wrapButtonActionsFunction<PressEvent>()

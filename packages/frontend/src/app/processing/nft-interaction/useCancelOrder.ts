@@ -4,8 +4,7 @@ import { type TransactionReceipt } from 'viem'
 import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useExchangeContract } from '../contracts'
-import { assertCollection, assertContract, assertTokenId } from '../utils'
+import { assertCollection, assertConfig, assertTokenId } from '../utils'
 
 /**
  * Calls Mark3dExchange contract to cancel an order
@@ -19,26 +18,25 @@ interface ICancelOrder {
 }
 
 export function useCancelOrder() {
-  const { contract } = useExchangeContract()
   const { callContract } = useCallContract()
   const config = useConfig()
   const { wrapPromise, statuses } = useStatusState<TransactionReceipt, ICancelOrder>()
   const cancelOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
-    assertContract(contract, config?.exchangeToken.name ?? '')
+    assertConfig(config)
 
     return callContract({
       callContractConfig: {
-        address: contract.address,
-        abi: contract.abi,
+        address: config.exchangeToken.address,
+        abi: config.exchangeToken.abi,
         functionName: 'cancelOrder',
         gasPrice: config?.gasPrice,
         args: [collectionAddress as `0x${string}`,
           BigInt(tokenId)],
       },
     })
-  }), [contract, wrapPromise])
+  }), [config, wrapPromise])
 
   return {
     ...statuses,

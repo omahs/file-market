@@ -9,7 +9,7 @@ import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import {
-  assertAccount, assertCollection,
+  assertAccount, assertCollection, assertConfig,
   assertContract,
   assertTokenId,
   bufferToEtherHex,
@@ -43,6 +43,7 @@ export function useFulfillOrder() {
     assertContract(contract, config?.exchangeToken.name ?? '')
     assertTokenId(tokenId)
     assertAccount(address)
+    assertConfig(config)
     assert(price, 'price is not provided')
 
     const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
@@ -52,8 +53,8 @@ export function useFulfillOrder() {
     return callContract(
       {
         callContractConfig: {
-          address: contract.address,
-          abi: contract.abi,
+          address: config.exchangeToken.address,
+          abi: config.exchangeToken.abi,
           functionName: 'fulfillOrder',
           value: BigInt(price),
           gasPrice: config?.gasPrice,

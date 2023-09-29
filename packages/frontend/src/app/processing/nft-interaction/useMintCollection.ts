@@ -7,9 +7,8 @@ import { wagmiConfig } from '../../config/web3Modal'
 import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
-import { assertAccount, assertContract } from '../utils/assert'
+import { assertAccount, assertConfig } from '../utils/assert'
 import { useUploadErc721Meta } from './useUploadErc721Meta'
 
 export interface CreateCollectionForm {
@@ -25,13 +24,12 @@ interface CreateCollectionResult {
 
 export function useMintCollection() {
   const { address } = useAccount()
-  const { contract } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult, CreateCollectionForm>()
   const upload = useUploadErc721Meta()
   const config = useConfig()
   const mintCollection = useCallback(wrapPromise(async (form: CreateCollectionForm) => {
     const { name, symbol, image, description } = form
-    assertContract(contract, config?.accessToken.name ?? '')
+    assertConfig(config)
     assertAccount(address)
     assert(name && symbol && image, 'CreateCollection form is not filled')
 
@@ -52,8 +50,8 @@ export function useMintCollection() {
     const receipt = await callContract(
       {
         callContractConfig: {
-          address: contract.address,
-          abi: contract.abi,
+          address: config.accessToken.address,
+          abi: config.accessToken.abi,
           functionName: 'createCollection',
           args: [salt,
             name,
@@ -67,7 +65,8 @@ export function useMintCollection() {
       })
 
     const createCollectionEvent = await wagmiConfig.getPublicClient().getContractEvents({
-      ...contract,
+      address: config.accessToken.address,
+      abi: config.accessToken.abi,
       eventName: 'CollectionCreation',
     })
 
@@ -81,7 +80,7 @@ export function useMintCollection() {
     }
 
     return { collectionAddress: '' }
-  }), [contract, wrapPromise, upload])
+  }), [config, wrapPromise, upload])
 
   return { ...statuses, mintCollection }
 }

@@ -4,8 +4,7 @@ import { type TransactionReceipt } from 'viem'
 import { useStatusState } from '../../hooks'
 import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertTokenId } from '../utils'
+import { assertCollection, assertConfig, assertTokenId } from '../utils'
 
 /**
  * Used to approve Mark3dExchange contract to manage user's NFT. Should be called prior to placeOrder.
@@ -13,28 +12,24 @@ import { assertCollection, assertContract, assertTokenId } from '../utils'
  * @param tokenId
  */
 
-interface IUseApproveExchange {
+interface IApproveExchange {
+  tokenId?: string
   collectionAddress?: string
 }
 
-interface IApproveExchange {
-  tokenId?: string
-}
-
-export function useApproveExchange({ collectionAddress }: IUseApproveExchange = {}) {
-  const { contract } = useCollectionContract(collectionAddress as `0x${string}`)
+export function useApproveExchange() {
   const config = useConfig()
   const { callContract } = useCallContract()
   const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IApproveExchange>()
-  const approveExchange = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, 'Mark3dCollection')
+  const approveExchange = useCallback(wrapPromise(async ({ tokenId, collectionAddress }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
+    assertConfig(config)
 
     return callContract({
       callContractConfig: {
-        address: contract.address,
-        abi: contract.abi,
+        address: collectionAddress as `0x${string}`,
+        abi: config.collectionToken.abi,
         functionName: 'approve',
         gasPrice: config?.gasPrice,
         args: [config?.exchangeToken.address,
@@ -42,7 +37,7 @@ export function useApproveExchange({ collectionAddress }: IUseApproveExchange = 
       },
     },
     )
-  }), [wrapPromise, contract])
+  }), [wrapPromise, config])
 
   return {
     ...statuses,
