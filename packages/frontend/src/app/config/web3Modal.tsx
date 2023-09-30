@@ -14,23 +14,17 @@ export const chainsDefault = (multichainConfig as IMultiChainConfig[])
     return (item.testnet === true) === !import.meta.env.VITE_IS_MAINNET
   })
 
-export const { chains } = configureChains(
-  chainsDefault,
-  [
-    publicProvider(),
-    publicProvider(),
-    publicProvider(),
-  ],
-  { pollingInterval: 10_000 },
-)
-
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 
 if (!projectId) {
   throw new Error('You need to provide VITE_WEB3_MODAL_PROJECT_ID env variable')
 }
 
-const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+export const { chains, publicClient } = configureChains(
+  chainsDefault,
+  [w3mProvider({ projectId }), publicProvider()],
+  { pollingInterval: 3_000 },
+)
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
