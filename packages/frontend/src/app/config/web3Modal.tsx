@@ -2,7 +2,6 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { type FC } from 'react'
 import { configureChains, createConfig } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
 
 import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
@@ -14,23 +13,13 @@ export const chainsDefault = (multichainConfig as IMultiChainConfig[])
     return (item.testnet === true) === !import.meta.env.VITE_IS_MAINNET
   })
 
-export const { chains } = configureChains(
-  chainsDefault,
-  [
-    publicProvider(),
-    publicProvider(),
-    publicProvider(),
-  ],
-  { pollingInterval: 10_000 },
-)
-
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 
 if (!projectId) {
   throw new Error('You need to provide VITE_WEB3_MODAL_PROJECT_ID env variable')
 }
 
-const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+const { publicClient, chains } = configureChains(chainsDefault, [w3mProvider({ projectId })])
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
