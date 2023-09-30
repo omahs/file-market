@@ -56,7 +56,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
           const receipt = await approveTransfer({
-            tokenId: tokenFullId.tokenId,
+            ...tokenFullId,
             publicKey: transfer?.publicKey,
           })
           const encryptedPasswordRes = await encryptedPassword
