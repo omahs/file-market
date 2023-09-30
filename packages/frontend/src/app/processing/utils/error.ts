@@ -85,6 +85,8 @@ const pingTx = async (txHash: `0x${string}`) => {
     if (receipt === null) continue
   }
 
+  console.log('PING')
+
   return receipt
 }
 
@@ -98,7 +100,7 @@ export const getTxReceipt = async (hash: `0x${string}`) => {
     pingTx(hash),
   ])
 
-  if (!receipt?.status) {
+  if (!receipt) {
     throw new JsonRpcError(503, `The transaction ${hash} is failed`)
   }
 

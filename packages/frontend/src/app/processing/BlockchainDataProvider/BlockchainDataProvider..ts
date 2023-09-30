@@ -42,8 +42,6 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
 
-    console.log()
-
     const globalSalt = await callContractGetter<typeof contract.abi, 'globalSalt', `0x${string}`>({
       callContractConfig: {
         address: contract.address,
@@ -51,6 +49,9 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
         abi: contract.abi,
       },
     })
+
+    console.log('GLOBAL SALT')
+    console.log(globalSalt)
 
     return hexToBuffer(globalSalt)
   }
@@ -81,7 +82,10 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
     )
 
-    return transferCountBN[1]
+    console.log('TRANSFER COUNT')
+    console.log(transferCountBN)
+
+    return transferCountBN
   }
 
   async getFee() {
@@ -94,6 +98,9 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
         abi: contract.abi,
       },
     })
+
+    console.log('FEE')
+    console.log(data)
 
     return data[1]
   }
@@ -113,7 +120,8 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
       },
     )
 
-    console.log(data[1])
+    console.log('ROYALTY')
+    console.log(data)
 
     return data[1]
   }
