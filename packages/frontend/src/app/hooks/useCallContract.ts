@@ -5,7 +5,6 @@ import { type Abi, type PublicClient } from 'viem'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { type WriteContractPreparedArgs, type WriteContractUnpreparedArgs } from 'wagmi/actions'
 
-import { wagmiConfig } from '../config/web3Modal'
 import { ErrorMessages, getTxReceipt, stringifyContractError } from '../processing'
 
 interface ICallContract<TAbi extends Abi | readonly unknown[], TFunctionName extends string> {
@@ -29,8 +28,6 @@ export const useCallContract = () => {
   }: ICallContract<TAbi, TFunctionName>,
   ) => {
     try {
-      const client = wagmiConfig.getPublicClient()
-
       const walletClient = await getWalletClient()
 
       assert(walletClient)
