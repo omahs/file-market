@@ -3,15 +3,13 @@ import { useAccount } from 'wagmi'
 
 import { ConnectFileWalletDialog } from '../components/Web3/ConnectFileWalletDialog'
 import useAppAuthAndConnect, { type IUseAppAuthAndConnect } from './useAppAuthAndConnect'
-import { useCurrentBlockChain } from './useCurrentBlockChain'
 import { useStores } from './useStores'
 
 type IUseAuth = IUseAppAuthAndConnect
 
 export const useAuth = (props?: IUseAuth) => {
   const { dialogStore } = useStores()
-  const { address, isConnected } = useAccount()
-  const currentBlockChainStore = useCurrentBlockChain()
+  const { isConnected } = useAccount()
   const { connect: openWeb3Modal, setDefaultChain, isLoading } = useAppAuthAndConnect(props)
 
   const openDialog = () => {
@@ -30,7 +28,7 @@ export const useAuth = (props?: IUseAuth) => {
     } else {
       openDialog()
     }
-  }, [currentBlockChainStore.chainId, address, isConnected, props?.isWithSign])
+  }, [isConnected, props?.isWithSign, openDialog, openWeb3Modal])
 
   return {
     connect,
