@@ -165,10 +165,10 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		Backoff: &retry.ExponentialBackoff{
 			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
-			Multiplier:      2,
+			Multiplier:      1.5,
 			MaxInterval:     10 * time.Second,
 		},
-		MaxElapsedTime: 30 * time.Second,
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
@@ -205,10 +205,10 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		Backoff: &retry.ExponentialBackoff{
 			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
-			Multiplier:      2,
+			Multiplier:      1.5,
 			MaxInterval:     10 * time.Second,
 		},
-		MaxElapsedTime: 30 * time.Second,
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
