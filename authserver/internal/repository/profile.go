@@ -214,9 +214,18 @@ func (p *postgres) UpdateUserProfile(ctx context.Context, tx pgx.Tx, profile *do
 		    telegram=$9,is_email_notifications_enabled=$10, is_push_notifications_enabled=$11
 		WHERE address=$12
 	`
+	var name, username *string
+	if profile.Name != "" {
+		name = &profile.Name
+	}
+	if profile.Username != "" {
+		lk := strings.ToLower(profile.Username)
+		username = &lk
+	}
+
 	if _, err := tx.Exec(ctx, query,
-		profile.Name,
-		strings.ToLower(profile.Username),
+		name,
+		username,
 		profile.Bio,
 		profile.WebsiteURL,
 		profile.AvatarURL,
