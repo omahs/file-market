@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import React, { useMemo, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { type SubmitHandler, useForm } from 'react-hook-form'
 import { useDebouncedCallback } from 'use-debounce'
 import { useAccount } from 'wagmi'
 
-import { Api, ProfileEmailExistsResponse } from '../../../swagger/Api'
+import { Api, type ProfileEmailExistsResponse } from '../../../swagger/Api'
 import { BaseModal } from '../../components'
 import { useStores } from '../../hooks'
 import { useStatusModal } from '../../hooks/useStatusModal'
@@ -14,7 +14,7 @@ import { requestJwtAccess } from '../../utils/jwt/function'
 import { reduceAddress } from '../../utils/nfts'
 import ReturnButton from './components/ReturnButton/ReturnButton'
 import { useUpdateProfile } from './helper/hooks/useUpdateProfile'
-import { IProfileSettings } from './helper/types/formType'
+import { type IProfileSettings } from './helper/types/formType'
 import { Form, GrayBgText, StyledTitle, WalletName, WalletNameMobile } from './ProfileSettings.styles'
 import AppearanceSection from './sections/Appereance/Appereance'
 import Links from './sections/Links/Links'
@@ -75,7 +75,7 @@ export default observer(function ProfileSettings() {
 
   const nameExistCheck = useDebouncedCallback(async (value) => {
     if (userStore.user?.name === name) {
-      setIsEmailExist(false)
+      setIsNamelExist(false)
 
       return
     }
@@ -90,7 +90,7 @@ export default observer(function ProfileSettings() {
 
   const urlExistCheck = useDebouncedCallback(async (value) => {
     if (userStore.user?.username === username) {
-      setIsEmailExist(false)
+      setIsUrlExist(false)
 
       return
     }
