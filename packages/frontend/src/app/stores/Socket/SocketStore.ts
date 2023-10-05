@@ -91,6 +91,10 @@ export class SocketStore {
 
   private readonly onMessageSubscribeToEft = (event: MessageEvent<string>, chainName?: string) => {
     const data = JSON.parse(event.data) as EFTSubscriptionMessage
+    if (!data) {
+      // sometimes backend sends empty subscription
+      return
+    }
     const transfer = data.transfer
     const order = data.order
     const token = data.token
