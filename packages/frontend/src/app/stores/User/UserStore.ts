@@ -51,16 +51,16 @@ export class UserStore implements IStoreRequester {
   async updateUserInfo(user?: UserProfile) {
     if (!user) return
 
-    return storeRequestPromise(
+    const result = await storeRequestPromise(
       this,
       requestJwtAccess(this.profileService.updateCreate, {
         ...this.user,
         ...user,
       }),
-      (response) => {
-        this.setUser(response)
-      },
     )
+    this.setUser(result)
+
+    return result
   }
 
   async updateEmail(email?: string) {
