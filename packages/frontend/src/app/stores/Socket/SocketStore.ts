@@ -61,6 +61,7 @@ export class SocketStore {
       socketConnect.socket?.send(JSON.stringify(params))
       socketConnect.lastMessage = JSON.stringify(params)
       if (this.socketConnects[this.findIndexSocket({ type, chainName })]?.socket) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         this.socketConnects[this.findIndexSocket({ type, chainName })].socket.onclose = onClose
       }

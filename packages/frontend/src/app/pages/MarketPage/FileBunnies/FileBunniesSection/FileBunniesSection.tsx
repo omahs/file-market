@@ -76,14 +76,9 @@ const FileBunniesSection = observer(() => {
   }, [isPayedMintSoldOut, currentChainStore.chain])
 
   const payedButtonOnClick = useMemo(() => {
-    if (currentChainStore.chain?.name !== 'Filecoin') {
+    const chainId = import.meta.env.VITE_IS_MAINNET ? 314 : 314159
+    if (currentChainStore.chain?.id !== chainId) {
       return () => {
-        const chainId = multiChainStore.getChainByName('Filecoin')?.chain?.id
-        if (!chainId) {
-          console.error('NO CHAIN ID FOUND WITH NAME Filecoin')
-
-          return
-        }
         changeNetwork(chainId)
       }
     }
