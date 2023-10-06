@@ -27,23 +27,28 @@ const DropDownWrapper = styled('div', {
   },
 })
 
+const initialSelectedSet = (currentChainId: number | undefined): Set<string> =>
+  new Set(currentChainId ? [currentChainId.toString()] : undefined)
+
 const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
+  const currentChainId = currentChainStore.chainId
   const { changeNetwork, isLoading, error } = useChangeNetwork({
     onError: () => {
-      setSelected(new Set([currentChainStore.chainId?.toString()]))
+      setSelected(initialSelectedSet(currentChainId))
     },
   })
-  const [selected, setSelected] = React.useState(new Set([currentChainStore.chainId?.toString()]))
 
-  const selectedValue = React.useCallback((value: any): string => {
+  const [selected, setSelected] = React.useState<Set<string | number>>(initialSelectedSet(currentChainId))
+
+  const selectedValue = React.useCallback((value: Set<string | number>): string => {
     return Array.from(value).join(', ')
   }, [selected])
 
   useEffect(() => {
-    setSelected(new Set([currentChainStore.chainId?.toString()]))
-  }, [currentChainStore.chainId])
+    setSelected(initialSelectedSet(currentChainId))
+  }, [currentChainId])
 
   return (
     <DropDownWrapper>
@@ -55,9 +60,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
           borderWeight={'black'}
         >
           {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-            <Dropdown.Trigger style={{ width: 'max-content' }}>
+            <Dropdown.Trigger css={{ width: 'max-content' }}>
               <CurrentBlockchainStyle isLight={isLight} style={{ width: 'max-content ' }}>
 
                 <CurrentBlockchainBlock
@@ -76,14 +79,12 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                 aria-label='Single selection actions'
                 disallowEmptySelection
                 selectionMode='single'
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
                 selectedKeys={selected}
                 onSelectionChange={(keys) => {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                  setSelected(keys)
-                  changeNetwork(+selectedValue(keys))
+                  if (keys !== 'all') {
+                    setSelected(keys)
+                    changeNetwork(+selectedValue(keys))
+                  }
                 }}
                 css={{
                   borderRadius: '16px',
