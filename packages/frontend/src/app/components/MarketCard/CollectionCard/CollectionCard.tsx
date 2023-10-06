@@ -88,9 +88,7 @@ export default function CollectionCard({
               )}
               TransitionComponent={Slide}
               TransitionProps={{
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                direction: 'left',
+                dir: 'right',
               }}
               PopperProps={{
                 modifiers: [
