@@ -126,10 +126,10 @@ func processRoyalty(ctx context.Context, s *service, block types.Block, token *d
 		Backoff: &retry.ExponentialBackoff{
 			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
-			Multiplier:      2,
+			Multiplier:      1.5,
 			MaxInterval:     10 * time.Second,
 		},
-		MaxElapsedTime: 30 * time.Second,
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	royaltyAny, err := retry.OnErrors(ctx, royaltyRetryOpts)
@@ -165,10 +165,10 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		Backoff: &retry.ExponentialBackoff{
 			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
-			Multiplier:      2,
+			Multiplier:      1.5,
 			MaxInterval:     10 * time.Second,
 		},
-		MaxElapsedTime: 30 * time.Second,
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
@@ -205,10 +205,10 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		Backoff: &retry.ExponentialBackoff{
 			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
-			Multiplier:      2,
+			Multiplier:      1.5,
 			MaxInterval:     10 * time.Second,
 		},
-		MaxElapsedTime: 30 * time.Second,
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
@@ -314,13 +314,6 @@ func (s *service) onTransferDraftEvent(
 		return err
 	}
 
-	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 3 * time.Second,
-		RandFactor:      0.5,
-		Multiplier:      2,
-		MaxInterval:     10 * time.Second,
-	}
-
 	getOrderRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			blockNum, bnOk := args[0].(*big.Int)
@@ -364,8 +357,13 @@ func (s *service) onTransferDraftEvent(
 			tokenId,
 		},
 		RetryOnAnyError: true,
-		Backoff:         backoff,
-		MaxElapsedTime:  30 * time.Second,
+		Backoff: &retry.ExponentialBackoff{
+			InitialInterval: 3 * time.Second,
+			RandFactor:      0.5,
+			Multiplier:      1.5,
+			MaxInterval:     10 * time.Second,
+		},
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	orderAny, err := retry.OnErrors(ctx, getOrderRetryOpts)

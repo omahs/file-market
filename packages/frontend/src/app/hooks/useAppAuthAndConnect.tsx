@@ -73,7 +73,7 @@ export default function useAppAuthAndConnect(props?: IUseAppAuthAndConnect) {
           setIsLoading(false)
         })
     }
-  }, [isConnected, address, connector, props?.isWithSign, setIsLoading])
+  }, [isConnected, address, connector, props?.isWithSign, setIsLoading, setAddressState, setIsACanAuthEffect, open])
 
   useEffect(() => {
     if (isLoading) {

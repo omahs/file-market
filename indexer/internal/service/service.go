@@ -511,13 +511,6 @@ func (s *service) processCollectionCreation(
 	}
 
 	// Get token metadata
-	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 3,
-		RandFactor:      0.5,
-		Multiplier:      2,
-		MaxInterval:     10,
-	}
-
 	metaUriRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			blockNum, bnOk := args[0].(*big.Int)
@@ -533,8 +526,13 @@ func (s *service) processCollectionCreation(
 			ev.TokenId,
 		},
 		RetryOnAnyError: true,
-		Backoff:         backoff,
-		MaxElapsedTime:  30 * time.Second,
+		Backoff: &retry.ExponentialBackoff{
+			InitialInterval: 3 * time.Second,
+			RandFactor:      0.5,
+			Multiplier:      1.5,
+			MaxInterval:     10 * time.Second,
+		},
+		MaxElapsedTime: 60 * time.Second,
 	}
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
@@ -564,8 +562,13 @@ func (s *service) processCollectionCreation(
 			},
 			FnArgs:          []any{metaUri},
 			RetryOnAnyError: true,
-			Backoff:         backoff,
-			MaxElapsedTime:  30 * time.Second,
+			Backoff: &retry.ExponentialBackoff{
+				InitialInterval: 3 * time.Second,
+				RandFactor:      0.5,
+				Multiplier:      1.5,
+				MaxInterval:     10 * time.Second,
+			},
+			MaxElapsedTime: 60 * time.Second,
 		}
 
 		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)

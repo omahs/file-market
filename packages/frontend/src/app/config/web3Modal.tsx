@@ -19,7 +19,11 @@ if (!projectId) {
   throw new Error('You need to provide VITE_WEB3_MODAL_PROJECT_ID env variable')
 }
 
-const { publicClient, chains } = configureChains(chainsDefault, [w3mProvider({ projectId })])
+export const { chains, publicClient } = configureChains(
+  chainsDefault,
+  [w3mProvider({ projectId }), publicProvider()],
+  { pollingInterval: 3_000 },
+)
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
