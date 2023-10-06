@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 
+import { type UserProfile } from '../../../../../swagger/Api'
 import { useStatusState, useStores } from '../../../../hooks'
 import { useAfterDidMountEffect } from '../../../../hooks/useDidMountEffect'
 import { type IProfileSettings } from '../types/formType'
@@ -18,7 +19,7 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     discord: '',
   })
   const [isEmailUpdated, setIsEmailUpdated] = useState<boolean>(false)
-  const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<string, IProfileSettings>()
+  const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<UserProfile | undefined, IProfileSettings>()
 
   const updateEmail = async (email?: string) => {
     await userStore.updateEmail(email)
@@ -29,10 +30,10 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
       await updateEmail(props.email)
       setIsEmailUpdated(true)
     } else setIsEmailUpdated(false)
-    await userStore.updateUserInfo(props)
+    const result = await userStore.updateUserInfo(props)
     onSuccess?.()
 
-    return Date.now().toString()
+    return result
   }), [userStore, onSuccess])
 
   useAfterDidMountEffect(() => {

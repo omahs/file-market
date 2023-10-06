@@ -29,10 +29,6 @@ export default observer(function ProfileSettings() {
   const [isNameExist, setIsNamelExist] = useState<boolean>()
   const [isUrlExist, setIsUrlExist] = useState<boolean>()
 
-  const redirectAddress = useMemo(() => {
-    return userStore.user?.username ?? address
-  }, [address, userStore.user])
-
   const {
     handleSubmit,
     formState: { errors },
@@ -117,7 +113,7 @@ export default observer(function ProfileSettings() {
     statuses,
     okMsg: 'Profile data update completed successfully!',
     loadingMsg: 'Profile is updating',
-    successNavTo: isEmailUpdated ? undefined : `/profile/${redirectAddress}`,
+    successNavTo: isEmailUpdated ? undefined : `/profile/${statuses?.result?.username ?? statuses.result?.address}`,
   })
 
   const isExistProblem = useMemo(() => {

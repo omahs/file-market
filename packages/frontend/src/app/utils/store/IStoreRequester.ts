@@ -115,3 +115,24 @@ export const storeReset = <Target extends IStoreRequester>(target: Target) => {
   target.isLoading = false
   target.isLoaded = false
 }
+
+export const storeRequestPromise = <Data>(
+  target: IStoreRequester,
+  requester: Promise<HttpResponse<Data, ErrorResponse>>,
+  callback: (data: Data) => void,
+  errorCallback?: (error: any) => void,
+): Promise<Data> => {
+  return new Promise((resolve, reject) => {
+    const callBackModif = (data: Data) => {
+      callback(data)
+      resolve(data)
+    }
+
+    const errorCallBackModif = (error: any) => {
+      errorCallback?.(error)
+      reject(error)
+    }
+
+    storeRequest(target, requester, callBackModif, errorCallBackModif)
+  })
+}

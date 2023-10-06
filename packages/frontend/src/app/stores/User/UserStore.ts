@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 
 import { Api, type UserProfile } from '../../../swagger/Api'
 import { requestJwtAccess } from '../../utils/jwt/function'
-import { type IStoreRequester, type RequestContext, storeRequest } from '../../utils/store'
+import { type IStoreRequester, type RequestContext, storeRequest, storeRequestPromise } from '../../utils/store'
 import { type DateStore } from '../Date/DateStore'
 import { type ErrorStore } from '../Error/ErrorStore'
 import { type RootStore } from '../RootStore'
@@ -50,7 +50,8 @@ export class UserStore implements IStoreRequester {
 
   async updateUserInfo(user?: UserProfile) {
     if (!user) return
-    storeRequest(
+
+    return storeRequestPromise(
       this,
       requestJwtAccess(this.profileService.updateCreate, {
         ...this.user,
