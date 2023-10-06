@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { type FC } from 'react'
 
 import { getProfileImageUrl } from '../../../utils/nfts/getProfileImageUrl'
 

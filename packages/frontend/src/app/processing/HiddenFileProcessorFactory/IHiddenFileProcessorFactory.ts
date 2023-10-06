@@ -1,5 +1,5 @@
-import { IHiddenFileBuyer } from '../HiddenFileBuyer'
-import { IHiddenFileOwner } from '../HiddenFileOwner'
+import { type IHiddenFileBuyer } from '../HiddenFileBuyer'
+import { type IHiddenFileOwner } from '../HiddenFileOwner'
 
 /**
  * Is responsible for creation and registration of HiddenFileProcessor instances

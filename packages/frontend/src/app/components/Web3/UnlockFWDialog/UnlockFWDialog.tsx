@@ -6,7 +6,7 @@ import { styled } from '../../../../styles'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { Modal, ModalBody, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
-import { AppDialogProps } from '../../../utils/dialog'
+import { type AppDialogProps } from '../../../utils/dialog'
 import { UnlockSection } from '../ConnectFileWalletDialog/sections/UnlockSection'
 
 const ConnectWalletWindowStyle = styled('div', {
@@ -16,7 +16,7 @@ const ConnectWalletWindowStyle = styled('div', {
   },
 })
 
-export const UnlockFWDialog = observer(({ open, onClose }: AppDialogProps<{}>) => {
+export const UnlockFWDialog = observer(({ open, onClose }: AppDialogProps<unknown>) => {
   useCloseIfNotConnected(onClose)
   const { adaptive } = useMediaMui()
   const { disconnect } = useDisconnect()

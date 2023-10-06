@@ -1,36 +1,39 @@
-import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
-
-interface IUseCancelTransfer {
-  collectionAddress?: string
-}
+import { assertCollection, assertConfig, assertTokenId } from '../utils'
 
 interface ICancelTransfer {
   tokenId?: string
+  collectionAddress?: string
 }
 
-export function useCancelTransfer({ collectionAddress }: IUseCancelTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+export function useCancelTransfer() {
   const config = useConfig()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, ICancelTransfer>()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, ICancelTransfer>()
+  const { callContract } = useCallContract()
 
-  const cancelTransfer = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
+  const cancelTransfer = useCallback(wrapPromise(async ({ tokenId, collectionAddress }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
+    assertConfig(config)
     console.log('cancel transfer', { tokenId })
 
-    return callContract({ contract, method: 'cancelTransfer' },
-      BigNumber.from(tokenId),
-      { gasPrice: config?.gasPrice },
+    return callContract(
+      {
+        callContractConfig: {
+          address: collectionAddress as `0x${string}`,
+          abi: config.collectionToken.abi,
+          functionName: 'cancelTransfer',
+          gasPrice: config?.gasPrice,
+          args: [BigInt(tokenId)],
+        },
+      },
     )
-  }), [contract, signer, wrapPromise])
+  }), [config, wrapPromise])
 
   return {
     ...statuses,

@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 /** This hook is a wrapper above useState */
 export const useModalProperties = () => {

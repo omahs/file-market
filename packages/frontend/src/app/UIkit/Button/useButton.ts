@@ -1,5 +1,5 @@
-import { HTMLAttributes, MouseEventHandler, Ref, RefObject, useCallback } from 'react'
-import { AriaButtonProps, mergeProps, useButton as useButtonAria, useFocusRing, useHover } from 'react-aria'
+import { type HTMLAttributes, type MouseEventHandler, type Ref, type RefObject, useCallback } from 'react'
+import { type AriaButtonProps, mergeProps, useButton as useButtonAria, useFocusRing, useHover } from 'react-aria'
 
 import { useDOMRef } from '../../hooks'
 import { useDrip } from '../Drip/Drip.hooks'

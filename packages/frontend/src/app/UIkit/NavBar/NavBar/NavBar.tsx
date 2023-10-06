@@ -1,7 +1,7 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { type FC, type ReactNode, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
+import { type BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import CurrentBlockchain from '../../../components/MultiChain/CurrentBlockchain/CurrentBlockchain'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'

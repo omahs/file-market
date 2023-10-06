@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { stringifyError } from '../utils/error'
-import { IStoreRequester } from '../utils/store'
+import { type IStoreRequester } from '../utils/store'
 import { useAuth } from './useAuth'
 import { useCurrentBlockChain } from './useCurrentBlockChain'
 import { useMultiChainStore } from './useMultiChainStore'

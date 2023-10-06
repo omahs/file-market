@@ -1,4 +1,4 @@
-import { Navigate, RouteObject } from 'react-router-dom'
+import { Navigate, type RouteObject } from 'react-router-dom'
 
 import CollectionSection from './section/Collection/CollectionSection'
 import NftSection from './section/Nft/NftSection'

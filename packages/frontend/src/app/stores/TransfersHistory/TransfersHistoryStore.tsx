@@ -1,29 +1,29 @@
 import dayjs from 'dayjs'
 import { makeAutoObservable } from 'mobx'
-import { Chain } from 'wagmi'
+import { type Chain } from 'wagmi'
 
 import { styled } from '../../../styles'
 import {
-  OrderStatusInfo,
-  TransfersResponseV2,
-  TransferWithData,
+  type OrderStatusInfo,
+  type TransfersResponseV2,
+  type TransferWithData,
 } from '../../../swagger/Api'
-import { ITableRow } from '../../components/Table/TableBuilder'
+import { type ITableRow } from '../../components/Table/TableBuilder'
 import ethIcon from '../../pages/ProfilePage/img/EthereumIcon.svg'
 import { Badge } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequest,
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0
@@ -111,8 +111,7 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing', chain: Chai
       {
         columnName: 'Date',
         value:
-          transfer.order?.statuses !== undefined &&
-          transfer.order.statuses.length
+          transfer.order?.statuses?.length
             ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
               'MMM D[,] YYYY [at] HH[:]mm',
             )
@@ -174,7 +173,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
     storeRequest(
       this,
       this.currentBlockChainStore.api.v2.transfersHistoryDetail(this.collectionAddress, { outgoingLimit: 10, incomingLimit: 10 }),
-      (data) => this.setData(data),
+      (data) => { this.setData(data) },
     )
   }
 
@@ -190,7 +189,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
         outgoingLimit: 10,
         incomingLimit: 10,
       }),
-      (data) => this.addData(data),
+      (data) => { this.addData(data) },
     )
   }
 

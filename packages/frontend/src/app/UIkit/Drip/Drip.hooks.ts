@@ -1,4 +1,4 @@
-import { MouseEventHandler, RefObject, useState } from 'react'
+import { type MouseEventHandler, type RefObject, useState } from 'react'
 
 export const useDrip = (
   ref: RefObject<HTMLElement>,

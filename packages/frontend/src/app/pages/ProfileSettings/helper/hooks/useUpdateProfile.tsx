@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
 
+import { type UserProfile } from '../../../../../swagger/Api'
 import { useStatusState, useStores } from '../../../../hooks'
 import { useAfterDidMountEffect } from '../../../../hooks/useDidMountEffect'
-import { IProfileSettings } from '../types/formType'
+import { type IProfileSettings } from '../types/formType'
 
 export const useUpdateProfile = (onSuccess?: () => void) => {
   const { userStore } = useStores()
@@ -18,22 +19,21 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     discord: '',
   })
   const [isEmailUpdated, setIsEmailUpdated] = useState<boolean>(false)
-  const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<string, IProfileSettings>()
+  const { wrapPromise, statuses, setError, setIsLoading } = useStatusState<UserProfile | undefined, IProfileSettings>()
 
   const updateEmail = async (email?: string) => {
     await userStore.updateEmail(email)
   }
 
   const updateProfile = useCallback(wrapPromise(async (props: IProfileSettings) => {
-    console.log('update')
     if (props.email !== userStore.user?.email) {
       await updateEmail(props.email)
       setIsEmailUpdated(true)
     } else setIsEmailUpdated(false)
-    await userStore.updateUserInfo(props)
+    const result = await userStore.updateUserInfo(props)
     onSuccess?.()
 
-    return Date.now().toString()
+    return result
   }), [userStore, onSuccess])
 
   useAfterDidMountEffect(() => {
@@ -46,7 +46,6 @@ export const useUpdateProfile = (onSuccess?: () => void) => {
     statuses,
     isEmailUpdated,
     updateProfile: (form: IProfileSettings) => {
-      console.log('Update2')
       setFormToTransfer(form)
     },
     updateEmail,

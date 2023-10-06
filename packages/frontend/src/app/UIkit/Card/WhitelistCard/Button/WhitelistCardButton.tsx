@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 
-import { ButtonProps, useButton } from '../../../Button'
+import { type ButtonProps, useButton } from '../../../Button'
 import { StyledButton } from './WhitelistCardButton.styles'
 
 export interface WhitelistCardButtonProps extends ButtonProps {

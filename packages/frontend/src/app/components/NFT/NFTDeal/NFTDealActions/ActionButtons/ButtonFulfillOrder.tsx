@@ -1,10 +1,9 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
+import { type PressEvent } from '@react-types/shared/src/events'
 import { observer } from 'mobx-react-lite'
-import { FC, useMemo } from 'react'
+import { type FC, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Order } from '../../../../../../swagger/Api'
+import { type Order } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import {
@@ -13,11 +12,11 @@ import {
   useHiddenFileProcessorFactory,
   useSeedProvider,
 } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonFulfillOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
@@ -43,24 +42,24 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     loadingMsg: 'Fulfilling order',
   })
 
-  const publicKeyHex = useMemo(async () => {
+  const getPublicKeyHex = useCallback(async () => {
     if (address && tokenFullId && seedProvider?.seed) {
       const buyer = await factory.getBuyer(address, tokenFullId.collectionAddress, +tokenFullId.tokenId)
       const publicKey = await buyer.initBuy()
 
       return bufferToEtherHex(publicKey)
     }
-  }, [address, tokenFullId, seedProvider?.seed])
+  }, [address, tokenFullId.collectionAddress, tokenFullId.tokenId, seedProvider?.seed])
 
   const onPress = wrapAction(async () => {
     const receipt = await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
     })
-    const publicKeyHexRes = await publicKeyHex
+    const publicKeyHexRes = await getPublicKeyHex()
     if (receipt?.blockNumber && publicKeyHexRes) {
-      transferStore.onTransferPublicKeySet(BigNumber.from(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
-      transferStore.onTransferDraftCompletion(BigNumber.from(tokenFullId.tokenId), receipt?.to, receipt?.blockNumber)
+      transferStore.onTransferPublicKeySet(BigInt(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
+      transferStore.onTransferDraftCompletion(BigInt(tokenFullId.tokenId), receipt?.to, receipt?.blockNumber)
     }
   })
 

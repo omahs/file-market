@@ -1,4 +1,4 @@
-import { ComponentProps, FC, useMemo } from 'react'
+import { type ComponentProps, type FC, useMemo } from 'react'
 
 import { NavLinkStyled } from '../NavBarItem'
 

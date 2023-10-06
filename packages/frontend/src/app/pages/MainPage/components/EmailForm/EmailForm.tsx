@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import ConvertKitForm from 'convertkit-react'
 import React from 'react'

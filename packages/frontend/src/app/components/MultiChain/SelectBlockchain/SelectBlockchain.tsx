@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import React, { ReactNode, useMemo } from 'react'
+import React, { type ReactNode, useMemo } from 'react'
 
 import { styled } from '../../../../styles'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
@@ -7,7 +7,7 @@ import { PageLayout, textVariant, Txt } from '../../../UIkit'
 import {
   selectBlockchainDescription,
   selectBlockchainTitle,
-  selectBlockchainType,
+  type selectBlockchainType,
 } from '../helper/data/SelectBlockchainData'
 import SelectBlockchainBlock from './SelectBlockchainBlock/SelectBlockchainBlock'
 

@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { Modal } from '../../UIkit/Modal/Modal'
-import { DialogProps } from '../../utils/dialog'
-import { InProcessBodyProps, InProgressBody } from './Modal'
+import { type DialogProps } from '../../utils/dialog'
+import { type InProcessBodyProps, InProgressBody } from './Modal'
 
 export const LoadingModal = ({
   onClose,

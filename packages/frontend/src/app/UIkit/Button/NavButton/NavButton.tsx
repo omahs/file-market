@@ -1,9 +1,9 @@
 import {
-  ComponentProps,
+  type ComponentProps,
   forwardRef,
 } from 'react'
 import {
-  AriaButtonProps,
+  type AriaButtonProps,
 } from 'react-aria'
 import { Link } from 'react-router-dom'
 

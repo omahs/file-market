@@ -1,7 +1,7 @@
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { TransferCard } from '../../../components/MarketCard/TransferCard'
@@ -18,9 +18,7 @@ const TransfersSection: React.FC = observer(() => {
 
   useEffect(() => {
     if (!currentAddress || !userAddress) navigate('/')
-    if (utils.getAddress(currentAddress ?? '') !== utils.getAddress(userAddress ?? '')) {
-      console.log(utils.getAddress(currentAddress ?? ''))
-      console.log(utils.getAddress(userAddress ?? ''))
+    if (getAddress(currentAddress ?? '') !== getAddress(userAddress ?? '')) {
       navigate('/')
     }
   }, [userAddress, currentAddress])
@@ -29,7 +27,7 @@ const TransfersSection: React.FC = observer(() => {
     <>
       <InfiniteScroll
         hasMore={userTransferStore.hasMoreData}
-        fetchMore={() => userTransferStore.requestMore()}
+        fetchMore={() => { userTransferStore.requestMore() }}
         isLoading={userTransferStore.isLoading}
         currentItemCount={userTransferStore.transferCards.length}
         render={({ index }) => <TransferCard {...userTransferStore.transferCards[index]} key={index} />}
@@ -41,10 +39,10 @@ const TransfersSection: React.FC = observer(() => {
           mainText={'Get started by creating your own EFT or go to the market to find something amazing'}
           buttonsBlock={(
             <>
-              <Button primary onClick={() => navigate('/market') }>
+              <Button primary onClick={() => { navigate('/market') } }>
                 <Txt primary1>3D Market</Txt>
               </Button>
-              <Button onClick={() => navigate('/create') }>
+              <Button onClick={() => { navigate('/create') } }>
                 <Txt primary1>Create</Txt>
               </Button>
             </>

@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
-import { FC, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { fee } from '../../../../config/mark3d'
@@ -11,13 +10,13 @@ import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Label } from '../../../../pages/CreatePage/helper/style/style'
 import { useIsCreator } from '../../../../processing/nft-interaction/useIsCreator'
-import { TokenFullId } from '../../../../processing/types'
+import { type TokenFullId } from '../../../../processing/types'
 import { ButtonGlowing, Flex, FormControl, Input, PriceBadge } from '../../../../UIkit'
 import { formatNumber } from '../../../../utils/number'
 import { StyledFlex, StyledPriceDescription } from './OrderForm.styles'
 
 export interface OrderFormValue {
-  price: BigNumber
+  price: string
 }
 
 interface OrderFormRawValue {
@@ -48,7 +47,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
   }), [toCurrency])
 
   const exportFormValue = useCallback((rawValue: OrderFormRawValue): OrderFormValue => ({
-    price: fromCurrency(+rawValue.price ?? 0),
+    price: fromCurrency(+rawValue.price ?? 0).toString(),
   }), [fromCurrency])
 
   const { handleSubmit, control, watch, setValue } = useForm<OrderFormRawValue>({
@@ -95,7 +94,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
                 {!!fee && !!tokenStore.data?.royalty && ' and ' && !isOwner}
                 {!!tokenStore.data?.royalty && (
                   <>
-                    the author&apos;s royalty (<span>{formatRoyalty(tokenStore.data.royalty)}%</span>)
+                    the author&apos;s royalty (<span>{formatRoyalty(BigInt(tokenStore.data.royalty ?? 0))}%</span>)
                   </>
                 )}
                 {' '}

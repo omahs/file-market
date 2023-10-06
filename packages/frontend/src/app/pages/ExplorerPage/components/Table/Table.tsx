@@ -1,7 +1,7 @@
-import { ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 
 import { styled } from '../../../../../styles'
-import { ITableColumn, ITableRow } from '../../../../components/Table/TableBuilder'
+import { type ITableColumn, type ITableRow } from '../../../../components/Table/TableBuilder'
 import { textVariant } from '../../../../UIkit'
 import { ExplorerTableBuilder } from './ExplorerTableBuilder'
 

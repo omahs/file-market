@@ -1,4 +1,4 @@
-import { JwtTokenInfo } from '../../../swagger/Api'
+import { type JwtTokenInfo } from '../../../swagger/Api'
 import {
   LOCALSTORAGE_ACCESS_EXPIRED_KEY,
   LOCALSTORAGE_ACCESS_TOKEN_KEY,

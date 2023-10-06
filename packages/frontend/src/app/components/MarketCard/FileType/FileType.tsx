@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 
-import { HiddenFileMetaData } from '../../../../swagger/Api'
+import { type HiddenFileMetaData } from '../../../../swagger/Api'
 import { Txt } from '../../../UIkit'
 import { typeImg } from '../helper/data'
 import { fileToExtension, fileToType } from '../helper/fileToType'

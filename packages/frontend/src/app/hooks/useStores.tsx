@@ -1,6 +1,6 @@
-import { createContext, PropsWithChildren, useContext } from 'react'
+import { createContext, type PropsWithChildren, useContext } from 'react'
 
-import { RootStore, rootStore } from '../stores/RootStore'
+import { type RootStore, rootStore } from '../stores/RootStore'
 
 export const StoreContext = createContext<RootStore>(rootStore)
 

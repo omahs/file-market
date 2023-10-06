@@ -1,36 +1,39 @@
-import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
-import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
-
-interface IUseFinalizeTransfer {
-  collectionAddress?: string
-}
+import { assertCollection, assertConfig, assertTokenId } from '../utils'
 
 interface IFinalizeTransfer {
   tokenId?: string
+  collectionAddress?: string
 }
 
-export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IFinalizeTransfer>()
+export function useFinalizeTransfer() {
+  const { callContract } = useCallContract()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IFinalizeTransfer>()
   const config = useConfig()
 
-  const finalizeTransfer = useCallback(wrapPromise(async ({ tokenId }: IFinalizeTransfer) => {
-    assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
+  const finalizeTransfer = useCallback(wrapPromise(async ({ tokenId, collectionAddress }: IFinalizeTransfer) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
+    assertConfig(collectionAddress)
     console.log('finalize transfer', { tokenId })
 
-    return callContract({ contract, method: 'finalizeTransfer' },
-      BigNumber.from(tokenId),
-      { gasPrice: config?.gasPrice },
+    return callContract(
+      {
+        callContractConfig: {
+          address: collectionAddress as `0x${string}`,
+          abi: config.collectionToken.abi,
+          functionName: 'finalizeTransfer',
+          gasPrice: config?.gasPrice,
+          args: [BigInt(tokenId)],
+        },
+      },
     )
-  }), [contract, signer, wrapPromise])
+  }), [config, wrapPromise])
 
   return {
     ...statuses,

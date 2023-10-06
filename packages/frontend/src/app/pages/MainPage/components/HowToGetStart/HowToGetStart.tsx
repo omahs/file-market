@@ -30,6 +30,19 @@ const Section = styled('section', {
       color: '$blue500',
     },
   },
+  marginBottom: '100px',
+  '@lg': {
+    marginBottom: '80px',
+  },
+  '@md': {
+    marginBottom: '70px',
+  },
+  '@sm': {
+    marginBottom: '60px',
+  },
+  '@xs': {
+    marginBottom: '50px',
+  },
 })
 
 const HowToGetStartStyle = styled('div', {
@@ -246,7 +259,7 @@ const HowToGetStart = () => {
                   size={'medium'}
                   content={(
                     <Text >
-                      Top your wallet
+                      Top up your wallet
                     </Text>
                   )}
                 />

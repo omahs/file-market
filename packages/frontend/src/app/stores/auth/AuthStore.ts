@@ -3,18 +3,18 @@ import { makeAutoObservable } from 'mobx'
 
 import {
   Api,
-  AuthBySignatureRequest,
-  AuthResponse,
-  UserProfile,
+  type AuthBySignatureRequest,
+  type AuthResponse,
+  type UserProfile,
 } from '../../../swagger/Api'
 import { getAccessToken, getRefreshToken } from '../../utils/jwt/get'
 import { removeAccessToken, removeRefreshToken } from '../../utils/jwt/remove'
 import { saveAccessToken, saveRefreshToken } from '../../utils/jwt/save'
-import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store'
-import { DateStore } from '../Date/DateStore'
-import { DialogStore } from '../Dialog/DialogStore'
-import { ErrorStore } from '../Error/ErrorStore'
-import { UserStore } from '../User/UserStore'
+import { type IStoreRequester, type RequestContext, storeRequest } from '../../utils/store'
+import { type DateStore } from '../Date/DateStore'
+import { type DialogStore } from '../Dialog/DialogStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type UserStore } from '../User/UserStore'
 
 const TIME_BEFORE_EXPIRED_ACCESS = 20000
 const TIME_BEFORE_EXPIRED_REFRESH = 40000
@@ -28,13 +28,13 @@ export class AuthStore implements IStoreRequester {
   dialogStore: DialogStore
   dateStore: DateStore
   userStore: UserStore
-  authService: Api<{}>
+  authService: Api<unknown>
 
   isAuth?: boolean
   isTryAuth?: boolean
 
   constructor(rootStore: { dialogStore: DialogStore, userStore: UserStore, dateStore: DateStore, errorStore: ErrorStore }) {
-    this.authService = new Api<{}>({ baseUrl: '/api' })
+    this.authService = new Api<unknown>({ baseUrl: '/api' })
     this.userStore = rootStore.userStore
     makeAutoObservable(this)
     this.dialogStore = rootStore.dialogStore

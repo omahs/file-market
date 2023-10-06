@@ -1,7 +1,7 @@
 import { action } from 'mobx'
 
-import { ErrorResponse, HttpResponse } from '../../../swagger/Api'
-import { ErrorStore } from '../../stores/Error/ErrorStore'
+import { type ErrorResponse, type HttpResponse } from '../../../swagger/Api'
+import { type ErrorStore } from '../../stores/Error/ErrorStore'
 import { errorResponseToMessage, stringifyError } from '../error'
 import { tap } from '../structs'
 
@@ -51,7 +51,6 @@ export const storeRequestGeneric = <ResponseType>(
         tap(
           action((data) => {
             finish(() => {
-              console.log(data)
               responseHandler(data)
             })
           }),
@@ -115,4 +114,13 @@ export const storeReset = <Target extends IStoreRequester>(target: Target) => {
   target.currentRequest = undefined // cancel current request
   target.isLoading = false
   target.isLoaded = false
+}
+
+export const storeRequestPromise = <Data>(
+  target: IStoreRequester,
+  requester: Promise<HttpResponse<Data, ErrorResponse>>,
+): Promise<Data> => {
+  return new Promise((resolve, reject) => {
+    storeRequest(target, requester, (data) => { resolve(data) }, (error) => { reject(error) })
+  })
 }

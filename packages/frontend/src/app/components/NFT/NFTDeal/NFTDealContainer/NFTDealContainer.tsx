@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import React, { PropsWithChildren } from 'react'
+import React, { type PropsWithChildren } from 'react'
 
 import { styled } from '../../../../../styles'
-import { Order } from '../../../../../swagger/Api'
+import { type Order } from '../../../../../swagger/Api'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useWatchStatusesTransfer } from '../../../../processing/nft-interaction/useWatchStatusesTransfer'
-import { TokenFullId } from '../../../../processing/types'
+import { type TokenFullId } from '../../../../processing/types'
 import { Txt } from '../../../../UIkit'
 import { LoadingOpacity } from '../../../../UIkit/Loading/LoadingOpacity'
 import BaseModal from '../../../Modal/Modal'
@@ -37,7 +37,14 @@ const NftDealContainer = observer(({
   reFetchOrder,
   isNetworkIncorrect,
 }: NFTDealContainerProps) => {
-  const { isOwner, isApprovedExchange, isLoading, error, transfer, isBuyer, runIsApprovedRefetch } = useWatchStatusesTransfer({ tokenFullId, isNetworkIncorrect })
+  const {
+    isOwner,
+    isApprovedExchange,
+    isLoading,
+    error,
+    transfer,
+    isBuyer, runIsApprovedRefetch,
+  } = useWatchStatusesTransfer({ tokenFullId, isNetworkIncorrect })
   const { modalProps } = useStatusModal({
     statuses: { result: undefined, isLoading: false, error: error as unknown as string },
     okMsg: '',
@@ -49,18 +56,16 @@ const NftDealContainer = observer(({
 
   return (
     <LoadingOpacity isLoading={isLoading}>
-      <>
-        <NFTDealActions
-          transfer={transfer}
-          order={order}
-          tokenFullId={tokenFullId}
-          reFetchOrder={reFetchOrder}
-          isOwner={isOwner}
-          isBuyer={isBuyer}
-          isApprovedExchange={isApprovedExchange}
-          runIsApprovedRefetch={runIsApprovedRefetch}
-        />
-      </>
+      <NFTDealActions
+        transfer={transfer}
+        order={order}
+        tokenFullId={tokenFullId}
+        reFetchOrder={reFetchOrder}
+        isOwner={isOwner}
+        isBuyer={isBuyer}
+        isApprovedExchange={isApprovedExchange}
+        runIsApprovedRefetch={runIsApprovedRefetch}
+      />
       {(!transfer && !isOwner) && (
         <IsNotListedContainer>
           <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>

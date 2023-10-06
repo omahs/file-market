@@ -1,7 +1,7 @@
-import { utils } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import { useMemo } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import Banner from '../../components/ViewInfo/Banner/Banner'
@@ -12,13 +12,13 @@ import { useAddress } from '../../hooks/useAddress'
 import { useProfileStore } from '../../hooks/useProfileStore'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { Button, PageLayout, TabItem, Tabs, Txt } from '../../UIkit'
+import { Button, PageLayout, type TabItem, Tabs, Txt } from '../../UIkit'
 import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { copyToClipboard } from '../../utils/clipboard/clipboard'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router'
+import { type Params } from '../../utils/router'
 import EthereumImg from './img/EthereumIcon.svg'
 import {
   AddressesButtonsContainer,
@@ -62,12 +62,9 @@ const ProfilePage: React.FC = observer(() => {
   const userTransferStore = useUserTransferStore(profileAddressMemo)
 
   const isOwner = useMemo(() => {
-    console.log(profileAddressMemo)
-    console.log(currentAddress)
-
     if (!currentAddress || !profileAddressMemo) return false
 
-    return utils.getAddress(currentAddress ?? '') === utils.getAddress(profileAddressMemo ?? '')
+    return getAddress(currentAddress ?? '') === getAddress(profileAddressMemo ?? '')
   }, [profileAddressMemo, currentAddress])
 
   const tabs = useMemo(() => {

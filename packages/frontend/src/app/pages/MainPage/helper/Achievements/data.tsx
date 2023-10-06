@@ -7,7 +7,7 @@ import FMSSpace from '../../../../../assets/img/MainPage/achievements/fvm_space.
 import HackFS from '../../../../../assets/img/MainPage/achievements/hack_fs.svg'
 import MagicSquare from '../../../../../assets/img/MainPage/achievements/MagicSquare.svg'
 import SwitchUp from '../../../../../assets/img/MainPage/achievements/SwitchUp.svg'
-import { AchievementItemProps } from '../../Blocks/Achievements'
+import { type AchievementItemProps } from '../../Blocks/Achievements'
 
 export const AchievementsData: AchievementItemProps[] = [
   {

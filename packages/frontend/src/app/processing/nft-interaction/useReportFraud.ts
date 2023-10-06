@@ -1,32 +1,35 @@
-import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract } from '../utils'
-
-interface IUseReportFraud {
-  collectionAddress?: string
-}
+import {
+  assertAccount,
+  assertCollection,
+  assertConfig,
+  assertTokenId,
+  bufferToEtherHex,
+} from '../utils'
 
 interface IReportFraud {
   tokenId?: string
+  collectionAddress?: string
 }
 
-export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+export function useReportFraud() {
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IReportFraud>()
+  const { statuses, wrapPromise } = useStatusState<TransactionReceipt, IReportFraud>()
   const config = useConfig()
+
+  const { callContract } = useCallContract()
 
   const factory = useHiddenFileProcessorFactory()
 
-  const reportFraud = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
+  const reportFraud = useCallback(wrapPromise(async ({ tokenId, collectionAddress }) => {
+    assertConfig(config)
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -35,12 +38,17 @@ export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
     const privateKey = await buyer.revealRsaPrivateKey()
     console.log('report fraud', { tokenId, privateKey })
 
-    return callContract({ contract, method: 'reportFraud' },
-      BigNumber.from(tokenId),
-      bufferToEtherHex(privateKey),
-      { gasPrice: config?.gasPrice },
-    )
-  }), [contract, signer, address, wrapPromise])
+    return callContract({
+      callContractConfig: {
+        address: collectionAddress as `0x${string}`,
+        abi: config.collectionToken.abi,
+        functionName: 'reportFraud',
+        gasPrice: config?.gasPrice,
+        args: [BigInt(tokenId),
+          bufferToEtherHex(privateKey)],
+      },
+    })
+  }), [config, address, wrapPromise])
 
   return {
     ...statuses,

@@ -1,16 +1,15 @@
-import { BigNumber, ContractReceipt } from 'ethers'
-import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
+import { parseUnits, type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useApi } from '../../hooks/useApi'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { FileMeta } from '../types'
-import { assertAccount, assertContract, assertSigner, callContract, callContractGetter } from '../utils'
+import { type FileMeta } from '../types'
+import { assertAccount, assertConfig, callContractGetter } from '../utils'
 import { useUploadErc721Meta } from './useUploadErc721Meta'
 
 export interface MintNFTForm {
@@ -31,17 +30,12 @@ type IMintNft = MintNFTForm & {
   isPublicCollection?: boolean
 }
 
-interface IUseMintNft {
-  collectionAddress?: string
-}
-
 interface MintNFTResult {
   tokenId: string
-  receipt: ContractReceipt // вся инфа о транзе
+  receipt: TransactionReceipt // вся инфа о транзе
 }
 
-export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+export function useMintNFT() {
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
@@ -49,24 +43,31 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const api = useApi()
   const config = useConfig()
 
+  const { callContract } = useCallContract()
+
   const mintNFT = useCallback(wrapPromise(async (form) => {
-    assertContract(contract, config?.collectionToken.name ?? '')
-    assertSigner(signer)
     assertAccount(address)
+    assertConfig(config)
 
     const { name, description = '', image, hiddenFile, collectionAddress, license, tags, subcategories, categories, royalty, isPublicCollection } = form
     if (!name || !collectionAddress || !image || !hiddenFile || royalty === undefined) {
       throw Error('CreateCollection form is not filled')
     }
 
-    let tokenIdBN: BigNumber
+    let tokenIdBN: bigint
     if (isPublicCollection) {
       const { data } = await api.sequencer.acquireDetail(collectionAddress, { wallet: address })
-      tokenIdBN = BigNumber.from(data.tokenId)
+      tokenIdBN = BigInt(data.tokenId ?? 0)
     } else {
-      tokenIdBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })
+      tokenIdBN = await callContractGetter<typeof config.collectionToken.abi, 'tokensCount', bigint>({
+        callContractConfig: {
+          address: collectionAddress as `0x${string}`,
+          functionName: 'tokensCount',
+          abi: config?.collectionToken.abi,
+        },
+      })
     }
-    const owner = await factory.getOwner(address, collectionAddress, tokenIdBN.toNumber())
+    const owner = await factory.getOwner(address, collectionAddress, Number(tokenIdBN))
 
     const hiddenFileEncrypted = await owner.encryptFile(hiddenFile)
     const hiddenFileMeta: FileMeta = {
@@ -88,12 +89,18 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
     })
     console.log('mint metadata', metadata)
 
-    const receipt = await callContract({ contract, signer, method: 'mint' },
-      address,
-      tokenIdBN,
-      metadata.url,
-      parseUnits(royalty.toString(), 2),
-      '0x00',
+    const receipt = await callContract({
+      callContractConfig: {
+        address: collectionAddress as `0x${string}`,
+        abi: config.collectionToken.abi,
+        functionName: 'mint',
+        args: [address,
+          tokenIdBN,
+          metadata.url,
+          parseUnits(royalty.toString(), 2),
+          '0x00'],
+      },
+    },
     )
 
     console.log(receipt)
@@ -102,7 +109,7 @@ export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
       tokenId: tokenIdBN.toString(),
       receipt,
     }
-  }), [contract, signer, address, factory, wrapPromise])
+  }), [config, address, factory, wrapPromise])
 
   return { ...statuses, mintNFT }
 }

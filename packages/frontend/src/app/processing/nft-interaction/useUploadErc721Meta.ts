@@ -1,25 +1,26 @@
 import { useCallback } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
-import { ERC721TokenMetaInput } from '../types'
+import { type ERC721TokenMetaInput } from '../types'
 import { assertAccount, assertSigner } from '../utils'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export function useUploadErc721Meta() {
-  const { data: signer } = useSigner()
+  const { data: walletClient } = useWalletClient()
   const { address } = useAccount()
   const { upload, getAccessToken } = useUploadLighthouse()
 
   return useCallback(async (meta: ERC721TokenMetaInput) => {
-    assertSigner(signer)
+    assertSigner(walletClient)
     assertAccount(address)
 
-    const accessToken = await getAccessToken(address, signer)
+    const accessToken = await getAccessToken(address, walletClient)
 
     // Key - property name, that contained files. Value - URI of the uploaded file
     const fileProps: Record<string, string> = Object.create(null)
 
     for (const key of Object.keys(meta)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       const value: any = meta[key]
       if (value instanceof Blob) {
@@ -36,5 +37,5 @@ export function useUploadErc721Meta() {
     const metaFile = new File([metaToUpload], 'metadata.json', { type: 'text/plain' })
 
     return upload(metaFile, accessToken)
-  }, [signer, address])
+  }, [walletClient, address])
 }

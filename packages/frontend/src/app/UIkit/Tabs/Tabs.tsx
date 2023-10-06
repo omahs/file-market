@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { OptionSwitch, SwitchButton } from '../../components/Switch/Switch'
+import { type OptionSwitch, SwitchButton } from '../../components/Switch/Switch'
 import { cutNumber } from '../../utils/number'
 import { StyledAmount, SwitchWrapperTabs } from './Tabs.styles'
 
@@ -37,10 +37,6 @@ export const Tabs: React.FC<TabsProps> = observer(({ tabs, isSmall, isTransparen
     }
     setTab(tabIndex)
   }, [location, tabs])
-
-  useEffect(() => {
-    console.log(tab)
-  }, [tab?.value])
 
   return (
     <>

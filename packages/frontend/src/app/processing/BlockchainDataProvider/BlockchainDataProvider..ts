@@ -1,11 +1,10 @@
-import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
-import { CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
+import { type CurrentBlockChainStore } from '../../stores/CurrentBlockChain/CurrentBlockChainStore'
 import { rootStore } from '../../stores/RootStore'
-import { ContractProvider, contractProvider } from '../ContractProvider'
+import { type ContractProvider, contractProvider } from '../ContractProvider'
 import { bufferToEtherHex, callContractGetter, hexToBuffer } from '../utils'
-import { IBlockchainDataProvider } from './IBlockchainDataProvider'
+import { type IBlockchainDataProvider } from './IBlockchainDataProvider'
 
 export class BlockchainDataProvider implements IBlockchainDataProvider {
   currentBlockChainStore: CurrentBlockChainStore
@@ -43,10 +42,16 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
 
-    console.log(contract)
-    console.log()
+    const globalSalt = await callContractGetter<typeof contract.abi, 'globalSalt', `0x${string}`>({
+      callContractConfig: {
+        address: contract.address,
+        functionName: 'globalSalt',
+        abi: contract.abi,
+      },
+    })
 
-    const globalSalt = await callContractGetter<`0x${string}`>({ contract, method: 'globalSalt' })
+    console.log('GLOBAL SALT')
+    console.log(globalSalt)
 
     return hexToBuffer(globalSalt)
   }
@@ -65,30 +70,60 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await callContractGetter<BigNumber>(
-      { contract, method: 'transferCounts' },
-      BigNumber.from(tokenId),
+    const transferCountBN = await callContractGetter<typeof contract.abi, 'trasnferCounts'>(
+      {
+        callContractConfig: {
+          address: contract.address,
+          functionName: 'transferCounts',
+          abi: contract.abi,
+          args: [BigInt(tokenId)],
+        },
+      },
+
     )
 
-    return transferCountBN.toNumber()
+    console.log('TRANSFER COUNT')
+    console.log(transferCountBN)
+
+    return transferCountBN
   }
 
   async getFee() {
     const contract = this.contractProvider.getExchangeContract()
 
-    return callContractGetter<BigNumber>({ contract, method: 'fee' })
+    const data = await callContractGetter<typeof contract.abi, 'fee'>({
+      callContractConfig: {
+        address: contract.address,
+        functionName: 'fee',
+        abi: contract.abi,
+      },
+    })
+
+    console.log('FEE')
+    console.log(data)
+
+    return data[1]
   }
 
-  async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: BigNumber) {
+  async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: bigint) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const { royaltyAmount } = await callContractGetter<{ royaltyAmount: BigNumber }>(
-      { contract, method: 'royaltyInfo' },
-      BigNumber.from(tokenId),
-      price,
+    const data = await callContractGetter<typeof contract.abi, 'royaltyInfo'>(
+      {
+        callContractConfig: {
+          address: contract.address,
+          functionName: 'royaltyInfo',
+          abi: contract.abi,
+          args: [BigInt(tokenId),
+            price],
+        },
+      },
     )
 
-    return royaltyAmount
+    console.log('ROYALTY')
+    console.log(data)
+
+    return data[1]
   }
 }
 

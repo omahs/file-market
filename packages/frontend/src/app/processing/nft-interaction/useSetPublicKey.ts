@@ -1,33 +1,37 @@
-import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useBlockchainDataProvider } from '../BlockchainDataProvider'
-import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract, hexToBuffer } from '../utils'
-
-interface IUseSetPublicKey {
-  collectionAddress?: string
-}
+import {
+  assertAccount,
+  assertCollection,
+  assertConfig,
+  assertTokenId,
+  bufferToEtherHex,
+  hexToBuffer,
+} from '../utils'
 
 interface ISetPublicKey {
   tokenId?: string
+  collectionAddress?: string
 }
 
-export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
+export function useSetPublicKey() {
   const { address } = useAccount()
   const config = useConfig()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, ISetPublicKey>()
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt, ISetPublicKey>()
   const factory = useHiddenFileProcessorFactory()
   const blockchainDataProvider = useBlockchainDataProvider()
 
-  const setPublicKey = useCallback(wrapPromise(async ({ tokenId }) => {
-    assertContract(contract, config?.exchangeToken.name ?? '')
-    assertSigner(signer)
+  const { callContract } = useCallContract()
+
+  const setPublicKey = useCallback(wrapPromise(async ({ tokenId, collectionAddress }) => {
+    assertConfig(config)
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -37,13 +41,18 @@ export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
     const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
-    return callContract({ contract, method: 'setTransferPublicKey' },
-      BigNumber.from(tokenId),
-      bufferToEtherHex(publicKey),
-      BigNumber.from(dealNumber),
-      { gasPrice: config?.gasPrice },
-    )
-  }), [contract, signer, address, wrapPromise])
+    return callContract({
+      callContractConfig: {
+        address: collectionAddress as `0x${string}`,
+        abi: config.collectionToken.abi,
+        functionName: 'setTransferPublicKey',
+        gasPrice: config?.gasPrice,
+        args: [BigInt(tokenId),
+          bufferToEtherHex(publicKey),
+          BigInt(dealNumber)],
+      },
+    })
+  }), [config, address, wrapPromise])
 
   return { ...statuses, setPublicKey }
 }

@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, Order } from '../../../swagger/Api'
-import { TokenFullId } from '../../processing/types'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type Api, type Order } from '../../../swagger/Api'
+import { type TokenFullId } from '../../processing/types'
+import { type IActivateDeactivate, type IStoreRequester, type RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
 
 /**
  * Stores only ACTIVE order state.
@@ -21,7 +21,7 @@ export class OrderStore implements IStoreRequester,
   isLoading = false
   isActivated = false
 
-  api?: Api<{}>
+  api?: Api<unknown>
 
   data?: Order = undefined
   tokenFullId?: TokenFullId = undefined
@@ -37,8 +37,7 @@ export class OrderStore implements IStoreRequester,
     })
   }
 
-  private request(tokenFullId: TokenFullId, api?: Api<{}>) {
-    console.log(api)
+  private request(tokenFullId: TokenFullId, api?: Api<unknown>) {
     if (!api) return
 
     storeRequest<Order | null>(
@@ -53,7 +52,6 @@ export class OrderStore implements IStoreRequester,
   activate(collectionAddress: string, tokenId: string, chainName: string): void {
     this.isActivated = true
     this.tokenFullId = { collectionAddress, tokenId }
-    console.log(this.multiChainStore.getApiByName(chainName))
     this.api = this.multiChainStore.getApiByName(chainName)
     this.request(this.tokenFullId, this.api)
   }
@@ -75,6 +73,5 @@ export class OrderStore implements IStoreRequester,
 
   setData(data: Order | undefined) {
     this.data = data
-    console.log(data)
   }
 }

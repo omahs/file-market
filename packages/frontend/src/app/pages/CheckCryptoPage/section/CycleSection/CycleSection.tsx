@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Txt } from '../../../../UIkit'
 import { Description, TestPart } from '../../CheckCryptoPage.styled'
-import { ITestProps } from '../../helper/types/types'
+import { type ITestProps } from '../../helper/types/types'
 import CycleTest from '../../TestBlock/CycleTest'
 
 const CycleSection = ({ items }: { items: ITestProps[] }) => {

@@ -3,8 +3,8 @@ import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import FileLogo from '../../../../assets/FilemarketFileLogo.png'
-import { Collection } from '../../../../swagger/Api'
-import { IMultiChainConfig } from '../../../config/multiChainConfigType'
+import { type Collection } from '../../../../swagger/Api'
+import { type IMultiChainConfig } from '../../../config/multiChainConfigType'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useMultiChainStore } from '../../../hooks/useMultiChainStore'
 import { gradientPlaceholderImg, Txt } from '../../../UIkit'
@@ -23,7 +23,17 @@ import {
 } from './CollectionCard.styles'
 import CollectionCardTooltipContent from './CollectionCardTooltipContent/CollectionCardTooltipContent'
 
-export default function CollectionCard({ name, address, image, type, chainId, ordersCount, ownersCount, tokensCount, contentTypes }: Collection) {
+export default function CollectionCard({
+  name,
+  address,
+  image,
+  type,
+  chainId,
+  ordersCount,
+  ownersCount,
+  tokensCount,
+  contentTypes,
+}: Collection) {
   const [isShowNumber, setIsShowNumber] = useState<boolean>(false)
   const navigate = useNavigate()
   const multiChainStore = useMultiChainStore()
@@ -70,11 +80,15 @@ export default function CollectionCard({ name, address, image, type, chainId, or
           <ThemeProvider theme={theme}>
             <Tooltip
               placement={'left'}
-              title={<CollectionCardTooltipContent categories={contentTypes?.categories} files={contentTypes?.fileExtensions} />}
+              title={(
+                <CollectionCardTooltipContent
+                  categories={contentTypes?.categories}
+                  files={contentTypes?.fileExtensions}
+                />
+              )}
               TransitionComponent={Slide}
               TransitionProps={{
-                // @ts-expect-error
-                direction: 'left',
+                dir: 'right',
               }}
               PopperProps={{
                 modifiers: [

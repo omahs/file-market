@@ -2,7 +2,7 @@ import { styled } from '@stitches/react'
 import * as React from 'react'
 
 import { textVariant } from '../../../UIkit'
-import { checkCryptoField } from '../helper/types/types'
+import { type checkCryptoField } from '../helper/types/types'
 
 const Text = styled('div', {
   ...textVariant('primary1').true,

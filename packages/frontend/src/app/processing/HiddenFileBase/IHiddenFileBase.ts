@@ -1,6 +1,6 @@
-import { FileMarketCrypto } from '../../../../../crypto/src'
-import { IBlockchainDataProvider } from '../BlockchainDataProvider'
-import { ISeedProvider } from '../SeedProvider'
+import { type FileMarketCrypto } from '../../../../../crypto/src'
+import { type IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { type ISeedProvider } from '../SeedProvider'
 
 export interface IHiddenFileBase {
   readonly collectionAddress: ArrayBuffer

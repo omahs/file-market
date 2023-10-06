@@ -7,7 +7,7 @@ import { styled } from '../../../../styles'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useCanUnlock } from '../../../processing/SeedProvider/useCanUnlock'
 import { Modal, ModalBody, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
-import { AppDialogProps } from '../../../utils/dialog'
+import { type AppDialogProps } from '../../../utils/dialog'
 import { CreateOrImportSection } from './sections/CreateOrImportSection'
 
 const ConnectWalletWindowStyle = styled('div', {
@@ -17,7 +17,7 @@ const ConnectWalletWindowStyle = styled('div', {
   },
 })
 
-type IConnectFileWalletDialog = AppDialogProps<{}> & {
+type IConnectFileWalletDialog = AppDialogProps<unknown> & {
   openWeb3Modal?: () => void
 }
 

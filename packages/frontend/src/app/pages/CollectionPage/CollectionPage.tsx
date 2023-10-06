@@ -12,7 +12,7 @@ import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router'
+import { type Params } from '../../utils/router'
 
 const Background = styled('div', {
   background: '$gradients$background',

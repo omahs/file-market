@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Drip } from '../../Drip'
-import { ButtonProps } from '../Button/Button'
+import { type ButtonProps } from '../Button/Button'
 import { useButton } from '../useButton'
 import { StyledButton, StyledGlow, StyledWrapper } from './ButtonGlowing.styles'
 

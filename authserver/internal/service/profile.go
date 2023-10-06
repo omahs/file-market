@@ -214,13 +214,13 @@ func (s *service) UpdateUserProfile(
 	}
 
 	// check banwords
-	if isForbiddenWord(profile.Username, false) {
+	if profile.Username != oldProfile.Username && isForbiddenWord(profile.Username, false) {
 		return nil, &domain.APIError{
 			Code:    http.StatusBadRequest,
 			Message: "forbidden username",
 		}
 	}
-	if isForbiddenWord(profile.Name, false) {
+	if profile.Name != oldProfile.Name && isForbiddenWord(profile.Name, false) {
 		return nil, &domain.APIError{
 			Code:    http.StatusBadRequest,
 			Message: "forbidden name",

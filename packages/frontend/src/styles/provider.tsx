@@ -1,6 +1,6 @@
 import 'reseter.css/css/minireseter.css'
 
-import { FC, PropsWithChildren } from 'react'
+import { type FC, type PropsWithChildren } from 'react'
 
 import { globalStyles } from './global'
 

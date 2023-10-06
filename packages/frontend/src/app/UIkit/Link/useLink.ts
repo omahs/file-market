@@ -1,5 +1,5 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { ForwardedRef } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type ForwardedRef } from 'react'
 import { mergeProps, useFocusRing, useHover, usePress } from 'react-aria'
 
 import { useDOMRef } from '../../hooks'

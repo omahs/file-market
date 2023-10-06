@@ -1,9 +1,9 @@
 import { useDrop } from '@react-aria/dnd'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
+import React, { type SyntheticEvent, useEffect, useState } from 'react'
+import { type UseFormRegisterReturn, type UseFormResetField } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { CreateNFTForm } from '../../../pages/CreatePage/EFT/sections/CreateEFT/CreateEFTSection'
+import { type CreateNFTForm } from '../../../pages/CreatePage/EFT/sections/CreateEFT/CreateEFTSection'
 import { textVariant } from '../../../UIkit'
 import CrossImage from '../NftLoader/img/cross.svg'
 import { CloseButton, CrossIcon, File } from '../NftLoader/NftLoader'
@@ -250,7 +250,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
     const objectUrl = URL.createObjectURL(file)
     setPreview(objectUrl)
 
-    return () => URL.revokeObjectURL(objectUrl)
+    return () => { URL.revokeObjectURL(objectUrl) }
   }, [file])
 
   const onSelectFile = (e: SyntheticEvent<HTMLInputElement>) => {
@@ -260,7 +260,6 @@ export default function ImageLoader(props: ImageLoaderProps) {
 
       return
     }
-    console.log(target.files)
     setFile(target.files[0])
   }
 

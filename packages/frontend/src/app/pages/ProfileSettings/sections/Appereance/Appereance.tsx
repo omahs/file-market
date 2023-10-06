@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { FieldValues } from 'react-hook-form'
+import { type FieldValues } from 'react-hook-form'
 
 import { TextStartInput } from '../../../../components/Form/TextStartInput/TextStartInput'
-import { ControlledInputProps, Input } from '../../../../UIkit'
+import { type ControlledInputProps, Input } from '../../../../UIkit'
 import { TextArea } from '../../../../UIkit/Form/TextArea/TextArea'
 import {
   FormControlSettings,

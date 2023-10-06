@@ -1,4 +1,4 @@
-import { styled, theme } from '../../../styles'
+import { styled, type theme } from '../../../styles'
 
 /**
  * works under condition, that config looks like this:

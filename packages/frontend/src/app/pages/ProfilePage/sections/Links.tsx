@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 
 import LinkCard from '../components/LinksCard/LinkCard'
-import { typesCard } from '../helper/linkCard/types'
+import { type typesCard } from '../helper/linkCard/types'
 import { StyledSection, StyledSectionContent, StyledSectionTitle } from '../ProfilePage.styles'
 
 interface ILinksProps {

@@ -8,7 +8,7 @@ import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { Txt } from '../../../../UIkit'
 import BoxShadowed from '../../../../UIkit/BoxShadowed/BoxShadowed'
-import { ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
+import { type ICurrentBlockchain } from '../../helper/types/currentBlockChainTypes'
 import { CurrentBlockchainStyle } from '../CurrentBlockchain.styles'
 import CurrentBlockchainBlock from '../CurrentBlockchainBlock/CurrentBlockchainBlock'
 
@@ -27,23 +27,28 @@ const DropDownWrapper = styled('div', {
   },
 })
 
+const initialSelectedSet = (currentChainId: number | undefined): Set<string> =>
+  new Set(currentChainId ? [currentChainId.toString()] : undefined)
+
 const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockchain) => {
   const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
+  const currentChainId = currentChainStore.chainId
   const { changeNetwork, isLoading, error } = useChangeNetwork({
     onError: () => {
-      setSelected(new Set([currentChainStore.chainId?.toString()]))
+      setSelected(initialSelectedSet(currentChainId))
     },
   })
-  const [selected, setSelected] = React.useState(new Set([currentChainStore.chainId?.toString()]))
 
-  const selectedValue = React.useCallback((value: any): string => {
+  const [selected, setSelected] = React.useState<Set<string | number>>(initialSelectedSet(currentChainId))
+
+  const selectedValue = React.useCallback((value: Set<string | number>): string => {
     return Array.from(value).join(', ')
   }, [selected])
 
   useEffect(() => {
-    setSelected(new Set([currentChainStore.chainId?.toString()]))
-  }, [currentChainStore.chainId])
+    setSelected(initialSelectedSet(currentChainId))
+  }, [currentChainId])
 
   return (
     <DropDownWrapper>
@@ -55,8 +60,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
           borderWeight={'black'}
         >
           {
-          // @ts-expect-error
-            <Dropdown.Trigger style={{ width: 'max-content' }}>
+            <Dropdown.Trigger css={{ width: 'max-content' }}>
               <CurrentBlockchainStyle isLight={isLight} style={{ width: 'max-content ' }}>
 
                 <CurrentBlockchainBlock
@@ -75,12 +79,12 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                 aria-label='Single selection actions'
                 disallowEmptySelection
                 selectionMode='single'
-                // @ts-expect-error
                 selectedKeys={selected}
                 onSelectionChange={(keys) => {
-                // @ts-expect-error
-                  setSelected(keys)
-                  changeNetwork(+selectedValue(keys))
+                  if (keys !== 'all') {
+                    setSelected(keys)
+                    changeNetwork(+selectedValue(keys))
+                  }
                 }}
                 css={{
                   borderRadius: '16px',
@@ -108,7 +112,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                         },
                       }}
                     >
-                      <img src={item.img} />
+                      <img src={item.img} alt={item.chain.name} />
                       <Txt
                         primary1
                         style={{

@@ -1,15 +1,14 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
-import { FC } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelOrder } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonCancelOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
@@ -37,7 +36,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, isD
         onPress={wrapAction(async () => {
           const receipt = await cancelOrder(tokenFullId)
           if (receipt?.blockNumber) {
-            transferStore.onTransferCancellation(BigNumber.from(tokenFullId.tokenId), receipt?.blockNumber)
+            transferStore.onTransferCancellation(BigInt(tokenFullId.tokenId), receipt?.blockNumber)
           }
         })
         }

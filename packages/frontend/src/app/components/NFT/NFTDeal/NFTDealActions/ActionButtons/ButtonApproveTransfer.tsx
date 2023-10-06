@@ -1,9 +1,8 @@
-import { PressEvent } from '@react-types/shared/src/events'
-import { BigNumber } from 'ethers'
-import { FC, useMemo } from 'react'
+import { type PressEvent } from '@react-types/shared/src/events'
+import { type FC, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Transfer } from '../../../../../../swagger/Api'
+import { type Transfer } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import {
@@ -12,11 +11,11 @@ import {
   useApproveTransfer,
   useHiddenFileProcessorFactory,
 } from '../../../../../processing'
-import { TokenFullId } from '../../../../../processing/types'
+import { type TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
 import { wrapButtonActionsFunction } from '../../helper/wrapButtonActionsFunction'
-import { ActionButtonProps } from './types/types'
+import { type ActionButtonProps } from './types/types'
 
 export type ButtonApproveTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
@@ -26,7 +25,7 @@ export type ButtonApproveTransferProps = ActionButtonProps & {
 export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
   tokenFullId, transfer, isDisabled,
 }) => {
-  const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
+  const { approveTransfer, ...statuses } = useApproveTransfer()
   const { isLoading } = statuses
   const { transferStore } = useStores()
   const factory = useHiddenFileProcessorFactory()
@@ -38,14 +37,14 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
     loadingMsg: 'Sending an encrypted encryption password',
   })
 
-  const encryptedPassword = useMemo(async () => {
+  const getEncryptedPassword = useCallback(async () => {
     if (address && tokenFullId && transfer?.publicKey) {
       const owner = await factory.getOwner(address, tokenFullId.collectionAddress, +tokenFullId.tokenId)
       const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(transfer?.publicKey))
 
       return bufferToEtherHex(encryptedFilePassword)
     }
-  }, [address, tokenFullId, transfer])
+  }, [address, tokenFullId.tokenId, tokenFullId.collectionAddress, transfer])
 
   return (
     <>
@@ -57,12 +56,12 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={wrapAction(async () => {
           const receipt = await approveTransfer({
-            tokenId: tokenFullId.tokenId,
+            ...tokenFullId,
             publicKey: transfer?.publicKey,
           })
-          const encryptedPasswordRes = await encryptedPassword
+          const encryptedPasswordRes = await getEncryptedPassword()
           if (receipt?.blockNumber && encryptedPasswordRes) {
-            transferStore.onTransferPasswordSet(BigNumber.from(tokenFullId.tokenId), encryptedPasswordRes, receipt?.blockNumber)
+            transferStore.onTransferPasswordSet(BigInt(tokenFullId.tokenId), encryptedPasswordRes, receipt?.blockNumber)
           }
         })}
       >

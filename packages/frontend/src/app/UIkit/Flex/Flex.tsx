@@ -1,6 +1,5 @@
-
-import { CSS } from '@stitches/react'
-import React, { PropsWithChildren } from 'react'
+import { type CSS } from '@stitches/react'
+import React, { type PropsWithChildren } from 'react'
 
 import { StyledDiv } from './Flex.styles'
 

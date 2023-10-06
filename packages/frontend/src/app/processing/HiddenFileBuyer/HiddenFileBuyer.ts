@@ -1,10 +1,9 @@
-
-import { FileMarketCrypto } from '../../../../../crypto/src'
-import { IBlockchainDataProvider } from '../BlockchainDataProvider'
-import { ISeedProvider } from '../SeedProvider'
-import { PersistentDerivationArgs } from '../types'
+import { type FileMarketCrypto } from '../../../../../crypto/src'
+import { type IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { type ISeedProvider } from '../SeedProvider'
+import { type PersistentDerivationArgs } from '../types'
 import { assertSeed } from '../utils'
-import { IHiddenFileBuyer } from './IHiddenFileBuyer'
+import { type IHiddenFileBuyer } from './IHiddenFileBuyer'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
   #tokenFullIdArgs: [ArrayBuffer, number]
@@ -31,7 +30,7 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     const { pub } = await this.crypto.eftRsaDerivation(
       this.seedProvider.seed,
       ...this.#persistentArgs,
-      dealNumber,
+      Number(dealNumber),
       { disableWorker: this.#isFirefox },
     )
 
@@ -45,7 +44,7 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     const { priv } = await this.crypto.eftRsaDerivation(
       this.seedProvider.seed,
       ...this.#persistentArgs,
-      dealNumber,
+      Number(dealNumber),
       { disableWorker: this.#isFirefox },
     )
 

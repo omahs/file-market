@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { utils } from 'ethers'
 import { saveAs } from 'file-saver'
 import { useMemo } from 'react'
+import { getAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { Token } from '../../swagger/Api'
+import { type Token } from '../../swagger/Api'
 import { useHiddenFileProcessorFactory } from '../processing'
-import { DecryptResult } from '../processing/types'
+import { type DecryptResult } from '../processing/types'
 import { ipfsService } from '../services/IPFSService'
-import { TokenMetaStore } from '../stores/Token/TokenMetaStore'
+import { type TokenMetaStore } from '../stores/Token/TokenMetaStore'
 import { getIpfsCidWithFilePath } from '../utils/nfts/getHttpLinkFromIpfsString'
 
 export interface HiddenFileDownload {
@@ -28,13 +28,13 @@ export function useHiddenFileDownload(
   const { meta } = tokenMetaStore
 
   return useMemo(() => {
-    if (!factory || !token || !token.collectionAddress || !token.tokenId || !address || !meta?.hidden_file) {
+    if (!factory || !token?.collectionAddress || !token.tokenId || !address || !meta?.hidden_file) {
       return []
     }
 
     const hiddenFileURI = meta.hidden_file
     const hiddenMeta = meta.hidden_file_meta
-    const collectionAddress = utils.getAddress(token.collectionAddress)
+    const collectionAddress = getAddress(token.collectionAddress)
     const tokenId = +token.tokenId
 
     return [{
@@ -42,14 +42,9 @@ export function useHiddenFileDownload(
       name: hiddenMeta?.name || hiddenFileURI,
       size: hiddenMeta?.size || 0,
       download: async () => {
-        console.log('Encrypted start')
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
-        console.log('Owner start')
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
-        console.log('Decrypt start')
         const file = await owner.decryptFile(encryptedFile, hiddenMeta)
-
-        console.log(file)
 
         if (file.ok) {
           saveAs(file.result, file.result.name)

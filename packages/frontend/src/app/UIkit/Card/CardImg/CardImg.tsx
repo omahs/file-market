@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { type PropsWithChildren } from 'react'
 
 import { gradientPlaceholderImg } from '../../Placeholder'
 import { StyledImg, StyledImgContainer, StyledImgRoot, StyledImgWrapper } from './CardImg.styles'

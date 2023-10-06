@@ -1,13 +1,13 @@
 import { makeAutoObservable } from 'mobx'
 
-import { EFTSubscriptionMessage, EFTSubscriptionRequest } from '../../../swagger/Api'
-import { MultiChainStore } from '../MultiChain/MultiChainStore'
-import { OrderStore } from '../Order/OrderStore'
-import { RootStore } from '../RootStore'
-import { TokenStore } from '../Token/TokenStore'
-import { TransferStore } from '../Transfer/TransferStore'
+import { type EFTSubscriptionMessage, type EFTSubscriptionRequest } from '../../../swagger/Api'
+import { type MultiChainStore } from '../MultiChain/MultiChainStore'
+import { type OrderStore } from '../Order/OrderStore'
+import { type RootStore } from '../RootStore'
+import { type TokenStore } from '../Token/TokenStore'
+import { type TransferStore } from '../Transfer/TransferStore'
 import { url } from './data'
-import { ConnectionType, ISocketConnect } from './types'
+import { ConnectionType, type ISocketConnect } from './types'
 
 interface ISubscribe<T, M> {
   params: T
@@ -60,9 +60,9 @@ export class SocketStore {
       console.log('Old socket')
       socketConnect.socket?.send(JSON.stringify(params))
       socketConnect.lastMessage = JSON.stringify(params)
-      if (this.socketConnects[this.findIndexSocket({ type, chainName })]?.socket) {
-        // @ts-expect-error
-        this.socketConnects[this.findIndexSocket({ type, chainName })].socket.onclose = onClose
+      const socket = this.socketConnects[this.findIndexSocket({ type, chainName })]?.socket
+      if (socket) {
+        socket.onclose = onClose
       }
     } else {
       console.log('New socket')
@@ -91,6 +91,10 @@ export class SocketStore {
 
   private readonly onMessageSubscribeToEft = (event: MessageEvent<string>, chainName?: string) => {
     const data = JSON.parse(event.data) as EFTSubscriptionMessage
+    if (!data) {
+      // sometimes backend sends empty subscription
+      return
+    }
     const transfer = data.transfer
     const order = data.order
     const token = data.token
@@ -124,7 +128,7 @@ export class SocketStore {
       type: ConnectionType.Eft,
       onSubscribeMessage: this.onMessageSubscribeToEft,
       onClose: () => {
-        setTimeout(() => this.subscribeToEft(params, chainName), 2000)
+        setTimeout(() => { this.subscribeToEft(params, chainName) }, 2000)
       },
       chainName,
     })

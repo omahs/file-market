@@ -1,4 +1,4 @@
-import { css, theme } from './stitches.config'
+import { css, type theme } from './stitches.config'
 
 // shows on all breakpoints, that higher than a specified one
 export const cssShowIn = css({

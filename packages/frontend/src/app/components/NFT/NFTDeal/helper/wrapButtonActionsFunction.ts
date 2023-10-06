@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { useStores } from '../../../../hooks'
 
-export function wrapButtonActionsFunction<Arguments extends any = void>() {
+export function wrapButtonActionsFunction<Arguments = void>() {
   const { transferStore } = useStores()
 
   const onActionStart = () => {
@@ -24,10 +24,8 @@ export function wrapButtonActionsFunction<Arguments extends any = void>() {
     return async (args: Arguments) => {
       try {
         onActionStart()
-        const result = await call(args)
+        await call(args)
         onActionEnd()
-
-        return result
       } catch (err) {
         onActionError()
         throw err

@@ -1,18 +1,18 @@
 import { makeAutoObservable } from 'mobx'
 
-import { Api, UserProfile } from '../../../swagger/Api'
+import { Api, type UserProfile } from '../../../swagger/Api'
 import { requestJwtAccess } from '../../utils/jwt/function'
-import { IStoreRequester, RequestContext, storeRequest } from '../../utils/store'
-import { DateStore } from '../Date/DateStore'
-import { ErrorStore } from '../Error/ErrorStore'
-import { RootStore } from '../RootStore'
+import { type IStoreRequester, type RequestContext, storeRequest, storeRequestPromise } from '../../utils/store'
+import { type DateStore } from '../Date/DateStore'
+import { type ErrorStore } from '../Error/ErrorStore'
+import { type RootStore } from '../RootStore'
 
 const TIMER_EMAIL_KEY = 'TimerEmail'
 const TIME_DISABLE_RESEND = 60000
 
 export class UserStore implements IStoreRequester {
   user?: UserProfile | null
-  profileService: Api<{}>['profile']
+  profileService: Api<unknown>['profile']
   errorStore: ErrorStore
   dateStore: DateStore
 
@@ -29,7 +29,7 @@ export class UserStore implements IStoreRequester {
   constructor(rootStore: RootStore) {
     this.timeCanResend = +(localStorage.getItem(TIMER_EMAIL_KEY) ?? '0')
     makeAutoObservable(this)
-    this.profileService = new Api<{}>({ baseUrl: '/api' }).profile
+    this.profileService = new Api<unknown>({ baseUrl: '/api' }).profile
     this.errorStore = rootStore.errorStore
     this.dateStore = rootStore.dateStore
   }
@@ -50,16 +50,17 @@ export class UserStore implements IStoreRequester {
 
   async updateUserInfo(user?: UserProfile) {
     if (!user) return
-    storeRequest(
+
+    const result = await storeRequestPromise(
       this,
       requestJwtAccess(this.profileService.updateCreate, {
         ...this.user,
         ...user,
       }),
-      (response) => {
-        this.setUser(response)
-      },
     )
+    this.setUser(result)
+
+    return result
   }
 
   async updateEmail(email?: string) {

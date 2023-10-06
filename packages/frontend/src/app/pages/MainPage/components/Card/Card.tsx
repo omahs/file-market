@@ -1,5 +1,5 @@
-import { ComponentProps } from '@stitches/react'
-import React, { ReactNode } from 'react'
+import { type ComponentProps } from '@stitches/react'
+import React, { type ReactNode } from 'react'
 
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'

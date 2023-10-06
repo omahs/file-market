@@ -1,8 +1,8 @@
-import { Transfer, TransferStatus } from '../../../swagger/Api'
+import { type Transfer, TransferStatus } from '../../../swagger/Api'
 import { mark3dConfig } from '../../config/mark3d'
 
 export const transferStatusInfo = (transfer?: Transfer) =>
-  transfer?.statuses && transfer.statuses[0]
+  transfer?.statuses?.[0]
 
 export const transferStatus = (transfer?: Transfer) =>
   transferStatusInfo(transfer)?.status

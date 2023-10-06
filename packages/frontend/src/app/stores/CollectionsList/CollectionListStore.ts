@@ -1,16 +1,16 @@
 import { makeAutoObservable } from 'mobx'
 
-import { CollectionsResponse } from '../../../swagger/Api'
+import { type CollectionsResponse } from '../../../swagger/Api'
 import {
-  IActivateDeactivate,
-  IStoreRequester,
-  RequestContext,
+  type IActivateDeactivate,
+  type IStoreRequester,
+  type RequestContext,
   storeRequest,
   storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
-import { CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
-import { ErrorStore } from '../Error/ErrorStore'
+import { type CurrentBlockChainStore } from '../CurrentBlockChain/CurrentBlockChainStore'
+import { type ErrorStore } from '../Error/ErrorStore'
 
 /**
  * Stores only ACTIVE order state.
@@ -56,7 +56,7 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
     storeRequest(
       this,
       this.currentBlockChainStore.api.collections.collectionsList({ limit: 15 }),
-      (data) => this.setData(data),
+      (data) => { this.setData(data) },
     )
   }
 
@@ -65,7 +65,7 @@ export class CollectionListStore implements IStoreRequester, IActivateDeactivate
     storeRequest(
       this,
       this.currentBlockChainStore.api.collections.collectionsList({ lastCollectionAddress, limit: 15 }),
-      (data) => this.addData(data),
+      (data) => { this.addData(data) },
     )
   }
 

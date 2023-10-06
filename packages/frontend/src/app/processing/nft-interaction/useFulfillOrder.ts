@@ -1,19 +1,18 @@
 import assert from 'assert'
-import { BigNumber, BigNumberish, ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
+import { getAddress, type TransactionReceipt } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useStatusState } from '../../hooks'
+import { useCallContract } from '../../hooks/useCallContract'
 import { useConfig } from '../../hooks/useConfig'
 import { useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import {
-  assertAccount, assertCollection,
+  assertAccount, assertCollection, assertConfig,
   assertContract,
-  assertSigner,
   assertTokenId,
   bufferToEtherHex,
-  callContract,
 } from '../utils'
 
 /**
@@ -24,25 +23,27 @@ import {
  */
 
 interface IFulFillOrder {
-  price?: BigNumberish
+  price?: string
   collectionAddress?: string
   tokenId?: string
   signature?: string
 }
 
 export function useFulfillOrder() {
-  const { contract, signer } = useExchangeContract()
+  const { contract } = useExchangeContract()
   const { address } = useAccount()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IFulFillOrder>()
+  const { wrapPromise, statuses } = useStatusState<TransactionReceipt, IFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
   const config = useConfig()
+
+  const { callContract } = useCallContract()
 
   const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price, signature }) => {
     assertCollection(collectionAddress)
     assertContract(contract, config?.exchangeToken.name ?? '')
-    assertSigner(signer)
     assertTokenId(tokenId)
     assertAccount(address)
+    assertConfig(config)
     assert(price, 'price is not provided')
 
     const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
@@ -50,17 +51,22 @@ export function useFulfillOrder() {
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
     return callContract(
-      { contract, signer, method: 'fulfillOrder', minBalance: BigNumber.from(price) },
-      utils.getAddress(collectionAddress),
-      bufferToEtherHex(publicKey),
-      BigNumber.from(tokenId),
-      signature ? `0x${signature}` : '0x00',
       {
-        value: BigNumber.from(price),
-        gasPrice: config?.gasPrice,
+        callContractConfig: {
+          address: config.exchangeToken.address,
+          abi: config.exchangeToken.abi,
+          functionName: 'fulfillOrder',
+          value: BigInt(price),
+          gasPrice: config?.gasPrice,
+          args: [getAddress(collectionAddress),
+            bufferToEtherHex(publicKey),
+            BigInt(tokenId),
+            signature ? `0x${signature}` : '0x00'],
+        },
+        minBalance: BigInt(price),
       },
     )
-  }), [contract, address, wrapPromise, signer])
+  }), [contract, address, wrapPromise])
 
   return { ...statuses, fulfillOrder }
 }

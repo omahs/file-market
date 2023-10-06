@@ -1,4 +1,4 @@
-import { CardPartnerProps } from '../../components/Card/CardPartner'
+import { type CardPartnerProps } from '../../components/Card/CardPartner'
 import item1 from '../../img/TechnologyStack/item1.svg'
 import item2 from '../../img/TechnologyStack/item2.svg'
 import item3 from '../../img/TechnologyStack/item3.svg'

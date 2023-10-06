@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 
 import { useCollectionsListStore } from '../../hooks/useCollectionsListStore'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
-import { PageLayout, TabItem, Tabs } from '../../UIkit'
+import { PageLayout, type TabItem, Tabs } from '../../UIkit'
 import { TabsContainer } from '../../UIkit/Tabs/TabsContainer'
 import FileBunniesSection from './FileBunnies/FileBunniesSection/FileBunniesSection'
 

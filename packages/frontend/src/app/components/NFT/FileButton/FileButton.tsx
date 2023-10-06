@@ -1,5 +1,5 @@
-import { FC, forwardRef, ReactNode } from 'react'
-import { AriaButtonProps } from 'react-aria'
+import { type FC, forwardRef, type ReactNode } from 'react'
+import { type AriaButtonProps } from 'react-aria'
 
 import { styled } from '../../../../styles'
 import { Card, Drip, Txt, useButton } from '../../../UIkit'

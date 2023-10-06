@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { EFTSubscriptionRequest } from '../../swagger/Api'
-import { Params } from '../utils/router'
+import { type EFTSubscriptionRequest } from '../../swagger/Api'
+import { type Params } from '../utils/router'
 import { useStores } from './useStores'
 
 interface IUseSubscribeToEft {

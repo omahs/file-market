@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { type FC, useState } from 'react'
 
 import Logo from '../../../../assets/icons/Plus.svg'
 import { styled } from '../../../../styles'
@@ -33,7 +33,7 @@ export const AppPlusNav: FC = () => {
             <NavLink
               key={path.to}
               to={path.to}
-              onPress={() => setIsOpen(false)}
+              onPress={() => { setIsOpen(false) }}
             >
               {path.label}
             </NavLink>
