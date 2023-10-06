@@ -62,9 +62,9 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
               required: true,
               validate: async (p) => {
                 if (!!validateImportMnemonic(p)) return validateImportMnemonic(p)
-                const sha512Value = await fileMarketCrypto.sha512(Buffer.from(mnemonicToEntropy((p)), 'hex'))
-
-                if (isReset && seedProvider?.hashSeed !== toHex(new Uint8Array(sha512Value)).substring(2) && !isAppliedWrongPhrase) {
+                const sha512Value = await fileMarketCrypto.sha512(Buffer.from(mnemonicToEntropy(p), 'hex'))
+                const hex = toHex(new Uint8Array(sha512Value)).substring(2)
+                if (isReset && seedProvider?.hashSeed !== hex && !isAppliedWrongPhrase) {
                   setAppliesWrongPhrase(true)
 
                   return 'You probably made a mistake. This phrase is not suitable for your eft. Click the Connect button again to ignore'
@@ -131,7 +131,7 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
           modalButton
           modalButtonFontSize
           type="submit"
-          isDisabled={!!(errors.password)}
+          isDisabled={!!errors.password}
         >
           Connect
         </ButtonGlowing>

@@ -48,7 +48,9 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
                 to: form.address,
               })
               if (receipt?.blockNumber) {
-                transferStore.onTransferDraft(BigInt(tokenFullId.tokenId), receipt.from, BigInt(receipt?.blockNumber ?? 0))
+                transferStore.onTransferDraft(BigInt(tokenFullId.tokenId),
+                  receipt.from,
+                  BigInt(receipt?.blockNumber ?? 0))
               }
             })}
           />

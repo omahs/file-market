@@ -1,6 +1,6 @@
 import { type PressEvent } from '@react-types/shared/src/events'
 import { observer } from 'mobx-react-lite'
-import { type FC, useMemo } from 'react'
+import { type FC, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
 import { type Order } from '../../../../../../swagger/Api'
@@ -42,21 +42,21 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     loadingMsg: 'Fulfilling order',
   })
 
-  const publicKeyHex = useMemo(async () => {
+  const getPublicKeyHex = useCallback(async () => {
     if (address && tokenFullId && seedProvider?.seed) {
       const buyer = await factory.getBuyer(address, tokenFullId.collectionAddress, +tokenFullId.tokenId)
       const publicKey = await buyer.initBuy()
 
       return bufferToEtherHex(publicKey)
     }
-  }, [address, tokenFullId, seedProvider?.seed])
+  }, [address, tokenFullId.collectionAddress, tokenFullId.tokenId, seedProvider?.seed])
 
   const onPress = wrapAction(async () => {
     const receipt = await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
     })
-    const publicKeyHexRes = await publicKeyHex
+    const publicKeyHexRes = await getPublicKeyHex()
     if (receipt?.blockNumber && publicKeyHexRes) {
       transferStore.onTransferPublicKeySet(BigInt(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
       transferStore.onTransferDraftCompletion(BigInt(tokenFullId.tokenId), receipt?.to, receipt?.blockNumber)

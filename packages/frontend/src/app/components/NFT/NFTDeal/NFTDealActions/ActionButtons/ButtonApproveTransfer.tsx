@@ -1,5 +1,5 @@
 import { type PressEvent } from '@react-types/shared/src/events'
-import { type FC, useMemo } from 'react'
+import { type FC, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
 import { type Transfer } from '../../../../../../swagger/Api'
@@ -37,14 +37,14 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
     loadingMsg: 'Sending an encrypted encryption password',
   })
 
-  const encryptedPassword = useMemo(async () => {
+  const getEncryptedPassword = useCallback(async () => {
     if (address && tokenFullId && transfer?.publicKey) {
       const owner = await factory.getOwner(address, tokenFullId.collectionAddress, +tokenFullId.tokenId)
       const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(transfer?.publicKey))
 
       return bufferToEtherHex(encryptedFilePassword)
     }
-  }, [address, tokenFullId, transfer])
+  }, [address, tokenFullId.tokenId, tokenFullId.collectionAddress, transfer])
 
   return (
     <>
@@ -59,7 +59,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
             ...tokenFullId,
             publicKey: transfer?.publicKey,
           })
-          const encryptedPasswordRes = await encryptedPassword
+          const encryptedPasswordRes = await getEncryptedPassword()
           if (receipt?.blockNumber && encryptedPasswordRes) {
             transferStore.onTransferPasswordSet(BigInt(tokenFullId.tokenId), encryptedPasswordRes, receipt?.blockNumber)
           }

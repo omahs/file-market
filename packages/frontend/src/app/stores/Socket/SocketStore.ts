@@ -60,9 +60,9 @@ export class SocketStore {
       console.log('Old socket')
       socketConnect.socket?.send(JSON.stringify(params))
       socketConnect.lastMessage = JSON.stringify(params)
-      if (this.socketConnects[this.findIndexSocket({ type, chainName })]?.socket) {
-        // @ts-expect-error
-        this.socketConnects[this.findIndexSocket({ type, chainName })].socket.onclose = onClose
+      const socket = this.socketConnects[this.findIndexSocket({ type, chainName })]?.socket
+      if (socket) {
+        socket.onclose = onClose
       }
     } else {
       console.log('New socket')
@@ -91,6 +91,10 @@ export class SocketStore {
 
   private readonly onMessageSubscribeToEft = (event: MessageEvent<string>, chainName?: string) => {
     const data = JSON.parse(event.data) as EFTSubscriptionMessage
+    if (!data) {
+      // sometimes backend sends empty subscription
+      return
+    }
     const transfer = data.transfer
     const order = data.order
     const token = data.token

@@ -87,13 +87,15 @@ export const HowWorkModalBody = () => {
     <FileBunniesModalBody>
       <p>
         FileMarket Labs company has created a new NFT standard and protocol
-        for secure storage and transfer of files stored on the decentralized Filecoin storage. It&apos;s called Encrypted FileToken (EFT).
+        for secure storage and transfer of files stored on
+        the decentralized Filecoin storage. It&apos;s called Encrypted FileToken (EFT).
       </p>
       <p>
         When someone creates an EFT, besides a link to a public file available
         to everyone, there&apos;s another link to a file that gets encrypted with
         a special cryptographic key before being uploaded to Filecoin. Only
-        the EFT owner has this key. Access to this key is stored inside FileWallet, which is created when first using the FileMarket platform.
+        the EFT owner has this key. Access to this key is
+        stored inside FileWallet, which is created when first using the FileMarket platform.
       </p>
       <p>
         The EFT protocol allows a decentralized and completely secure transfer
@@ -138,7 +140,12 @@ export const HowWorkModalTitle = () => {
   )
 }
 
-export const FileBunniesModal = ({ open, onClose, body, title }: AppDialogProps<{ body: ReactNode, title: ReactNode }>) => {
+export const FileBunniesModal = ({
+  open,
+  onClose,
+  body,
+  title,
+}: AppDialogProps<{ body: ReactNode, title: ReactNode }>) => {
   const { adaptive, mdValue, smValue } = useMediaMui()
 
   return (

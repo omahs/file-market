@@ -5,9 +5,9 @@ import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
 import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
-import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
+import { FILEBUNNIES_FILECOIN_CHAINID } from '../../../../utils/web3/data'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
 import LeftBottomPl from '../../img/LeftBottomPlanet.png'
 import LeftTopPl from '../../img/LeftTopPlanet.png'
@@ -38,7 +38,6 @@ const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
   const { payedMint, isLoading, freeMint, modalProps, isPayedMintSoldOut } = useFileBunniesMint()
   const { changeNetwork } = useChangeNetwork()
-  const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
 
   const rarityModalOpen = () => {
@@ -76,11 +75,15 @@ const FileBunniesSection = observer(() => {
   }, [isPayedMintSoldOut, currentChainStore.chain])
 
   const payedButtonOnClick = useMemo(() => {
-    if (currentChainStore.chain?.name !== 'Filecoin') return () => { changeNetwork(multiChainStore.getChainByName('Filecoin')?.chain.id) }
+    if (currentChainStore.chain?.id !== FILEBUNNIES_FILECOIN_CHAINID) {
+      return () => {
+        changeNetwork(FILEBUNNIES_FILECOIN_CHAINID)
+      }
+    }
     if (isPayedMintSoldOut) return () => {}
 
     return () => { payedMint() }
-  }, [isPayedMintSoldOut, currentChainStore.chain])
+  }, [isPayedMintSoldOut, currentChainStore.chain, FILEBUNNIES_FILECOIN_CHAINID])
 
   return (
     <>

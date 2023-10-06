@@ -28,13 +28,13 @@ export class AuthStore implements IStoreRequester {
   dialogStore: DialogStore
   dateStore: DateStore
   userStore: UserStore
-  authService: Api<{}>
+  authService: Api<unknown>
 
   isAuth?: boolean
   isTryAuth?: boolean
 
   constructor(rootStore: { dialogStore: DialogStore, userStore: UserStore, dateStore: DateStore, errorStore: ErrorStore }) {
-    this.authService = new Api<{}>({ baseUrl: '/api' })
+    this.authService = new Api<unknown>({ baseUrl: '/api' })
     this.userStore = rootStore.userStore
     makeAutoObservable(this)
     this.dialogStore = rootStore.dialogStore

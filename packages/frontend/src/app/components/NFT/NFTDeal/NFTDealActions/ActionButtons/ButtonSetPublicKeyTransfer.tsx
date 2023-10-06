@@ -1,5 +1,5 @@
 import { type PressEvent } from '@react-types/shared/src/events'
-import { type FC, useMemo } from 'react'
+import { type FC, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useStores } from '../../../../../hooks'
@@ -36,7 +36,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
     loadingMsg: 'Sending keys, so owner could encrypt the file password and transfer it to you',
   })
 
-  const publicKeyHex = useMemo(async () => {
+  const getPublicKeyHex = useCallback(async () => {
     if (address && tokenFullId && seedProvider?.seed) {
       const factory = useHiddenFileProcessorFactory()
       const buyer = await factory.getBuyer(address, tokenFullId.collectionAddress, +tokenFullId.tokenId)
@@ -44,11 +44,11 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
 
       return bufferToEtherHex(publicKey)
     }
-  }, [address, tokenFullId, seedProvider?.seed])
+  }, [address, tokenFullId.collectionAddress, tokenFullId.tokenId, seedProvider?.seed])
 
   const onPress = wrapAction(async () => {
     const receipt = await setPublicKey(tokenFullId)
-    const publicKeyHexRes = await publicKeyHex
+    const publicKeyHexRes = await getPublicKeyHex()
     if (receipt?.blockNumber && publicKeyHexRes) {
       transferStore.onTransferPublicKeySet(BigInt(tokenFullId.tokenId), publicKeyHexRes, receipt?.blockNumber)
     }
