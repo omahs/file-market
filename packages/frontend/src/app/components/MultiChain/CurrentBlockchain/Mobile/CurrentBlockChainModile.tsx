@@ -112,7 +112,7 @@ const CurrentBlockchainMobile = observer(({ isLight, isVisible }: ICurrentBlockc
                         },
                       }}
                     >
-                      <img src={item.img} />
+                      <img src={item.img} alt={item.chain.name} />
                       <Txt
                         primary1
                         style={{
