@@ -2,7 +2,6 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { type FC } from 'react'
 import { configureChains, createConfig } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
 
 import multichainConfig from '../../../../../config/multiChainConfig.json'
 import { theme } from '../../styles'
