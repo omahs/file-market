@@ -1,0 +1,1 @@
+export const FILEBUNNIES_FILECOIN_CHAINID = import.meta.env.VITE_IS_MAINNET ? 314 : 314159

@@ -170,9 +170,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
       event.preventDefault()
       if (inputValue && inputValue.length <= 35) {
         props.onEnter?.(inputValue as string)
-        const target = event.target as HTMLInputElement
-
-        target.blur()
+        event.currentTarget.blur()
 
         props.onChangeDop?.('')
 
@@ -189,9 +187,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
 
   const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
     props.onClickRightContent?.(inputValue as string)
-    const target = event.target as HTMLInputElement
-
-    target.focus()
+    event.currentTarget.focus()
 
     return false
   }

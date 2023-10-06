@@ -7,6 +7,7 @@ import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
+import { FILEBUNNIES_FILECOIN_CHAINID } from '../../../../utils/web3/data'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
 import LeftBottomPl from '../../img/LeftBottomPlanet.png'
 import LeftTopPl from '../../img/LeftTopPlanet.png'
@@ -74,16 +75,15 @@ const FileBunniesSection = observer(() => {
   }, [isPayedMintSoldOut, currentChainStore.chain])
 
   const payedButtonOnClick = useMemo(() => {
-    const chainId = import.meta.env.VITE_IS_MAINNET ? 314 : 314159
-    if (currentChainStore.chain?.id !== chainId) {
+    if (currentChainStore.chain?.id !== FILEBUNNIES_FILECOIN_CHAINID) {
       return () => {
-        changeNetwork(chainId)
+        changeNetwork(FILEBUNNIES_FILECOIN_CHAINID)
       }
     }
     if (isPayedMintSoldOut) return () => {}
 
     return () => { payedMint() }
-  }, [isPayedMintSoldOut, currentChainStore.chain])
+  }, [isPayedMintSoldOut, currentChainStore.chain, FILEBUNNIES_FILECOIN_CHAINID])
 
   return (
     <>
