@@ -62,6 +62,3 @@ export const useCallContract = () => {
     callContract,
   }
 }
-function waitForTransactionReceipt(arg0: { hash: `0x${string}` }) {
-  throw new Error('Function not implemented.')
-}

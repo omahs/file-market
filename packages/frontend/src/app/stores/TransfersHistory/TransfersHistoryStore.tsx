@@ -111,8 +111,7 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing', chain: Chai
       {
         columnName: 'Date',
         value:
-          transfer.order?.statuses !== undefined &&
-          transfer.order.statuses.length
+          transfer.order?.statuses?.length
             ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
               'MMM D[,] YYYY [at] HH[:]mm',
             )

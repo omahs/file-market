@@ -5,7 +5,6 @@ import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
 import { useChangeNetwork } from '../../../../hooks/useChangeNetwork'
 import { useCurrentBlockChain } from '../../../../hooks/useCurrentBlockChain'
-import { useMultiChainStore } from '../../../../hooks/useMultiChainStore'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
@@ -38,7 +37,6 @@ const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
   const { payedMint, isLoading, freeMint, modalProps, isPayedMintSoldOut } = useFileBunniesMint()
   const { changeNetwork } = useChangeNetwork()
-  const multiChainStore = useMultiChainStore()
   const currentChainStore = useCurrentBlockChain()
 
   const rarityModalOpen = () => {

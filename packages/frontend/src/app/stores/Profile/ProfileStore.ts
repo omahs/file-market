@@ -8,7 +8,7 @@ import { type RootStore } from '../RootStore'
 export class ProfileStore implements IStoreRequester,
   IActivateDeactivate<[string]> {
   user?: UserProfile | null
-  profileService: Api<{}>['profile']
+  profileService: Api<unknown>['profile']
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
@@ -21,7 +21,7 @@ export class ProfileStore implements IStoreRequester,
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this)
-    this.profileService = new Api<{}>({ baseUrl: '/api' }).profile
+    this.profileService = new Api<unknown>({ baseUrl: '/api' }).profile
     this.errorStore = rootStore.errorStore
   }
 

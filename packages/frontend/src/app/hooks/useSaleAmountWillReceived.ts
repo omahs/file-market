@@ -8,7 +8,10 @@ import { useBlockchainDataProvider } from '../processing/BlockchainDataProvider'
 import { type TokenFullId } from '../processing/types'
 import { useConversionRateStore } from './useConversionRateStore'
 
-export const useSaleAmountWillReceived = ({ collectionAddress, tokenId }: TokenFullId, price: number, isCreator?: boolean) => {
+export const useSaleAmountWillReceived = ({
+  collectionAddress,
+  tokenId,
+}: TokenFullId, price: number, isCreator?: boolean) => {
   const [amountWillReceived, setAmountWillReceived] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 

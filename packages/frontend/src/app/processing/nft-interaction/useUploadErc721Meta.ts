@@ -20,6 +20,7 @@ export function useUploadErc721Meta() {
     const fileProps: Record<string, string> = Object.create(null)
 
     for (const key of Object.keys(meta)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       const value: any = meta[key]
       if (value instanceof Blob) {

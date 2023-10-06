@@ -12,7 +12,7 @@ const TIME_DISABLE_RESEND = 60000
 
 export class UserStore implements IStoreRequester {
   user?: UserProfile | null
-  profileService: Api<{}>['profile']
+  profileService: Api<unknown>['profile']
   errorStore: ErrorStore
   dateStore: DateStore
 
@@ -29,7 +29,7 @@ export class UserStore implements IStoreRequester {
   constructor(rootStore: RootStore) {
     this.timeCanResend = +(localStorage.getItem(TIMER_EMAIL_KEY) ?? '0')
     makeAutoObservable(this)
-    this.profileService = new Api<{}>({ baseUrl: '/api' }).profile
+    this.profileService = new Api<unknown>({ baseUrl: '/api' }).profile
     this.errorStore = rootStore.errorStore
     this.dateStore = rootStore.dateStore
   }

@@ -8,7 +8,7 @@ export const selectBlockchainTitle: Record<selectBlockchainType, ReactNode> = {
     <br />
     {' '}
     for your EFT Collection
-  </>,
+              </>,
   eft: 'Choose Blockchain for your EFT',
 }
 
